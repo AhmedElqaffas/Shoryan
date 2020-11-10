@@ -1,19 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@+id/itemOne"
-        android:title="itemOne"
-        android:icon="@android:drawable/btn_star"/>
-    <item android:id="@+id/itemTwo"
-        android:title="itemTwo"
-        android:icon="@android:drawable/btn_star"/>
-    <item android:id="@+id/itemThree"
-        android:title="itemThree"
-        android:icon="@android:drawable/btn_star"/>
-    <item android:id="@+id/itemFour"
-        android:title="itemFour"
-        android:icon="@android:drawable/btn_star"/>
-    <item android:id="@+id/itemFive"
-        android:title="itemFive"
-        android:icon="@android:drawable/btn_star"/>
+    <item android:id="@+id/home"
+        android:title="@string/home"
+        android:icon="@mipmap/home"/>
+
+    <item android:id="@+id/notifications"
+        android:title="@string/notifications"
+        android:icon="@mipmap/bell"/>
+
+    <item android:id="@+id/profile"
+        android:title="@string/profile"
+        android:icon="@mipmap/user"/>
+
 </menu>
