@@ -3,4 +3,7 @@
     <string name="home">Home</string>
     <string name="notifications">Notifications</string>
     <string name="profile">Profile</string>
+    <string name="hello_user">Hello, User</string>
+    <string name="donations">Donations</string>
+    <string name="points">Points</string>
 </resources>
