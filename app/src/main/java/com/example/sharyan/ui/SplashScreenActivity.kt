@@ -34,7 +34,7 @@ class SplashScreenActivity : AppCompatActivity() {
     }
 
     private fun isUserLoggedIn(): Boolean{
-        return false
+        return true
     }
 
     private fun showSigningOptions(){
