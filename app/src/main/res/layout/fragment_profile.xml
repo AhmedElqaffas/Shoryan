@@ -13,7 +13,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHeight_percent="0.15"
         app:layout_constraintVertical_bias="0"
-        android:background="@color/colorPrimary">
+        android:background="@drawable/appbar_background">
 
         <ImageView
             android:id="@+id/profileImage"
@@ -23,7 +23,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_bias="0.1"
+            app:layout_constraintHorizontal_bias="0.9"
             app:layout_constraintVertical_bias="0.6"
             android:src="@mipmap/account"/>
 
@@ -32,10 +32,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="@id/profileImage"
-            app:layout_constraintLeft_toRightOf="@id/profileImage"
-            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/profileImage"
             app:layout_constraintBottom_toBottomOf="@id/profileImage"
-            app:layout_constraintHorizontal_bias="0.1"
+            app:layout_constraintHorizontal_bias="0.9"
             android:text="@string/hello_user"
             android:textColor="@android:color/white"
             android:textSize="25sp"
@@ -52,7 +52,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintVertical_bias="0.3"
-        app:layout_constraintWidth_percent="0.85"
+        app:layout_constraintWidth_percent="0.95"
         app:layout_constraintHeight_percent="0.17"
         app:cardCornerRadius="30dp"
         app:cardElevation="40dp">
@@ -69,7 +69,7 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHorizontal_bias="0.25"
+                app:layout_constraintHorizontal_bias="0.75"
                 app:layout_constraintVertical_bias="0.3"
                 android:text="0"
                 android:textSize="22sp"
@@ -81,7 +81,7 @@
                 app:layout_constraintTop_toTopOf="@id/donationsNumber"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintHorizontal_bias="0.75"
+                app:layout_constraintHorizontal_bias="0.25"
                 android:text="0"
                 android:textSize="22sp"
                 android:textStyle="bold"/>
@@ -117,16 +117,17 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/statisticsCardView"
-        app:layout_constraintLeft_toLeftOf="@id/statisticsCardView"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="@id/statisticsCardView"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintVertical_bias="0.3"
-        android:drawableEnd="@mipmap/iconfinder_nav_arrow_right_4"
-        android:paddingEnd="30dp"
+        android:drawableStart="@mipmap/iconfinder_nav_arrow_right_4"
+        android:paddingStart="30dp"
+        android:paddingEnd="0dp"
         android:text="@string/settings"
-        android:textAlignment="viewStart"
+        android:textAlignment="viewEnd"
         android:textAllCaps="false"
-        style="?android:attr/borderlessButtonStyle"/>
+        style="?android:attr/borderlessButtonStyle" />
 
     <View
         app:layout_constraintTop_toBottomOf="@id/settingsButton"
@@ -145,10 +146,11 @@
         app:layout_constraintLeft_toLeftOf="@id/settingsButton"
         app:layout_constraintRight_toRightOf="@id/settingsButton"
         android:paddingTop="10dp"
-        android:drawableEnd="@mipmap/iconfinder_nav_arrow_right_4"
-        android:paddingEnd="30dp"
+        android:drawableStart="@mipmap/iconfinder_nav_arrow_right_4"
+        android:paddingStart="30dp"
+        android:paddingEnd="0dp"
         android:text="@string/my_requests"
-        android:textAlignment="viewStart"
+        android:textAlignment="viewEnd"
         android:textAllCaps="false"
         style="?android:attr/borderlessButtonStyle"/>
 
