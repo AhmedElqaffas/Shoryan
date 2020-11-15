@@ -1,15 +1,24 @@
 <resources>
     <string name="app_name">Sharyan</string>
-    <string name="home">الرئيسية</string>
-    <string name="notifications">الإشعارات</string>
-    <string name="profile">حسابي</string>
-    <string name="hello_user">مرحباً،</string>
+    <string name="back">رجوع</string>
     <string name="donations">التبرعات</string>
-    <string name="points">النقاط</string>
-    <string name="settings">الإعدادات</string>
-    <string name="my_requests">طلباتي</string>
-    <string name="requests">الطلبات</string>
+    <string name="hello_user">مرحباً،</string>
+    <string name="home">الرئيسية</string>
     <string name="login">تسجيل دخول</string>
+    <string name="my_requests">طلباتي</string>
+    <string name="notifications">الإشعارات</string>
+    <string name="password">كلمة السر</string>
+    <string name="phone_number">رقم الهاتف</string>
+    <string name="points">النقاط</string>
+    <string name="proceed">استمرار</string>
+    <string name="profile">حسابي</string>
     <string name="register">إنشاء حساب جديد</string>
+    <string name="requests">الطلبات</string>
+    <string name="settings">الإعدادات</string>
+
+
+
+
+
     <string name="b_plus">B+</string>
 </resources>
