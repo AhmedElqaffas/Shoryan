@@ -16,7 +16,9 @@
     <string name="requests">الطلبات</string>
     <string name="settings">الإعدادات</string>
     <string name="username">الاسم بالكامل</string>
+    <string name="birth_date">تاريخ الميلاد</string>
 
 
     <string name="b_plus">B+</string>
+    <string name="initial_date">DD-MM-YYYY</string>
 </resources>
