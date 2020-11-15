@@ -130,9 +130,9 @@
             android:id="@+id/birthDatePicker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="5dp"
-            style="@android:style/Widget.Material.Light.Spinner"
-            android:background="@drawable/textview_border_bg"
+            android:padding="4dp"
+            android:textColor="#7E7878"
+            android:background="@drawable/button_border_bg_selector"
             android:drawableEnd="@drawable/iconfinder_nav_arrow_right_383100"
             android:drawablePadding="4dp"
             android:text="@string/initial_date"
@@ -142,6 +142,54 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.507" />
+
+        <TextView
+            android:id="@+id/bloodTypeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="arial"
+            android:text="@string/blood_type"
+            android:textColor="@color/colorPrimary"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.948"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.627" />
+
+
+        <TextView
+            android:id="@+id/bloodTypeSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:textSize="16sp"
+            android:textColor="@color/colorPrimary"
+            android:background= "@drawable/textview_bg_selector"
+            android:drawableEnd="@drawable/iconfinder_nav_arrow_right_383100_big"
+            android:drawablePadding="10dp"
+            android:text="@string/b_plus"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.4"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.627" />
+
+        <View
+            android:background="@color/colorPrimary"
+            android:layout_height="2dp"
+            android:layout_width="70dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.395"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.645" />
+
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -17,8 +17,20 @@
     <string name="settings">الإعدادات</string>
     <string name="username">الاسم بالكامل</string>
     <string name="birth_date">تاريخ الميلاد</string>
+    <string name="blood_type">فصيلة الدم</string>
 
 
     <string name="b_plus">B+</string>
     <string name="initial_date">DD-MM-YYYY</string>
+
+    <string-array name="blood_types">
+        <item>A+</item>
+        <item>A-</item>
+        <item>B+</item>
+        <item>B-</item>
+        <item>O+</item>
+        <item>O-</item>
+        <item>AB+</item>
+        <item>AB-</item>
+    </string-array>
 </resources>
