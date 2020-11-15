@@ -79,7 +79,7 @@
                 android:drawableEnd="@mipmap/username"
                 android:drawablePadding="16dp"
                 android:hint="@string/username"
-                android:inputType="phone"
+                android:inputType="text"
                 android:maxLines="1"
                 android:singleLine="true" />
 
