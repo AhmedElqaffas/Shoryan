@@ -1,6 +1,7 @@
 package com.example.sharyan.ui
 
 import android.app.DatePickerDialog
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.sharyan.R
@@ -15,6 +16,12 @@ class RegistrationActivity : AppCompatActivity() {
         // Setting a click listener for the birthDatePicker button
         birthDatePicker.setOnClickListener{
             pickBirthDate()
+        }
+
+
+        // Adding a click listener for confirmRegistrationButton
+        confirmRegistrationButton.setOnClickListener {
+            startActivity(Intent(this, MainActivity::class.java))
         }
 
     }

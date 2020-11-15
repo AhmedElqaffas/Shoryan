@@ -38,11 +38,11 @@
         android:background="@drawable/registration_cardview_bg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.70"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/registrationAppLogo"
-        app:layout_constraintVertical_bias="1.0"
-        app:layout_constraintHeight_percent="0.70">
+        app:layout_constraintVertical_bias="1.0">
 
         <TextView
             android:id="@+id/registrationTextView"
@@ -130,12 +130,12 @@
             android:id="@+id/birthDatePicker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="4dp"
-            android:textColor="#7E7878"
             android:background="@drawable/button_border_bg_selector"
             android:drawableEnd="@drawable/iconfinder_nav_arrow_right_383100"
             android:drawablePadding="4dp"
+            android:padding="4dp"
             android:text="@string/initial_date"
+            android:textColor="#7E7878"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="0.4"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -164,13 +164,13 @@
             android:id="@+id/bloodTypeSpinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:textSize="16sp"
-            android:textColor="@color/colorPrimary"
-            android:background= "@drawable/textview_bg_selector"
+            android:background="@drawable/textview_bg_selector"
             android:drawableEnd="@drawable/iconfinder_nav_arrow_right_383100_big"
             android:drawablePadding="10dp"
+            android:padding="5dp"
             android:text="@string/b_plus"
+            android:textColor="@color/colorPrimary"
+            android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="0.4"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -179,9 +179,9 @@
             app:layout_constraintVertical_bias="0.627" />
 
         <View
-            android:background="@color/colorPrimary"
-            android:layout_height="2dp"
             android:layout_width="70dp"
+            android:layout_height="2dp"
+            android:background="@color/colorPrimary"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintHorizontal_bias="0.395"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -189,6 +189,25 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.645" />
 
+        <Button
+            android:id="@+id/confirmRegistrationButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/curved_red_button"
+            android:fontFamily="arial"
+            android:paddingStart="120dp"
+            android:paddingEnd="120dp"
+            android:text="@string/proceed"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.82" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
