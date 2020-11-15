@@ -161,13 +161,13 @@
 
 
         <TextView
-            android:id="@+id/bloodTypeSpinner"
+            android:id="@+id/bloodTypePicker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/textview_bg_selector"
             android:drawableEnd="@drawable/iconfinder_nav_arrow_right_383100_big"
             android:drawablePadding="10dp"
-            android:padding="5dp"
+            android:padding="10dp"
             android:text="@string/b_plus"
             android:textColor="@color/colorPrimary"
             android:textSize="16sp"
