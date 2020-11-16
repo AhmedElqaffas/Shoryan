@@ -22,6 +22,9 @@
 
     <string name="b_plus">B+</string>
     <string name="initial_date">DD-MM-YYYY</string>
+    <string name="gender">النوع</string>
+    <string name="female">أنثي</string>
+    <string name="male">ّذكر</string>
 
     <string-array name="blood_types">
         <item>A+</item>
