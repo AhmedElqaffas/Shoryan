@@ -19,6 +19,9 @@ class SplashScreenActivity : AppCompatActivity() {
         loginButton.setOnClickListener {
             goToLoginScreen()
         }
+        registerButton.setOnClickListener {
+            goToRegistrationScreen()
+        }
     }
 
     private fun openApplicationOrShowSigningOptions(){
@@ -63,5 +66,9 @@ class SplashScreenActivity : AppCompatActivity() {
 
     private fun goToLoginScreen(){
         startActivity(Intent(this, LoginActivity::class.java))
+    }
+
+    private fun goToRegistrationScreen(){
+        startActivity(Intent(this, RegistrationActivity::class.java))
     }
 }
