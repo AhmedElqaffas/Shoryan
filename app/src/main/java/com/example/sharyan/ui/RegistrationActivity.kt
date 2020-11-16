@@ -33,7 +33,8 @@ class RegistrationActivity : AppCompatActivity() {
 
         // Adding a click listener for confirmRegistrationButton
         confirmRegistrationButton.setOnClickListener {
-            startActivity(Intent(this, MainActivity::class.java))
+            startActivity(Intent(this, MainActivity::class.java)
+                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK))
         }
 
         // Destroying activity when the back button is clicked
@@ -47,14 +48,14 @@ class RegistrationActivity : AppCompatActivity() {
      * This function opens a DatePicker dialog so that the user can select his/her birth date for
      * registration
      */
-    fun pickBirthDate(){
+    private fun pickBirthDate(){
         val c = Calendar.getInstance()
         val currentYear = c.get(Calendar.YEAR)
         val currentMonth = c.get(Calendar.MONTH)
         val currentDay = c.get(Calendar.DAY_OF_MONTH)
         val dpd = DatePickerDialog(
             this,
-            DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+            { view, year, monthOfYear, dayOfMonth ->
                 // Display Selected date in the Button's text
                 birthDatePicker.text = "$dayOfMonth/$monthOfYear/$year"
             },

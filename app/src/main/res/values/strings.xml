@@ -1,10 +1,18 @@
 <resources>
     <string name="app_name">Sharyan</string>
+    <string name="address">العنوان</string>
     <string name="back">رجوع</string>
+    <string name="birth_date">تاريخ الميلاد</string>
+    <string name="blood_type">فصيلة الدم</string>
+    <string name="confirm_password">تأكيد كلمة السر</string>
     <string name="donations">التبرعات</string>
+    <string name="female">أنثي</string>
+    <string name="gender">النوع</string>
     <string name="hello_user">مرحباً،</string>
     <string name="home">الرئيسية</string>
+    <string name="initial_date">DD-MM-YYYY</string>
     <string name="login">تسجيل دخول</string>
+    <string name="male">ّذكر</string>
     <string name="my_requests">طلباتي</string>
     <string name="notifications">الإشعارات</string>
     <string name="password">كلمة السر</string>
@@ -16,17 +24,10 @@
     <string name="requests">الطلبات</string>
     <string name="settings">الإعدادات</string>
     <string name="username">الاسم بالكامل</string>
-    <string name="birth_date">تاريخ الميلاد</string>
-    <string name="blood_type">فصيلة الدم</string>
 
 
     <string name="b_plus">B+</string>
-    <string name="initial_date">DD-MM-YYYY</string>
-    <string name="gender">النوع</string>
-    <string name="female">أنثي</string>
-    <string name="male">ّذكر</string>
-    <string name="address">العنوان</string>
-    <string name="confirm_password">تأكيد كلمة السر</string>
+
 
     <string-array name="blood_types">
         <item>A+</item>
