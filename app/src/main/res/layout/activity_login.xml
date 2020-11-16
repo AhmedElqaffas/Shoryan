@@ -18,7 +18,10 @@
         app:layout_constraintVertical_bias="0"
         app:layout_constraintHeight_percent="0.22"
         android:scaleType="fitXY"
-        android:src="@drawable/login_bg"/>
+        android:src="@drawable/login_banner"
+        android:clickable="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true" />
 
     <TextView
         android:id="@+id/loginBack"
@@ -77,7 +80,8 @@
                 android:drawablePadding="12dp"
                 android:backgroundTint="@color/colorPrimary"
                 android:maxLines="1"
-                android:singleLine="true"/>
+                android:singleLine="true"
+                android:maxLength="@integer/phone_number_length" />
 
         </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>

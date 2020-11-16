@@ -20,6 +20,16 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+
+        phoneEditText.apply{
+            this.addTextChangedListener { observePhoneText(it) }
+            this.setOnFocusChangeListener { view, _ -> focusListener(view) }
+        }
+
+        passwordEditText.setOnFocusChangeListener { view, _ ->   focusListener(view) }
+
+        submitInfoFromPasswordEditText()
+
         confirmLoginButton.setOnClickListener {
             checkLogin()
         }
@@ -27,6 +37,38 @@ class LoginActivity : AppCompatActivity() {
         loginBack.setOnClickListener{
             finish()
         }
+    }
+
+    /**
+     * Observes changes in the phone number EditText and shifts focus to the password EditText
+     * when the user inputs the complete full number, i.e. when the EditText length reaches the
+     * max length specified in the XML
+    */
+    private fun observePhoneText(editable: Editable?) {
+        if(editable?.length == resources.getInteger(R.integer.phone_number_length)){
+            passwordEditText.requestFocus()
+        }
+    }
+
+    /**
+     * When the user clicks "Done" while in the password EditText, a click is automatically performed
+     * on the login button instead of letting the user manually click it
+     */
+    private fun submitInfoFromPasswordEditText(){
+        passwordEditText.setOnEditorActionListener{ _, actionId, _ ->
+            if(actionId == EditorInfo.IME_ACTION_DONE){
+                confirmLoginButton.performClick()
+            }
+            false
+        }
+    }
+
+    /**
+     * Hides the keyboard whenever the EditTexts lose focus
+     */
+    private fun focusListener(view: View){
+        if(!phoneEditText.hasFocus() && !passwordEditText.hasFocus())
+            Utility.hideSoftKeyboard(this@LoginActivity, view)
     }
 
     private fun checkLogin(){
