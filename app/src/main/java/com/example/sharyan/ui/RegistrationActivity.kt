@@ -31,10 +31,14 @@ class RegistrationActivity : AppCompatActivity() {
             it.showContextMenu()
         }
 
-
         // Adding a click listener for confirmRegistrationButton
         confirmRegistrationButton.setOnClickListener {
             startActivity(Intent(this, MainActivity::class.java))
+        }
+
+        // Destroying activity when the back button is clicked
+        registrationBack.setOnClickListener{
+            finish()
         }
 
     }
@@ -52,7 +56,7 @@ class RegistrationActivity : AppCompatActivity() {
             this,
             DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
                 // Display Selected date in the Button's text
-                birthDatePicker.text = "$dayOfMonth - $monthOfYear - $year"
+                birthDatePicker.text = "$dayOfMonth/$monthOfYear/$year"
             },
             currentYear,
             currentMonth,
@@ -67,7 +71,7 @@ class RegistrationActivity : AppCompatActivity() {
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo?) {
         super.onCreateContextMenu(menu, v, menuInfo)
         val bloodTypesList = resources.getStringArray(R.array.blood_types)
-        menu.setHeaderTitle("Select Blood Type")
+        menu.setHeaderTitle("اختار فصيلة الدم")
         for(i in bloodTypesList.indices)
             menu.add(0, v.id, i, bloodTypesList[i].toString() )  //groupId, itemId, order, title
 
