@@ -2,8 +2,13 @@ package com.example.sharyan.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.view.View
+import android.view.inputmethod.EditorInfo
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.addTextChangedListener
 import com.example.sharyan.R
+import com.example.sharyan.Utility
 import kotlinx.android.synthetic.main.activity_login.*
 
 
