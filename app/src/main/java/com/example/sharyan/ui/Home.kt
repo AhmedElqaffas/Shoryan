@@ -18,7 +18,7 @@ class Home : Fragment() {
     override fun onResume() {
         super.onResume()
         setToolbarText(resources.getString(R.string.home))
-        setRequestsFragment()
+        //setRequestsFragment()
     }
 
     private fun setToolbarText(text: String){
