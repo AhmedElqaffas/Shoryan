@@ -5,6 +5,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import com.example.sharyan.R
 import com.example.sharyan.data.DonationRequest
 import com.example.sharyan.recyclersAdapters.RequestsRecyclerAdapter
@@ -14,6 +17,8 @@ class RequestsRecyclerFragment : Fragment() {
 
     private lateinit var requestsRecyclerAdapter: RequestsRecyclerAdapter
 
+    private val requestsViewModel: RequestsViewModel by viewModels()
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?):View?{
         return inflater.inflate(R.layout.fragment_requests_recycler, container, false)
     }
@@ -21,7 +26,7 @@ class RequestsRecyclerFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         initializeRecyclerViewAdapter()
-        setupDummyData()
+        getOngoingRequests()
     }
 
     private fun initializeRecyclerViewAdapter(){
@@ -29,20 +34,12 @@ class RequestsRecyclerFragment : Fragment() {
         requestsRecycler.adapter = requestsRecyclerAdapter
     }
 
-    private fun setupDummyData(){
-        requestsRecyclerAdapter.addRequests(
-            listOf(
-                DonationRequest("AB", "عبد الغفور البرعي", "مدينة نصر"),
-                DonationRequest("B+", "مدحت قلابيظو", "المقطم"),
-                DonationRequest("B", "الفارس الشجاع", "المقطم"),
-                DonationRequest("A+", "وردة البستان", "مصر الجديدة"),
-                DonationRequest("O-", "صديق الفلاح", "6 اكتوبر"),
-                DonationRequest("B+", "الفلاح", "المعادي"),
-
-            )
-
-        )
+    private fun getOngoingRequests(){
+        requestsViewModel.getOngoingRequests().observe(viewLifecycleOwner,  {
+            requestsRecyclerAdapter.addRequests(it)
+        })
     }
+
 
 
 }

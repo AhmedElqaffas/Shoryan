@@ -26,9 +26,12 @@ class Home : Fragment() {
     }
 
     private fun setRequestsFragment(){
-        childFragmentManager.beginTransaction().replace(
-            R.id.requestsContainer, RequestsRecyclerFragment(),
-            "requests").commit()
+        if(childFragmentManager.findFragmentByTag("requests") == null){
+            childFragmentManager.beginTransaction().replace(
+                R.id.requestsContainer, RequestsRecyclerFragment(),
+                "requests").commit()
+        }
+
     }
 
 }
