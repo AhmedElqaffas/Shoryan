@@ -5,8 +5,15 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-
+        <item name="actionBarStyle">@style/CustomActionBar</item>
         <item name="android:datePickerStyle">@style/myDatePickerStyle</item>
+    </style>
+
+    <style name="CustomActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="background">@drawable/appbar_background</item>
+        <item name="android:background">@drawable/appbar_background</item>
+        <item name="elevation">0dp</item>
     </style>
 
     <style name="hintAppearance" parent="TextAppearance.AppCompat">
