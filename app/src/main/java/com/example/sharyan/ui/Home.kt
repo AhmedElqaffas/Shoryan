@@ -18,20 +18,9 @@ class Home : Fragment() {
     override fun onResume() {
         super.onResume()
         setToolbarText(resources.getString(R.string.home))
-        setRequestsFragment()
     }
 
     private fun setToolbarText(text: String){
         toolbarText.text = text
     }
-
-    private fun setRequestsFragment(){
-        if(childFragmentManager.findFragmentByTag("requests") == null){
-            childFragmentManager.beginTransaction().replace(
-                R.id.requestsContainer, RequestsRecyclerFragment(),
-                "requests").commit()
-        }
-
-    }
-
 }
