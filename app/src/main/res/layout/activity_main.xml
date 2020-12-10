@@ -21,6 +21,8 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:menu="@menu/main_bottom_navigation"
-        app:itemBackground="@drawable/bottom_navigation_selector"/>
+        app:itemBackground="@drawable/bottom_navigation_selector"
+        android:layout_gravity="bottom"
+        android:background="@android:color/white"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
