@@ -1,3 +1,9 @@
 package com.example.sharyan.data
 
-data class DonationRequest(val bloodType: String, val requesterName: String, val location: String)
+import com.google.gson.annotations.SerializedName
+
+data class DonationRequest(@SerializedName("_id") val id: String,
+                           @SerializedName("requestBy") val requester: User,
+                           val bloodType: String,
+                           val donationLocation: DonationLocation
+                           )

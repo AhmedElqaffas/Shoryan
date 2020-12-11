@@ -3,37 +3,45 @@ package com.example.sharyan.recyclersAdapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sharyan.R
 import com.example.sharyan.data.DonationRequest
 import kotlinx.android.synthetic.main.item_request.view.*
 
-class RequestsRecyclerAdapter: RecyclerView.Adapter<RequestsRecyclerAdapter.RequestViewHolder>() {
-
-    private var requestsList = mutableListOf<DonationRequest>()
+/*class RequestsRecyclerAdapter: ListAdapter<DonationRequest,
+        RequestsRecyclerAdapter.RequestViewHolder>(RequestsRecyclerDiffCallback()) {
+*/
+class RequestsRecyclerAdapter: ListAdapter<DonationRequest,
+        RequestsRecyclerAdapter.RequestViewHolder>(RequestsRecyclerDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RequestViewHolder {
         return RequestViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_request, parent, false))
     }
 
     override fun onBindViewHolder(holder: RequestViewHolder, position: Int) {
-        holder.bindRequestData(requestsList[position])
+        holder.bindRequestData(getItem(position))
     }
 
-    override fun getItemCount(): Int {
-        return requestsList.size
-    }
-
-    fun addRequests(requests: List<DonationRequest>){
-        requestsList.addAll(requests)
-    }
 
     inner class RequestViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
 
         fun bindRequestData(request: DonationRequest){
             itemView.request_item_blood_type.text = request.bloodType
-            itemView.request_item_name.text = request.requesterName
-            itemView.request_item_location.text = request.location
+            itemView.request_item_name.text = request.requester.name.firstName
+            itemView.request_item_location.text = request.donationLocation.region
         }
     }
+}
+
+class RequestsRecyclerDiffCallback: DiffUtil.ItemCallback<DonationRequest>(){
+    override fun areItemsTheSame(oldItem: DonationRequest, newItem: DonationRequest): Boolean {
+        return oldItem.id == newItem.id
+    }
+
+    override fun areContentsTheSame(oldItem: DonationRequest, newItem: DonationRequest): Boolean {
+        return oldItem == newItem
+    }
+
 }
