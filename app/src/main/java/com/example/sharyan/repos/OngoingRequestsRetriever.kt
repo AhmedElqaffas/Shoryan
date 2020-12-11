@@ -1,20 +1,27 @@
 package com.example.sharyan.repos
 
+import android.util.Log
 import com.example.sharyan.data.DonationRequest
+import com.example.sharyan.networking.RetrofitBloodDonationInterface
+import java.lang.Exception
 
 object OngoingRequestsRetriever {
 
+    private var  requestsList = listOf<DonationRequest>()
 
-    fun getRequestsFromNetwork(): List<DonationRequest>{
+    suspend fun getRequests(bloodDonationAPI: RetrofitBloodDonationInterface): List<DonationRequest>{
 
-        return mutableListOf(
-            DonationRequest("AB", "عبد الغفور البرعي", "مدينة نصر"),
-            DonationRequest("B+", "مدحت قلابيظو", "المقطم"),
-            DonationRequest("B", "الفارس الشجاع", "المقطم"),
-            DonationRequest("A+", "وردة البستان", "مصر الجديدة"),
-            DonationRequest("O-", "صديق الفلاح", "6 اكتوبر"),
-            DonationRequest("B+", "الفلاح", "المعادي"),
-        )
+        if(requestsList.isNullOrEmpty()){
+            return try{
+                requestsList = bloodDonationAPI.getAllOngoingRequests()
+                requestsList
+            } catch(e: Exception){
+                Log.e("OngoingRequestsAPICall","Couldn't get requests" + e.message)
+                listOf()
+            }
+        }
+
+        return requestsList
 
     }
 }
