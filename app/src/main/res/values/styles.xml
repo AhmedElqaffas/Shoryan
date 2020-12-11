@@ -11,8 +11,6 @@
 
     <style name="CustomActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
         <item name="android:windowContentOverlay">@null</item>
-        <item name="background">@drawable/appbar_background</item>
-        <item name="android:background">@drawable/appbar_background</item>
         <item name="elevation">0dp</item>
     </style>
 
