@@ -5,6 +5,9 @@ import android.os.Bundle
 import android.text.Editable
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.widget.EditText
+import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import com.example.sharyan.R
@@ -13,6 +16,9 @@ import kotlinx.android.synthetic.main.activity_login.*
 
 
 class LoginActivity : AppCompatActivity() {
+
+   private val usersLoginViewModel: UsersLoginViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -71,7 +77,50 @@ class LoginActivity : AppCompatActivity() {
             Utility.hideSoftKeyboard(this@LoginActivity, view)
     }
 
-    private fun checkLogin(){
+    /**
+     * This method checks the phone number and password the user has entered and validates
+     * the login attempt by checking if this phone number and password exist in the registered users
+     * data in the database. If it does exist, the user login is successful and the MainActivity starts.
+     * However, if not successful then an error message appears.
+     */
+
+    private fun checkLogin() {
+
+        val phoneNumber = getEditTextValue(phoneEditText)
+        val password = getEditTextValue(passwordEditText)
+
+        if(!areAllInputsProvided(phoneNumber, password)){
+            displayError("من فضلك تأكّد من ادخال رقم الهاتف و كلمة السر")
+        }
+
+        else {
+            verifyCredentials(phoneNumber, password)
+        }
+    }
+
+    private fun getEditTextValue(editText: EditText):String{
+        return editText.text.toString().trim()
+    }
+
+    private fun areAllInputsProvided(phoneNumber: String, password: String): Boolean{
+        return phoneNumber.isNotEmpty() and password.isNotEmpty()
+    }
+
+    private fun displayError(error: String){
+        Toast.makeText(this@LoginActivity, error, Toast.LENGTH_LONG).show()
+    }
+
+    private fun verifyCredentials(phoneNumber: String, password: String) {
+        usersLoginViewModel.verifyCredentials(phoneNumber, password)
+            .observe(this@LoginActivity, {
+                it.user?.let { openMainActivity() }
+                it.error?.let {message -> it.error
+                    displayError(message)
+                }
+            })
+    }
+
+    private fun openMainActivity(){
         val intent = Intent(applicationContext, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
