@@ -11,7 +11,7 @@ class UsersLoginViewModel : ViewModel() {
         .getRetrofitClient()
         .create(RetrofitBloodDonationInterface::class.java)
 
-     fun verifyCredentials(phoneNumber: String, password: String)= liveData(Dispatchers.Default){
+     fun verifyCredentials(phoneNumber: String, password: String)= liveData(Dispatchers.IO){
          emit(UsersRetriever.checkCredentials(bloodDonationAPI, phoneNumber, password))
     }
 }

@@ -10,9 +10,6 @@ import com.example.sharyan.R
 import com.example.sharyan.data.DonationRequest
 import kotlinx.android.synthetic.main.item_request.view.*
 
-/*class RequestsRecyclerAdapter: ListAdapter<DonationRequest,
-        RequestsRecyclerAdapter.RequestViewHolder>(RequestsRecyclerDiffCallback()) {
-*/
 class RequestsRecyclerAdapter: ListAdapter<DonationRequest,
         RequestsRecyclerAdapter.RequestViewHolder>(RequestsRecyclerDiffCallback()) {
 
@@ -23,7 +20,6 @@ class RequestsRecyclerAdapter: ListAdapter<DonationRequest,
     override fun onBindViewHolder(holder: RequestViewHolder, position: Int) {
         holder.bindRequestData(getItem(position))
     }
-
 
     inner class RequestViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
 
