@@ -12,27 +12,19 @@ import kotlin.Exception
 
 object UsersRetriever {
 
-    private var  usersList = listOf<User>()
+    var  usersList = listOf<User>()
 
-
-    suspend fun verifyCredentials(bloodDonationAPI: RetrofitBloodDonationInterface,
+    suspend fun checkCredentials(bloodDonationAPI: RetrofitBloodDonationInterface,
     phoneNumber: String, password: String): UserStateWrapper{
 
         CoroutineScope(Dispatchers.Default).async {
             usersList = getUsers(bloodDonationAPI)
         }.await()
 
-        for(user in usersList){
-            // phoneNumber is 1097049699  password is pass1
-            if((user.phoneNumber == phoneNumber.toInt()) and (user.password == password)){
-                return UserStateWrapper(user,null)
-            }
-        }
-
-        return UserStateWrapper(null, "خطأ في رقم الهاتف او كلمة السر")
+        return verifyCredentials(usersList, phoneNumber, password)
     }
 
-    private suspend fun getUsers(bloodDonationAPI: RetrofitBloodDonationInterface): List<User>{
+     suspend fun getUsers(bloodDonationAPI: RetrofitBloodDonationInterface): List<User>{
 
         if(usersList.isNullOrEmpty()){
             return try{
@@ -43,9 +35,18 @@ object UsersRetriever {
                 listOf()
             }
         }
-
         return usersList
+    }
 
+    fun verifyCredentials(usersList: List<User>, phoneNumber: String, password: String): UserStateWrapper{
+        for(user in usersList){
+            // phoneNumber is 1097049699  password is pass1
+            if(("0"+user.phoneNumber == phoneNumber) and (user.password == password)){
+                return UserStateWrapper(user,null)
+            }
+        }
+
+        return UserStateWrapper(null, "خطأ في رقم الهاتف او كلمة السر")
     }
 }
 
