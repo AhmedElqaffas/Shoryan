@@ -22,8 +22,6 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        //usersLoginViewModel = ViewModelProvider(this).get(UsersLoginViewModel::class.java)
-
     }
 
     override fun onResume() {
@@ -127,32 +125,4 @@ class LoginActivity : AppCompatActivity() {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
     }
-
-    /*private fun getUsersList(): Flow<List<User>> {
-        return usersLoginViewModel.getAllUsers().asFlow()
-        /*CoroutineScope(Dispatchers.Main).launch {
-            usersLoginViewModel.getAllUsers().observe(this@LoginActivity,  {
-
-            }
-        }*/
-        /*CoroutineScope(Dispatchers.Main).launch {
-            usersLoginViewModel.getAllUsers().observe(this@LoginActivity,  {
-                var count = 0
-                for(user in it){
-                    // phoneNumber is 1097049699  password is pass1
-                    if((user.phoneNumber == phoneNumber.toInt()) and (user.password == password)){
-                        val intent = Intent(applicationContext, MainActivity::class.java)
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                        startActivity(intent)
-                    }
-                    else{
-                        count += 1
-                    }
-                    if(count == it.size) {
-                        errorToast("خطأ في رقم الهاتف او كلمة السر")
-                    }
-                } })
-        }*/
-    }
-*/
 }

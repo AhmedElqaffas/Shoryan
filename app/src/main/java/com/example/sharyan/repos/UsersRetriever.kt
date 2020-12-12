@@ -1,12 +1,10 @@
 package com.example.sharyan.repos
 
-import android.content.Intent
+
 import android.util.Log
-import com.example.sharyan.data.DonationRequest
 import com.example.sharyan.data.User
 import com.example.sharyan.data.UserStateWrapper
 import com.example.sharyan.networking.RetrofitBloodDonationInterface
-import com.example.sharyan.ui.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -32,10 +30,9 @@ object UsersRetriever {
         }
 
         return UserStateWrapper(null, "خطأ في رقم الهاتف او كلمة السر")
-        //throw Exception("خطأ في رقم الهاتف او كلمة السر")
     }
 
-    suspend fun getUsers(bloodDonationAPI: RetrofitBloodDonationInterface): List<User>{
+    private suspend fun getUsers(bloodDonationAPI: RetrofitBloodDonationInterface): List<User>{
 
         if(usersList.isNullOrEmpty()){
             return try{
