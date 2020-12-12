@@ -17,7 +17,7 @@ object UsersRetriever {
     suspend fun checkCredentials(bloodDonationAPI: RetrofitBloodDonationInterface,
     phoneNumber: String, password: String): UserStateWrapper{
 
-        CoroutineScope(Dispatchers.Default).async {
+        CoroutineScope(Dispatchers.IO).async {
             usersList = getUsers(bloodDonationAPI)
         }.await()
 
