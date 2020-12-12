@@ -22,7 +22,7 @@ class RequestsViewModel : ViewModel() {
         .create(RetrofitBloodDonationInterface::class.java)
 
       suspend fun getOngoingRequests(): LiveData<List<DonationRequest>>{
-            CoroutineScope(Dispatchers.Default).async{
+            CoroutineScope(Dispatchers.IO).async{
                 requestsListLiveData.postValue(OngoingRequestsRetriever.getRequests(bloodDonationAPI))
             }.await()
 
