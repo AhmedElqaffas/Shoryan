@@ -87,7 +87,6 @@ class Home : Fragment(){
 
     private fun setSwipeRefreshListener(){
         homeSwipeRefresh.setOnRefreshListener{
-            requestsGettingJob?.cancel()
             getOngoingRequests(true)
         }
     }
@@ -98,11 +97,28 @@ class Home : Fragment(){
     }
 
     private fun getOngoingRequests(refresh: Boolean = false){
+        requestsBeingLoaded()
         requestsGettingJob = CoroutineScope(Dispatchers.Main).launch {
             requestsViewModel.getOngoingRequests(refresh).observe(viewLifecycleOwner, {
                 homeSwipeRefresh.isRefreshing = false
+                if(it.isNotEmpty()){
+                    requestsLoaded()
+                }
                 requestsRecyclerAdapter.submitList(it)
             })
         }
+    }
+
+    private fun requestsBeingLoaded(){
+        requestsGettingJob?.cancel()
+        requestsShimmerContainer.startShimmer()
+        requestsShimmerContainer.visibility = View.VISIBLE
+        requestsRecycler.visibility = View.GONE
+    }
+
+    private fun requestsLoaded(){
+        requestsShimmerContainer.stopShimmer()
+        requestsShimmerContainer.visibility = View.GONE
+        requestsRecycler.visibility = View.VISIBLE
     }
 }
