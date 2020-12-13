@@ -1,18 +1,21 @@
 package com.example.sharyan.ui
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.navGraphViewModels
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sharyan.R
 import com.example.sharyan.recyclersAdapters.RequestsRecyclerAdapter
 import kotlinx.android.synthetic.main.appbar.toolbarText
 import kotlinx.android.synthetic.main.fragment_home.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 
 class Home : Fragment(){
@@ -42,27 +45,51 @@ class Home : Fragment(){
         getOngoingRequests()
     }
 
-    override fun onResume() {
+    override fun onResume(){
         super.onResume()
         setToolbarText(resources.getString(R.string.home))
         setRecyclerViewScrollListener()
+        setRecyclerViewTouchListener()
+        setSwipeRefreshListener()
     }
 
     private fun setToolbarText(text: String){
         toolbarText.text = text
     }
 
-    /**
-     * Prevents "Swipe refresh" from getting triggered when swiping recyclerview upwards, except
-     * if the recyclerview is at the top element.
-     */
     private fun setRecyclerViewScrollListener(){
         requestsRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                val layoutManager = requestsRecycler.layoutManager as LinearLayoutManager
-                homeSwipeRefresh.isEnabled = layoutManager.findFirstCompletelyVisibleItemPosition() == 0
+            /*
+             * When the recyclerview is not being dragged, enable the SwipeRefresh
+             * This method, accompanied with the setRecyclerViewTouchListener(), make sure
+             * the pull to refresh functionality only works outside the recyclerview
+             */
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                if (newState != RecyclerView.SCROLL_STATE_DRAGGING) {
+                   homeSwipeRefresh.isEnabled = true
+                }
             }
         })
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun setRecyclerViewTouchListener(){
+        /*
+         * To avoid "SwipeRefresh" interfering with recyclerview scrolling, we disable the SwipeRefresh
+         * when the recyclerview is touched.
+         */
+        requestsRecycler.setOnTouchListener { _, _ ->
+            homeSwipeRefresh.isEnabled = false
+            false
+        }
+
+    }
+
+    private fun setSwipeRefreshListener(){
+        homeSwipeRefresh.setOnRefreshListener{
+            requestsGettingJob?.cancel()
+            getOngoingRequests(true)
+        }
     }
 
     private fun initializeRecyclerViewAdapter(){
@@ -70,10 +97,11 @@ class Home : Fragment(){
         requestsRecycler.adapter = requestsRecyclerAdapter
     }
 
-    private fun getOngoingRequests(){
+    private fun getOngoingRequests(refresh: Boolean = false){
         requestsGettingJob = CoroutineScope(Dispatchers.Main).launch {
-            requestsViewModel.getOngoingRequests().observe(viewLifecycleOwner, {
-                    requestsRecyclerAdapter.submitList(it)
+            requestsViewModel.getOngoingRequests(refresh).observe(viewLifecycleOwner, {
+                homeSwipeRefresh.isRefreshing = false
+                requestsRecyclerAdapter.submitList(it)
             })
         }
     }

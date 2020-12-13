@@ -4,8 +4,6 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
-import com.example.sharyan.data.DonationLocation
 import com.example.sharyan.data.DonationRequest
 import com.example.sharyan.networking.RetrofitBloodDonationInterface
 import com.example.sharyan.networking.RetrofitClient
@@ -21,9 +19,9 @@ class RequestsViewModel : ViewModel() {
         .getRetrofitClient()
         .create(RetrofitBloodDonationInterface::class.java)
 
-      suspend fun getOngoingRequests(): LiveData<List<DonationRequest>>{
+      suspend fun getOngoingRequests(refresh: Boolean): LiveData<List<DonationRequest>>{
             CoroutineScope(Dispatchers.IO).async{
-                requestsListLiveData.postValue(OngoingRequestsRetriever.getRequests(bloodDonationAPI))
+                requestsListLiveData.postValue(OngoingRequestsRetriever.getRequests(bloodDonationAPI, refresh))
             }.await()
 
 
