@@ -327,7 +327,7 @@
                 android:id="@+id/confirmRegistrationButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/curved_red_button"
+                android:background="@drawable/button_curved_red"
                 android:fontFamily="arial"
                 android:paddingStart="120dp"
                 android:paddingEnd="120dp"
