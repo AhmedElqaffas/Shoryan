@@ -110,14 +110,23 @@ class LoginActivity : AppCompatActivity() {
         Toast.makeText(this@LoginActivity, error, Toast.LENGTH_LONG).show()
     }
 
-    private fun verifyCredentials(phoneNumber: String, password: String) {
+    private fun verifyCredentials(phoneNumber: String, password: String){
+        toggleLoggingInIndicator()
         usersLoginViewModel.verifyCredentials(phoneNumber, password)
             .observe(this@LoginActivity, {
+                toggleLoggingInIndicator()
                 it.user?.let { openMainActivity() }
                 it.error?.let {message -> it.error
                     displayError(message)
                 }
             })
+    }
+
+    private fun toggleLoggingInIndicator(){
+        phoneEditText.isEnabled = phoneEditText.isEnabled.not()
+        passwordEditText.isEnabled = passwordEditText.isEnabled.not()
+        confirmLoginButton.isEnabled = confirmLoginButton.isEnabled.not()
+        loadingProgressBar.visibility = loadingProgressBar.visibility.xor(View.GONE)
     }
 
     private fun openMainActivity(){
