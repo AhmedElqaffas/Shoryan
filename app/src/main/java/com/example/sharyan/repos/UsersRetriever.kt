@@ -17,9 +17,15 @@ object UsersRetriever {
     suspend fun checkCredentials(bloodDonationAPI: RetrofitBloodDonationInterface,
     phoneNumber: String, password: String): UserStateWrapper{
 
-        CoroutineScope(Dispatchers.Default).async {
-            usersList = getUsers(bloodDonationAPI)
-        }.await()
+        try{
+            CoroutineScope(Dispatchers.Default).async {
+                usersList = getUsers(bloodDonationAPI)
+            }.await()
+        }catch (e: Exception){
+            Log.e("UserRequestsAPICall","Couldn't get requests" + e.message)
+            return  UserStateWrapper(null, "تأكّد من اتصالك بالإنترنت")
+        }
+
 
         return verifyCredentials(usersList, phoneNumber, password)
     }
@@ -27,13 +33,7 @@ object UsersRetriever {
      suspend fun getUsers(bloodDonationAPI: RetrofitBloodDonationInterface): List<User>{
 
         if(usersList.isNullOrEmpty()){
-            return try{
-                usersList = bloodDonationAPI.getAllRegisteredUsers()
-                usersList
-            } catch(e: Exception){
-                Log.e("UserRequestsAPICall","Couldn't get requests" + e.message)
-                listOf()
-            }
+            usersList = bloodDonationAPI.getAllRegisteredUsers()
         }
         return usersList
     }
