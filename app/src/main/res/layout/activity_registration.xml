@@ -141,7 +141,7 @@
                 android:drawableEnd="@drawable/iconfinder_nav_arrow_right_383100"
                 android:drawablePadding="4dp"
                 android:padding="4dp"
-                android:text="@string/initial_date"
+                android:text="@string/date_initial"
                 android:textColor="#7E7878"
                 android:layout_marginTop="20dp"
                 app:layout_constraintHorizontal_bias="0.4"
