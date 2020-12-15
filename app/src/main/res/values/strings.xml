@@ -5,12 +5,15 @@
     <string name="birth_date">تاريخ الميلاد</string>
     <string name="blood_type">فصيلة الدم</string>
     <string name="confirm_password">تأكيد كلمة السر</string>
+    <string name="covid_precautions">إحتياطات كورونا</string>
+    <string name="date_initial">DD-MM-YYYY</string>
     <string name="donations">التبرعات</string>
     <string name="female">أنثي</string>
+    <string name="faq">أسئلة متواردة</string>
     <string name="gender">النوع</string>
     <string name="hello_user">مرحباً،</string>
     <string name="home">الرئيسية</string>
-    <string name="initial_date">DD-MM-YYYY</string>
+    <string name="instructions">تعليمات</string>
     <string name="login">تسجيل دخول</string>
     <string name="male">ّذكر</string>
     <string name="my_requests">طلباتي</string>
