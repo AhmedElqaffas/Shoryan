@@ -45,6 +45,11 @@ class Home : Fragment(){
         getOngoingRequests()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        requestsGettingJob?.cancel()
+    }
+
     override fun onResume(){
         super.onResume()
         setToolbarText(resources.getString(R.string.home))
