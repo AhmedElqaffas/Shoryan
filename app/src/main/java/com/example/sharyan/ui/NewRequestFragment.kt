@@ -24,6 +24,34 @@ class NewRequestFragment : Fragment() {
         setToolbarText(resources.getString(R.string.new_request))
         setRadioGroupsMutuallyExclusive()
         setSpinnerAdapter(governmentsSpinner, R.array.governments)
+
+        //Adding click listeners for increment and decrement buttons
+        setIncDecButtons()
+    }
+
+    private fun setIncDecButtons() {
+        incrementBloodBags.setOnClickListener {incNumOfBloodBags()}
+        decrementBloodBags.setOnClickListener {decNumOfBloodBags()}
+    }
+
+    private fun getCurrentBagsCount(): Int {
+        return bagsNumberEditText.text.toString().trim().toInt()
+    }
+
+    private fun incNumOfBloodBags() {
+        var numOfCurrentBloodBags = getCurrentBagsCount()
+        if(numOfCurrentBloodBags == 99)
+            return
+        val newBagsNumber= numOfCurrentBloodBags + 1
+        bagsNumberEditText.setText(newBagsNumber.toString())
+    }
+
+    private fun decNumOfBloodBags() {
+        var numOfCurrentBloodBags = getCurrentBagsCount()
+        if(numOfCurrentBloodBags == 0)
+            return
+        val newBagsNumber= numOfCurrentBloodBags - 1
+        bagsNumberEditText.setText(newBagsNumber.toString())
     }
 
     private fun setToolbarText(text: String){

@@ -297,6 +297,7 @@
                 app:layout_constraintLeft_toRightOf="@id/decrementBloodBags"
                 android:inputType="number"
                 android:text="0"
+                android:maxLength="2"
                 android:textSize="22sp"
                 android:textColor="#000000"
                 android:textStyle="bold"
