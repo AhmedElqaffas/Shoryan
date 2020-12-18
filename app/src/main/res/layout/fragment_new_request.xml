@@ -262,8 +262,7 @@
                     android:background="@android:color/transparent"
                     android:gravity="center"
                     android:layout_marginRight="5dp"
-                    android:spinnerMode="dropdown"
-                    android:popupBackground="@color/colorPrimary"/>
+                    android:spinnerMode="dropdown"/>
 
                 <TextView
                     android:id="@+id/governmentsSpinnerTextView"
@@ -306,8 +305,7 @@
                     android:background="@android:color/transparent"
                     android:gravity="center"
                     android:layout_marginRight="5dp"
-                    android:spinnerMode="dropdown"
-                    android:popupBackground="@color/colorPrimary"/>
+                    android:spinnerMode="dropdown"/>
 
                 <TextView
                     android:id="@+id/citySpinnerTextView"
@@ -350,8 +348,7 @@
                     android:background="@android:color/transparent"
                     android:gravity="center"
                     android:layout_marginRight="5dp"
-                    android:spinnerMode="dropdown"
-                    android:popupBackground="@color/colorPrimary"/>
+                    android:spinnerMode="dropdown"/>
 
                 <TextView
                     android:id="@+id/bloodBankSpinnerTextView"
@@ -360,7 +357,6 @@
                     android:text="@string/choose_blood_bank"
                     android:layout_marginRight="5dp"
                     android:textSize="16sp"/>
-
             </RelativeLayout>
 
 
@@ -417,7 +413,7 @@
                 app:layout_constraintRight_toLeftOf="@id/incrementBloodBags"
                 app:layout_constraintLeft_toRightOf="@id/decrementBloodBags"
                 android:inputType="number"
-                android:text="0"
+                android:hint="0"
                 android:maxLength="2"
                 android:textSize="22sp"
                 android:textColor="#000000"
