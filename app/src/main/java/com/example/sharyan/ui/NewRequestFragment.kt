@@ -9,6 +9,7 @@ import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
 import android.widget.Spinner
+import android.widget.Toast
 import androidx.core.view.children
 import androidx.core.view.get
 import androidx.fragment.app.Fragment
@@ -39,7 +40,13 @@ class NewRequestFragment : Fragment() {
 
         //Adding click listener for confirm request button
         confirmRequestButton.setOnClickListener{
-            
+            if( ((plusTypesRadioGroup.checkedRadioButtonId != -1) or (minusTypesRadioGroup.checkedRadioButtonId != -1))
+                and (getCurrentBagsCount() > 0) and (spinnerGov.selectedItem?.toString() != "") and (spinnerCity.selectedItem?.toString() != "")){
+                Toast.makeText(requireContext(), "تم الطلب بنجاح", Toast.LENGTH_SHORT).show()
+            }
+            else{
+                Toast.makeText(requireContext(), "ارجوك اكمل ادخال البيانات", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -167,6 +174,8 @@ class NewRequestFragment : Fragment() {
         spinnerCity.adapter = null
         citySpinnerLayout.setBackgroundResource(R.drawable.spinner_grey_curve)
         citySpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_grey)
+        bloodBankSpinnerLayout.setBackgroundResource(R.drawable.spinner_grey_curve)
+        bloodBankSpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_grey)
     }
 
     private fun enableCitySpinner(selectedGovernorate : String){
