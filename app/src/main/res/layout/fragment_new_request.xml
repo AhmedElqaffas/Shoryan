@@ -286,15 +286,16 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintWidth_percent="0.75"
                 android:layout_marginTop="20dp"
-                android:background="@drawable/spinner_bg_selector" >
+                android:background="@drawable/spinner_grey_curve" >
 
                 <ImageView
+                    android:id="@+id/citySpinnerImageView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:layout_gravity="center"
-                    android:src="@drawable/iconfinder_nav_arrow_right_383100_big" />
+                    android:src="@drawable/iconfinder_nav_arrow_right_383100_grey" />
 
                 <Spinner
                     android:id="@+id/spinnerCity"
@@ -332,6 +333,7 @@
                 android:background="@drawable/spinner_grey_curve" >
 
                 <ImageView
+                    android:id="@+id/bloodBankSpinnerImageView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"

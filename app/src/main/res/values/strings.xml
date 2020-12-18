@@ -89,4 +89,26 @@
         <item>الوادي الجديد</item>
     </string-array>
 
+    <string-array name="cairo_cities">
+    <item></item>
+    <item>مدينة نصر</item>
+    <item>مصر الجديدة</item>
+    <item>التجمع الخامس</item>
+    <item>العباسية</item>
+    </string-array>
+
+    <string-array name="alex_cities">
+        <item></item>
+        <item>سيدي بشر</item>
+        <item>سموحة</item>
+        <item>ستانلي</item>
+        <item>شدس</item>
+    </string-array>
+
+    <string-array name="example_cities">
+        <item></item>
+        <item>مدينة أ</item>
+        <item>مدينة ب</item>
+    </string-array>
+
 </resources>

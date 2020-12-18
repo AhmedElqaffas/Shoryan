@@ -32,10 +32,15 @@ class NewRequestFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setToolbarText(resources.getString(R.string.new_request))
         setRadioGroupsMutuallyExclusive()
-        setSpinnerAdapter(spinnerGov, R.array.governments)
+        setGovSpinnerAdapter(spinnerGov, R.array.governments)
 
         //Adding click listeners for increment and decrement buttons
         setIncDecButtons()
+
+        //Adding click listener for confirm request button
+        confirmRequestButton.setOnClickListener{
+            
+        }
     }
 
     private fun setIncDecButtons() {
@@ -80,7 +85,7 @@ class NewRequestFragment : Fragment() {
         }
     }
 
-    private fun setSpinnerAdapter(spinner: Spinner, arrayResource: Int) {
+    private fun setGovSpinnerAdapter(spinner: Spinner, arrayResource: Int) {
         // Create an ArrayAdapter using the string array and a default spinner layout
         activity?.let {
             ArrayAdapter.createFromResource(
@@ -101,8 +106,11 @@ class NewRequestFragment : Fragment() {
                     ) {
                         if (position == 0) {
                             governmentsSpinnerTextView.visibility = View.VISIBLE
+                            disableCitySpinner()
                         } else {
                             governmentsSpinnerTextView.visibility = View.GONE
+                            val selectedGovernorate = spinner.selectedItem.toString()
+                            enableCitySpinner(selectedGovernorate)
                         }
                     }
 
@@ -114,14 +122,61 @@ class NewRequestFragment : Fragment() {
         }
 
     }
-}
 
-class HintAdapter<String>(context: Context, resource: Int, objects: Int) :
-    ArrayAdapter<String>(context, resource, objects) {
+    private fun setCitySpinnerAdapter(spinner: Spinner, arrayResource: Int) {
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        activity?.let {
+            ArrayAdapter.createFromResource(
+                it,
+                arrayResource,
+                android.R.layout.simple_spinner_item
+            ).also { adapter ->
+                // Specify the layout to use when the list of choices appears
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                // Apply the adapter to the spinner
+                spinner.adapter = adapter
+                spinner.onItemSelectedListener = object : OnItemSelectedListener {
+                    override fun onItemSelected(
+                        parentView: AdapterView<*>?,
+                        selectedItemView: View,
+                        position: Int,
+                        id: Long
+                    ) {
+                        if (position == 0) {
+                            citySpinnerTextView.visibility = View.VISIBLE
+                            bloodBankSpinnerLayout.setBackgroundResource(R.drawable.spinner_grey_curve)
+                            bloodBankSpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_grey)
+                        } else {
+                            citySpinnerTextView.visibility = View.GONE
+                            bloodBankSpinnerLayout.setBackgroundResource(R.drawable.spinner_red_curve)
+                            bloodBankSpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_big)
+                        }
+                    }
 
-    override fun getCount(): Int {
-        val count = super.getCount()
-        // The last item will be the hint.
-        return if (count > 0) count - 1 else count
+                    override fun onNothingSelected(parentView: AdapterView<*>?) {
+
+                    }
+                }
+            }
+        }
+
+    }
+
+    private fun disableCitySpinner(){
+        citySpinnerTextView.visibility = View.VISIBLE
+        spinnerCity.adapter = null
+        citySpinnerLayout.setBackgroundResource(R.drawable.spinner_grey_curve)
+        citySpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_grey)
+    }
+
+    private fun enableCitySpinner(selectedGovernorate : String){
+        citySpinnerLayout.setBackgroundResource(R.drawable.spinner_red_curve)
+        citySpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_big)
+        when(selectedGovernorate){
+            "القاهرة" -> setCitySpinnerAdapter(spinnerCity, R.array.cairo_cities)
+            "الإسكندرية" -> setCitySpinnerAdapter(spinnerCity, R.array.alex_cities)
+            else -> setCitySpinnerAdapter(spinnerCity, R.array.example_cities)
+        }
     }
 }
+
