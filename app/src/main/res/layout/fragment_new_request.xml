@@ -219,7 +219,8 @@
                 </RadioGroup>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <TextView android:id="@+id/chooseLocationWord"
+            <TextView
+                android:id="@+id/chooseLocationWord"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 app:layout_constraintTop_toBottomOf="@+id/bloodTypeRadioGroupsContainer"
@@ -231,20 +232,52 @@
                 android:textSize="22sp"
                 android:textStyle="bold"/>
 
-            <Spinner
+            <RelativeLayout
                 android:id="@+id/governmentsSpinner"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="10dp"
                 app:layout_constraintTop_toBottomOf="@id/chooseLocationWord"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintWidth_percent="0.75"
                 android:layout_marginTop="35dp"
-                android:background="@drawable/spinner_red_curve"
-                android:popupBackground="@color/colorPrimary"/>
+                android:background="@drawable/spinner_bg_selector" >
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center"
+                    android:src="@drawable/iconfinder_nav_arrow_right_383100_big" />
+
+                <Spinner
+                    android:id="@+id/spinnerGov"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center"
+                    android:background="@android:color/transparent"
+                    android:gravity="center"
+                    android:layout_marginRight="5dp"
+                    android:spinnerMode="dropdown"
+                    android:popupBackground="@color/colorPrimary"/>
+
+                <TextView
+                    android:id="@+id/governmentsSpinnerTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="اختر المحافظة"
+                    android:layout_marginRight="5dp"
+                    android:textSize="16sp"/>
+
+            </RelativeLayout>
 
 
-            <TextView android:id="@+id/bagsNumberWord"
+            <TextView
+                android:id="@+id/bagsNumberWord"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 app:layout_constraintTop_toBottomOf="@+id/governmentsSpinner"
