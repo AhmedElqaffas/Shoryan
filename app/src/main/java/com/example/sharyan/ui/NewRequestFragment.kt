@@ -149,7 +149,7 @@ class NewRequestFragment : Fragment() {
         }
     }
 
-    private fun getCurrentBagsCount(): Int {
+    fun getCurrentBagsCount(): Int {
         return bagsNumberEditText.text.toString().trim().toIntOrNull()?: 0
     }
 
