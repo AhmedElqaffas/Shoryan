@@ -43,6 +43,9 @@
     <string name="b_minus">B-</string>
     <string name="ab_minus">AB-</string>
     <string name="o_minus">O-</string>
+    <string name="choose_governorate">اختر المحافظة</string>
+    <string name="choose_city">اختر المنطقة</string>
+    <string name="choose_blood_bank">اختر بنك الدم</string>
 
 
     <string-array name="blood_types">
