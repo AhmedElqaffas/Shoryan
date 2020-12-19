@@ -6,13 +6,14 @@ import android.text.Editable
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import com.example.sharyan.R
 import com.example.sharyan.Utility
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.android.synthetic.main.fragment_new_request.*
 
 
 class LoginActivity : AppCompatActivity() {
@@ -107,7 +108,11 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun displayError(error: String){
-        Toast.makeText(this@LoginActivity, error, Toast.LENGTH_LONG).show()
+        Snackbar.make(loginScreenLayout, error, Snackbar.LENGTH_LONG)
+            .setAction("حسناً") {
+                // By default, the snackbar will be dismissed
+            }
+            .show()
     }
 
     private fun verifyCredentials(phoneNumber: String, password: String){

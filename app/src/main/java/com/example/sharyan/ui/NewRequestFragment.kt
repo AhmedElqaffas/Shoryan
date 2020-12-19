@@ -8,10 +8,10 @@ import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
 import android.widget.Spinner
-import android.widget.Toast
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import com.example.sharyan.R
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.appbar.*
 import kotlinx.android.synthetic.main.fragment_new_request.*
 
@@ -156,10 +156,10 @@ class NewRequestFragment : Fragment() {
     private fun setConfirmButtonClickListener(){
         confirmRequestButton.setOnClickListener{
             if(isBloodTypeSelected() and isBagsCountSet() and isLocationSelected()){
-                showToast("تم الطلب بنجاح")
+                showMessage("تم الطلب بنجاح")
             }
             else{
-                showToast("ارجوك اكمل ادخال البيانات")
+                showMessage("ارجوك اكمل ادخال البيانات")
             }
         }
     }
@@ -181,8 +181,12 @@ class NewRequestFragment : Fragment() {
         return spinner.selectedItem?.toString() != ""
     }
 
-    private fun showToast(message: String){
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    private fun showMessage(message: String){
+        Snackbar.make(scrollView, message, Snackbar.LENGTH_LONG)
+            .setAction("حسناً") {
+                // By default, the snackbar will be dismissed
+            }
+            .show()
     }
 }
 

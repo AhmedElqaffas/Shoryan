@@ -1,15 +1,25 @@
 package com.example.sharyan.ui
 
+import android.view.View
+import android.widget.HorizontalScrollView
+import android.widget.ListView
+import android.widget.ScrollView
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.espresso.Espresso.onData
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.ViewAction
+import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
 import com.example.sharyan.R
 import kotlinx.android.synthetic.main.fragment_new_request.*
 import org.hamcrest.CoreMatchers.*
+import org.hamcrest.Matcher
+import org.hamcrest.Matchers
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -71,7 +81,7 @@ class NewRequestFragmentTest{
             }
 
             onView(withId(R.id.incrementBloodBags))
-                .perform(scrollTo())
+                .perform(NestedScrollViewExtension())
                 .perform(click())
             onView(withId(R.id.bagsNumberEditText))
                 .check(matches(withText((bagsNumberBeforeIncrement + 1).toString())))
@@ -83,7 +93,7 @@ class NewRequestFragmentTest{
         // Test that increment button works
         launchFragmentInContainer<NewRequestFragment>()
         onView(withId(R.id.bagsNumberEditText))
-            .perform(scrollTo())
+            .perform(NestedScrollViewExtension())
             .perform(typeText("99"), closeSoftKeyboard())
         onView(withId(R.id.incrementBloodBags))
             .perform(click())
@@ -96,7 +106,7 @@ class NewRequestFragmentTest{
     fun decrementButtonGeneral(){
         launchFragmentInContainer<NewRequestFragment>()
         onView(withId(R.id.bagsNumberEditText))
-            .perform(scrollTo())
+            .perform(NestedScrollViewExtension())
             .perform(typeText("11"), closeSoftKeyboard())
         onView(withId(R.id.decrementBloodBags))
             .perform(click())
@@ -121,7 +131,7 @@ class NewRequestFragmentTest{
         launchFragmentInContainer<NewRequestFragment>()
 
         onView(withId(R.id.decrementBloodBags))
-            .perform(scrollTo())
+            .perform(NestedScrollViewExtension())
             .perform(click())
         // Should stay empty (showing the hint, not decremented to -1)
         onView(withId(R.id.bagsNumberEditText))
@@ -136,7 +146,7 @@ class NewRequestFragmentTest{
     fun decrementButtonDontReachZero(){
         launchFragmentInContainer<NewRequestFragment>()
         onView(withId(R.id.bagsNumberEditText))
-            .perform(scrollTo())
+            .perform(NestedScrollViewExtension())
             .perform(typeText("1"), closeSoftKeyboard())
         onView(withId(R.id.decrementBloodBags))
             .perform(click())
@@ -189,4 +199,17 @@ class NewRequestFragmentTest{
         }
     }
 
+    class NestedScrollViewExtension(scrollToAction: ViewAction = scrollTo()) : ViewAction by scrollToAction {
+        override fun getConstraints(): Matcher<View> {
+            return Matchers.allOf(
+                withEffectiveVisibility(Visibility.VISIBLE),
+                isDescendantOfA(Matchers.anyOf(isAssignableFrom(
+                    NestedScrollView::class.java),
+                    isAssignableFrom(ScrollView::class.java),
+                    isAssignableFrom(HorizontalScrollView::class.java),
+                    isAssignableFrom(ListView::class.java))))
+        }
+    }
+
 }
+
