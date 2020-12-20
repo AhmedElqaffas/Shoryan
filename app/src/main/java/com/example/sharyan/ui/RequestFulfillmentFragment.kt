@@ -6,6 +6,10 @@ import android.view.*
 import androidx.fragment.app.viewModels
 import com.example.sharyan.R
 import com.example.sharyan.data.DonationRequest
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.android.synthetic.main.fragment_request_details.*
@@ -15,7 +19,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 
-class RequestFulfillmentFragment : BottomSheetDialogFragment() {
+class RequestFulfillmentFragment : BottomSheetDialogFragment(){
 
     companion object {
 
@@ -41,11 +45,13 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment() {
     private lateinit var request: DonationRequest
     private var apiCallJob: Job? = null
     private val requestViewModel: RequestFulfillmentViewModel by viewModels()
+    private var mapFragmentObject: SupportMapFragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         request = getClickedRequest()
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -55,6 +61,15 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // Get the SupportMapFragment and request notification when the map is ready to be used.
+        mapFragmentObject =  childFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment
+        //mapFragment?.getMapAsync(this)
+        mapFragmentObject?.getMapAsync {
+            it.apply {
+                addMarker(MarkerOptions().position(LatLng(30.048158,31.371376)))
+                moveCamera(CameraUpdateFactory.newLatLng(LatLng(30.048158,31.371376)))
+            }
+        }
         getRequestDetails()
     }
 
