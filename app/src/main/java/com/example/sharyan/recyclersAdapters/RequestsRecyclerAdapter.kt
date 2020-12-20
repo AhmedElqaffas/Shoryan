@@ -10,8 +10,8 @@ import com.example.sharyan.R
 import com.example.sharyan.data.DonationRequest
 import kotlinx.android.synthetic.main.item_request.view.*
 
-class RequestsRecyclerAdapter: ListAdapter<DonationRequest,
-        RequestsRecyclerAdapter.RequestViewHolder>(RequestsRecyclerDiffCallback()) {
+class RequestsRecyclerAdapter(private val requestsRecyclerInteraction: RequestsRecyclerInteraction):
+    ListAdapter<DonationRequest, RequestsRecyclerAdapter.RequestViewHolder>(RequestsRecyclerDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RequestViewHolder {
         return RequestViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_request, parent, false))
@@ -22,6 +22,16 @@ class RequestsRecyclerAdapter: ListAdapter<DonationRequest,
     }
 
     inner class RequestViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
+
+        init{
+            setClickListener()
+        }
+
+        private fun setClickListener(){
+            itemView.setOnClickListener{
+                requestsRecyclerInteraction.onItemClicked(getItem(layoutPosition))
+            }
+        }
 
         fun bindRequestData(request: DonationRequest){
             itemView.request_item_blood_type.text = request.bloodType
