@@ -7,12 +7,13 @@ import androidx.fragment.app.viewModels
 import com.example.sharyan.R
 import com.example.sharyan.data.DonationRequest
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlinx.android.synthetic.main.fragment_request_details.*
+import kotlinx.android.synthetic.main.fragment_request_fulfillment.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -45,7 +46,7 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
     private lateinit var request: DonationRequest
     private var apiCallJob: Job? = null
     private val requestViewModel: RequestFulfillmentViewModel by viewModels()
-    private var mapFragmentObject: SupportMapFragment? = null
+    private lateinit var mapInstance: GoogleMap
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,15 +57,15 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_request_details, container, false)
+        return inflater.inflate(R.layout.fragment_request_fulfillment, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // Get the SupportMapFragment and request notification when the map is ready to be used.
-        mapFragmentObject =  childFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment
-        //mapFragment?.getMapAsync(this)
-        mapFragmentObject?.getMapAsync {
+        val mapFragmentObject =  childFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment
+        mapFragmentObject.getMapAsync {
+            mapInstance = it
             it.apply {
                 addMarker(MarkerOptions().position(LatLng(30.048158,31.371376)))
                 moveCamera(CameraUpdateFactory.newLatLng(LatLng(30.048158,31.371376)))
@@ -94,7 +95,7 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
             val display: Display = window!!.windowManager.defaultDisplay
             display.getSize(size)
             val height: Int = size.y
-            design_bottom_sheet.layoutParams.height = (height*0.85).toInt()
+            design_bottom_sheet.layoutParams.height = (height).toInt()
             val behavior = BottomSheetBehavior.from<View>(design_bottom_sheet)
             behavior.peekHeight = height
             view?.requestLayout()
