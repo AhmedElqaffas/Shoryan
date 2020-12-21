@@ -44,25 +44,31 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/donationRequestWord">
 
-                <fragment xmlns:map="http://schemas.android.com/apk/res-auto"
-                    android:id="@+id/mapFragment"
-                    android:name="com.google.android.gms.maps.SupportMapFragment"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintHeight_percent="0.4"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0"
+                    android:id="@+id/mapFragmentContainer"
+                    android:nestedScrollingEnabled="true">
+
+                <fragment xmlns:map="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/mapFragment"
+                    android:name="com.google.android.gms.maps.SupportMapFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     map:cameraZoom="13"
                     map:mapType="normal"
                     map:uiCompass="false" />
-
+                </androidx.constraintlayout.widget.ConstraintLayout>
                 <View
                     android:id="@+id/cardBiasGuide"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    app:layout_constraintTop_toTopOf="@id/mapFragment"
-                    app:layout_constraintBottom_toBottomOf="@id/mapFragment"
+                    app:layout_constraintTop_toTopOf="@id/mapFragmentContainer"
+                    app:layout_constraintBottom_toBottomOf="@id/mapFragmentContainer"
                     app:layout_constraintVertical_bias="0.8"/>
 
                 <androidx.cardview.widget.CardView

@@ -43,6 +43,7 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
             }
     }
 
+    private var windowHeight = 0
     private lateinit var request: DonationRequest
     private var apiCallJob: Job? = null
     private val requestViewModel: RequestFulfillmentViewModel by viewModels()
@@ -69,8 +70,10 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
             it.apply {
                 addMarker(MarkerOptions().position(LatLng(30.048158,31.371376)))
                 moveCamera(CameraUpdateFactory.newLatLng(LatLng(30.048158,31.371376)))
+                setPadding(0,0,0,(windowHeight/4))
             }
         }
+
         getRequestDetails()
     }
 
@@ -94,10 +97,10 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
             val size = Point()
             val display: Display = window!!.windowManager.defaultDisplay
             display.getSize(size)
-            val height: Int = size.y
-            design_bottom_sheet.layoutParams.height = (height).toInt()
+            windowHeight = size.y
+            design_bottom_sheet.layoutParams.height = (windowHeight)
             val behavior = BottomSheetBehavior.from<View>(design_bottom_sheet)
-            behavior.peekHeight = height
+            behavior.peekHeight = windowHeight
             view?.requestLayout()
         }
     }
