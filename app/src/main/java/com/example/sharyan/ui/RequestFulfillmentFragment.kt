@@ -3,6 +3,7 @@ package com.example.sharyan.ui
 import android.graphics.Point
 import android.os.Bundle
 import android.view.*
+import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.fragment.app.viewModels
 import com.example.sharyan.R
 import com.example.sharyan.data.DonationRequest
@@ -43,7 +44,6 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
             }
     }
 
-    private var windowHeight = 0
     private lateinit var request: DonationRequest
     private var apiCallJob: Job? = null
     private val requestViewModel: RequestFulfillmentViewModel by viewModels()
@@ -56,25 +56,13 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
 
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_request_fulfillment, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        // Get the SupportMapFragment and request notification when the map is ready to be used.
-        val mapFragmentObject =  childFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment
-        mapFragmentObject.getMapAsync {
-            mapInstance = it
-            it.apply {
-                addMarker(MarkerOptions().position(LatLng(30.048158,31.371376)))
-                moveCamera(CameraUpdateFactory.newLatLng(LatLng(30.048158,31.371376)))
-                setPadding(0,0,0,(windowHeight/4))
-            }
-        }
-
-        getRequestDetails()
     }
 
     override fun onDestroyView() {
@@ -87,6 +75,34 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
         setWindowSize()
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        setupMap()
+        getRequestDetails()
+    }
+
+    private fun setupMap(){
+        val mapFragmentObject =  childFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment
+        mapFragmentObject.getMapAsync {
+            mapInstance = it
+            it.apply {
+                addMarker(MarkerOptions().position(LatLng(30.048158, 31.371376)))
+                moveCamera(CameraUpdateFactory.newLatLng(LatLng(30.048158, 31.371376)))
+                setMapPaddingWhenLayoutIsReady()
+            }
+        }
+    }
+
+    private fun setMapPaddingWhenLayoutIsReady(){
+        mapFragmentContainer!!.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                mapFragmentContainer!!.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                mapInstance.setPadding(0, 0, 0, (mapFragmentContainer!!.height/4))
+            }
+        })
+    }
+
     private fun getClickedRequest(): DonationRequest{
         return requireArguments().getSerializable(ARGUMENT_KEY) as DonationRequest
     }
@@ -97,7 +113,7 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
             val size = Point()
             val display: Display = window!!.windowManager.defaultDisplay
             display.getSize(size)
-            windowHeight = size.y
+            val windowHeight = size.y
             design_bottom_sheet.layoutParams.height = (windowHeight)
             val behavior = BottomSheetBehavior.from<View>(design_bottom_sheet)
             behavior.peekHeight = windowHeight
@@ -112,6 +128,4 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
             }
         }
     }
-
-
 }

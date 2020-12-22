@@ -5,6 +5,7 @@
     <string name="birth_date">تاريخ الميلاد</string>
     <string name="blood_bags">أكياس دم</string>
     <string name="blood_type">فصيلة الدم</string>
+    <string name="cancel_donation">إلغاء التبرّع</string>
     <string name="confirm_password">تأكيد كلمة السر</string>
     <string name="covid_precautions">إحتياطات كورونا</string>
     <string name="date_initial">DD-MM-YYYY</string>
@@ -17,6 +18,7 @@
     <string name="hello_user">مرحباً،</string>
     <string name="home">الرئيسية</string>
     <string name="instructions">تعليمات</string>
+    <string name="i_donated">لقد تبرّعت</string>
     <string name="login">تسجيل دخول</string>
     <string name="male">ّذكر</string>
     <string name="my_requests">طلباتي</string>
@@ -31,6 +33,8 @@
     <string name="requests">الطلبات</string>
     <string name="settings">الإعدادات</string>
     <string name="username">الاسم بالكامل</string>
+    <string name="waiting_confirmation">انت الان مسجل كمتبرع لهذا الطلب, نحن في انتظار وصولك الي بنك الدم</string>
+
 
 
     <string name="b_plus">B+</string>

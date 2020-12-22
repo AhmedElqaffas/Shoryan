@@ -28,21 +28,19 @@
             android:textSize="25sp"
             android:textStyle="bold"/>
 
-        <!--<androidx.core.widget.NestedScrollView
+        <com.example.sharyan.ui.CustomScrollView
             android:id="@+id/requestDetailsScrollView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="15dp"
-            android:fillViewport="true"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/donationRequestWord">-->
+            app:layout_constraintTop_toBottomOf="@id/donationRequestWord"
+            android:layout_marginTop="15dp"
+            android:fillViewport="true">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginTop="15dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/donationRequestWord">
+                android:layout_height="match_parent"
+                android:paddingBottom="40dp">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -51,8 +49,8 @@
                     app:layout_constraintHeight_percent="0.4"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0"
-                    android:id="@+id/mapFragmentContainer"
-                    android:nestedScrollingEnabled="true">
+                    android:nestedScrollingEnabled="true"
+                    android:id="@+id/mapFragmentContainer">
 
                 <fragment xmlns:map="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/mapFragment"
@@ -61,7 +59,7 @@
                     android:layout_height="match_parent"
                     map:cameraZoom="13"
                     map:mapType="normal"
-                    map:uiCompass="false" />
+                    map:uiCompass="false"/>
                 </androidx.constraintlayout.widget.ConstraintLayout>
                 <View
                     android:id="@+id/cardBiasGuide"
@@ -186,6 +184,7 @@
                 </androidx.cardview.widget.CardView>
 
                 <Button
+                    android:id="@+id/donateButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
@@ -200,8 +199,54 @@
                     android:text="@string/donate"
                     android:paddingVertical="20dp"/>
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                <TextView
+                    android:id="@+id/waitingConfirmationSentence"
+                    app:layout_constraintTop_toBottomOf="@id/requestDetailsCard"
+                    app:layout_constraintLeft_toLeftOf="@id/requestDetailsCard"
+                    app:layout_constraintRight_toRightOf="@id/requestDetailsCard"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:text="@string/waiting_confirmation"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:visibility="gone"/>
 
+                <Button
+                    android:id="@+id/cancelDonationButton"
+                    app:layout_constraintLeft_toLeftOf="@id/requestDetailsCard"
+                    app:layout_constraintRight_toRightOf="@id/requestDetailsCard"
+                    app:layout_constraintTop_toBottomOf="@id/waitingConfirmationSentence"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/curved_gray_border"
+                    android:fontFamily="arial"
+                    android:textSize="17sp"
+                    android:textStyle="bold"
+                    android:textColor="#000000"
+                    android:text="@string/cancel_donation"
+                    android:paddingVertical="20dp"
+                    android:visibility="gone"/>
+
+                <Button
+                    android:id="@+id/confirmDonationButton"
+                    app:layout_constraintLeft_toLeftOf="@id/requestDetailsCard"
+                    app:layout_constraintRight_toRightOf="@id/requestDetailsCard"
+                    app:layout_constraintTop_toBottomOf="@id/cancelDonationButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:background="@drawable/button_curved_red"
+                    android:fontFamily="arial"
+                    android:textSize="17sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:text="@string/i_donated"
+                    android:paddingVertical="20dp"
+                    android:visibility="gone"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.example.sharyan.ui.CustomScrollView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
