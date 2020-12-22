@@ -207,6 +207,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
+                    android:fontFamily="arial"
+                    android:textSize="17sp"
                     android:text="@string/waiting_confirmation"
                     android:textColor="@color/colorPrimaryDark"
                     android:visibility="gone"/>
