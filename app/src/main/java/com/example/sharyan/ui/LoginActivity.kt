@@ -6,19 +6,28 @@ import android.text.Editable
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.DialogFragment
 import com.example.sharyan.R
 import com.example.sharyan.Utility
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.fragment_new_request.*
+import kotlinx.coroutines.*
 
 
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : AppCompatActivity(), LoadingFragmentHolder {
 
    private val usersLoginViewModel: UsersLoginViewModel by viewModels()
+    private var loginVerificationJob: Job? = null
+
+    override fun onDestroy() {
+        super.onDestroy()
+        loginVerificationJob?.cancel()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -117,26 +126,34 @@ class LoginActivity : AppCompatActivity() {
 
     private fun verifyCredentials(phoneNumber: String, password: String){
         toggleLoggingInIndicator()
-        usersLoginViewModel.verifyCredentials(phoneNumber, password)
-            .observe(this@LoginActivity, {
-                toggleLoggingInIndicator()
-                it.user?.let { openMainActivity() }
-                it.error?.let {message -> it.error
-                    displayError(message)
-                }
-            })
+        loginVerificationJob = CoroutineScope(Dispatchers.Main).launch {
+            usersLoginViewModel.verifyCredentials(phoneNumber, password)
+                .observe(this@LoginActivity, {
+                    toggleLoggingInIndicator()
+                    it.user?.let { openMainActivity() }
+                    it.error?.let { message ->
+                        it.error
+                        displayError(message)
+                    }
+                })
+        }
     }
 
     private fun toggleLoggingInIndicator(){
-        phoneEditText.isEnabled = phoneEditText.isEnabled.not()
-        passwordEditText.isEnabled = passwordEditText.isEnabled.not()
-        confirmLoginButton.isEnabled = confirmLoginButton.isEnabled.not()
-        loadingProgressBar.visibility = loadingProgressBar.visibility.xor(View.GONE)
+        val loadingFragment: DialogFragment? = supportFragmentManager.findFragmentByTag("loading") as DialogFragment?
+        if(loadingFragment == null)
+            LoadingFragment(this).show(supportFragmentManager, "loading")
+        else
+            loadingFragment.dismiss()
     }
 
     private fun openMainActivity(){
         val intent = Intent(applicationContext, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
+    }
+
+    override fun onLoadingFragmentDismissed() {
+        this.finish()
     }
 }
