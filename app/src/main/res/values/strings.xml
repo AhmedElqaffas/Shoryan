@@ -3,7 +3,7 @@
     <string name="address">العنوان</string>
     <string name="back">رجوع</string>
     <string name="birth_date">تاريخ الميلاد</string>
-    <string name="blood_bags">أكياس دم</string>
+    <string name="blood_bags">\u200F %1$d أكياس دم</string>
     <string name="blood_type">فصيلة الدم</string>
     <string name="cancel_donation">إلغاء التبرّع</string>
     <string name="confirm_password">تأكيد كلمة السر</string>
@@ -50,6 +50,6 @@
         <item>AB+</item>
         <item>AB-</item>
     </string-array>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
 </resources>

@@ -79,7 +79,7 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
         super.onResume()
 
         setupMap()
-        getRequestDetails()
+        getDonationDetails()
     }
 
     private fun setupMap(){
@@ -121,11 +121,22 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
         }
     }
 
-    private fun getRequestDetails(){
+    private fun getDonationDetails(){
         apiCallJob = CoroutineScope(Dispatchers.Main).launch {
             requestViewModel.getRequestDetails(request.id).observe(viewLifecycleOwner){
-                println(it)
+                it?.let {
+                    displayRequestDetails(it)
+                }
+
             }
         }
+    }
+
+    private fun displayRequestDetails(request: DonationRequest){
+        requestBloodType.text = request.bloodType
+        requesterName.text = request.requester.name?.getFullName()
+        requestLocation.text = request.donationLocation.region
+        requestBagsRequired.text = resources.getString(R.string.blood_bags, request.numberOfBagsRequired)
+
     }
 }
