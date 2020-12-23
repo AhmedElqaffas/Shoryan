@@ -1,20 +1,21 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar.Bridge">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="actionBarStyle">@style/CustomActionBar</item>
         <item name="android:datePickerStyle">@style/myDatePickerStyle</item>
+        <item name="bottomSheetDialogTheme">@style/CurvedBottomSheetDialog</item>
     </style>
 
-    <style name="CustomActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+    <style name="CustomActionBar" parent="@style/Widget.MaterialComponents.Light.ActionBar.Solid">
         <item name="android:windowContentOverlay">@null</item>
         <item name="elevation">0dp</item>
     </style>
 
-    <style name="hintAppearance" parent="TextAppearance.AppCompat">
+    <style name="hintAppearance" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="android:textColorHint">@color/colorPrimary</item>
         <item name="android:textSize">16sp</item>
         <item name="fontFamily">arial</item>
@@ -22,5 +23,21 @@
 
     <style name="myDatePickerStyle" parent="android:Widget.Material.DatePicker">
         <item name="android:datePickerMode">spinner</item>
+    </style>
+
+    <style name="CurvedBottomSheetDialog" parent="@style/ThemeOverlay.MaterialComponents.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/CustomBottomSheet</item>
+    </style>
+
+    <style name="CustomBottomSheet" parent="Widget.MaterialComponents.BottomSheet">
+        <item name="shapeAppearanceOverlay">@style/CustomShapeAppearanceBottomSheetDialog</item>
+    </style>
+
+    <style name="CustomShapeAppearanceBottomSheetDialog" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopRight">59dp</item>
+        <item name="cornerSizeTopLeft">59dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
     </style>
 </resources>

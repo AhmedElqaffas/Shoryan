@@ -1,3 +1,5 @@
 package com.example.sharyan.data
 
-data class DonationLocation(val region: String)
+import java.io.Serializable
+
+data class DonationLocation(val region: String): Serializable

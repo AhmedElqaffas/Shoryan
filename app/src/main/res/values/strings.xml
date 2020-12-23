@@ -3,27 +3,32 @@
     <string name="address">العنوان</string>
     <string name="back">رجوع</string>
     <string name="birth_date">تاريخ الميلاد</string>
+    <string name="blood_bags">\u200F %1$d أكياس دم</string>
     <string name="blood_type">فصيلة الدم</string>
     <string name="bags_number">عدد الوحدات</string>
     <string name="choose_location">اختر المكان</string>
+    <string name="cancel_donation">إلغاء التبرّع</string>
     <string name="confirm_password">تأكيد كلمة السر</string>
     <string name="covid_precautions">إحتياطات كورونا</string>
     <string name="date_initial">DD-MM-YYYY</string>
+    <string name="donate">تبرّع</string>
     <string name="donations">التبرعات</string>
     <string name="donation_constraint">يمكنك طلب دم ثلاث مرات فقط خلال اليوم</string>
-    <string name="donation_request">طلب دم</string>
+    <string name="donation_request">طلب تبرّع بالدم</string>
     <string name="female">أنثي</string>
     <string name="faq">أسئلة متواردة</string>
     <string name="gender">النوع</string>
     <string name="hello_user">مرحباً،</string>
     <string name="home">الرئيسية</string>
     <string name="instructions">تعليمات</string>
+    <string name="i_donated">لقد تبرّعت</string>
     <string name="login">تسجيل دخول</string>
     <string name="male">ّذكر</string>
     <string name="my_requests">طلباتي</string>
     <string name="new_request">طلب جديد</string>
     <string name="notifications">الإشعارات</string>
     <string name="password">كلمة السر</string>
+    <string name="persons_going">أشخاص في طريقهم للتبرّع</string>
     <string name="phone_number">رقم المحمول</string>
     <string name="points">النقاط</string>
     <string name="proceed">استمرار</string>
@@ -32,6 +37,8 @@
     <string name="requests">الطلبات</string>
     <string name="settings">الإعدادات</string>
     <string name="username">الاسم بالكامل</string>
+    <string name="waiting_confirmation">انت الان مسجل كمتبرع لهذا الطلب, نحن في انتظار وصولك الي بنك الدم</string>
+
 
 
     <string name="a_plus">A+</string>
@@ -43,6 +50,7 @@
     <string name="b_minus">B-</string>
     <string name="ab_minus">AB-</string>
     <string name="o_minus">O-</string>
+
     <string name="choose_governorate">اختر المحافظة</string>
     <string name="choose_city">اختر المنطقة</string>
     <string name="choose_blood_bank">اختر بنك الدم</string>
