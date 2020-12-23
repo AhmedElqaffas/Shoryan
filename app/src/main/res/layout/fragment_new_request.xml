@@ -40,7 +40,7 @@
                 android:textStyle="bold"
                 android:textSize="25sp"
                 android:textAlignment="center"
-                android:textColor="@color/colorPrimary" />
+                android:textColor="@color/colorPrimaryDark" />
 
 
             <TextView android:id="@+id/bloodTypeWord"
@@ -52,7 +52,7 @@
                 android:layout_marginTop="30dp"
                 android:text="@string/blood_type"
                 android:fontFamily="arial"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/colorPrimaryDark"
                 android:textSize="22sp"
                 android:textStyle="bold"/>
 
@@ -230,7 +230,7 @@
                 android:layout_marginTop="40dp"
                 android:text="@string/choose_location"
                 android:fontFamily="arial"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/colorPrimaryDark"
                 android:textSize="22sp"
                 android:textStyle="bold"/>
 
@@ -371,7 +371,7 @@
                 android:layout_marginTop="40dp"
                 android:text="@string/bags_number"
                 android:fontFamily="arial"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/colorPrimaryDark"
                 android:textSize="22sp"
                 android:textStyle="bold"/>
 

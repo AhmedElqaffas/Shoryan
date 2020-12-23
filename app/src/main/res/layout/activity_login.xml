@@ -49,7 +49,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintVertical_bias="0.294"
         android:text="@string/login"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/colorPrimaryDark"
         android:textSize="25sp"
         android:fontFamily="arial"
         android:textStyle="bold"/>
@@ -78,7 +78,7 @@
                 android:inputType="number"
                 android:drawableEnd="@mipmap/smartphone"
                 android:drawablePadding="12dp"
-                android:backgroundTint="@color/colorPrimary"
+                android:backgroundTint="@color/colorPrimaryDark"
                 android:maxLines="1"
                 android:singleLine="true"
                 android:maxLength="@integer/phone_number_length" />
@@ -107,7 +107,7 @@
                 android:hint="@string/password"
                 android:drawableStart="@mipmap/lock"
                 android:drawablePadding="16dp"
-                android:backgroundTint="@color/colorPrimary"
+                android:backgroundTint="@color/colorPrimaryDark"
                 android:inputType="textPassword"
                 android:maxLines="1"
                 android:singleLine="true"
