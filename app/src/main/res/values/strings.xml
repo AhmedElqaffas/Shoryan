@@ -6,8 +6,9 @@
     <string name="blood_bags">\u200F %1$d أكياس دم</string>
     <string name="blood_type">فصيلة الدم</string>
     <string name="bags_number">عدد الوحدات</string>
-    <string name="choose_location">اختر المكان</string>
     <string name="cancel_donation">إلغاء التبرّع</string>
+    <string name="checking_requesting_permission">جاري التأكد من عدد طلباتك اليوم</string>
+    <string name="choose_location">اختر المكان</string>
     <string name="confirm_password">تأكيد كلمة السر</string>
     <string name="covid_precautions">إحتياطات كورونا</string>
     <string name="date_initial">DD-MM-YYYY</string>
