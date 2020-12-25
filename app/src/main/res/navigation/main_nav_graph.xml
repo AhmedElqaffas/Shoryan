@@ -11,6 +11,12 @@
         android:label="Home"
         tools:layout="@layout/fragment_home" />
     <fragment
+        android:id="@+id/newRequest"
+        android:name="com.example.sharyan.ui.NewRequestFragment"
+        android:label="New Request"
+        tools:layout="@layout/fragment_new_request"/>
+
+    <fragment
         android:id="@+id/notifications"
         android:name="com.example.sharyan.ui.Notifications"
         android:label="Notifications"
