@@ -14,6 +14,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_request_fulfillment.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -48,12 +49,11 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
     private var apiCallJob: Job? = null
     private val requestViewModel: RequestFulfillmentViewModel by viewModels()
     private lateinit var mapInstance: GoogleMap
+    private var checkingAbilitySnackbar: Snackbar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         request = getClickedRequest()
-
     }
 
     override fun onCreateView(
@@ -70,14 +70,10 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
         apiCallJob?.cancel()
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setWindowSize()
-    }
-
-    override fun onResume() {
-        super.onResume()
-
+        checkIfUserCanFulfilRequest()
         setupMap()
         getDonationDetails()
     }
@@ -101,6 +97,13 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
                 mapInstance.setPadding(0, 0, 0, (mapFragmentContainer!!.height/4))
             }
         })
+    }
+
+    private fun checkIfUserCanFulfilRequest(){
+        checkingAbilitySnackbar = Snackbar.make(design_bottom_sheet,
+                resources.getString(R.string.checking_donating_ability),
+                Snackbar.LENGTH_INDEFINITE)
+        checkingAbilitySnackbar?.show()
     }
 
     private fun getClickedRequest(): DonationRequest{
