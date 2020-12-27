@@ -8,22 +8,18 @@ import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
 import android.widget.Spinner
-import android.widget.Toast
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.navigation.navGraphViewModels
 import com.example.sharyan.R
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.appbar.*
 import kotlinx.android.synthetic.main.appbar.toolbarText
-import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_new_request.*
 import kotlinx.coroutines.*
 
 
 class NewRequestFragment : Fragment() {
     private val newRequestViewModel: NewRequestViewModel by navGraphViewModels(R.id.main_nav_graph)
-    private var canUserRequestJob: Job? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -50,7 +46,35 @@ class NewRequestFragment : Fragment() {
     }
 
     private fun disableInput() {
+        disableRadioButtons()
+        disableGovSpinner()
+        disableIncDecButtons()
+        disableSubmitButton()
         showMessage("نأسف لا يمكنك طلب تبرع بالدم اكثر من ثلاثة مرات في اليوم")
+    }
+
+    private fun disableSubmitButton() {
+        confirmRequestButton.setOnClickListener{
+            showMessage("نأسف لا يمكنك طلب تبرع بالدم اكثر من ثلاثة مرات في اليوم")
+        }
+    }
+
+    private fun disableIncDecButtons() {
+        incrementBloodBags.isEnabled = false
+        decrementBloodBags.isEnabled = false
+        bagsNumberEditText.setText("")
+        bagsNumberEditText.isEnabled = false
+    }
+
+    private fun disableRadioButtons() {
+         plusTypesRadioGroup.children.forEach {
+             it.isEnabled = false
+             plusTypesRadioGroup.clearCheck()
+        }
+        minusTypesRadioGroup.children.forEach {
+            it.isEnabled = false
+            minusTypesRadioGroup.clearCheck()
+        }
     }
 
     private fun enableInput() {
@@ -134,6 +158,23 @@ class NewRequestFragment : Fragment() {
         }
 
         override fun onNothingSelected(parentView: AdapterView<*>?) {}
+    }
+
+    private fun disableGovSpinner(){
+        governmentsSpinnerTextView.visibility = View.VISIBLE
+        spinnerGov.adapter = null
+        governmentsSpinnerLayout.setBackgroundResource(R.drawable.spinner_grey_curve)
+        governmentsSpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_grey)
+        citySpinnerLayout.setBackgroundResource(R.drawable.spinner_grey_curve)
+        citySpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_grey)
+        bloodBankSpinnerLayout.setBackgroundResource(R.drawable.spinner_grey_curve)
+        bloodBankSpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_grey)
+    }
+
+    private fun enableGovSpinner(){
+        governmentsSpinnerLayout.setBackgroundResource(R.drawable.spinner_red_curve)
+        governmentsSpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_big)
+        setGovSpinnerAdapter(spinnerGov, R.array.governments)
     }
 
     private fun disableCitySpinner(){

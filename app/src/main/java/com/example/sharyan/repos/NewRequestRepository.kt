@@ -17,7 +17,7 @@ object NewRequestRepository {
             // Simulating the API call
             runBlocking {
                 delay(2000)
-                cachedCanUserRequest = false
+                cachedCanUserRequest = true
             }
         }
         return cachedCanUserRequest!!
