@@ -9,6 +9,10 @@
         android:title="@string/notifications"
         android:icon="@mipmap/bell"/>
 
+    <item android:id="@+id/newRequest"
+        android:title="@string/new_request"
+        android:icon="@drawable/ic_new_request"/>
+
     <item android:id="@+id/home"
         android:title="@string/home"
         android:icon="@mipmap/home"/>

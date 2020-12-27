@@ -1,7 +1,13 @@
 package com.example.sharyan.data
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
-data class User(@SerializedName("_id") val id: String, val name: Name,
-                val phoneNumber : String, val password: String)
-data class Name(val firstName: String)
+open class User(@SerializedName("_id") var id: String?, var name: Name?,
+                var phoneNumber : String?, var password: String?): Serializable{
+                }
+data class Name(val firstName: String): Serializable{
+    fun getFullName(): String{
+        return firstName
+    }
+}
