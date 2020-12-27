@@ -1,5 +1,6 @@
 package com.example.sharyan.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -224,7 +225,7 @@ class NewRequestFragment : Fragment() {
     private fun setConfirmButtonClickListener(){
         confirmRequestButton.setOnClickListener{
             if(isBloodTypeSelected() and isBagsCountSet() and isLocationSelected()){
-                showMessage("تم الطلب بنجاح")
+                showMessage("تم الطلب بنجاح", successFlag = true)
             }
             else{
                 showMessage("ارجوك اكمل ادخال البيانات")
@@ -249,12 +250,20 @@ class NewRequestFragment : Fragment() {
         return spinner.selectedItem?.toString() != ""
     }
 
-    private fun showMessage(message: String){
-        Snackbar.make(scrollView, message, Snackbar.LENGTH_LONG)
-            .setAction("حسناً") {
-                // By default, the snackbar will be dismissed
-            }
-            .show()
+    private fun showMessage(message: String, successFlag : Boolean = false){
+        if(successFlag)
+            Snackbar.make(scrollView, message, Snackbar.LENGTH_LONG)
+                .setAction("اظهر بيانات الطلبً") {
+                    val intent = Intent(context, MyRequestDetails::class.java )
+                    startActivity(intent)
+                }
+                .show()
+        else
+            Snackbar.make(scrollView, message, Snackbar.LENGTH_LONG)
+                .setAction("حسناً") {
+                    // By default, the snackbar will be dismissed
+                }
+                .show()
     }
 }
 
