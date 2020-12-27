@@ -8,15 +8,22 @@ import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
 import android.widget.Spinner
+import android.widget.Toast
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
+import androidx.navigation.navGraphViewModels
 import com.example.sharyan.R
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.appbar.*
+import kotlinx.android.synthetic.main.appbar.toolbarText
+import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_new_request.*
+import kotlinx.coroutines.*
 
 
 class NewRequestFragment : Fragment() {
+    private val newRequestViewModel: NewRequestViewModel by navGraphViewModels(R.id.main_nav_graph)
+    private var canUserRequestJob: Job? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -27,6 +34,26 @@ class NewRequestFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setToolbarText(resources.getString(R.string.new_request))
+        enableInput()
+        checkIfUserCanRequest()
+
+
+
+    }
+
+    private fun checkIfUserCanRequest(){
+        CoroutineScope(Dispatchers.Main).async {
+             newRequestViewModel.canUserRequest().observe(viewLifecycleOwner, {
+                 canUserRequest -> if(!canUserRequest)  disableInput()
+             })
+         }
+    }
+
+    private fun disableInput() {
+        showMessage("نأسف لا يمكنك طلب تبرع بالدم اكثر من ثلاثة مرات في اليوم")
+    }
+
+    private fun enableInput() {
         setRadioGroupsMutuallyExclusive()
         setGovSpinnerAdapter(spinnerGov, R.array.governments)
         setIncDecButtonsClickListeners()
@@ -149,7 +176,7 @@ class NewRequestFragment : Fragment() {
         }
     }
 
-    private fun getCurrentBagsCount(): Int {
+    fun getCurrentBagsCount(): Int {
         return bagsNumberEditText.text.toString().trim().toIntOrNull()?: 0
     }
 
