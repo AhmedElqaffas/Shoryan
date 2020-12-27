@@ -44,7 +44,7 @@ class NewRequestFragment : Fragment() {
     private fun checkIfUserCanRequest() {
         CoroutineScope(Dispatchers.Main).async {
             newRequestViewModel.canUserRequest().observe(viewLifecycleOwner, { canUserRequest ->
-                if (!canUserRequest) disableInput()
+                if (!canUserRequest) disableInput() else enableSubmitButton()
             })
         }
     }
@@ -53,14 +53,15 @@ class NewRequestFragment : Fragment() {
         disableRadioButtons()
         disableGovSpinner()
         disableIncDecButtons()
-        disableSubmitButton()
         showMessage("نأسف لا يمكنك طلب تبرع بالدم اكثر من ثلاثة مرات في اليوم")
     }
 
-    private fun disableSubmitButton() {
-        confirmRequestButton.setOnClickListener {
-            showMessage("نأسف لا يمكنك طلب تبرع بالدم اكثر من ثلاثة مرات في اليوم")
-        }
+    private fun enableSubmitButton() {
+        confirmRequestButton.isEnabled = true
+        setConfirmButtonClickListener()
+        confirmRequestButton.setBackgroundResource(R.drawable.button_curved_red)
+        progressBar.visibility = View.GONE
+        checkingPermissionSentence.visibility = View.GONE
     }
 
     private fun disableIncDecButtons() {

@@ -14,6 +14,14 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        Properties properties = new Properties()
+        if (rootProject.file("local.properties").exists()) {
+            properties.load(rootProject.file("local.properties").newDataInputStream())
+        }
+
+        // Inject the Maps API key into the manifest
+        manifestPlaceholders = [ mapsApiKey : properties.getProperty("MAPS_API_KEY", "") ]
     }
 
     buildTypes {
@@ -49,8 +57,8 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0-beta01'
     //Jetpack Navigation Component
-    implementation "androidx.navigation:navigation-fragment-ktx:2.3.1"
-    implementation "androidx.navigation:navigation-ui-ktx:2.3.1"
+    implementation "androidx.navigation:navigation-fragment-ktx:2.3.2"
+    implementation "androidx.navigation:navigation-ui-ktx:2.3.2"
     //ViewModel
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.2.0"
@@ -59,9 +67,14 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     // Paging3
     implementation "androidx.paging:paging-runtime-ktx:3.0.0-alpha11"
+    // Maps
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
+    implementation 'com.google.maps.android:android-maps-utils:2.2.0'
 
     //Shimmer Effect
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
+    // Material Design
+    implementation 'com.google.android.material:material:1.2.1'
 
     //Mockito
     testImplementation 'android.arch.core:core-testing:2.0.1'

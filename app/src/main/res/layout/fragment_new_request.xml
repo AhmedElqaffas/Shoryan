@@ -40,7 +40,7 @@
                 android:textStyle="bold"
                 android:textSize="25sp"
                 android:textAlignment="center"
-                android:textColor="@color/colorPrimary" />
+                android:textColor="@color/colorPrimaryDark" />
 
 
             <TextView android:id="@+id/bloodTypeWord"
@@ -52,7 +52,7 @@
                 android:layout_marginTop="30dp"
                 android:text="@string/blood_type"
                 android:fontFamily="arial"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/colorPrimaryDark"
                 android:textSize="22sp"
                 android:textStyle="bold"/>
 
@@ -225,12 +225,12 @@
                 android:id="@+id/chooseLocationWord"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                app:layout_constraintTop_toBottomOf="@+id/bloodTypeRadioGroupsContainer"
+                app:layout_constraintTop_toBottomOf="@+id/incrementBloodBags"
                 app:layout_constraintRight_toRightOf="@id/bloodTypeWord"
                 android:layout_marginTop="40dp"
                 android:text="@string/choose_location"
                 android:fontFamily="arial"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/colorPrimaryDark"
                 android:textSize="22sp"
                 android:textStyle="bold"/>
 
@@ -367,12 +367,12 @@
                 android:id="@+id/bagsNumberWord"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
-                app:layout_constraintTop_toBottomOf="@+id/bloodBankSpinnerLayout"
+                app:layout_constraintTop_toBottomOf="@+id/bloodTypeRadioGroupsContainer"
                 app:layout_constraintRight_toRightOf="@id/bloodTypeWord"
                 android:layout_marginTop="40dp"
                 android:text="@string/bags_number"
                 android:fontFamily="arial"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/colorPrimaryDark"
                 android:textSize="22sp"
                 android:textStyle="bold"/>
 
@@ -427,17 +427,40 @@
                 android:id="@+id/confirmRequestButton"
                 android:layout_width="220dp"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/decrementBloodBags"
+                app:layout_constraintTop_toBottomOf="@id/bloodBankSpinnerLayout"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 android:layout_marginTop="53dp"
                 android:paddingVertical="18dp"
-                android:background="@drawable/button_curved_red"
+                android:background="@drawable/button_disabled_selector"
                 android:text="@string/donation_request"
                 android:textColor="#FFFFFF"
                 android:textSize="17sp"
                 android:textStyle="bold"
-                android:fontFamily="arial" />
+                android:fontFamily="arial"
+                android:enabled="false"/>
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="60dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.468"
+                app:layout_constraintStart_toEndOf="@+id/confirmRequestButton"
+                app:layout_constraintTop_toBottomOf="@+id/bloodBankSpinnerLayout" />
+
+            <TextView
+                android:id="@+id/checkingPermissionSentence"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/confirmRequestButton"
+                app:layout_constraintLeft_toLeftOf="@id/confirmRequestButton"
+                app:layout_constraintRight_toRightOf="@id/confirmRequestButton"
+                android:fontFamily="arial"
+                android:textSize="17sp"
+                android:textColor="@color/colorPrimaryDark"
+                android:text="@string/checking_requesting_permission" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
