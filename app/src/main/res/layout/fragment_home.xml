@@ -15,6 +15,7 @@
         android:id="@+id/coodinatorLayout">
 
             <com.google.android.material.appbar.AppBarLayout
+                android:id="@+id/homeAppBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:theme="@style/CustomActionBar"
@@ -23,6 +24,7 @@
 
 
                 <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/homeToolbar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layout_scrollFlags="scroll|enterAlways"

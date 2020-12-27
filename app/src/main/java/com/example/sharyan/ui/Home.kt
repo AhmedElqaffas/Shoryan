@@ -122,8 +122,14 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
 
     private fun setFilterListener(){
         filter.setOnClickListener {
+            resetScrollingToTop()
             FilterFragment(this).show(childFragmentManager, "filterFragment")
         }
+    }
+
+    private fun resetScrollingToTop(){
+        (requestsRecycler.layoutManager as LinearLayoutManager).scrollToPosition(0)
+        homeAppBar.setExpanded(true)
     }
 
     override fun onItemClicked(donationRequest: DonationRequest) {

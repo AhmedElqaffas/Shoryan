@@ -29,7 +29,7 @@
     <string name="new_request">طلب جديد</string>
     <string name="notifications">الإشعارات</string>
     <string name="password">كلمة السر</string>
-    <string name="persons_going">أشخاص في طريقهم للتبرّع</string>
+    <string name="persons_going">\u200F %1$d أشخاص في طريقهم للتبرّع</string>
     <string name="phone_number">رقم المحمول</string>
     <string name="points">النقاط</string>
     <string name="proceed">استمرار</string>

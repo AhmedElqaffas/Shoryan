@@ -135,8 +135,9 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
     private fun displayRequestDetails(request: DonationRequest){
         requestBloodType.text = request.bloodType
         requesterName.text = request.requester.name?.getFullName()
-        requestLocation.text = request.donationLocation.region
+        requestLocation.text = request.bloodBank.location.region
         requestBagsRequired.text = resources.getString(R.string.blood_bags, request.numberOfBagsRequired)
+        personsDonatingToRequest.text = resources.getString(R.string.persons_going, request.numberOfComingDonors)
 
     }
 }
