@@ -279,7 +279,7 @@ class NewRequestFragment : Fragment() {
     }
 
     private fun openRequestDetails() {
-        val intent = Intent(context, MyRequestDetails::class.java)
+        val intent = Intent(context, MyRequestDetailsActivity::class.java)
         intent.putExtra("bloodType", getSelectedBloodType().text.toString())
         intent.putExtra("gov", getSelectedItemFromSpinner(spinnerGov))
         intent.putExtra("city", getSelectedItemFromSpinner(spinnerCity))
