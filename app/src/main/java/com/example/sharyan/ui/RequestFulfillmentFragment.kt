@@ -78,8 +78,8 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
     override fun onResume() {
         super.onResume()
 
-        setupMap()
         getDonationDetails()
+        setupMap()
     }
 
     private fun setupMap(){
@@ -87,8 +87,6 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
         mapFragmentObject.getMapAsync {
             mapInstance = it
             it.apply {
-                addMarker(MarkerOptions().position(LatLng(30.048158, 31.371376)))
-                moveCamera(CameraUpdateFactory.newLatLng(LatLng(30.048158, 31.371376)))
                 setMapPaddingWhenLayoutIsReady()
             }
         }
@@ -125,19 +123,34 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
         apiCallJob = CoroutineScope(Dispatchers.Main).launch {
             requestViewModel.getRequestDetails(request.id).observe(viewLifecycleOwner){
                 it?.let {
-                    displayRequestDetails(it)
+                    request = it
+                    displayRequestDetails()
+                    updateMapLocation()
                 }
-
             }
         }
     }
 
-    private fun displayRequestDetails(request: DonationRequest){
+    private fun displayRequestDetails(){
         requestBloodType.text = request.bloodType
         requesterName.text = request.requester.name?.getFullName()
-        requestLocation.text = request.bloodBank.location.region
-        requestBagsRequired.text = resources.getString(R.string.blood_bags, request.numberOfBagsRequired)
+        requestLocation.text = resources.getString(R.string.address_full,
+            request.bloodBank.name,
+            request.bloodBank.location.buildingNumber,
+            request.bloodBank.location.streetName,
+            request.bloodBank.location.region,
+            request.bloodBank.location.governorate)
+        requestBagsRequired.text = resources.getString(R.string.blood_bags,
+            request.numberOfBagsRequired - request.numberOfBagsFulfilled)
         personsDonatingToRequest.text = resources.getString(R.string.persons_going, request.numberOfComingDonors)
+    }
 
+    private fun updateMapLocation(){
+        mapInstance.apply {
+            addMarker(MarkerOptions().position(LatLng(request.bloodBank.location.latitude,
+                request.bloodBank.location.longitude)))
+            moveCamera(CameraUpdateFactory.newLatLng(LatLng(request.bloodBank.location.latitude,
+                request.bloodBank.location.longitude)))
+        }
     }
 }
