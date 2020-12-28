@@ -19,27 +19,14 @@ class RequestsViewModel : ViewModel() {
         .getRetrofitClient()
         .create(RetrofitBloodDonationInterface::class.java)
 
+    private var bloodTypesFilter = setOf("B+", "A-")
+
       suspend fun getOngoingRequests(refresh: Boolean): LiveData<List<DonationRequest>>{
             CoroutineScope(Dispatchers.IO).async{
-                requestsListLiveData.postValue(OngoingRequestsRetriever.getRequests(bloodDonationAPI, refresh))
+                requestsListLiveData.postValue(OngoingRequestsRetriever.getRequests(bloodDonationAPI, refresh)
+                    .filter { bloodTypesFilter.contains(it.bloodType) })
             }.await()
 
-
-        /*if(requestsList.isNullOrEmpty()){
-            requestsList= listOf(
-                DonationRequest("ghdgh",null,"G", DonationLocation("cgcngf")),
-                DonationRequest("ghdgh",null,"G", DonationLocation("cgcngf")),
-                DonationRequest("ghdgh",null,"G", DonationLocation("cgcngf")),
-                DonationRequest("ghdgh",null,"G", DonationLocation("cgcngf")),
-                DonationRequest("ghdgh",null,"G", DonationLocation("cgcngf")),
-                DonationRequest("ghdgh",null,"G", DonationLocation("cgcngf")),
-                DonationRequest("ghdgh",null,"G", DonationLocation("cgcngf")),
-                DonationRequest("ghdgh",null,"G", DonationLocation("cgcngf")),
-                DonationRequest("ghdgh",null,"G", DonationLocation("cgcngf")),
-                DonationRequest("ghdgh",null,"G", DonationLocation("cgcngf"))
-            )
-            requestsListLiveData.postValue(requestsList)
-        }*/
 
         return requestsListLiveData
     }

@@ -6,12 +6,36 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.FilterFragment">
 
-    <Button
-        android:id="@+id/submitFilters"
+    <TextView
+        android:id="@+id/bloodTypeWord"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:text="@string/blood_type"
+        android:textColor="@color/colorPrimaryDark"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bloodTypeFilterLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/bloodTypeWord">
+
+    <CheckBox
+        android:id="@+id/A_plus"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/a_plus"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Button
+        android:id="@+id/submitFilters"
+        app:layout_constraintTop_toBottomOf="@id/bloodTypeFilterLayout"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/submit"/>
