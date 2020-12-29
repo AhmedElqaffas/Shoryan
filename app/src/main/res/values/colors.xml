@@ -3,4 +3,5 @@
     <color name="colorPrimary">#D12A2A</color>
     <color name="colorPrimaryDark">#9C1111</color>
     <color name="colorAccent">#9C1111</color>
+    <color name="shimmer">#DDDDDD</color>
 </resources>

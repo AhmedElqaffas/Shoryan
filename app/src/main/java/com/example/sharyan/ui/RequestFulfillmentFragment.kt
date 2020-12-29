@@ -126,6 +126,7 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
                     request = it
                     displayRequestDetails()
                     updateMapLocation()
+                    disableShimmer()
                 }
             }
         }
@@ -143,6 +144,7 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
         requestBagsRequired.text = resources.getString(R.string.blood_bags,
             request.numberOfBagsRequired - request.numberOfBagsFulfilled)
         personsDonatingToRequest.text = resources.getString(R.string.persons_going, request.numberOfComingDonors)
+        requestDetailsLayout.visibility = View.VISIBLE
     }
 
     private fun updateMapLocation(){
@@ -152,5 +154,9 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
             moveCamera(CameraUpdateFactory.newLatLng(LatLng(request.bloodBank.location.latitude,
                 request.bloodBank.location.longitude)))
         }
+    }
+
+    private fun disableShimmer(){
+        requestDetailsShimmer.visibility = View.INVISIBLE
     }
 }
