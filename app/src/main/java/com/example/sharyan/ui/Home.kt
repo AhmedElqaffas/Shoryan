@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sharyan.R
 import com.example.sharyan.data.DonationRequest
+import com.example.sharyan.data.RequestsFilter
 import com.example.sharyan.recyclersAdapters.RequestsRecyclerAdapter
 import com.example.sharyan.recyclersAdapters.RequestsRecyclerInteraction
 import kotlinx.android.synthetic.main.appbar.toolbarText
@@ -99,9 +100,7 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
         requestsGettingJob = CoroutineScope(Dispatchers.Main).launch {
             requestsViewModel.getOngoingRequests(refresh).observe(viewLifecycleOwner, {
                 homeSwipeRefresh.isRefreshing = false
-                if(it.isNotEmpty()){
-                    hideRequestsLoadingIndicator()
-                }
+                hideRequestsLoadingIndicator()
                 requestsRecyclerAdapter.submitList(it)
             })
         }
@@ -123,7 +122,9 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
     private fun setFilterListener(){
         filter.setOnClickListener {
             resetScrollingToTop()
-            FilterFragment(this).show(childFragmentManager, "filterFragment")
+
+            FilterFragment(this, requestsViewModel.restoreFilter())
+                .show(childFragmentManager, "filterFragment")
         }
     }
 
@@ -136,11 +137,15 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
         val fragment = RequestFulfillmentFragment.newInstance(donationRequest)
         fragment.show(childFragmentManager, "requestDetails")
     }
+
+    override fun submitFilters(requestsFilter: RequestsFilter?) {
+        requestsViewModel.storeFilter(requestsFilter)
+        getOngoingRequests( true)
+    }
 }
 
 interface FilterHolder{
-    fun submitFilters(){
-
+    fun submitFilters(requestsFilter: RequestsFilter?) {
     }
 }
 

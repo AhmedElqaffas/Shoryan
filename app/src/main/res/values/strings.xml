@@ -7,8 +7,9 @@
     <string name="blood_bags">\u200F %1$d أكياس دم</string>
     <string name="blood_type">فصيلة الدم</string>
     <string name="bags_number">عدد الوحدات</string>
-    <string name="choose_location">اختر المكان</string>
     <string name="cancel_donation">إلغاء التبرّع</string>
+    <string name="choose_location">اختر المكان</string>
+    <string name="clear">مسح</string>
     <string name="confirm_password">تأكيد كلمة السر</string>
     <string name="covid_precautions">إحتياطات كورونا</string>
     <string name="date_initial">DD-MM-YYYY</string>
@@ -19,6 +20,8 @@
     <string name="faq">أسئلة متواردة</string>
     <string name="female">أنثي</string>
     <string name="filter"><u>فلترة</u></string>
+    <string name="filter_according">تصنيف حسب</string>
+    <string name="filter_matching_types">الفصائل التي يمكننى التبرع لها</string>
     <string name="gender">النوع</string>
     <string name="hello_user">مرحباً،</string>
     <string name="home">الرئيسية</string>
