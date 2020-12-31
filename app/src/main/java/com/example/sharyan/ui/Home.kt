@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.navigation.navGraphViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -23,6 +25,7 @@ import kotlinx.coroutines.launch
 
 class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
 
+    private lateinit var navController: NavController
     private lateinit var requestsRecyclerAdapter: RequestsRecyclerAdapter
 
     // viewModels() connects the viewModel to the fragment, so, when the user navigates to another
@@ -41,6 +44,16 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        instantiateNavController(view)
+    }
+
+    private fun instantiateNavController(view: View){
+        navController = Navigation.findNavController(view)
+    }
+
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -187,7 +200,7 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
     }
 
     private fun openMyRequestsFragment(){
-
+        navController.navigate(R.id.action_home_to_myRequestsFragment)
     }
 
     override fun onItemClicked(donationRequest: DonationRequest) {
