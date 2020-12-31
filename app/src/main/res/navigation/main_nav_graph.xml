@@ -9,7 +9,19 @@
         android:id="@+id/home"
         android:name="com.example.sharyan.ui.Home"
         android:label="Home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home"
+        app:defaultNavHost="true">
+        <action
+            android:id="@+id/action_home_to_myRequestsFragment"
+            app:destination="@id/myRequestsFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/newRequest"
+        android:name="com.example.sharyan.ui.NewRequestFragment"
+        android:label="New Request"
+        tools:layout="@layout/fragment_new_request"/>
+
     <fragment
         android:id="@+id/newRequest"
         android:name="com.example.sharyan.ui.NewRequestFragment"
@@ -21,9 +33,23 @@
         android:name="com.example.sharyan.ui.Notifications"
         android:label="Notifications"
         tools:layout="@layout/fragment_notifications" />
+
     <fragment
         android:id="@+id/profile"
         android:name="com.example.sharyan.ui.Profile"
         android:label="Profile"
         tools:layout="@layout/fragment_profile" />
+
+    <fragment
+        android:id="@+id/myRequestsFragment"
+        android:name="com.example.sharyan.ui.MyRequestsFragment"
+        android:label="fragment_my_requests"
+        tools:layout="@layout/fragment_my_requests" >
+        <action
+            android:id="@+id/action_myRequestsFragment_to_newRequest"
+            app:destination="@id/newRequest" />
+        <argument android:name="requestsIDs"
+            app:argType="com.example.sharyan.data.DonationRequest"/>
+
+    </fragment>
 </navigation>

@@ -45,7 +45,7 @@
             app:layout_constraintTop_toTopOf="@id/request_item_blood_type"
             app:layout_constraintRight_toLeftOf="@id/request_item_blood_type"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintHorizontal_bias="0.7"
+            app:layout_constraintHorizontal_bias="0.85"
             android:textColor="#dddddd"
             android:background="#dddddd"
             android:textSize="21sp"

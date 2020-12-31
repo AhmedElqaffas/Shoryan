@@ -1,10 +1,15 @@
 <resources>
     <string name="app_name">Shoryan</string>
     <string name="address">العنوان</string>
+    <string name="address_full">\u200F %1$s : %2$d %3$s - %4$s - %5$s</string>
     <string name="back">رجوع</string>
     <string name="birth_date">تاريخ الميلاد</string>
     <string name="blood_bags">\u200F %1$d أكياس دم</string>
     <string name="blood_type">فصيلة الدم</string>
+    <string name="bags_number">عدد الوحدات</string>
+    <string name="cancel_donation">إلغاء التبرّع</string>
+    <string name="choose_location">اختر المكان</string>
+    <string name="clear">مسح</string>
     <string name="bags_number">عدد الوحدات</string>
     <string name="cancel_donation">إلغاء التبرّع</string>
     <string name="checking_requesting_permission">جاري التأكد من عدد طلباتك اليوم</string>
@@ -16,8 +21,11 @@
     <string name="donations">التبرعات</string>
     <string name="donation_constraint">يمكنك طلب دم ثلاث مرات فقط خلال اليوم</string>
     <string name="donation_request">طلب تبرّع بالدم</string>
-    <string name="female">أنثي</string>
     <string name="faq">أسئلة متواردة</string>
+    <string name="female">أنثي</string>
+    <string name="filter"><u>فلترة</u></string>
+    <string name="filter_according">تصنيف حسب</string>
+    <string name="filter_matching_types">الفصائل التي يمكننى التبرع لها</string>
     <string name="gender">النوع</string>
     <string name="hello_user">مرحباً،</string>
     <string name="home">الرئيسية</string>
@@ -29,7 +37,8 @@
     <string name="new_request">طلب جديد</string>
     <string name="notifications">الإشعارات</string>
     <string name="password">كلمة السر</string>
-    <string name="persons_going">أشخاص في طريقهم للتبرّع</string>
+    <string name="pending_request">في انتظارك</string>
+    <string name="persons_going">\u200F %1$d أشخاص في طريقهم للتبرّع</string>
     <string name="phone_number">رقم المحمول</string>
     <string name="points">النقاط</string>
     <string name="proceed">استمرار</string>
@@ -37,9 +46,9 @@
     <string name="register">إنشاء حساب جديد</string>
     <string name="requests">الطلبات</string>
     <string name="settings">الإعدادات</string>
+    <string name="submit">تنفيذ</string>
     <string name="username">الاسم بالكامل</string>
     <string name="waiting_confirmation">انت الان مسجل كمتبرع لهذا الطلب, نحن في انتظار وصولك الي بنك الدم</string>
-
 
 
     <string name="a_plus">A+</string>
@@ -55,7 +64,6 @@
     <string name="choose_governorate">اختر المحافظة</string>
     <string name="choose_city">اختر المنطقة</string>
     <string name="choose_blood_bank">اختر بنك الدم</string>
-    <string name="my_request_details">تفاصيل طلب التبرع بالدم</string>
 
 
     <string-array name="blood_types">
