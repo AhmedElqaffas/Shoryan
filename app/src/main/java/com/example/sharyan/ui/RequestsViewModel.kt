@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.sharyan.data.CurrentAppUser
 import com.example.sharyan.data.DonationRequest
 import com.example.sharyan.data.RequestsFilter
 import com.example.sharyan.networking.RetrofitBloodDonationInterface
@@ -45,6 +46,28 @@ class RequestsViewModel : ViewModel() {
     /*fun getOngoingRequests() = liveData(Dispatchers.Default){
             emit( OngoingRequestsRetriever.getRequests(bloodDonationAPI))
     }*/
+
+    suspend fun updateUserPendingRequest(){
+        OngoingRequestsRetriever.updateUserPendingRequest(bloodDonationAPI)
+    }
+
+    suspend fun updateMyRequestsList(){
+        OngoingRequestsRetriever.updateMyActiveRequestsList(bloodDonationAPI)
+    }
+
+    fun getUserPendingRequest(): DonationRequest?{
+        val pendingRequestId = CurrentAppUser.pendingRequestId
+        return if(pendingRequestId != null) DonationRequest(pendingRequestId) else null
+    }
+
+    fun getUserActiveRequests(): List<DonationRequest>{
+        val activeRequestsList = mutableListOf<DonationRequest>()
+        CurrentAppUser.myRequestsIDs.forEach {
+            activeRequestsList.add(DonationRequest(it))
+        }
+        return activeRequestsList
+    }
+
     override fun onCleared() {
         super.onCleared()
         Log.d("RequestsViewModel", "viewModel is cleared")

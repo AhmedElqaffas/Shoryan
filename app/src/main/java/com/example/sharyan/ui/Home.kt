@@ -9,11 +9,11 @@ import androidx.navigation.navGraphViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sharyan.R
-import com.example.sharyan.data.CurrentAppUser
 import com.example.sharyan.data.DonationRequest
 import com.example.sharyan.data.RequestsFilter
 import com.example.sharyan.recyclersAdapters.RequestsRecyclerAdapter
 import com.example.sharyan.recyclersAdapters.RequestsRecyclerInteraction
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.appbar.toolbarText
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.coroutines.CoroutineScope
@@ -45,15 +45,22 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         initializeRecyclerViewAdapter()
+        // Getting ongoingRequests, pending request, my requests,  all in parallel
+        updateUserPendingRequest()
+        updateMyRequestsList()
         getOngoingRequests()
+
     }
 
     override fun onResume(){
         super.onResume()
+
         setToolbarText(resources.getString(R.string.home))
         setRecyclerViewScrollListener()
         setSwipeRefreshListener()
         setFilterListener()
+        setPendingRequestCardListener()
+        setMyRequestsCardListener()
     }
 
     override fun onDestroyView() {
@@ -96,6 +103,18 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
         requestsRecycler.adapter = requestsRecyclerAdapter
     }
 
+    private fun updateUserPendingRequest(){
+        CoroutineScope(Dispatchers.IO).launch {
+            requestsViewModel.updateUserPendingRequest()
+        }
+    }
+
+    private fun updateMyRequestsList(){
+        CoroutineScope(Dispatchers.IO).launch {
+            requestsViewModel.updateMyRequestsList()
+        }
+    }
+
     private fun getOngoingRequests(refresh: Boolean = false){
         showRequestsLoadingIndicator()
         requestsGettingJob = CoroutineScope(Dispatchers.Main).launch {
@@ -134,9 +153,45 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
         homeAppBar.setExpanded(true)
     }
 
-    override fun onItemClicked(donationRequest: DonationRequest) {
+    private fun setMyRequestsCardListener(){
+        myRequestsCard.setOnClickListener {
+            val myRequests = requestsViewModel.getUserActiveRequests()
+            if(myRequests.isEmpty()) showSnackBar("ليس لديك طلبات حالياً") else openMyRequestsFragment()
+        }
+    }
+
+    private fun setPendingRequestCardListener(){
+        pendingRequestCard.setOnClickListener {
+            val userPendingRequest = requestsViewModel.getUserPendingRequest()
+            if(userPendingRequest == null){
+                showSnackBar("ليس لديك طلبات مُعلّقة")
+            }
+            else{
+                openDonationFragment(userPendingRequest)
+            }
+        }
+    }
+
+    private fun showSnackBar(message: String){
+        Snackbar.make(homeParentLayout, message, Snackbar.LENGTH_LONG)
+            .setAction("حسناً") {
+                // By default, the snackbar will be dismissed
+            }
+            .setActionTextColor(resources.getColor(R.color.colorAccent))
+            .show()
+    }
+
+    private fun openDonationFragment(donationRequest: DonationRequest){
         val fragment = RequestFulfillmentFragment.newInstance(donationRequest)
         fragment.show(childFragmentManager, "requestDetails")
+    }
+
+    private fun openMyRequestsFragment(){
+
+    }
+
+    override fun onItemClicked(donationRequest: DonationRequest) {
+        openDonationFragment(donationRequest)
     }
 
     override fun submitFilters(requestsFilter: RequestsFilter?) {

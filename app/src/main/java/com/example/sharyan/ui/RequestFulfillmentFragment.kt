@@ -136,25 +136,25 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
 
     private fun displayRequestDetails(){
         requestBloodType.text = request.bloodType
-        requesterName.text = request.requester.name?.getFullName()
+        requesterName.text = request.requester?.name?.getFullName()
         requestLocation.text = resources.getString(R.string.address_full,
-            request.bloodBank.name,
-            request.bloodBank.location.buildingNumber,
-            request.bloodBank.location.streetName,
-            request.bloodBank.location.region,
-            request.bloodBank.location.governorate)
+            request.bloodBank?.name,
+            request.bloodBank?.location?.buildingNumber,
+            request.bloodBank?.location?.streetName,
+            request.bloodBank?.location?.region,
+            request.bloodBank?.location?.governorate)
         requestBagsRequired.text = resources.getString(R.string.blood_bags,
-            request.numberOfBagsRequired - request.numberOfBagsFulfilled)
+            request.numberOfBagsRequired!! - request.numberOfBagsFulfilled!!)
         personsDonatingToRequest.text = resources.getString(R.string.persons_going, request.numberOfComingDonors)
         requestDetailsLayout.visibility = View.VISIBLE
     }
 
     private fun updateMapLocation(){
         mapInstance.apply {
-            addMarker(MarkerOptions().position(LatLng(request.bloodBank.location.latitude,
-                request.bloodBank.location.longitude)))
-            moveCamera(CameraUpdateFactory.newLatLng(LatLng(request.bloodBank.location.latitude,
-                request.bloodBank.location.longitude)))
+            addMarker(MarkerOptions().position(LatLng(request.bloodBank!!.location.latitude,
+                request.bloodBank!!.location.longitude)))
+            moveCamera(CameraUpdateFactory.newLatLng(LatLng(request.bloodBank!!.location.latitude,
+                request.bloodBank!!.location.longitude)))
         }
     }
 

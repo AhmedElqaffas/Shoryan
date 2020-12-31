@@ -1,10 +1,11 @@
 package com.example.sharyan.repos
 
 import android.util.Log
+import com.example.sharyan.data.CurrentAppUser
 import com.example.sharyan.data.DonationRequest
 import com.example.sharyan.data.RequestsFilter
 import com.example.sharyan.networking.RetrofitBloodDonationInterface
-import java.lang.Exception
+
 
 object OngoingRequestsRetriever {
 
@@ -24,20 +25,39 @@ object OngoingRequestsRetriever {
      *         or cached in OngoingRequestsRetriever object
      */
 
-    suspend fun getRequests(bloodDonationAPI: RetrofitBloodDonationInterface,
-                            refresh: Boolean): List<DonationRequest>{
+    suspend fun getRequests(
+        bloodDonationAPI: RetrofitBloodDonationInterface,
+        refresh: Boolean
+    ): List<DonationRequest>{
 
         if(requestsList.isNullOrEmpty() || refresh){
             return try{
                 requestsList = bloodDonationAPI.getAllOngoingRequests()
                 requestsList
-            } catch(e: Exception){
-                Log.e("OngoingRequestsAPICall","Couldn't get requests - " + e.message)
+            } catch (e: Exception){
+                Log.e("OngoingRequestsAPICall", "Couldn't get requests - " + e.message)
                 requestsList
             }
         }
 
         return requestsList
+    }
 
+    suspend fun updateUserPendingRequest(bloodDonationAPI: RetrofitBloodDonationInterface){
+        try{
+            CurrentAppUser.pendingRequestId = bloodDonationAPI.getPendingRequest(CurrentAppUser.id!!)
+                ?.get("pendingRequest")?.asString
+        }catch (e: Exception){
+            Log.e("pendingRequestAPICall", "Couldn't get request - " + e.message)
+        }
+    }
+
+    suspend fun updateMyActiveRequestsList(bloodDonationAPI: RetrofitBloodDonationInterface){
+        try{
+            CurrentAppUser.myRequestsIDs = bloodDonationAPI.getUserActiveRequests(CurrentAppUser.id!!)
+                .activeRequests.toMutableList()
+        }catch (e: Exception){
+            Log.e("MyActiveRequestsAPICall", "Couldn't get requests - " + e.message)
+        }
     }
 }

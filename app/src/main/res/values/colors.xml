@@ -2,6 +2,6 @@
 <resources>
     <color name="colorPrimary">#D12A2A</color>
     <color name="colorPrimaryDark">#9C1111</color>
-    <color name="colorAccent">#9C1111</color>
+    <color name="colorAccent">#ED5A5A</color>
     <color name="shimmer">#DDDDDD</color>
 </resources>
