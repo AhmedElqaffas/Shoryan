@@ -42,5 +42,8 @@
         <action
             android:id="@+id/action_myRequestsFragment_to_newRequest"
             app:destination="@id/newRequest" />
+        <argument android:name="requestsIDs"
+            app:argType="com.example.sharyan.data.DonationRequest"/>
+
     </fragment>
 </navigation>

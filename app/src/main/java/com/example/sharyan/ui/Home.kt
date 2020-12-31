@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -169,7 +170,9 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
     private fun setMyRequestsCardListener(){
         myRequestsCard.setOnClickListener {
             val myRequests = requestsViewModel.getUserActiveRequests()
-            if(myRequests.isEmpty()) showSnackBar("ليس لديك طلبات حالياً") else openMyRequestsFragment()
+            if(myRequests.isEmpty())
+                showSnackBar("ليس لديك طلبات حالياً")
+            else openMyRequestsFragment(myRequests)
         }
     }
 
@@ -199,8 +202,9 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
         fragment.show(childFragmentManager, "requestDetails")
     }
 
-    private fun openMyRequestsFragment(){
-        navController.navigate(R.id.action_home_to_myRequestsFragment)
+    private fun openMyRequestsFragment(myRequests: List<DonationRequest>) {
+        val requests = bundleOf("requestsIDs" to myRequests)
+        navController.navigate(R.id.action_home_to_myRequestsFragment, requests)
     }
 
     override fun onItemClicked(donationRequest: DonationRequest) {
