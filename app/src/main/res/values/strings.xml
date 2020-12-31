@@ -3,17 +3,14 @@
     <string name="address">العنوان</string>
     <string name="address_full">\u200F %1$s : %2$d %3$s - %4$s - %5$s</string>
     <string name="back">رجوع</string>
+    <string name="bags_number">عدد الوحدات</string>
     <string name="birth_date">تاريخ الميلاد</string>
     <string name="blood_bags">\u200F %1$d أكياس دم</string>
     <string name="blood_type">فصيلة الدم</string>
-    <string name="bags_number">عدد الوحدات</string>
     <string name="cancel_donation">إلغاء التبرّع</string>
     <string name="choose_location">اختر المكان</string>
-    <string name="clear">مسح</string>
-    <string name="bags_number">عدد الوحدات</string>
-    <string name="cancel_donation">إلغاء التبرّع</string>
     <string name="checking_requesting_permission">جاري التأكد من عدد طلباتك اليوم</string>
-    <string name="choose_location">اختر المكان</string>
+    <string name="clear">مسح</string>
     <string name="confirm_password">تأكيد كلمة السر</string>
     <string name="covid_precautions">إحتياطات كورونا</string>
     <string name="date_initial">DD-MM-YYYY</string>
@@ -34,6 +31,7 @@
     <string name="login">تسجيل دخول</string>
     <string name="male">ّذكر</string>
     <string name="my_requests">طلباتي</string>
+    <string name="my_request_details">تفاصيل طلب التبرع بالدم</string>
     <string name="new_request">طلب جديد</string>
     <string name="notifications">الإشعارات</string>
     <string name="password">كلمة السر</string>

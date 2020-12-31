@@ -23,6 +23,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.MainActivity" />
+        <activity android:name=".ui.MyRequestDetailsActivity" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
