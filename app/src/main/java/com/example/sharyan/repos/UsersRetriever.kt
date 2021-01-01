@@ -2,6 +2,7 @@ package com.example.sharyan.repos
 
 
 import android.util.Log
+import com.example.sharyan.data.CurrentAppUser
 import com.example.sharyan.data.User
 import com.example.sharyan.data.UserStateWrapper
 import com.example.sharyan.networking.RetrofitBloodDonationInterface
@@ -42,11 +43,16 @@ object UsersRetriever {
         for(user in usersList){
             // phoneNumber is 01097049699  password is pass1
             if(("0"+user.phoneNumber == phoneNumber) and (user.password == password)){
+                storeCurrentUserData(user)
                 return UserStateWrapper(user,null)
             }
         }
 
         return UserStateWrapper(null, "خطأ في رقم الهاتف او كلمة السر")
+    }
+
+    private fun storeCurrentUserData(user: User){
+        CurrentAppUser.initializeUser(user)
     }
 }
 

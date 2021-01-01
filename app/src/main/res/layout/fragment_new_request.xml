@@ -248,6 +248,7 @@
                 android:background="@drawable/spinner_bg_selector" >
 
                 <ImageView
+                    android:id="@+id/governmentsSpinnerImageView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
@@ -438,6 +439,16 @@
                 android:textStyle="bold"
                 android:fontFamily="arial"
                 android:enabled="false"/>
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="60dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.468"
+                app:layout_constraintStart_toEndOf="@+id/confirmRequestButton"
+                app:layout_constraintTop_toBottomOf="@+id/bloodBankSpinnerLayout" />
 
             <TextView
                 android:id="@+id/checkingPermissionSentence"

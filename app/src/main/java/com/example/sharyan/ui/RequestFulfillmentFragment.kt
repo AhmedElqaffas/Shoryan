@@ -16,6 +16,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_request_fulfillment.*
+import kotlinx.android.synthetic.main.fragment_request_fulfillment.design_bottom_sheet
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -53,7 +54,9 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         request = getClickedRequest()
+
     }
 
     override fun onCreateView(
@@ -83,8 +86,6 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
         mapFragmentObject.getMapAsync {
             mapInstance = it
             it.apply {
-                addMarker(MarkerOptions().position(LatLng(30.048158, 31.371376)))
-                moveCamera(CameraUpdateFactory.newLatLng(LatLng(30.048158, 31.371376)))
                 setMapPaddingWhenLayoutIsReady()
             }
         }
@@ -128,18 +129,41 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
         apiCallJob = CoroutineScope(Dispatchers.Main).launch {
             requestViewModel.getRequestDetails(request.id).observe(viewLifecycleOwner){
                 it?.let {
-                    displayRequestDetails(it)
+                    request = it
+                    displayRequestDetails()
+                    updateMapLocation()
+                    disableShimmer()
                 }
 
             }
         }
     }
 
-    private fun displayRequestDetails(request: DonationRequest){
+    private fun displayRequestDetails(){
         requestBloodType.text = request.bloodType
-        requesterName.text = request.requester.name?.getFullName()
-        requestLocation.text = request.donationLocation.region
-        requestBagsRequired.text = resources.getString(R.string.blood_bags, request.numberOfBagsRequired)
+        requesterName.text = request.requester?.name?.getFullName()
+        requestLocation.text = resources.getString(R.string.address_full,
+            request.bloodBank?.name,
+            request.bloodBank?.location?.buildingNumber,
+            request.bloodBank?.location?.streetName,
+            request.bloodBank?.location?.region,
+            request.bloodBank?.location?.governorate)
+        requestBagsRequired.text = resources.getString(R.string.blood_bags,
+            request.numberOfBagsRequired!! - request.numberOfBagsFulfilled!!)
+        personsDonatingToRequest.text = resources.getString(R.string.persons_going, request.numberOfComingDonors)
+        requestDetailsLayout.visibility = View.VISIBLE
+    }
 
+    private fun updateMapLocation(){
+        mapInstance.apply {
+            addMarker(MarkerOptions().position(LatLng(request.bloodBank!!.location.latitude,
+                request.bloodBank!!.location.longitude)))
+            moveCamera(CameraUpdateFactory.newLatLng(LatLng(request.bloodBank!!.location.latitude,
+                request.bloodBank!!.location.longitude)))
+        }
+    }
+
+    private fun disableShimmer(){
+        requestDetailsShimmer.visibility = View.INVISIBLE
     }
 }
