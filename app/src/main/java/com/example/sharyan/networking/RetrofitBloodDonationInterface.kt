@@ -1,5 +1,6 @@
 package com.example.sharyan.networking
 
+import com.example.sharyan.data.DonationDetails
 import com.example.sharyan.data.DonationRequest
 import com.example.sharyan.data.MyRequestsServerResponse
 import com.example.sharyan.data.User
@@ -24,6 +25,10 @@ interface RetrofitBloodDonationInterface {
 
     @GET("/requests/{requestId}")
     suspend fun getRequestDetails(@Path("requestId") requestId: String): DonationRequest
+
+    @GET("/requests/{requestId}/user-donation/{userId}")
+    suspend fun getDonationDetails(@Path("requestId") requestId: String
+                                   ,@Path("userId") userId: String): DonationDetails
 
     @GET("/users")
      suspend fun getAllRegisteredUsers(): List<User>

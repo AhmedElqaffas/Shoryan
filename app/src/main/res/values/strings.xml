@@ -19,8 +19,9 @@
     <string name="donations">التبرّعات</string>
     <string name="donation_constraint">يمكنك طلب دم ثلاث مرات فقط خلال اليوم</string>
     <string name="donation_request">طلب تبرّع بالدم</string>
-    <string name="female">أنثي</string>
     <string name="faq">أسئلة متواردة</string>
+    <string name="female">أنثي</string>
+    <string name="fetching_data_error">فشل في الحصول علي البيانات</string>
     <string name="filter"><u>فلترة</u></string>
     <string name="filter_according">تصنيف حسب</string>
     <string name="filter_matching_types">الفصائل التي يمكننى التبرع لها</string>
@@ -35,6 +36,7 @@
     <string name="my_request_details">تفاصيل طلب التبرع بالدم</string>
     <string name="new_request">طلب جديد</string>
     <string name="notifications">الإشعارات</string>
+    <string name="ok">حسناً</string>
     <string name="password">كلمة السر</string>
     <string name="pending_request">في انتظارك</string>
     <string name="persons_going">\u200F %1$d أشخاص في طريقهم للتبرّع</string>

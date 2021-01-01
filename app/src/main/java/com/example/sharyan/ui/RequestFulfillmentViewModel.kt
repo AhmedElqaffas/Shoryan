@@ -2,6 +2,7 @@ package com.example.sharyan.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
+import com.example.sharyan.data.CurrentAppUser
 import com.example.sharyan.networking.RetrofitBloodDonationInterface
 import com.example.sharyan.networking.RetrofitClient
 import com.example.sharyan.repos.RequestFulfillmentRepo
@@ -13,7 +14,11 @@ class RequestFulfillmentViewModel: ViewModel() {
         .getRetrofitClient()
         .create(RetrofitBloodDonationInterface::class.java)
 
-    fun getRequestDetails(requestId: String) = liveData(Dispatchers.Default){
-        emit(RequestFulfillmentRepo.getRequestDetails(bloodDonationAPI, requestId))
+    fun getDonationDetails(requestId: String) = liveData(Dispatchers.IO){
+        emit(RequestFulfillmentRepo.getDonationDetails(bloodDonationAPI, requestId))
+    }
+
+    fun isAlreadyDonatingToThisRequest(requestId: String): Boolean{
+        return CurrentAppUser.pendingRequestId == requestId
     }
 }
