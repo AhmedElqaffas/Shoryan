@@ -221,7 +221,7 @@
                     android:textStyle="bold"
                     android:textColor="#FFFFFF"
                     android:text="@string/donate"
-                    android:alpha="0.7"
+                    android:alpha="0.5"
                     android:paddingVertical="20dp"
                     android:enabled="false"/>
 

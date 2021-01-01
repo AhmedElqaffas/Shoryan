@@ -6,7 +6,9 @@ import com.example.sharyan.data.MyRequestsServerResponse
 import com.example.sharyan.data.User
 import com.google.gson.JsonObject
 import retrofit2.Call
+import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface RetrofitBloodDonationInterface {
@@ -29,6 +31,19 @@ interface RetrofitBloodDonationInterface {
     @GET("/requests/{requestId}/user-donation/{userId}")
     suspend fun getDonationDetails(@Path("requestId") requestId: String
                                    ,@Path("userId") userId: String): DonationDetails
+
+    @POST("/requests/{requestId}/user-donation/{userId}")
+    suspend fun confirmDonation(@Path("requestId") requestId: String
+                                   ,@Path("userId") userId: String)
+
+    @DELETE("/requests/{requestId}/user-potential-donation/{userId}")
+    suspend fun removeUserFromDonorsList(@Path("requestId") requestId: String
+                                         ,@Path("userId") userId: String)
+
+    @POST("/requests/{requestId}/user-potential-donation/{userId}")
+    suspend fun addUserToDonorsList(@Path("requestId") requestId: String
+                                         ,@Path("userId") userId: String)
+
 
     @GET("/users")
      suspend fun getAllRegisteredUsers(): List<User>

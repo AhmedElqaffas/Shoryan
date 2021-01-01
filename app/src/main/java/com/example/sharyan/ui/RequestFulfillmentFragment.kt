@@ -80,6 +80,7 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
         showIndefiniteMessage(resources.getString(R.string.checking_donating_ability))
         getDonationDetails()
         setupMap()
+        donateButton.setOnClickListener { startDonation() }
         cancelDonationButton.setOnClickListener { cancelDonation() }
         confirmDonationButton.setOnClickListener { confirmDonation() }
     }
@@ -128,23 +129,10 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
         fetchRequestDetails()
     }
 
-
-    private fun showCancelAndConfirmButtons(){
-        donateButton.visibility = View.GONE
-        cancelDonationButton.visibility = View.VISIBLE
-        confirmDonationButton.visibility = View.VISIBLE
-    }
-
-    private fun showDonateButton(){
-        donateButton.visibility = View.VISIBLE
-        cancelDonationButton.visibility = View.GONE
-        confirmDonationButton.visibility = View.GONE
-    }
-
     private fun fetchRequestDetails(){
         apiCallJob = CoroutineScope(Dispatchers.Main).launch {
             requestViewModel.getDonationDetails(request.id).observe(viewLifecycleOwner){
-                if(it != null) {
+                if(it != null){
                     donationDetailsReceived(it)
                 }
                 else{
@@ -193,24 +181,72 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
 
     private fun enableOrDisableDonation(donationAbility: DonationAbility) {
         if(donationAbility.canUserDonate){
-            enableDonationButton()
+            enableDonation()
         }
         else{
-            showIndefiniteMessage("YOU...SHALL NOT...PASS!!")
+            showIndefiniteMessage(donationAbility.reasonForDisability!!)
+            disableDonation()
         }
     }
 
-    private fun enableDonationButton(){
-        donateButton.isEnabled = true
-        donateButton.alpha = 1.0f
+    private fun startDonation(){
+        requestViewModel.addUserToDonorsList(request.id).observe(viewLifecycleOwner){
+            if(it.isNullOrEmpty()){
+                showCancelAndConfirmButtons()
+                requestViewModel.setUserPendingRequest(request.id)
+            }
+            else{
+                showDefiniteMessage(it)
+            }
+        }
     }
 
     private fun cancelDonation(){
-        showDonateButton()
+        requestViewModel.cancelDonation(request.id).observe(viewLifecycleOwner){
+            if(it.isNullOrEmpty()){
+                enableDonation()
+                requestViewModel.removeUserPendingRequest()
+                showDefiniteMessage("تم الغاء التبرّع")
+            }
+            else{
+                showDefiniteMessage(it)
+            }
+        }
     }
 
     private fun confirmDonation(){
-        showDonateButton()
+        requestViewModel.confirmDonation(request.id).observe(viewLifecycleOwner){
+            if(it.isNullOrEmpty()){
+                requestViewModel.removeUserPendingRequest()
+                showDefiniteMessage("شكراً لتبرّعك")
+                disableDonation()
+            }
+        }
+    }
+
+    private fun disableDonation(){
+        donateButton.visibility = View.VISIBLE
+        donateButton.isEnabled = false
+        donateButton.alpha = 0.5f
+        waitingConfirmationSentence.visibility = View.GONE
+        cancelDonationButton.visibility = View.GONE
+        confirmDonationButton.visibility = View.GONE
+    }
+
+    private fun enableDonation(){
+        donateButton.visibility = View.VISIBLE
+        donateButton.alpha = 1.0f
+        donateButton.isEnabled = true
+        waitingConfirmationSentence.visibility = View.GONE
+        cancelDonationButton.visibility = View.GONE
+        confirmDonationButton.visibility = View.GONE
+    }
+
+    private fun showCancelAndConfirmButtons(){
+        donateButton.visibility = View.GONE
+        waitingConfirmationSentence.visibility = View.VISIBLE
+        cancelDonationButton.visibility = View.VISIBLE
+        confirmDonationButton.visibility = View.VISIBLE
     }
 
     private fun showIndefiniteMessage(message: String){
