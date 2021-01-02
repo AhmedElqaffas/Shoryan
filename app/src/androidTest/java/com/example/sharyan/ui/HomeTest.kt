@@ -138,8 +138,13 @@ class HomeTest {
                 )
         )
 
-        // Check that visibility = View.GONE
-        onView(withId(R.id.confirmDonationButton)).isGone()
+        // Check that button is invisible
+       try{
+           onView(allOf(withId(R.id.confirmDonationButton), viewVisible)).perform(clickInvisibleView)
+           assertEquals("View is visible", false, true)
+       }catch (e: Exception){
+           assertEquals(true, true)
+       }
     }
 
     @Test
@@ -277,9 +282,9 @@ class HomeTest {
         }
     }
 
-    fun isInvisible() = getViewAssertion(Visibility.INVISIBLE)
-    fun isVisible() = getViewAssertion(Visibility.VISIBLE)
-    private fun ViewInteraction.isGone() = getViewAssertion(Visibility.GONE)
+    fun ViewInteraction.isInvisible() = getViewAssertion(Visibility.INVISIBLE)
+    fun ViewInteraction.isVisible() = getViewAssertion(Visibility.VISIBLE)
+    fun ViewInteraction.isGone() = getViewAssertion(Visibility.GONE)
 
     private fun getViewAssertion(visibility: Visibility): ViewAssertion? {
         return ViewAssertions.matches(withEffectiveVisibility(visibility))
