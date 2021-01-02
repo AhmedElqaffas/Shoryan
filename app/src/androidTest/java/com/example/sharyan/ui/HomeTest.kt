@@ -2,55 +2,32 @@ package com.example.sharyan.ui
 
 import android.view.View
 import android.widget.TextView
-import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.lifecycle.ViewModelStore
-import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.testing.TestNavHostController
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.espresso.*
 import androidx.test.espresso.Espresso.*
-import androidx.test.espresso.UiController
-import androidx.test.espresso.ViewAction
-import androidx.test.espresso.ViewAssertion
-import androidx.test.espresso.ViewInteraction
 import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.contrib.RecyclerViewActions
-import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
 import com.example.sharyan.R
 import com.example.sharyan.data.CurrentAppUser
-import com.example.sharyan.data.DonationRequest
 import com.example.sharyan.recyclersAdapters.RequestsRecyclerAdapter
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.junit.Assert.assertEquals
 import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 
 
 @RunWith(AndroidJUnit4ClassRunner::class)
 class HomeTest {
-
-    companion object{
-
-
-
-        @BeforeClass
-        @JvmStatic
-        fun beforeClass(){
-            // Setup NavController
-
-        }
-    }
 
     // This allows fragments to use by navGraphViewModels()
     private lateinit var navController: TestNavHostController
@@ -139,12 +116,12 @@ class HomeTest {
         )
 
         // Check that button is invisible
-       try{
-           onView(allOf(withId(R.id.confirmDonationButton), viewVisible)).perform(clickInvisibleView)
-           assertEquals("View is visible", false, true)
-       }catch (e: Exception){
-           assertEquals(true, true)
-       }
+        try{
+            onView(allOf(withId(R.id.confirmDonationButton), viewVisible)).perform(clickInvisibleView)
+            assertEquals("View is visible", false, true)
+        }catch (e: Exception){
+            assertEquals(true, true)
+        }
     }
 
     @Test
@@ -222,11 +199,57 @@ class HomeTest {
         cancelDonation()
     }
 
+    @Test
+    fun cantAcceptMultipleRequests(){
+        // Wait for requests to load (max 5 seconds)
+        onView(isRoot()).perform(waitForView(R.id.requestsRecycler, 5000))
+        onView(withId(R.id.requestsRecycler)).perform(
+            RecyclerViewActions
+                .actionOnItemAtPosition<RequestsRecyclerAdapter.RequestViewHolder>(
+                    0, click()
+                )
+        )
+
+        // Wait for request details to load and donateButton to be visible + enabled
+        onView(isRoot()).perform(waitForView(R.id.donateButton, 5000))
+        // click donate
+        onView(withId(R.id.donateButton)).perform(clickInvisibleView)
+        // Wait until the server confirms starting the donation
+        onView(isRoot()).perform(waitForView(R.id.confirmDonationButton,5000))
+            .check { view, _ -> assertEquals(view.isVisible, true) }
+        // Dismiss fragment
+        pressBack()
+        // Open Another request
+        onView(withId(R.id.requestsRecycler)).perform(
+            RecyclerViewActions
+                .actionOnItemAtPosition<RequestsRecyclerAdapter.RequestViewHolder>(1, click())
+        )
+
+        try{
+            // Wait for request details to load and donateButton to be visible + enabled
+            onView(isRoot()).perform(waitForView(R.id.donateButton, 5000)).perform(clickInvisibleView)
+            assertEquals("Can accept multiple requests", false, true)
+        }catch (e: Exception){
+            assertEquals(true, true)
+        }
+        // Dismiss fragment
+        pressBack()
+        // Reopen first request to cancel it
+        onView(withId(R.id.requestsRecycler)).perform(
+            RecyclerViewActions
+                .actionOnItemAtPosition<RequestsRecyclerAdapter.RequestViewHolder>(0, click())
+        )
+        cancelDonation()
+    }
+
     /**
      * Cancels the ongoing Donation, to prevent tests from affecting each other
      */
     private fun cancelDonation(){
+        onView(isRoot()).perform(waitForView(R.id.cancelDonationButton, 5000))
         onView(withId(R.id.cancelDonationButton)).perform(clickInvisibleView)
+        onView(isRoot()).perform(waitForView(R.id.donateButton, 5000))
+            .check{view, _ -> assertEquals(view.isVisible, true)}
     }
 
     // This is a custom viewAction to be able to click a button that is not in screen bounds
@@ -278,15 +301,6 @@ class HomeTest {
         }
 
         override fun _dont_implement_Matcher___instead_extend_BaseMatcher_() {
-
         }
-    }
-
-    fun ViewInteraction.isInvisible() = getViewAssertion(Visibility.INVISIBLE)
-    fun ViewInteraction.isVisible() = getViewAssertion(Visibility.VISIBLE)
-    fun ViewInteraction.isGone() = getViewAssertion(Visibility.GONE)
-
-    private fun getViewAssertion(visibility: Visibility): ViewAssertion? {
-        return ViewAssertions.matches(withEffectiveVisibility(visibility))
     }
 }
