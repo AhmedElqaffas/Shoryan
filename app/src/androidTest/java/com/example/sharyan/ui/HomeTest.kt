@@ -40,18 +40,6 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4ClassRunner::class)
 class HomeTest {
 
-    companion object{
-
-
-
-        @BeforeClass
-        @JvmStatic
-        fun beforeClass(){
-            // Setup NavController
-
-        }
-    }
-
     // This allows fragments to use by navGraphViewModels()
     private lateinit var navController: TestNavHostController
     private val currentAppUser = CurrentAppUser
