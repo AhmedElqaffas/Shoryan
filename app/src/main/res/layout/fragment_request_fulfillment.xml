@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:background="@android:color/transparent">
+    android:background="@android:color/transparent"
+    android:id="@+id/bottomSheetParent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -40,7 +41,8 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:paddingBottom="40dp">
+                android:paddingBottom="40dp"
+                android:id="@+id/scrollViewChild">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -210,16 +212,18 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
-                    android:background="@drawable/button_curved_red"
                     app:layout_constraintLeft_toLeftOf="@id/requestDetailsCard"
                     app:layout_constraintRight_toRightOf="@id/requestDetailsCard"
                     app:layout_constraintTop_toBottomOf="@id/requestDetailsCard"
+                    android:background="@drawable/button_disabled_selector"
                     android:fontFamily="arial"
                     android:textSize="17sp"
                     android:textStyle="bold"
                     android:textColor="#FFFFFF"
                     android:text="@string/donate"
-                    android:paddingVertical="20dp"/>
+                    android:alpha="0.5"
+                    android:paddingVertical="20dp"
+                    android:enabled="false"/>
 
                 <TextView
                     android:id="@+id/waitingConfirmationSentence"

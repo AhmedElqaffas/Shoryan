@@ -9,5 +9,7 @@ object CurrentAppUser: User(null,null,null,null) {
         id = user.id
         name = user.name
         phoneNumber = user.phoneNumber
+        numberOfDonations = user.numberOfDonations
+        points = user.points
     }
 }

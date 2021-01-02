@@ -28,7 +28,6 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4ClassRunner::class)
 class NewRequestFragmentTest{
 
-    // DEBUG THIS TEST, DO NOT RUN IT
     @Test
     fun radioButtonsInteractionInSameRow(){
       launchFragmentInContainer<NewRequestFragment>()
@@ -49,7 +48,7 @@ class NewRequestFragmentTest{
                 .check(matches(isChecked()))
     }
 
-    // DEBUG THIS TEST, DO NOT RUN IT
+
     @Test
     fun radioButtonsInteractionInDifferentRows(){
         launchFragmentInContainer<NewRequestFragment>()
@@ -70,7 +69,7 @@ class NewRequestFragmentTest{
             .check(matches(isChecked()))
     }
 
-    // DEBUG THIS TEST, DO NOT RUN IT
+
     @Test
     fun incrementButtonGeneral(){
         // Test that increment button works
@@ -87,7 +86,7 @@ class NewRequestFragmentTest{
                 .check(matches(withText((bagsNumberBeforeIncrement + 1).toString())))
     }
 
-    // DEBUG THIS TEST, DO NOT RUN IT
+
     @Test
     fun incrementButtonLimit(){
         // Test that increment button works
@@ -120,7 +119,7 @@ class NewRequestFragmentTest{
             .check(matches(withText("9")))
     }
 
-    // DEBUG THIS TEST, DO NOT RUN IT
+
     /*
         Need to make sure that if the user decrements the edittext when it is still empty, no errors
         nor negative values are shown
@@ -138,7 +137,7 @@ class NewRequestFragmentTest{
             .check(matches(withText("")))
     }
 
-    // DEBUG THIS TEST, DO NOT RUN IT
+
     /*
         Need to make sure when user enters a number and starts decrementing it, it doesn't reach 0
      */
@@ -155,7 +154,7 @@ class NewRequestFragmentTest{
             .check(matches(withText("1")))
     }
 
-    // DEBUG THIS TEST, DO NOT RUN IT
+
     @Test
     fun spinnersInitialState(){
         // The government spinner should be set, the city and blood bank adapters shouldn't
@@ -167,12 +166,12 @@ class NewRequestFragmentTest{
         }
     }
 
-    // DEBUG THIS TEST, DO NOT RUN IT
+
     @Test
     fun spinnersStateAfterSelectingGovernment(){
         // city spinner adapter should be set, blood bank adapter shouldn't
         val scenario = launchFragmentInContainer<NewRequestFragment>()
-        onView(withId(R.id.spinnerGov))
+        onView(withId(R.id.spinnerGov)).perform(NestedScrollViewExtension())
             .perform(click())
         onData(allOf(`is`(instanceOf(String::class.java)), `is`("قنا"))).perform(click())
         scenario.onFragment {
@@ -181,15 +180,15 @@ class NewRequestFragmentTest{
         }
     }
 
-    // DEBUG THIS TEST, DO NOT RUN IT
+
     @Test
     fun spinnersStateAfterSelectingGovernmentAndCity(){
         // blood bank spinner adapter should be set
         val scenario = launchFragmentInContainer<NewRequestFragment>()
-        onView(withId(R.id.spinnerGov))
+        onView(withId(R.id.spinnerGov)).perform(NestedScrollViewExtension())
             .perform(click())
         onData(allOf(`is`(instanceOf(String::class.java)), `is`("قنا"))).perform(click())
-        onView(withId(R.id.spinnerCity))
+        onView(withId(R.id.spinnerCity)).perform(NestedScrollViewExtension())
             .perform(click())
         onData(`is`(instanceOf(String::class.java))).atPosition(1).perform(click())
         scenario.onFragment {

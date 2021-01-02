@@ -6,6 +6,8 @@ import android.view.*
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.fragment.app.viewModels
 import com.example.sharyan.R
+import com.example.sharyan.data.DonationAbility
+import com.example.sharyan.data.DonationDetails
 import com.example.sharyan.data.DonationRequest
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -14,7 +16,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlinx.android.synthetic.main.fragment_filter.*
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_request_fulfillment.*
 import kotlinx.android.synthetic.main.fragment_request_fulfillment.design_bottom_sheet
 import kotlinx.coroutines.CoroutineScope
@@ -50,12 +52,12 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
     private var apiCallJob: Job? = null
     private val requestViewModel: RequestFulfillmentViewModel by viewModels()
     private lateinit var mapInstance: GoogleMap
+    private var snackbar: Snackbar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         request = getClickedRequest()
-
     }
 
     override fun onCreateView(
@@ -72,16 +74,15 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
         apiCallJob?.cancel()
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setWindowSize()
-    }
-
-    override fun onResume() {
-        super.onResume()
-
+        showIndefiniteMessage(resources.getString(R.string.checking_donating_ability))
         getDonationDetails()
         setupMap()
+        donateButton.setOnClickListener { startDonation() }
+        cancelDonationButton.setOnClickListener { cancelDonation() }
+        confirmDonationButton.setOnClickListener { confirmDonation() }
     }
 
     private fun setupMap(){
@@ -122,16 +123,32 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
     }
 
     private fun getDonationDetails(){
+        if(requestViewModel.isAlreadyDonatingToThisRequest(request.id)){
+            showCancelAndConfirmButtons()
+        }
+        fetchRequestDetails()
+    }
+
+    private fun fetchRequestDetails(){
         apiCallJob = CoroutineScope(Dispatchers.Main).launch {
-            requestViewModel.getRequestDetails(request.id).observe(viewLifecycleOwner){
-                it?.let {
-                    request = it
-                    displayRequestDetails()
-                    updateMapLocation()
-                    disableShimmer()
+            requestViewModel.getDonationDetails(request.id).observe(viewLifecycleOwner){
+                if(it != null){
+                    donationDetailsReceived(it)
+                }
+                else{
+                    showDefiniteMessage(resources.getString(R.string.fetching_data_error))
                 }
             }
         }
+    }
+
+    private fun donationDetailsReceived(donationDetails: DonationDetails){
+        request = donationDetails.request
+        displayRequestDetails()
+        updateMapLocation()
+        disableShimmer()
+        enableOrDisableDonation(donationDetails.donationAbility)
+        dismissSnackBar()
     }
 
     private fun displayRequestDetails(){
@@ -160,5 +177,98 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
 
     private fun disableShimmer(){
         requestDetailsShimmer.visibility = View.INVISIBLE
+    }
+
+    private fun enableOrDisableDonation(donationAbility: DonationAbility) {
+        if(donationAbility.canUserDonate && !requestViewModel.isAlreadyDonatingToThisRequest(request.id)){
+            enableDonation()
+        }
+        else if(!donationAbility.canUserDonate){
+            showIndefiniteMessage(donationAbility.reasonForDisability!!)
+            disableDonation()
+        }
+    }
+
+    private fun startDonation(){
+        requestViewModel.addUserToDonorsList(request.id).observe(viewLifecycleOwner){
+            if(it.isNullOrEmpty()){
+                showCancelAndConfirmButtons()
+                requestViewModel.setUserPendingRequest(request.id)
+            }
+            else{
+                showDefiniteMessage(it)
+            }
+        }
+    }
+
+    private fun cancelDonation(){
+        requestViewModel.cancelDonation(request.id).observe(viewLifecycleOwner){
+            if(it.isNullOrEmpty()){
+                enableDonation()
+                requestViewModel.removeUserPendingRequest()
+                showDefiniteMessage("تم الغاء التبرّع")
+            }
+            else{
+                showDefiniteMessage(it)
+            }
+        }
+    }
+
+    private fun confirmDonation(){
+        requestViewModel.confirmDonation(request.id).observe(viewLifecycleOwner){
+            if(it.isNullOrEmpty()){
+                requestViewModel.removeUserPendingRequest()
+                showDefiniteMessage("شكراً لتبرّعك")
+                disableDonation()
+            }
+            else{
+                showDefiniteMessage(it)
+            }
+        }
+    }
+
+    private fun disableDonation(){
+        donateButton.visibility = View.VISIBLE
+        donateButton.isEnabled = false
+        donateButton.alpha = 0.5f
+        waitingConfirmationSentence.visibility = View.GONE
+        cancelDonationButton.visibility = View.GONE
+        confirmDonationButton.visibility = View.GONE
+    }
+
+    private fun enableDonation(){
+        donateButton.visibility = View.VISIBLE
+        donateButton.alpha = 1.0f
+        donateButton.isEnabled = true
+        waitingConfirmationSentence.visibility = View.GONE
+        cancelDonationButton.visibility = View.GONE
+        confirmDonationButton.visibility = View.GONE
+    }
+
+    private fun showCancelAndConfirmButtons(){
+        donateButton.visibility = View.GONE
+        waitingConfirmationSentence.visibility = View.VISIBLE
+        cancelDonationButton.visibility = View.VISIBLE
+        confirmDonationButton.visibility = View.VISIBLE
+    }
+
+    private fun showIndefiniteMessage(message: String){
+        snackbar = Snackbar.make(design_bottom_sheet,
+            message,
+            Snackbar.LENGTH_INDEFINITE)
+        snackbar?.show()
+    }
+
+    private fun showDefiniteMessage(message: String){
+        snackbar = Snackbar.make(design_bottom_sheet,
+            message,
+            Snackbar.LENGTH_LONG)
+            .setAction(R.string.ok){}
+            .setActionTextColor(resources.getColor(R.color.colorAccent))
+        snackbar?.show()
+    }
+
+    private fun dismissSnackBar(){
+        snackbar?.dismiss()
     }
 }
