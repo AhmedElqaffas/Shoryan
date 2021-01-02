@@ -180,10 +180,10 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
     }
 
     private fun enableOrDisableDonation(donationAbility: DonationAbility) {
-        if(donationAbility.canUserDonate){
+        if(donationAbility.canUserDonate && !requestViewModel.isAlreadyDonatingToThisRequest(request.id)){
             enableDonation()
         }
-        else{
+        else if(!donationAbility.canUserDonate){
             showIndefiniteMessage(donationAbility.reasonForDisability!!)
             disableDonation()
         }
@@ -220,6 +220,9 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
                 requestViewModel.removeUserPendingRequest()
                 showDefiniteMessage("شكراً لتبرّعك")
                 disableDonation()
+            }
+            else{
+                showDefiniteMessage(it)
             }
         }
     }

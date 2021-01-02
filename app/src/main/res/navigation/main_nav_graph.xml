@@ -14,6 +14,9 @@
         <action
             android:id="@+id/action_home_to_myRequestsFragment"
             app:destination="@id/myRequestsFragment"/>
+        <action
+            android:id="@+id/action_home_to_newRequest"
+            app:destination="@id/newRequest" />
     </fragment>
 
     <fragment
