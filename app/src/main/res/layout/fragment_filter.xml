@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:background="@android:color/transparent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.FilterFragment"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+        android:id="@+id/design_bottom_sheet">
+
+        <TextView
+            android:id="@+id/filterAccordingWord"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:layout_marginTop="25dp"
+            android:text="@string/filter_according"
+            android:fontFamily="arial"
+            android:textColor="#000000"
+            android:textSize="25sp"
+            android:textStyle="bold"/>
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nestedScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/filterAccordingWord"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="55dp"
+            android:fillViewport="true">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/bloodTypeWord"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintHorizontal_bias="0.84"
+                android:fontFamily="arial"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:text="@string/blood_type"
+                android:textColor="#000000"/>
+
+            <TextView
+                android:id="@+id/clearBloodTypeFilter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:padding="5dp"
+                app:layout_constraintHorizontal_bias="0.11"
+                android:fontFamily="arial"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:text="@string/clear"
+                android:textColor="@color/colorPrimary"/>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/bloodTypeFilterLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/bloodTypeWord"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintWidth_percent="0.7"
+                android:layout_marginTop="40dp">
+
+                <LinearLayout
+                    android:id="@+id/positiveTypes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:orientation="horizontal"
+                    android:gravity="fill_horizontal">
+
+                <androidx.appcompat.widget.AppCompatToggleButton
+                    android:id="@+id/a_plus_filter"
+                    android:layout_width="0dp"
+                    android:layout_height="43dp"
+                    android:background="@drawable/filter_blood_type_selector"
+                    android:textOff="@string/a_plus"
+                    android:textOn="@string/a_plus"
+                    android:layout_weight="2"
+                    android:textColor="@color/text_blood_type_filter"/>
+
+                    <View
+                        android:id="@+id/space1"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:visibility="invisible"/>
+
+                    <androidx.appcompat.widget.AppCompatToggleButton
+                        android:id="@+id/b_plus_filter"
+                        android:layout_width="0dp"
+                        android:layout_height="43dp"
+                        android:background="@drawable/filter_blood_type_selector"
+                        android:textOff="@string/b_plus"
+                        android:textOn="@string/b_plus"
+                        android:layout_weight="2"
+                        android:textColor="@color/text_blood_type_filter"/>
+
+                    <View
+                        android:id="@+id/space2"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:visibility="invisible"/>
+
+                    <androidx.appcompat.widget.AppCompatToggleButton
+                        android:id="@+id/ab_plus_filter"
+                        android:layout_width="0dp"
+                        android:layout_height="43dp"
+                        android:background="@drawable/filter_blood_type_selector"
+                        android:textOff="@string/ab_plus"
+                        android:textOn="@string/ab_plus"
+                        android:layout_weight="2"
+                        android:textColor="@color/text_blood_type_filter"/>
+
+                    <View
+                        android:id="@+id/space3"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:visibility="invisible"/>
+
+                    <androidx.appcompat.widget.AppCompatToggleButton
+                        android:id="@+id/o_plus_filter"
+                        android:layout_width="0dp"
+                        android:layout_height="43dp"
+                        android:background="@drawable/filter_blood_type_selector"
+                        android:textOff="@string/o_plus"
+                        android:textOn="@string/o_plus"
+                        android:layout_weight="2"
+                        android:textColor="@color/text_blood_type_filter" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/negativeTypes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/positiveTypes"
+                    android:orientation="horizontal"
+                    android:gravity="fill_horizontal"
+                    android:layout_marginTop="25dp">
+
+                    <androidx.appcompat.widget.AppCompatToggleButton
+                        android:id="@+id/a_minus_filter"
+                        android:layout_width="0dp"
+                        android:layout_height="43dp"
+                        android:background="@drawable/filter_blood_type_selector"
+                        android:textOff="@string/a_minus"
+                        android:textOn="@string/a_minus"
+                        android:layout_weight="2"
+                        android:textColor="@color/text_blood_type_filter"/>
+
+                    <View
+                        android:id="@+id/space4"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:visibility="invisible"/>
+
+                    <androidx.appcompat.widget.AppCompatToggleButton
+                        android:id="@+id/b_minus_filter"
+                        android:layout_width="0dp"
+                        android:layout_height="43dp"
+                        android:background="@drawable/filter_blood_type_selector"
+                        android:textOff="@string/b_minus"
+                        android:textOn="@string/b_minus"
+                        android:layout_weight="2"
+                        android:textColor="@color/text_blood_type_filter"/>
+
+                    <View
+                        android:id="@+id/space5"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:visibility="invisible"/>
+
+                    <androidx.appcompat.widget.AppCompatToggleButton
+                        android:id="@+id/ab_minus_filter"
+                        android:layout_width="0dp"
+                        android:layout_height="43dp"
+                        android:background="@drawable/filter_blood_type_selector"
+                        android:textOff="@string/ab_minus"
+                        android:textOn="@string/ab_minus"
+                        android:layout_weight="2"
+                        android:textColor="@color/text_blood_type_filter"/>
+
+                    <View
+                        android:id="@+id/space6"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:visibility="invisible"/>
+
+                    <androidx.appcompat.widget.AppCompatToggleButton
+                        android:id="@+id/o_minus_filter"
+                        android:layout_width="0dp"
+                        android:layout_height="43dp"
+                        android:background="@drawable/filter_blood_type_selector"
+                        android:textOff="@string/o_minus"
+                        android:textOn="@string/o_minus"
+                        android:layout_weight="2"
+                        android:textColor="@color/text_blood_type_filter" />
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <Button
+                android:id="@+id/matchingBloodFilterButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintLeft_toLeftOf="@id/bloodTypeFilterLayout"
+                app:layout_constraintRight_toRightOf="@id/bloodTypeFilterLayout"
+                app:layout_constraintTop_toBottomOf="@id/bloodTypeFilterLayout"
+                android:layout_marginTop="25dp"
+                android:text="@string/filter_matching_types"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:fontFamily="arial"
+                android:textStyle="bold"
+                android:background="@drawable/fifteen_dp_curve"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

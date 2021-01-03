@@ -20,7 +20,7 @@ class UsersRetrieverTest {
     lateinit var usersRetriever: UsersRetriever
 
     private var correctUserWrapper = UserStateWrapper(
-        User("a", Name("Ahmed"), "01097049699", "pass1"),
+        User("a", Name("Ahmed", "Mohamed"), "1097049699", "pass1", "A-"),
         null
     )
 
@@ -29,7 +29,7 @@ class UsersRetrieverTest {
         "خطأ في رقم الهاتف او كلمة السر"
     )
 
-    private val user = User("a", Name("Ahmed"), "01097049699", "pass1")
+    private val user = User("a", Name("Ahmed", "Mohamed"), "1097049699", "pass1", "A-")
     private val list = listOf(user)
     private val correctPhoneNumber = "01097049699"
     private val correctPassword = "pass1"
