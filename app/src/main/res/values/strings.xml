@@ -26,13 +26,14 @@
     <string name="filter_according">تصنيف حسب</string>
     <string name="filter_matching_types">الفصائل التي يمكننى التبرع لها</string>
     <string name="gender">النوع</string>
-    <string name="hello_user">مرحباً،</string>
+    <string name="hello_user_greeting">%1$s ،مرحباً</string>
     <string name="home">الرئيسية</string>
     <string name="instructions">تعليمات</string>
     <string name="i_donated">لقد تبرّعت</string>
     <string name="login">تسجيل دخول</string>
     <string name="male">ّذكر</string>
     <string name="my_requests">طلباتي</string>
+    <string name="my_old_requests">طلباتي السابقة</string>
     <string name="my_request_details">تفاصيل طلب التبرع بالدم</string>
     <string name="new_request">طلب جديد</string>
     <string name="notifications">الإشعارات</string>
