@@ -31,6 +31,7 @@
     <string name="instructions">تعليمات</string>
     <string name="i_donated">لقد تبرّعت</string>
     <string name="login">تسجيل دخول</string>
+    <string name="login_sms">رمز الدخول</string>
     <string name="male">ّذكر</string>
     <string name="my_requests">طلباتي</string>
     <string name="my_old_requests">طلباتي السابقة</string>
