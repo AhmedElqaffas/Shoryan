@@ -9,6 +9,7 @@ import android.widget.ToggleButton
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.children
 import com.example.sharyan.R
+import com.example.sharyan.data.CurrentAppUser
 import com.example.sharyan.data.RequestsFilter
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -36,9 +37,8 @@ class FilterFragment(private val filterHolder: FilterHolder, private val request
         super.onViewCreated(view, savedInstanceState)
         setWindowSize()
         restoreViewsState()
-        clearBloodTypeFilter.setOnClickListener{
-            clearBloodTypeFilters()
-        }
+        clearBloodTypeFilter.setOnClickListener{ clearBloodTypeFilters() }
+        matchingBloodFilterButton.setOnClickListener { chooseCompatibleTypes() }
     }
 
     private fun setWindowSize(){
@@ -87,5 +87,26 @@ class FilterFragment(private val filterHolder: FilterHolder, private val request
             }
         }
         return selectedTypes
+    }
+
+    private fun chooseCompatibleTypes(){
+        val compatibilityTable = mapOf(
+                "O-" to setOf("A-","A+","B-","B+","AB-","AB+","O-","O+"),
+                "O+" to setOf("A+","B+","AB+","O+"),
+                "B-" to setOf("B-","B+","AB-","AB+"),
+                "B+" to setOf("B+","AB+"),
+                "A-" to setOf("A-","A+","AB-","AB+"),
+                "A+" to setOf("A+","AB+"),
+                "AB-" to setOf("AB-","AB+"),
+                "AB+" to setOf("AB+")
+        )
+        val compatibleTypes = compatibilityTable[CurrentAppUser.bloodType!!]
+        bloodTypeFilterLayout.children.forEach { linearLayout ->
+            (linearLayout as LinearLayout).children.forEach {
+                if(it is ToggleButton){
+                    it.isChecked = compatibleTypes!!.contains(it.text)
+                }
+            }
+        }
     }
 }
