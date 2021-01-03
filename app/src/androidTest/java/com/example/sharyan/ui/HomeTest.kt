@@ -151,6 +151,8 @@ class HomeTest {
 
         // Open it from quick access menu
         onView(withId(R.id.pendingRequestCard)).perform(click())
+        // Wait for request details to reload
+        onView(isRoot()).perform(waitForView(R.id.requesterName, 5000))
         // Assert name is the same, therefore the correct request is opened
         assertEquals(
             "Wrong request opened",

@@ -202,6 +202,7 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
     }
 
     private fun cancelDonation(){
+        suspendButtons(true)
         requestViewModel.cancelDonation(request.id).observe(viewLifecycleOwner){
             if(it.isNullOrEmpty()){
                 enableDonation()
@@ -210,11 +211,13 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
             }
             else{
                 showDefiniteMessage(it)
+                suspendButtons(false)
             }
         }
     }
 
     private fun confirmDonation(){
+        suspendButtons(true)
         requestViewModel.confirmDonation(request.id).observe(viewLifecycleOwner){
             if(it.isNullOrEmpty()){
                 requestViewModel.removeUserPendingRequest()
@@ -223,6 +226,7 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
             }
             else{
                 showDefiniteMessage(it)
+                suspendButtons(false)
             }
         }
     }
@@ -250,6 +254,12 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
         waitingConfirmationSentence.visibility = View.VISIBLE
         cancelDonationButton.visibility = View.VISIBLE
         confirmDonationButton.visibility = View.VISIBLE
+    }
+
+    private fun suspendButtons(shouldSuspendButtons: Boolean){
+        donateButton.isEnabled = !shouldSuspendButtons
+        cancelDonationButton.isEnabled = !shouldSuspendButtons
+        confirmDonationButton.isEnabled = !shouldSuspendButtons
     }
 
     private fun showIndefiniteMessage(message: String){
