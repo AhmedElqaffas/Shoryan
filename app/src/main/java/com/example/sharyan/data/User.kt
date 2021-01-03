@@ -7,6 +7,7 @@ open class User(@SerializedName("_id") var id: String?,
                 var name: Name?,
                 var phoneNumber : String?,
                 var password: String?,
+                var bloodType: String?,
                 var numberOfDonations: Int = 0,
                 var points: Int = 0): Serializable{
                 }
