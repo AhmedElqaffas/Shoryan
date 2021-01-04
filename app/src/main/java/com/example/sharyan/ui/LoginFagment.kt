@@ -3,25 +3,32 @@ package com.example.sharyan.ui
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
+import androidx.navigation.navGraphViewModels
 import com.example.sharyan.R
 import com.example.sharyan.Utility
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.android.synthetic.main.fragment_new_request.*
 import kotlinx.coroutines.*
 
 
-class LoginActivity : AppCompatActivity(), LoadingFragmentHolder {
+class LoginFragment : Fragment(), LoadingFragmentHolder {
 
-   private val usersLoginViewModel: UsersLoginViewModel by viewModels()
+    private lateinit var navController: NavController
+    private val usersLoginViewModel: UsersLoginViewModel by navGraphViewModels(R.id.landing_nav_graph)
     private var loginVerificationJob: Job? = null
 
     override fun onDestroy() {
@@ -29,9 +36,18 @@ class LoginActivity : AppCompatActivity(), LoadingFragmentHolder {
         loginVerificationJob?.cancel()
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_login, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        instantiateNavController(view)
     }
 
     override fun onResume() {
@@ -51,8 +67,17 @@ class LoginActivity : AppCompatActivity(), LoadingFragmentHolder {
         }
 
         loginBack.setOnClickListener{
-            finish()
+            navController.popBackStack()
         }
+
+        loginWithSMSButton.setOnClickListener {
+            val phoneNumber = bundleOf("phoneNumber" to "01000000009")
+            navController.navigate(R.id.action_loginFragment_to_SMSLoginFragment, phoneNumber )
+        }
+    }
+
+    private fun instantiateNavController(view: View){
+        navController = Navigation.findNavController(view)
     }
 
     /**
@@ -84,7 +109,7 @@ class LoginActivity : AppCompatActivity(), LoadingFragmentHolder {
      */
     private fun focusListener(view: View){
         if(!phoneEditText.hasFocus() && !passwordEditText.hasFocus())
-            Utility.hideSoftKeyboard(this@LoginActivity, view)
+            Utility.hideSoftKeyboard(requireActivity(), view)
     }
 
     /**
@@ -128,7 +153,7 @@ class LoginActivity : AppCompatActivity(), LoadingFragmentHolder {
         toggleLoggingInIndicator()
         loginVerificationJob = CoroutineScope(Dispatchers.Main).launch {
             usersLoginViewModel.verifyCredentials(phoneNumber, password)
-                .observe(this@LoginActivity, {
+                .observe(this@LoginFragment, {
                     toggleLoggingInIndicator()
                     it.user?.let { openMainActivity() }
                     it.error?.let { message ->
@@ -140,20 +165,20 @@ class LoginActivity : AppCompatActivity(), LoadingFragmentHolder {
     }
 
     private fun toggleLoggingInIndicator(){
-        val loadingFragment: DialogFragment? = supportFragmentManager.findFragmentByTag("loading") as DialogFragment?
+        val loadingFragment: DialogFragment? = childFragmentManager.findFragmentByTag("loading") as DialogFragment?
         if(loadingFragment == null)
-            LoadingFragment(this).show(supportFragmentManager, "loading")
+            LoadingFragment(this).show(childFragmentManager, "loading")
         else
             loadingFragment.dismiss()
     }
 
     private fun openMainActivity(){
-        val intent = Intent(applicationContext, MainActivity::class.java)
+        val intent = Intent(activity, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
     }
 
     override fun onLoadingFragmentDismissed() {
-        this.finish()
+        activity?.finish()
     }
 }
