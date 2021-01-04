@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.navGraphViewModels
@@ -19,10 +20,7 @@ import com.example.sharyan.recyclersAdapters.RequestsRecyclerInteraction
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.appbar.toolbarText
 import kotlinx.android.synthetic.main.fragment_home.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
 
@@ -35,7 +33,7 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
     // viewModel to the navComponent instead of individual fragment
     private val requestsViewModel: RequestsViewModel by navGraphViewModels(R.id.main_nav_graph)
 
-    private var requestsGettingJob: Job? = null
+    private var requestsGettingJob: Job = Job()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -77,11 +75,6 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
         setMyRequestsCardListener()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        requestsGettingJob?.cancel()
-    }
-
     private fun setToolbarText(text: String){
         toolbarText.text = text
     }
@@ -108,6 +101,7 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
 
     private fun setSwipeRefreshListener(){
         homeSwipeRefresh.setOnRefreshListener{
+            resetScrollingToTop()
             getOngoingRequests(true)
         }
     }
@@ -118,20 +112,25 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
     }
 
     private fun updateUserPendingRequest(){
-        CoroutineScope(Dispatchers.IO).launch {
-            requestsViewModel.updateUserPendingRequest()
+        viewLifecycleOwner.lifecycleScope.launch {
+            withContext(Dispatchers.IO){
+                requestsViewModel.updateUserPendingRequest()
+            }
         }
     }
 
     private fun updateMyRequestsList(){
-        CoroutineScope(Dispatchers.IO).launch {
-            requestsViewModel.updateMyRequestsList()
+        viewLifecycleOwner.lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                requestsViewModel.updateMyRequestsList()
+            }
         }
     }
 
     private fun getOngoingRequests(refresh: Boolean = false){
+        requestsGettingJob.cancel()
         showRequestsLoadingIndicator()
-        requestsGettingJob = CoroutineScope(Dispatchers.Main).launch {
+        requestsGettingJob = viewLifecycleOwner.lifecycleScope.launch {
             requestsViewModel.getOngoingRequests(refresh).observe(viewLifecycleOwner, {
                 homeSwipeRefresh.isRefreshing = false
                 hideRequestsLoadingIndicator()
@@ -141,7 +140,6 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
     }
 
     private fun showRequestsLoadingIndicator(){
-        requestsGettingJob?.cancel()
         requestsShimmerContainer.startShimmer()
         requestsShimmerContainer.visibility = View.VISIBLE
         requestsRecycler.visibility = View.GONE
@@ -156,7 +154,6 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
     private fun setFilterListener(){
         filter.setOnClickListener {
             resetScrollingToTop()
-
             FilterFragment(this, requestsViewModel.restoreFilter())
                 .show(childFragmentManager, "filterFragment")
         }
