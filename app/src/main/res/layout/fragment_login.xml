@@ -132,4 +132,20 @@
         android:textStyle="bold"
         android:textAllCaps="false"/>
 
+    <Button
+        android:id="@+id/loginWithSMSButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/confirmLoginButton"
+        app:layout_constraintLeft_toLeftOf="@id/confirmLoginButton"
+        app:layout_constraintRight_toRightOf="@id/confirmLoginButton"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/button_curved_red"
+        android:text="@string/login_with_sms"
+        android:textColor="@android:color/white"
+        android:fontFamily="arial"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        android:textAllCaps="false"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

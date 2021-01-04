@@ -91,4 +91,9 @@ dependencies {
     debugImplementation "androidx.fragment:fragment-testing:1.2.5"
     androidTestImplementation "androidx.navigation:navigation-testing:2.3.2"
 
+    implementation ('com.alimuzaffar.lib:pinentryedittext:2.0.6') {
+        // Exclude is needed as we already have androidx.appcompat as a dependency.
+        exclude group: 'androidx.appcompat', module: 'appcompat'
+    }
+
 }

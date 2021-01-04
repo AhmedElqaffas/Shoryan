@@ -18,7 +18,8 @@
     <string name="donate">تبرّع</string>
     <string name="donations">التبرّعات</string>
     <string name="donation_constraint">يمكنك طلب دم ثلاث مرات فقط خلال اليوم</string>
-    <string name="donation_request">طلب تبرّع بالدم</string>
+    <string name="donation_request">طلب تبرّع بالدم</string>%1$s
+    <string name="enter_login_code">\u200F قم بإدخال رمز الدخول المرسل الى \n %1$s</string>
     <string name="faq">أسئلة متواردة</string>
     <string name="female">أنثي</string>
     <string name="fetching_data_error">فشل في الحصول علي البيانات</string>
@@ -31,7 +32,8 @@
     <string name="instructions">تعليمات</string>
     <string name="i_donated">لقد تبرّعت</string>
     <string name="login">تسجيل دخول</string>
-    <string name="login_sms">رمز الدخول</string>
+    <string name="login_code">رمز الدخول</string>
+    <string name="login_with_sms">الدخول برسالة نصية</string>
     <string name="male">ّذكر</string>
     <string name="my_requests">طلباتي</string>
     <string name="my_old_requests">طلباتي السابقة</string>
@@ -48,6 +50,7 @@
     <string name="profile">حسابي</string>
     <string name="register">إنشاء حساب جديد</string>
     <string name="requests">الطلبات</string>
+    <string name="resend_sms"><u>إعادة إرسال الرمز</u></string>
     <string name="settings">الإعدادات</string>
     <string name="submit">تنفيذ</string>
     <string name="username">الاسم بالكامل</string>

@@ -21,7 +21,8 @@
         android:label="LoginFragment" >
         <action
             android:id="@+id/action_loginFragment_to_SMSLoginFragment"
-            app:destination="@id/SMSLoginFragment" />
+            app:destination="@id/SMSLoginFragment"/>
+        <argument android:name="phoneNumber" />
     </fragment>
     <fragment
         android:id="@+id/registrationFragment"
@@ -32,5 +33,5 @@
         android:id="@+id/SMSLoginFragment"
         android:name="com.example.sharyan.ui.SMSLoginFragment"
         android:label="fragment_sms__login"
-        tools:layout="@layout/fragment_sms__login" />
+        tools:layout="@layout/fragment_sms_login" />
 </navigation>

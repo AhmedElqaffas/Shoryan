@@ -10,6 +10,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
@@ -67,6 +68,11 @@ class LoginFragment : Fragment(), LoadingFragmentHolder {
 
         loginBack.setOnClickListener{
             navController.popBackStack()
+        }
+
+        loginWithSMSButton.setOnClickListener {
+            val phoneNumber = bundleOf("phoneNumber" to "01000000009")
+            navController.navigate(R.id.action_loginFragment_to_SMSLoginFragment, phoneNumber )
         }
     }
 
