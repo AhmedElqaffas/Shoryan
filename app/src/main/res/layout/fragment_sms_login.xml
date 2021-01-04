@@ -34,7 +34,8 @@
         android:textColor="@android:color/white"
         android:textSize="16sp"
         android:fontFamily="arial"
-        app:drawableLeftCompat="@drawable/back_arrow_icon"/>
+        app:drawableLeftCompat="@drawable/back_arrow_icon"
+        android:padding="10dp"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -73,7 +74,8 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintWidth_percent="0.85"
+        app:layout_constraintWidth_percent="0.78"
+        app:layout_constraintVertical_bias="0.55"
         android:cursorVisible="false"
         android:digits="1234567890"
         android:inputType="number"
@@ -83,7 +85,7 @@
         app:pinLineStroke="2dp"
         app:pinBackgroundIsSquare="true"
         app:pinLineColors="@color/colorPrimaryDark"
-        android:layoutDirection="ltr"/>
+        android:layoutDirection="ltr" />
 
     <TextView
         android:id="@+id/resendSMSTextView"
@@ -97,6 +99,7 @@
         android:text="@string/resend_sms"
         android:textColor="#000000"
         android:textSize="17sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        android:padding="10dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
