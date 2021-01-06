@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.sharyan.R
 import com.example.sharyan.Utility
 import kotlinx.android.synthetic.main.fragment_sms_login.*
+import kotlinx.android.synthetic.main.login_banner.*
 
 
 class SMSLoginFragment : Fragment() {

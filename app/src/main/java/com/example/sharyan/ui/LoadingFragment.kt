@@ -20,7 +20,6 @@ class LoadingFragment(val loadingFragmentHolder: LoadingFragmentHolder) : Dialog
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     }
 
     override fun onCancel(dialog: DialogInterface) {

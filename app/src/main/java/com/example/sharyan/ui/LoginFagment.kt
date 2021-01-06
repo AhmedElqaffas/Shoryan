@@ -1,40 +1,25 @@
 package com.example.sharyan.ui
 
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import android.widget.EditText
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.navigation.navGraphViewModels
 import com.example.sharyan.R
 import com.example.sharyan.Utility
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_login.*
-import kotlinx.android.synthetic.main.fragment_new_request.*
-import kotlinx.coroutines.*
+import kotlinx.android.synthetic.main.fragment_login_phone.*
+import kotlinx.android.synthetic.main.login_banner.*
 
-
-class LoginFragment : Fragment(), LoadingFragmentHolder {
+class LoginPhoneFragment : Fragment(){
 
     private lateinit var navController: NavController
-    private val usersLoginViewModel: UsersLoginViewModel by navGraphViewModels(R.id.landing_nav_graph)
-    private var loginVerificationJob: Job? = null
-
-    override fun onDestroy() {
-        super.onDestroy()
-        loginVerificationJob?.cancel()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,7 +27,7 @@ class LoginFragment : Fragment(), LoadingFragmentHolder {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_login, container, false)
+        return inflater.inflate(R.layout.fragment_login_phone, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -54,25 +39,22 @@ class LoginFragment : Fragment(), LoadingFragmentHolder {
         super.onResume()
 
         phoneEditText.apply{
+            requestFocus()
+            Utility.showSoftKeyboard(requireActivity(), this)
             this.addTextChangedListener { observePhoneText(it) }
-            this.setOnFocusChangeListener { view, _ -> focusListener(view) }
-        }
-
-        passwordEditText.setOnFocusChangeListener { view, _ ->   focusListener(view) }
-
-        submitInfoFromPasswordEditText()
-
-        confirmLoginButton.setOnClickListener {
-            checkLogin()
+            this.setOnFocusChangeListener { view, _ -> phoneEditTextFocusListener(view) }
         }
 
         loginBack.setOnClickListener{
             navController.popBackStack()
         }
 
+        loginWithPasswordButton.setOnClickListener {
+            goToFragmentIfNumberValid(R.id.action_loginFragment_to_loginPasswordFragment)
+        }
+
         loginWithSMSButton.setOnClickListener {
-            val phoneNumber = bundleOf("phoneNumber" to "01000000009")
-            navController.navigate(R.id.action_loginFragment_to_SMSLoginFragment, phoneNumber )
+            goToFragmentIfNumberValid(R.id.action_loginFragment_to_SMSLoginFragment)
         }
     }
 
@@ -81,104 +63,43 @@ class LoginFragment : Fragment(), LoadingFragmentHolder {
     }
 
     /**
-     * Observes changes in the phone number EditText and shifts focus to the password EditText
-     * when the user inputs the complete full number, i.e. when the EditText length reaches the
-     * max length specified in the XML
-    */
+     * Observes changes in the phone number EditText and close keyboard
+     * when the user inputs their complete full number.
+     */
     private fun observePhoneText(editable: Editable?) {
-        if(editable?.length == resources.getInteger(R.integer.phone_number_length)){
-            passwordEditText.requestFocus()
+        if(isValidMobilePhoneEntered(editable.toString())){
+            loginScreenLayout.requestFocus()
+            phoneTextInputLayout.error = ""
+        }
+        else{
+            phoneTextInputLayout.error = resources.getString(R.string.phone_format_message)
         }
     }
 
     /**
-     * When the user clicks "Done" while in the password EditText, a click is automatically performed
-     * on the login button instead of letting the user manually click it
+     * When the phone EditText loses focus, hide keyboard
      */
-    private fun submitInfoFromPasswordEditText(){
-        passwordEditText.setOnEditorActionListener{ _, actionId, _ ->
-            if(actionId == EditorInfo.IME_ACTION_DONE){
-                confirmLoginButton.performClick()
-            }
-            false
-        }
-    }
-
-    /**
-     * Hides the keyboard whenever the EditTexts lose focus
-     */
-    private fun focusListener(view: View){
-        if(!phoneEditText.hasFocus() && !passwordEditText.hasFocus())
+    private fun phoneEditTextFocusListener(view: View){
+        if(!view.hasFocus()) {
             Utility.hideSoftKeyboard(requireActivity(), view)
+        }
     }
 
-    /**
-     * This method checks the phone number and password the user has entered and validates
-     * the login attempt by checking if this phone number and password exist in the registered users
-     * data in the database. If it does exist, the user login is successful and the MainActivity starts.
-     * However, if not successful then an error message appears.
-     */
-
-    private fun checkLogin() {
-
+    private fun goToFragmentIfNumberValid(fragmentId: Int){
         val phoneNumber = getEditTextValue(phoneEditText)
-        val password = getEditTextValue(passwordEditText)
-
-        if(!areAllInputsProvided(phoneNumber, password)){
-            displayError("من فضلك تأكّد من ادخال رقم الهاتف و كلمة السر")
+        if(isValidMobilePhoneEntered(phoneNumber)){
+            val phoneNumberBundle = bundleOf("phoneNumber" to phoneNumber)
+            navController.navigate(fragmentId, phoneNumberBundle)
         }
-
-        else {
-            verifyCredentials(phoneNumber, password)
-        }
-    }
-
-    private fun getEditTextValue(editText: EditText):String{
-        return editText.text.toString().trim()
-    }
-
-    private fun areAllInputsProvided(phoneNumber: String, password: String): Boolean{
-        return phoneNumber.isNotEmpty() and password.isNotEmpty()
-    }
-
-    private fun displayError(error: String){
-        Snackbar.make(loginScreenLayout, error, Snackbar.LENGTH_LONG)
-            .setAction("حسناً") {
-                // By default, the snackbar will be dismissed
-            }
-            .show()
-    }
-
-    private fun verifyCredentials(phoneNumber: String, password: String){
-        toggleLoggingInIndicator()
-        loginVerificationJob = CoroutineScope(Dispatchers.Main).launch {
-            usersLoginViewModel.verifyCredentials(phoneNumber, password)
-                .observe(this@LoginFragment, {
-                    toggleLoggingInIndicator()
-                    it.user?.let { openMainActivity() }
-                    it.error?.let { message ->
-                        it.error
-                        displayError(message)
-                    }
-                })
+        else{
+            Utility.displaySnackbarMessage(loginScreenLayout,
+                resources.getString(R.string.phone_format_message), Snackbar.LENGTH_LONG)
         }
     }
 
-    private fun toggleLoggingInIndicator(){
-        val loadingFragment: DialogFragment? = childFragmentManager.findFragmentByTag("loading") as DialogFragment?
-        if(loadingFragment == null)
-            LoadingFragment(this).show(childFragmentManager, "loading")
-        else
-            loadingFragment.dismiss()
-    }
+    private fun isValidMobilePhoneEntered(phoneNumber: String): Boolean =
+        phoneNumber.length == resources.getInteger(R.integer.phone_number_length)
+            && phoneNumber.matches(Regex("01[0-9]+"))
 
-    private fun openMainActivity(){
-        val intent = Intent(activity, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-        startActivity(intent)
-    }
-
-    override fun onLoadingFragmentDismissed() {
-        activity?.finish()
-    }
+    private fun getEditTextValue(editText: EditText):String =  editText.text.toString().trim()
 }

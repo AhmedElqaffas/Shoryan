@@ -10,18 +10,29 @@
         android:label="SplashScreenFragment" >
         <action
             android:id="@+id/action_splashScreenFragment_to_loginFragment"
-            app:destination="@id/loginFragment" />
+            app:destination="@id/loginFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:popExitAnim="@android:anim/slide_out_right" />
         <action
             android:id="@+id/action_splashScreenFragment_to_registrationFragment"
-            app:destination="@id/registrationFragment" />
+            app:destination="@id/registrationFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.example.sharyan.ui.LoginFragment"
+        android:name="com.example.sharyan.ui.LoginPhoneFragment"
         android:label="LoginFragment" >
         <action
             android:id="@+id/action_loginFragment_to_SMSLoginFragment"
-            app:destination="@id/SMSLoginFragment"/>
+            app:destination="@id/SMSLoginFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_loginFragment_to_loginPasswordFragment"
+            app:destination="@id/loginPasswordFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:popExitAnim="@android:anim/slide_out_right" />
         <argument android:name="phoneNumber" />
     </fragment>
     <fragment
@@ -34,4 +45,9 @@
         android:name="com.example.sharyan.ui.SMSLoginFragment"
         android:label="fragment_sms__login"
         tools:layout="@layout/fragment_sms_login" />
+    <fragment
+        android:id="@+id/loginPasswordFragment"
+        android:name="com.example.sharyan.ui.LoginPasswordFragment"
+        android:label="fragment_login_password"
+        tools:layout="@layout/fragment_login_password" />
 </navigation>
