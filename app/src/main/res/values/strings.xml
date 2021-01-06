@@ -33,6 +33,7 @@
     <string name="i_donated">لقد تبرّعت</string>
     <string name="login">تسجيل دخول</string>
     <string name="login_code">رمز الدخول</string>
+    <string name="login_with_password">الدخول بكلمة السر</string>
     <string name="login_with_sms">الدخول برسالة نصية</string>
     <string name="male">ّذكر</string>
     <string name="my_requests">طلباتي</string>
@@ -44,6 +45,7 @@
     <string name="password">كلمة السر</string>
     <string name="pending_request">في انتظارك</string>
     <string name="persons_going">\u200F %1$d أشخاص في طريقهم للتبرّع</string>
+    <string name="phone_format_message">تأكد من إدخال رقم بهذا الشكل: 01xxxxxxxxx</string>
     <string name="phone_number">رقم المحمول</string>
     <string name="points">النقاط</string>
     <string name="proceed">استمرار</string>
