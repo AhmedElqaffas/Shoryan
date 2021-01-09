@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.*
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.fragment.app.viewModels
+import com.example.sharyan.EnglishToArabicConverter
 import com.example.sharyan.R
 import com.example.sharyan.data.DonationAbility
 import com.example.sharyan.data.DonationDetails
@@ -156,13 +157,15 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
         requesterName.text = request.requester?.name?.getFullName()
         requestLocation.text = resources.getString(R.string.address_full,
             request.bloodBank?.name,
-            request.bloodBank?.location?.buildingNumber,
+            EnglishToArabicConverter().convertDigits(request.bloodBank?.location?.buildingNumber.toString()),
             request.bloodBank?.location?.streetName,
             request.bloodBank?.location?.region,
             request.bloodBank?.location?.governorate)
+        val remainingBags = request.numberOfBagsRequired!! - request.numberOfBagsFulfilled!!
         requestBagsRequired.text = resources.getString(R.string.blood_bags,
-            request.numberOfBagsRequired!! - request.numberOfBagsFulfilled!!)
-        personsDonatingToRequest.text = resources.getString(R.string.persons_going, request.numberOfComingDonors)
+            EnglishToArabicConverter().convertDigits(remainingBags.toString()))
+        personsDonatingToRequest.text = resources.getString(R.string.persons_going,
+            EnglishToArabicConverter().convertDigits(request.numberOfComingDonors.toString()))
         requestDetailsLayout.visibility = View.VISIBLE
     }
 
