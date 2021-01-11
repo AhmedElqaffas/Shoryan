@@ -3,12 +3,11 @@ package com.example.sharyan.ui
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.view.ContextMenu.ContextMenuInfo
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.sharyan.R
@@ -16,9 +15,10 @@ import kotlinx.android.synthetic.main.fragment_registration.*
 import java.util.*
 
 
-class RegistrationFragment : Fragment() {
+class RegistrationFragment : Fragment(){
 
     private lateinit var navController: NavController
+    private lateinit var locationPickerViewModel: LocationPickerViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,6 +33,7 @@ class RegistrationFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         instantiateNavController(view)
+        initializeLocationPickerViewModel()
         // Setting a click listener for the birthDatePicker button
         birthDatePicker.setOnClickListener{
             pickBirthDate()
@@ -43,6 +44,12 @@ class RegistrationFragment : Fragment() {
         bloodTypePicker.setOnClickListener {
             it.showContextMenu()
         }
+
+        addressEditText.setOnClickListener {
+            openLocationPicker()
+        }
+
+        setAddressText()
 
         // Adding a click listener for confirmRegistrationButton
         confirmRegistrationButton.setOnClickListener {
@@ -58,6 +65,11 @@ class RegistrationFragment : Fragment() {
 
     private fun instantiateNavController(view: View){
         navController = Navigation.findNavController(view)
+    }
+
+    private fun initializeLocationPickerViewModel(){
+        locationPickerViewModel = ViewModelProvider(requireActivity())
+            .get(LocationPickerViewModel::class.java)
     }
 
     /**
@@ -96,7 +108,16 @@ class RegistrationFragment : Fragment() {
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
         bloodTypePicker.text = item.title
-
         return true
+    }
+
+    private fun openLocationPicker(){
+        navController.navigate(R.id.action_registrationFragment_to_mapFragment)
+    }
+
+    private fun setAddressText(){
+        locationPickerViewModel.locationStringLiveData.observe(viewLifecycleOwner){
+            addressEditText.setText(it)
+        }
     }
 }

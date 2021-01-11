@@ -256,7 +256,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/genderRadioGroup">
+                app:layout_constraintTop_toBottomOf="@id/genderRadioGroup"
+                android:focusable="false">
 
                 <EditText
                     android:id="@+id/addressEditText"
@@ -269,7 +270,8 @@
                     android:hint="@string/address"
                     android:inputType="text"
                     android:maxLines="1"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:focusable="false"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 

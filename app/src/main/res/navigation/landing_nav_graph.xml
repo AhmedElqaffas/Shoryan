@@ -39,6 +39,9 @@
         android:id="@+id/registrationFragment"
         android:name="com.example.sharyan.ui.RegistrationFragment"
         android:label="RegistrationFragment" >
+        <action
+            android:id="@+id/action_registrationFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
     </fragment>
     <fragment
         android:id="@+id/SMSLoginFragment"
@@ -50,4 +53,9 @@
         android:name="com.example.sharyan.ui.LoginPasswordFragment"
         android:label="fragment_login_password"
         tools:layout="@layout/fragment_login_password" />
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.example.sharyan.ui.MapFragment"
+        android:label="fragment_map"
+        tools:layout="@layout/fragment_map" />
 </navigation>
