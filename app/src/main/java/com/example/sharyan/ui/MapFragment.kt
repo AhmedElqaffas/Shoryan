@@ -2,12 +2,10 @@ package com.example.sharyan.ui
 
 import android.annotation.SuppressLint
 import android.location.Address
-import android.location.Geocoder
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -20,9 +18,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class MapFragment : Fragment() {
 
@@ -81,30 +77,11 @@ class MapFragment : Fragment() {
 
     private fun confirmChosenLocation(location: LatLng){
         lifecycleScope.launch {
-            val address = getAddressOfMarker(location)
+            val address = locationPickerViewModel.getAddressFromLatLng(requireActivity(), location)
             address?.let {
                 showConfirmationDialog(it)
             }
         }
-    }
-
-    private suspend fun getAddressOfMarker(markerPosition: LatLng): Address?{
-        val geocoder = Geocoder(requireActivity())
-        var address: Address? = null
-        withContext(lifecycleScope.coroutineContext) {
-            withContext(Dispatchers.IO) {
-                try {
-                    address = geocoder.getFromLocation(markerPosition.latitude, markerPosition.longitude, 1)[0]
-                } catch (e: Exception) {
-                    Toast.makeText(
-                        requireActivity(),
-                        resources.getString(R.string.internet_connection),
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-            }
-        }
-        return address
     }
 
     private fun showConfirmationDialog(location: Address){
