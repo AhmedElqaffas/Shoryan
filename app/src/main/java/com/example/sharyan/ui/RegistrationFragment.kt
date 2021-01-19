@@ -62,7 +62,7 @@ class RegistrationFragment : Fragment(){
             it.showContextMenu()
         }
 
-        addressEditText.setOnClickListener {
+        openMapButton.setOnClickListener {
             openLocationPicker()
         }
 

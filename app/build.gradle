@@ -15,13 +15,16 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        Properties properties = new Properties()
+        // Load local.properties file data used to hold API keys
+        def localProperties = new Properties()
         if (rootProject.file("local.properties").exists()) {
-            properties.load(rootProject.file("local.properties").newDataInputStream())
+            localProperties.load(rootProject.file("local.properties").newDataInputStream())
         }
 
         // Inject the Maps API key into the manifest
-        manifestPlaceholders = [ mapsApiKey : properties.getProperty("MAPS_API_KEY", "") ]
+        manifestPlaceholders = [ mapsApiKey : localProperties.getProperty("MAPS_API_KEY", "") ]
+        // Set the places api key as a variable to use it in kotlin code
+        buildConfigField "String", "PLACES_API_KEY", "\"${localProperties.getProperty('PLACES_API_KEY')}\""
     }
 
     buildTypes {
@@ -99,5 +102,6 @@ dependencies {
 
     // Location
     implementation 'com.google.android.gms:play-services-location:17.1.0'
+    implementation 'com.google.android.libraries.places:places:2.4.0'
 
 }

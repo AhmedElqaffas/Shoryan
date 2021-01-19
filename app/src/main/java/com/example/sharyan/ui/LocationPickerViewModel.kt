@@ -1,6 +1,7 @@
 package com.example.sharyan.ui
 
 import android.app.Activity
+import android.content.Context
 import android.location.Address
 import android.location.Geocoder
 import android.widget.Toast
@@ -13,6 +14,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
+import java.util.*
 
 class LocationPickerViewModel: ViewModel() {
 
@@ -24,8 +26,8 @@ class LocationPickerViewModel: ViewModel() {
         locationLatLng = LatLng(location.latitude, location.longitude)
     }
 
-     suspend fun getAddressFromLatLng(activity: Activity, position: LatLng): Address?{
-         val geocoder = Geocoder(activity)
+     suspend fun getAddressFromLatLng(context: Context, position: LatLng): Address?{
+         val geocoder = Geocoder(context, Locale("ar"))
          var address: Address? = null
          withContext(viewModelScope.coroutineContext) {
              withContext(Dispatchers.IO) {
@@ -33,13 +35,20 @@ class LocationPickerViewModel: ViewModel() {
                      address = geocoder.getFromLocation(position.latitude, position.longitude, 1)[0]
                  } catch (e: Exception) {
                      Toast.makeText(
-                         activity,
-                         activity.resources.getString(R.string.internet_connection),
+                         context,
+                         context.resources.getString(R.string.internet_connection),
                          Toast.LENGTH_LONG
                      ).show()
                  }
              }
          }
+         println(address)
+         println(address?.subLocality)
+         println(address?.featureName)
+         println(address?.thoroughfare)
+         println(address?.locality)
+         println(address?.subAdminArea)
+         println(address?.adminArea)
          return address
     }
 }

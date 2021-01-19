@@ -10,7 +10,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.example.sharyan.BuildConfig
 import com.example.sharyan.R
+import com.google.android.gms.common.api.Status
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -18,34 +20,44 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import kotlinx.coroutines.launch
 
 class MapFragment : Fragment() {
 
     private lateinit var mapInstance: GoogleMap
     private lateinit var locationPickerViewModel: LocationPickerViewModel
+    private lateinit var marker: Marker
+    /* If the user did not change pinned location, this variable will stay null.
+       If the user changed the pinned location, this variable will contain the location address
+     */
+    private var newlyMarkedAddress: Address? = null
 
 
     @SuppressLint("PotentialBehaviorOverride")
     private val callback = OnMapReadyCallback { googleMap ->
         mapInstance = googleMap
-        val initialMarker = locationPickerViewModel.locationLatLng
-        googleMap.addMarker(MarkerOptions().position(initialMarker).draggable(true))
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(initialMarker,15f))
-
+        val initialMarkerPosition = locationPickerViewModel.locationLatLng
+        marker = googleMap.addMarker(MarkerOptions()
+            .position(initialMarkerPosition)
+            .draggable(true)
+        )
+        moveCameraToLocation(initialMarkerPosition)
         googleMap.setOnMapClickListener {
-            placeMarker(it)
-            confirmChosenLocation(it)
+            setLocation(it)
         }
 
-        googleMap.setOnMarkerDragListener(object: GoogleMap.OnMarkerDragListener{
+        googleMap.setOnMarkerDragListener(object : GoogleMap.OnMarkerDragListener {
             override fun onMarkerDragStart(p0: Marker?) {}
 
             override fun onMarkerDrag(p0: Marker?) {}
 
             override fun onMarkerDragEnd(p0: Marker?) {
                 p0?.let {
-                    confirmChosenLocation(it.position)
+                    setLocation(it.position)
                 }
             }
         })
@@ -61,28 +73,62 @@ class MapFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
-        mapFragment?.getMapAsync(callback)
+        initializeGoogleMap()
+        initializeAutoComplete()
         initializeViewModel()
     }
 
-    private fun initializeViewModel(){
-        locationPickerViewModel = ViewModelProvider(requireActivity()).get(LocationPickerViewModel::class.java)
+    private fun initializeGoogleMap() {
+        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
+        mapFragment?.getMapAsync(callback)
     }
 
-    private fun placeMarker(location: LatLng){
-        mapInstance.clear()
-        mapInstance.addMarker(MarkerOptions().position(location).draggable(true))
-    }
+    private fun initializeAutoComplete() {
+        initializePlacesAPI()
+        val autocompleteFragment = childFragmentManager.findFragmentById(R.id.autocompleteFragment)
+                as AutocompleteSupportFragment
 
-    private fun confirmChosenLocation(location: LatLng){
-        lifecycleScope.launch {
-            val address = locationPickerViewModel.getAddressFromLatLng(requireActivity(), location)
-            address?.let {
-                showConfirmationDialog(it)
+        autocompleteFragment.setCountries("EG")
+        autocompleteFragment.setPlaceFields(listOf(Place.Field.LAT_LNG, Place.Field.NAME))
+        autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
+            override fun onPlaceSelected(place: Place) {
+                place.latLng?.let {
+                    setLocation(it)
+                }
             }
-        }
+
+            override fun onError(status: Status) {
+                println("An error occurred: $status")
+            }
+        })
     }
+
+    private fun initializePlacesAPI() {
+        Places.initialize(requireActivity(), BuildConfig.PLACES_API_KEY)
+    }
+
+    private fun initializeViewModel() {
+        locationPickerViewModel =
+            ViewModelProvider(requireActivity()).get(LocationPickerViewModel::class.java)
+    }
+
+    private fun setLocation(latLng: LatLng) =
+        lifecycleScope.launch {
+            moveCameraToLocation(latLng)
+            changeMarkerPosition(latLng)
+            newlyMarkedAddress = getChosenLocation(latLng)
+        }
+
+    private fun moveCameraToLocation(latLng: LatLng) {
+        mapInstance.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
+    }
+
+    private fun changeMarkerPosition(location: LatLng) {
+        marker.position = location
+    }
+
+    private suspend fun getChosenLocation(location: LatLng) =
+        locationPickerViewModel.getAddressFromLatLng(requireActivity(), location)
 
     private fun showConfirmationDialog(location: Address){
         AlertDialog.Builder(requireActivity())
