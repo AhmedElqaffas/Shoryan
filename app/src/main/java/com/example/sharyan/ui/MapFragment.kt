@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -24,6 +23,7 @@ import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
+import kotlinx.android.synthetic.main.fragment_map.*
 import kotlinx.coroutines.launch
 
 class MapFragment : Fragment() {
@@ -76,6 +76,7 @@ class MapFragment : Fragment() {
         initializeGoogleMap()
         initializeAutoComplete()
         initializeViewModel()
+        setConfirmLocationButtonListener()
     }
 
     private fun initializeGoogleMap() {
@@ -130,18 +131,12 @@ class MapFragment : Fragment() {
     private suspend fun getChosenLocation(location: LatLng) =
         locationPickerViewModel.getAddressFromLatLng(requireActivity(), location)
 
-    private fun showConfirmationDialog(location: Address){
-        AlertDialog.Builder(requireActivity())
-            .setTitle("تأكيد العنوان")
-            .setMessage("العنوان هو: ${location.getAddressLine(0)} ")
-            .setNegativeButton("لا"){ dialog, _ ->
-                dialog.dismiss()
+    private fun setConfirmLocationButtonListener() {
+        confirmLocationFAB.setOnClickListener {
+            newlyMarkedAddress?.let {
+                locationPickerViewModel.setLocation(it)
             }
-            .setPositiveButton("نعم"){ dialog, _ ->
-                locationPickerViewModel.setLocation(location)
-                dialog.dismiss()
-                activity?.onBackPressed()
-            }
-            .show()
+            activity?.onBackPressed()
+        }
     }
 }
