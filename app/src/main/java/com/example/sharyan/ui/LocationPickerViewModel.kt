@@ -1,6 +1,5 @@
 package com.example.sharyan.ui
 
-import android.app.Activity
 import android.content.Context
 import android.location.Address
 import android.location.Geocoder
@@ -10,19 +9,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.sharyan.R
 import com.google.android.gms.maps.model.LatLng
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 import java.util.*
 
 class LocationPickerViewModel: ViewModel() {
 
-    val locationStringLiveData = MutableLiveData("")
+    val locationStringLiveData: MutableLiveData<String> = MutableLiveData("")
     var locationLatLng = LatLng(30.041517, 31.234525)
 
     fun setLocation(location: Address){
-        locationStringLiveData.value = location.getAddressLine(0)
+        locationStringLiveData.value = location.getAddressLine(0)?: ""
         locationLatLng = LatLng(location.latitude, location.longitude)
     }
 
@@ -51,4 +48,6 @@ class LocationPickerViewModel: ViewModel() {
          println(address?.adminArea)
          return address
     }
+
+    fun getCurrentSavedAddress(): String = locationStringLiveData.value!!
 }

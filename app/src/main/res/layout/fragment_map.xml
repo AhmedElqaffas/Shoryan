@@ -46,9 +46,10 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.93"
         app:layout_constraintVertical_bias="0.8"
-        android:backgroundTint="@color/colorPrimaryDark"
+        android:backgroundTint="#FFFFFF"
+        app:borderWidth="0dp"
         android:src="@drawable/ic_my_location"
-        app:maxImageSize="40dp"
+        app:maxImageSize="36dp"
         android:contentDescription="@string/new_request" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -61,7 +62,7 @@
         android:layout_marginTop="15dp"
         android:backgroundTint="@color/colorPrimaryDark"
         android:src="@drawable/ic_check"
-        app:maxImageSize="50dp"
+        app:maxImageSize="36dp"
         android:contentDescription="@string/new_request" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -34,7 +34,8 @@ class RegistrationFragment : Fragment(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        askUserForLocation()
+        initializeLocationPickerViewModel()
+        initializeUserLocation()
     }
 
     override fun onCreateView(
@@ -48,9 +49,7 @@ class RegistrationFragment : Fragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         instantiateNavController(view)
-        initializeLocationPickerViewModel()
         // Setting a click listener for the birthDatePicker button
         birthDatePicker.setOnClickListener{
             pickBirthDate()
@@ -90,6 +89,14 @@ class RegistrationFragment : Fragment(){
         locationPickerViewModel = ViewModelProvider(requireActivity())
             .get(LocationPickerViewModel::class.java)
     }
+
+    private fun initializeUserLocation(){
+        if(isNoLocationAlreadyStored()){
+            askUserForLocation()
+        }
+    }
+
+    private fun isNoLocationAlreadyStored() = locationPickerViewModel.getCurrentSavedAddress().isEmpty()
 
     private fun askUserForLocation(){
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
