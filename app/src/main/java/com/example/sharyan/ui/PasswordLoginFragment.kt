@@ -20,7 +20,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_login_password.*
 import kotlinx.android.synthetic.main.login_banner.*
 
-class LoginPasswordFragment : Fragment(), LoadingFragmentHolder {
+class PasswordLoginFragment : Fragment(), LoadingFragmentHolder {
 
     private lateinit var navController: NavController
     private lateinit var phoneNumber: String
@@ -42,6 +42,7 @@ class LoginPasswordFragment : Fragment(), LoadingFragmentHolder {
         super.onViewCreated(view, savedInstanceState)
 
         instantiateNavController(view)
+        displayPhoneNumber()
         initializeLoginObserver()
         phoneNumber = requireArguments().get("phoneNumber").toString()
 
@@ -61,6 +62,11 @@ class LoginPasswordFragment : Fragment(), LoadingFragmentHolder {
 
     private fun instantiateNavController(view: View){
         navController = Navigation.findNavController(view)
+    }
+
+    private fun displayPhoneNumber(){
+        val phoneNumber = requireArguments().get("phoneNumber")
+        enterPasswordSentence.text = resources.getString(R.string.enter_login_password, phoneNumber)
     }
 
     private fun submitPasswordFromKeyboard(){

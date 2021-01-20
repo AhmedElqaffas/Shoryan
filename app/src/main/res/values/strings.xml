@@ -22,6 +22,7 @@
     <string name="donation_constraint">يمكنك طلب دم ثلاث مرات فقط خلال اليوم</string>
     <string name="donation_request">طلب تبرّع بالدم</string>%1$s
     <string name="enter_login_code">\u200F قم بإدخال رمز الدخول المرسل الى \n %1$s</string>
+    <string name="enter_login_password">\u200F قم بإدخال كلمة السر الخاصة بالرقم \n %1$s</string>
     <string name="faq">أسئلة متواردة</string>
     <string name="female">أنثي</string>
     <string name="fetching_data_error">فشل في الحصول علي البيانات</string>

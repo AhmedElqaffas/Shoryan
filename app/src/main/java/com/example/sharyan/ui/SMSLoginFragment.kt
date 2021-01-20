@@ -8,10 +8,9 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.findNavController
 import com.example.sharyan.R
 import com.example.sharyan.Utility
-import kotlinx.android.synthetic.main.fragment_sms_login.*
+import kotlinx.android.synthetic.main.fragment_login_sms.*
 import kotlinx.android.synthetic.main.login_banner.*
 
 
@@ -24,7 +23,7 @@ class SMSLoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_sms_login, container, false)
+        return inflater.inflate(R.layout.fragment_login_sms, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
