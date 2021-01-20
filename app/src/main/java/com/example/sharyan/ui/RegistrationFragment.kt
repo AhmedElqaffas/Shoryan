@@ -30,7 +30,7 @@ class RegistrationFragment : Fragment(){
 
     private lateinit var navController: NavController
     private lateinit var locationPickerViewModel: LocationPickerViewModel
-    var fusedLocationProviderClient: FusedLocationProviderClient? = null
+    private var fusedLocationProviderClient: FusedLocationProviderClient? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -120,9 +120,6 @@ class RegistrationFragment : Fragment(){
             if (isLocationPermissionGranted()){
                 getUserLastKnownLocation()
             }
-        }
-        else {
-            // The user denied the permission, decide with the team what to do
         }
     }
 

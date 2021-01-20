@@ -1,17 +1,22 @@
 package com.example.sharyan.ui
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.pm.PackageManager
 import android.location.Address
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.sharyan.BuildConfig
 import com.example.sharyan.R
 import com.google.android.gms.common.api.Status
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -30,11 +35,13 @@ class MapFragment : Fragment() {
 
     private lateinit var mapInstance: GoogleMap
     private lateinit var locationPickerViewModel: LocationPickerViewModel
+    private var fusedLocationProviderClient: FusedLocationProviderClient? = null
     private lateinit var marker: Marker
     /* If the user did not change pinned location, this variable will stay null.
        If the user changed the pinned location, this variable will contain the location address
      */
     private var newlyMarkedAddress: Address? = null
+
 
 
     @SuppressLint("PotentialBehaviorOverride")
@@ -76,6 +83,7 @@ class MapFragment : Fragment() {
         initializeGoogleMap()
         initializeAutoComplete()
         initializeViewModel()
+        setGetMyLocationButtonListener()
         setConfirmLocationButtonListener()
     }
 
@@ -137,6 +145,44 @@ class MapFragment : Fragment() {
                 locationPickerViewModel.setLocation(it)
             }
             activity?.onBackPressed()
+        }
+    }
+
+    private fun setGetMyLocationButtonListener(){
+        getMyLocationFAB.setOnClickListener{
+            askUserForLocation()
+        }
+    }
+
+    private fun askUserForLocation(){
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        if (!isLocationPermissionGranted()){
+            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+        }
+        else {
+            getUserLastKnownLocation()
+        }
+    }
+
+    private fun isLocationPermissionGranted() =
+        (ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED)
+
+    // What happens when users accept or deny accessing their location
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray){
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (isLocationPermissionGranted()){
+                getUserLastKnownLocation()
+            }
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun getUserLastKnownLocation(){
+        fusedLocationProviderClient?.lastLocation?.addOnSuccessListener(requireActivity()) { location ->
+            setLocation(LatLng(location.latitude, location.longitude))
         }
     }
 }
