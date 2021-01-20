@@ -10,11 +10,11 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.sharyan.R
 import com.example.sharyan.Utility
-import kotlinx.android.synthetic.main.fragment_login_sms.*
+import kotlinx.android.synthetic.main.fragment_sms.*
 import kotlinx.android.synthetic.main.login_banner.*
 
 
-class SMSLoginFragment : Fragment() {
+class SMSFragment : Fragment() {
 
     private lateinit var navController: NavController
 
@@ -23,7 +23,7 @@ class SMSLoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_login_sms, container, false)
+        return inflater.inflate(R.layout.fragment_sms, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -55,7 +55,7 @@ class SMSLoginFragment : Fragment() {
 
     private fun displayPhoneNumber(){
         val phoneNumber = requireArguments().get("phoneNumber")
-        enterCodeSentence.text = resources.getString(R.string.enter_login_code, phoneNumber)
+        enterCodeSentence.text = resources.getString(R.string.enter_code, phoneNumber)
     }
 
     private fun setPinListener(){

@@ -13,6 +13,7 @@
     <string name="checking_donating_ability">جاري التأكد من قدرتك على تلبية الطلب</string>
     <string name="choose_location">اختر المكان</string>
     <string name="clear">مسح</string>
+    <string name="confirmation_code">رمز التأكيد</string>
     <string name="confirm_password">تأكيد كلمة السر</string>
     <string name="covid_precautions">إحتياطات كورونا</string>
     <string name="current_location">الموقع الحالي</string>
@@ -21,7 +22,7 @@
     <string name="donations">التبرّعات</string>
     <string name="donation_constraint">يمكنك طلب دم ثلاث مرات فقط خلال اليوم</string>
     <string name="donation_request">طلب تبرّع بالدم</string>%1$s
-    <string name="enter_login_code">\u200F قم بإدخال رمز الدخول المرسل الى \n %1$s</string>
+    <string name="enter_code">\u200F قم بإدخال الرمز المرسل الى \n %1$s</string>
     <string name="enter_login_password">\u200F قم بإدخال كلمة السر الخاصة بالرقم \n %1$s</string>
     <string name="faq">أسئلة متواردة</string>
     <string name="female">أنثي</string>

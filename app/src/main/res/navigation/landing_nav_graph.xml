@@ -19,13 +19,14 @@
             app:enterAnim="@anim/slide_in_right"
             app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
+
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.sharyan.ui.LoginPhoneFragment"
         android:label="LoginFragment" >
         <action
-            android:id="@+id/action_loginFragment_to_SMSLoginFragment"
-            app:destination="@id/SMSLoginFragment"
+            android:id="@+id/action_loginFragment_to_SMSFragment"
+            app:destination="@id/SMSFragment"
             app:enterAnim="@anim/slide_in_right"
             app:popExitAnim="@android:anim/slide_out_right" />
         <action
@@ -33,8 +34,8 @@
             app:destination="@id/loginPasswordFragment"
             app:enterAnim="@anim/slide_in_right"
             app:popExitAnim="@android:anim/slide_out_right" />
-        <argument android:name="phoneNumber" />
     </fragment>
+
     <fragment
         android:id="@+id/registrationFragment"
         android:name="com.example.sharyan.ui.RegistrationFragment"
@@ -42,17 +43,25 @@
         <action
             android:id="@+id/action_registrationFragment_to_mapFragment"
             app:destination="@id/mapFragment" />
+        <action
+            android:id="@+id/action_registrationFragment_to_SMSFragment"
+            app:destination="@id/SMSFragment" />
     </fragment>
+
     <fragment
-        android:id="@+id/SMSLoginFragment"
-        android:name="com.example.sharyan.ui.SMSLoginFragment"
-        android:label="fragment_sms__login"
-        tools:layout="@layout/fragment_login_sms" />
+        android:id="@+id/SMSFragment"
+        android:name="com.example.sharyan.ui.SMSFragment"
+        android:label="fragment_sms"
+        tools:layout="@layout/fragment_sms">
+        <argument android:name="phoneNumber" />
+    </fragment>
+
     <fragment
         android:id="@+id/loginPasswordFragment"
         android:name="com.example.sharyan.ui.PasswordLoginFragment"
         android:label="fragment_login_password"
         tools:layout="@layout/fragment_login_password" />
+
     <fragment
         android:id="@+id/mapFragment"
         android:name="com.example.sharyan.ui.MapFragment"

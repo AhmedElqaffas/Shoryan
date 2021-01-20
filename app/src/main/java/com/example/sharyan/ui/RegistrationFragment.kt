@@ -3,13 +3,14 @@ package com.example.sharyan.ui
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.view.*
 import android.view.ContextMenu.ContextMenuInfo
+import android.widget.EditText
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -66,14 +67,7 @@ class RegistrationFragment : Fragment(){
         }
 
         setAddressText()
-
-        // Adding a click listener for confirmRegistrationButton
-        confirmRegistrationButton.setOnClickListener {
-            startActivity(
-                Intent(activity, MainActivity::class.java)
-                    .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-            )
-        }
+        setConfirmRegistrationButtonListener()
 
         // Destroying activity when the back button is clicked
         registrationBack.setOnClickListener{
@@ -196,4 +190,21 @@ class RegistrationFragment : Fragment(){
             addressEditText.setText(it)
         }
     }
+
+    private fun setConfirmRegistrationButtonListener(){
+        confirmRegistrationButton.setOnClickListener {
+            // true should be replaced with checking if entered data is valid and complete
+            if(true){
+                goToSMSFragment()
+            }
+        }
+    }
+
+    private fun goToSMSFragment(){
+        val phoneNumber = getEditTextValue(registrationPhoneEditText)
+        val phoneNumberBundle = bundleOf("phoneNumber" to phoneNumber)
+        navController.navigate(R.id.action_registrationFragment_to_SMSFragment, phoneNumberBundle )
+    }
+
+    private fun getEditTextValue(editText: EditText):String =  editText.text.toString().trim()
 }

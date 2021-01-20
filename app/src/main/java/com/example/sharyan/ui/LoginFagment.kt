@@ -54,7 +54,7 @@ class LoginPhoneFragment : Fragment(){
         }
 
         loginWithSMSButton.setOnClickListener {
-            goToFragmentIfNumberValid(R.id.action_loginFragment_to_SMSLoginFragment)
+            goToFragmentIfNumberValid(R.id.action_loginFragment_to_SMSFragment)
         }
     }
 
