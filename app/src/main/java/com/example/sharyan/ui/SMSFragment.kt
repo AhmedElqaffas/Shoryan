@@ -60,6 +60,7 @@ class SMSFragment : Fragment() {
 
     private fun setPinListener(){
         verificationCodeInput.setOnPinEnteredListener {
+            verificationCodeInput.clearFocus()
             Toast.makeText(requireContext(), "Entered full", Toast.LENGTH_SHORT).show()
         }
     }

@@ -4,7 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.SMSFragment">
+    tools:context=".ui.SMSFragment"
+    android:focusableInTouchMode="true"
+    android:focusable="true">
 
     <include
         layout="@layout/login_banner"/>
@@ -54,10 +56,10 @@
         android:inputType="number"
         android:maxLength="@integer/code_length"
         android:textIsSelectable="false"
+        app:pinAnimationType="fromBottom"
         android:textSize="20sp"
-        app:pinLineStroke="2dp"
-        app:pinBackgroundIsSquare="true"
-        app:pinLineColors="@color/colorPrimaryDark"
+        app:pinBackgroundDrawable="@drawable/sms_border"
+        app:pinTextBottomPadding="20dp"
         android:layoutDirection="ltr" />
 
     <TextView
