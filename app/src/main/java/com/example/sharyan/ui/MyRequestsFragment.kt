@@ -26,11 +26,7 @@ class MyRequestsFragment : Fragment(), RequestsRecyclerInteraction {
         requestsList = requireArguments().get("requestsIDs") as List<DonationRequest>
 
     }
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_my_requests, container, false)
     }
 
@@ -49,14 +45,6 @@ class MyRequestsFragment : Fragment(), RequestsRecyclerInteraction {
         myRequestsRecycler.adapter = requestsRecyclerAdapter
     }
 
-    private fun instantiateNavController(view: View){
-        navController = Navigation.findNavController(view)
-    }
-
-    private fun setToolbarText(text: String){
-        toolbarText.text = text
-    }
-
     private fun showRequestsDetails(requestsList: List<DonationRequest>){
         requestsRecyclerAdapter.submitList(requestsList)
     }
@@ -67,7 +55,15 @@ class MyRequestsFragment : Fragment(), RequestsRecyclerInteraction {
         myRequestsRecycler.visibility = View.VISIBLE
     }
 
-    override fun onItemClicked(donationRequest: DonationRequest) {
+    private fun instantiateNavController(view: View){
+        navController = Navigation.findNavController(view)
+    }
+
+    private fun setToolbarText(text: String){
+        toolbarText.text = text
+    }
+
+    override fun onRequestCardClicked(donationRequest: DonationRequest) {
         Snackbar.make(myRequestsLayout, "Should Open request details screen", Snackbar.LENGTH_LONG)
             .setAction("حسناً") {
                 // By default, the snackbar will be dismissed

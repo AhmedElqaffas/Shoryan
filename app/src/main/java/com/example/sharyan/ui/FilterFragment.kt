@@ -6,17 +6,16 @@ import android.os.Bundle
 import android.view.*
 import android.widget.LinearLayout
 import android.widget.ToggleButton
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.children
 import com.example.sharyan.R
 import com.example.sharyan.data.CurrentAppUser
-import com.example.sharyan.data.RequestsFilter
+import com.example.sharyan.data.RequestsFiltersContainer
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.android.synthetic.main.fragment_filter.*
 import kotlinx.android.synthetic.main.fragment_filter.design_bottom_sheet
 
-class FilterFragment(private val filterHolder: FilterHolder, private val requestsFilter: RequestsFilter?)
+class FilterFragment(private val filterHolder: FilterHolder, private val requestsFiltersContainer: RequestsFiltersContainer?)
     : BottomSheetDialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -26,19 +25,15 @@ class FilterFragment(private val filterHolder: FilterHolder, private val request
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        val bloodTypeSet = getSelectedBloodTypeFiltersSet()
-        if(bloodTypeSet.isNotEmpty())
-            filterHolder.submitFilters(RequestsFilter(bloodTypeSet))
-        else
-            filterHolder.submitFilters(null)
+        submitFiltersToParent()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setWindowSize()
-        restoreViewsState()
+        restoreViewsState(requestsFiltersContainer)
         clearBloodTypeFilter.setOnClickListener{ clearBloodTypeFilters() }
-        matchingBloodFilterButton.setOnClickListener { chooseCompatibleTypes() }
+        matchingBloodFilterButton.setOnClickListener { chooseCompatibleTypesWithUser() }
     }
 
     private fun setWindowSize(){
@@ -48,20 +43,31 @@ class FilterFragment(private val filterHolder: FilterHolder, private val request
             val display: Display = window!!.windowManager.defaultDisplay
             display.getSize(size)
             val windowHeight = size.y
-            design_bottom_sheet.layoutParams.height = (windowHeight)
+            design_bottom_sheet.layoutParams.height = windowHeight
             val behavior = BottomSheetBehavior.from<View>(design_bottom_sheet)
             behavior.peekHeight = windowHeight
             view?.requestLayout()
         }
     }
 
-    private fun restoreViewsState(){
-        requestsFilter?.bloodType?.let { filtersSet ->
-            bloodTypeFilterLayout.children.forEach { linearLayout ->
-                (linearLayout as LinearLayout).children.forEach {
-                    if(it is ToggleButton && filtersSet.contains(it.text) ){
-                        it.isChecked = true
-                    }
+    /**
+     * The user may have opened this fragment and chosen some filters before, to restore the filters,
+     * an object (requestsFiltersContainer) is used to preserve the filters information.
+     * This method takes a requestsFiltersContainer as a parameter to change the layout of the
+     * fragment according to the filters in the requestsFilter.
+     * @param requestsFiltersContainer An object that encapsulates the filters chosen by the user.
+     */
+    private fun restoreViewsState(requestsFiltersContainer: RequestsFiltersContainer?){
+        requestsFiltersContainer?.let{
+            restoreBloodTypesFilter(it.bloodType)
+        }
+    }
+
+    private fun restoreBloodTypesFilter(bloodTypesFilter: Set<String>) {
+        bloodTypeFilterLayout.children.forEach { linearLayout ->
+            (linearLayout as LinearLayout).children.forEach {
+                if(it is ToggleButton && bloodTypesFilter.contains(it.text) ){
+                    it.isChecked = true
                 }
             }
         }
@@ -89,7 +95,7 @@ class FilterFragment(private val filterHolder: FilterHolder, private val request
         return selectedTypes
     }
 
-    private fun chooseCompatibleTypes(){
+    private fun chooseCompatibleTypesWithUser(){
         val compatibilityTable = mapOf(
                 "O-" to setOf("A-","A+","B-","B+","AB-","AB+","O-","O+"),
                 "O+" to setOf("A+","B+","AB+","O+"),
@@ -108,5 +114,13 @@ class FilterFragment(private val filterHolder: FilterHolder, private val request
                 }
             }
         }
+    }
+
+    private fun submitFiltersToParent(){
+        val bloodTypeSet = getSelectedBloodTypeFiltersSet()
+        if(bloodTypeSet.isNotEmpty())
+            filterHolder.submitFilters(RequestsFiltersContainer(bloodTypeSet))
+        else
+            filterHolder.submitFilters(null)
     }
 }

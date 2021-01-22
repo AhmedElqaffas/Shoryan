@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.location.Address
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,25 +34,23 @@ import kotlinx.coroutines.launch
 
 class MapFragment : Fragment() {
 
+    private val defaultCameraZoom = 15f
+    private val TAG = javaClass.simpleName
     private lateinit var mapInstance: GoogleMap
     private lateinit var locationPickerViewModel: LocationPickerViewModel
     private var fusedLocationProviderClient: FusedLocationProviderClient? = null
     private lateinit var marker: Marker
     /* If the user did not change pinned location, this variable will stay null.
-       If the user changed the pinned location, this variable will contain the location address
+       If the user changed the pinned location, this variable will contain the pin address
      */
     private var newlyMarkedAddress: Address? = null
-
 
 
     @SuppressLint("PotentialBehaviorOverride")
     private val callback = OnMapReadyCallback { googleMap ->
         mapInstance = googleMap
         val initialMarkerPosition = locationPickerViewModel.locationLatLng
-        marker = googleMap.addMarker(MarkerOptions()
-            .position(initialMarkerPosition)
-            .draggable(true)
-        )
+        initializeMapMarker(googleMap, initialMarkerPosition)
         moveCameraToLocation(initialMarkerPosition)
         googleMap.setOnMapClickListener {
             setLocation(it)
@@ -69,6 +68,34 @@ class MapFragment : Fragment() {
             }
         })
     }
+
+    private fun initializeMapMarker(googleMap: GoogleMap, initialMarkerPosition: LatLng){
+        marker = googleMap.addMarker(
+            MarkerOptions()
+                .position(initialMarkerPosition)
+                .draggable(true)
+        )
+    }
+
+    private fun moveCameraToLocation(latLng: LatLng) {
+        mapInstance.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, defaultCameraZoom))
+    }
+
+    private fun setLocation(latLng: LatLng) {
+        lifecycleScope.launch {
+            moveCameraToLocation(latLng)
+            changeMarkerPosition(latLng)
+            newlyMarkedAddress = getChosenLocation(latLng)
+        }
+    }
+
+    private fun changeMarkerPosition(location: LatLng) {
+        marker.position = location
+    }
+
+    private suspend fun getChosenLocation(location: LatLng) =
+        locationPickerViewModel.getAddressFromLatLng(requireActivity(), location)
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -107,7 +134,7 @@ class MapFragment : Fragment() {
             }
 
             override fun onError(status: Status) {
-                println("An error occurred: $status")
+                Log.e(TAG, "An error occurred: $status")
             }
         })
     }
@@ -120,24 +147,6 @@ class MapFragment : Fragment() {
         locationPickerViewModel =
             ViewModelProvider(requireActivity()).get(LocationPickerViewModel::class.java)
     }
-
-    private fun setLocation(latLng: LatLng) =
-        lifecycleScope.launch {
-            moveCameraToLocation(latLng)
-            changeMarkerPosition(latLng)
-            newlyMarkedAddress = getChosenLocation(latLng)
-        }
-
-    private fun moveCameraToLocation(latLng: LatLng) {
-        mapInstance.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
-    }
-
-    private fun changeMarkerPosition(location: LatLng) {
-        marker.position = location
-    }
-
-    private suspend fun getChosenLocation(location: LatLng) =
-        locationPickerViewModel.getAddressFromLatLng(requireActivity(), location)
 
     private fun setConfirmLocationButtonListener() {
         confirmLocationFAB.setOnClickListener {
@@ -165,8 +174,8 @@ class MapFragment : Fragment() {
     }
 
     private fun isLocationPermissionGranted() =
-        (ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED)
+        ( ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
+                        == PackageManager.PERMISSION_GRANTED )
 
     // What happens when users accept or deny accessing their location
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray){

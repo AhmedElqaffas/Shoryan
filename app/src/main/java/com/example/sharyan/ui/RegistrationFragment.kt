@@ -39,12 +39,7 @@ class RegistrationFragment : Fragment(){
         initializeUserLocation()
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?{
         return inflater.inflate(R.layout.fragment_registration, container, false)
     }
 
@@ -69,7 +64,7 @@ class RegistrationFragment : Fragment(){
         setAddressText()
         setConfirmRegistrationButtonListener()
 
-        // Destroying activity when the back button is clicked
+        // Destroying fragment when the back button is clicked
         registrationBack.setOnClickListener{
             navController.popBackStack()
         }

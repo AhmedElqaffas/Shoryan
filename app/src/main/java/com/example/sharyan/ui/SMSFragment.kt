@@ -17,30 +17,39 @@ import kotlinx.android.synthetic.main.login_banner.*
 class SMSFragment : Fragment() {
 
     private lateinit var navController: NavController
+    private var phoneNumber = ""
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_sms, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initializeNavController(view)
+        phoneNumber = requireArguments().get("phoneNumber") as String
         displayPhoneNumber()
         setPinListener()
         loginBack.setOnClickListener { navController.popBackStack() }
     }
 
+    private fun initializeNavController(view: View) {
+        navController = Navigation.findNavController(view)
+    }
+
+    private fun displayPhoneNumber(){
+        enterCodeSentence.text = resources.getString(R.string.enter_code, phoneNumber)
+    }
+
+    private fun setPinListener(){
+        verificationCodeInput.setOnPinEnteredListener {
+            verificationCodeInput.clearFocus()
+            Toast.makeText(requireContext(), "Entered full", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         setupEditTextFocus()
-    }
-
-    private fun initializeNavController(view: View) {
-        navController = Navigation.findNavController(view)
     }
 
     private fun setupEditTextFocus(){
@@ -52,17 +61,4 @@ class SMSFragment : Fragment() {
             }
         }
     }
-
-    private fun displayPhoneNumber(){
-        val phoneNumber = requireArguments().get("phoneNumber")
-        enterCodeSentence.text = resources.getString(R.string.enter_code, phoneNumber)
-    }
-
-    private fun setPinListener(){
-        verificationCodeInput.setOnPinEnteredListener {
-            verificationCodeInput.clearFocus()
-            Toast.makeText(requireContext(), "Entered full", Toast.LENGTH_SHORT).show()
-        }
-    }
-
 }

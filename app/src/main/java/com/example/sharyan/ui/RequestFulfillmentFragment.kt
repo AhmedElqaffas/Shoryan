@@ -55,17 +55,7 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
     private lateinit var mapInstance: GoogleMap
     private var snackbar: Snackbar? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        request = getClickedRequest()
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_request_fulfillment, container, false)
     }
@@ -77,13 +67,37 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        request = getClickedRequest()
         setWindowSize()
         showIndefiniteMessage(resources.getString(R.string.checking_donating_ability))
-        getDonationDetails()
         setupMap()
+        getDonationDetails()
         donateButton.setOnClickListener { startDonation() }
         cancelDonationButton.setOnClickListener { cancelDonation() }
         confirmDonationButton.setOnClickListener { confirmDonation() }
+    }
+
+    private fun getClickedRequest() = requireArguments().getSerializable(ARGUMENT_KEY) as DonationRequest
+
+    private fun setWindowSize(){
+        dialog?.also {
+            val window: Window? = dialog!!.window
+            val size = Point()
+            val display: Display = window!!.windowManager.defaultDisplay
+            display.getSize(size)
+            val windowHeight = size.y
+            design_bottom_sheet.layoutParams.height = (windowHeight)
+            val behavior = BottomSheetBehavior.from<View>(design_bottom_sheet)
+            behavior.peekHeight = windowHeight
+            view?.requestLayout()
+        }
+    }
+
+    private fun showIndefiniteMessage(message: String){
+        snackbar = Snackbar.make(design_bottom_sheet,
+            message,
+            Snackbar.LENGTH_INDEFINITE)
+        snackbar?.show()
     }
 
     private fun setupMap(){
@@ -105,29 +119,18 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
         })
     }
 
-    private fun getClickedRequest(): DonationRequest{
-        return requireArguments().getSerializable(ARGUMENT_KEY) as DonationRequest
-    }
-
-    private fun setWindowSize(){
-        dialog?.also {
-            val window: Window? = dialog!!.window
-            val size = Point()
-            val display: Display = window!!.windowManager.defaultDisplay
-            display.getSize(size)
-            val windowHeight = size.y
-            design_bottom_sheet.layoutParams.height = (windowHeight)
-            val behavior = BottomSheetBehavior.from<View>(design_bottom_sheet)
-            behavior.peekHeight = windowHeight
-            view?.requestLayout()
-        }
-    }
-
     private fun getDonationDetails(){
         if(requestViewModel.isAlreadyDonatingToThisRequest(request.id)){
             showCancelAndConfirmButtons()
         }
         fetchRequestDetails()
+    }
+
+    private fun showCancelAndConfirmButtons(){
+        donateButton.visibility = View.GONE
+        waitingConfirmationSentence.visibility = View.VISIBLE
+        cancelDonationButton.visibility = View.VISIBLE
+        confirmDonationButton.visibility = View.VISIBLE
     }
 
     private fun fetchRequestDetails(){
@@ -142,6 +145,16 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
             }
         }
     }
+
+    private fun showDefiniteMessage(message: String){
+        snackbar = Snackbar.make(design_bottom_sheet,
+            message,
+            Snackbar.LENGTH_LONG)
+            .setAction(R.string.ok){}
+            .setActionTextColor(resources.getColor(R.color.colorAccent))
+        snackbar?.show()
+    }
+
 
     private fun donationDetailsReceived(donationDetails: DonationDetails){
         request = donationDetails.request
@@ -192,46 +205,13 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
         }
     }
 
-    private fun startDonation(){
-        requestViewModel.addUserToDonorsList(request.id).observe(viewLifecycleOwner){
-            if(it.isNullOrEmpty()){
-                showCancelAndConfirmButtons()
-                requestViewModel.setUserPendingRequest(request.id)
-            }
-            else{
-                showDefiniteMessage(it)
-            }
-        }
-    }
-
-    private fun cancelDonation(){
-        suspendButtons(true)
-        requestViewModel.cancelDonation(request.id).observe(viewLifecycleOwner){
-            if(it.isNullOrEmpty()){
-                enableDonation()
-                requestViewModel.removeUserPendingRequest()
-                showDefiniteMessage("تم الغاء التبرّع")
-            }
-            else{
-                showDefiniteMessage(it)
-                suspendButtons(false)
-            }
-        }
-    }
-
-    private fun confirmDonation(){
-        suspendButtons(true)
-        requestViewModel.confirmDonation(request.id).observe(viewLifecycleOwner){
-            if(it.isNullOrEmpty()){
-                requestViewModel.removeUserPendingRequest()
-                showDefiniteMessage("شكراً لتبرّعك")
-                disableDonation()
-            }
-            else{
-                showDefiniteMessage(it)
-                suspendButtons(false)
-            }
-        }
+    private fun enableDonation(){
+        donateButton.visibility = View.VISIBLE
+        donateButton.alpha = 1.0f
+        donateButton.isEnabled = true
+        waitingConfirmationSentence.visibility = View.GONE
+        cancelDonationButton.visibility = View.GONE
+        confirmDonationButton.visibility = View.GONE
     }
 
     private fun disableDonation(){
@@ -243,45 +223,58 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
         confirmDonationButton.visibility = View.GONE
     }
 
-    private fun enableDonation(){
-        donateButton.visibility = View.VISIBLE
-        donateButton.alpha = 1.0f
-        donateButton.isEnabled = true
-        waitingConfirmationSentence.visibility = View.GONE
-        cancelDonationButton.visibility = View.GONE
-        confirmDonationButton.visibility = View.GONE
+    private fun dismissSnackBar(){
+        snackbar?.dismiss()
     }
 
-    private fun showCancelAndConfirmButtons(){
-        donateButton.visibility = View.GONE
-        waitingConfirmationSentence.visibility = View.VISIBLE
-        cancelDonationButton.visibility = View.VISIBLE
-        confirmDonationButton.visibility = View.VISIBLE
+    private fun startDonation(){
+        requestViewModel.addUserToDonorsList(request.id).observe(viewLifecycleOwner){ errorMessage ->
+            if(errorMessage.isNullOrEmpty()){
+                showCancelAndConfirmButtons()
+                requestViewModel.setUserPendingRequest(request.id)
+            }
+            else{
+                showDefiniteMessage(errorMessage)
+            }
+        }
     }
 
+    private fun cancelDonation(){
+        suspendButtons(true)
+        requestViewModel.cancelDonation(request.id).observe(viewLifecycleOwner){ errorMessage ->
+            if(errorMessage.isNullOrEmpty()){
+                enableDonation()
+                requestViewModel.removeUserPendingRequest()
+                showDefiniteMessage("تم الغاء التبرّع")
+            }
+            else{
+                showDefiniteMessage(errorMessage)
+                suspendButtons(false)
+            }
+        }
+    }
+
+    private fun confirmDonation(){
+        suspendButtons(true)
+        requestViewModel.confirmDonation(request.id).observe(viewLifecycleOwner){ errorMessage ->
+            if(errorMessage.isNullOrEmpty()){
+                requestViewModel.removeUserPendingRequest()
+                showDefiniteMessage("شكراً لتبرّعك")
+                disableDonation()
+            }
+            else{
+                showDefiniteMessage(errorMessage)
+                suspendButtons(false)
+            }
+        }
+    }
+
+    /**
+     * Used to disable or enable buttons until a backend query is completed
+     */
     private fun suspendButtons(shouldSuspendButtons: Boolean){
         donateButton.isEnabled = !shouldSuspendButtons
         cancelDonationButton.isEnabled = !shouldSuspendButtons
         confirmDonationButton.isEnabled = !shouldSuspendButtons
-    }
-
-    private fun showIndefiniteMessage(message: String){
-        snackbar = Snackbar.make(design_bottom_sheet,
-            message,
-            Snackbar.LENGTH_INDEFINITE)
-        snackbar?.show()
-    }
-
-    private fun showDefiniteMessage(message: String){
-        snackbar = Snackbar.make(design_bottom_sheet,
-            message,
-            Snackbar.LENGTH_LONG)
-            .setAction(R.string.ok){}
-            .setActionTextColor(resources.getColor(R.color.colorAccent))
-        snackbar?.show()
-    }
-
-    private fun dismissSnackBar(){
-        snackbar?.dismiss()
     }
 }

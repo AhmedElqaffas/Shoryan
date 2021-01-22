@@ -1,13 +1,12 @@
 package com.example.sharyan.ui
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.sharyan.data.CurrentAppUser
 import com.example.sharyan.data.DonationRequest
-import com.example.sharyan.data.RequestsFilter
+import com.example.sharyan.data.RequestsFiltersContainer
 import com.example.sharyan.networking.RetrofitBloodDonationInterface
 import com.example.sharyan.networking.RetrofitClient
 import com.example.sharyan.repos.OngoingRequestsRetriever
@@ -28,9 +27,9 @@ class RequestsViewModel : ViewModel() {
                     val requestsList =
                         OngoingRequestsRetriever.getRequests(bloodDonationAPI, refresh)
                     var filteredList = requestsList
-                    OngoingRequestsRetriever.requestsFilter?.let {
+                    OngoingRequestsRetriever.requestsFiltersContainer?.let {
                         filteredList = requestsList.filter {
-                            OngoingRequestsRetriever.requestsFilter!!.bloodType.contains(it.bloodType)
+                            OngoingRequestsRetriever.requestsFiltersContainer!!.bloodType.contains(it.bloodType)
                         }
                     }
                     requestsListLiveData.postValue(filteredList)
@@ -41,11 +40,11 @@ class RequestsViewModel : ViewModel() {
         return requestsListLiveData
     }
 
-    fun storeFilter(requestsFilter: RequestsFilter?){
-        OngoingRequestsRetriever.requestsFilter = requestsFilter
+    fun storeFilter(requestsFiltersContainer: RequestsFiltersContainer?){
+        OngoingRequestsRetriever.requestsFiltersContainer = requestsFiltersContainer
     }
 
-    fun restoreFilter(): RequestsFilter? = OngoingRequestsRetriever.requestsFilter
+    fun restoreFilter(): RequestsFiltersContainer? = OngoingRequestsRetriever.requestsFiltersContainer
 
     suspend fun updateUserPendingRequest(){
         OngoingRequestsRetriever.updateUserPendingRequest(bloodDonationAPI)
@@ -66,10 +65,5 @@ class RequestsViewModel : ViewModel() {
             activeRequestsList.add(DonationRequest(it))
         }
         return activeRequestsList
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        Log.d("RequestsViewModel", "viewModel is cleared")
     }
 }

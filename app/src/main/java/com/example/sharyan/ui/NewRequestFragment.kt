@@ -23,22 +23,15 @@ import kotlinx.coroutines.*
 class NewRequestFragment : Fragment() {
     private val newRequestViewModel: NewRequestViewModel by navGraphViewModels(R.id.main_nav_graph)
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_new_request, container, false)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?){
         super.onViewCreated(view, savedInstanceState)
-
         setToolbarText(resources.getString(R.string.new_request))
         enableInput()
         checkIfUserCanRequest()
-
     }
 
     private fun checkIfUserCanRequest() {

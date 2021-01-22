@@ -24,11 +24,7 @@ class SplashScreenFragment : Fragment() {
         firstTimeOpened = true
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?{
         return inflater.inflate(R.layout.fragment_splash_screen, container, false)
     }
 
@@ -36,12 +32,8 @@ class SplashScreenFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         instantiateNavController(view)
         openApplicationOrShowSigningOptions()
-        loginButton.setOnClickListener {
-            goToLoginScreen()
-        }
-        registerButton.setOnClickListener {
-            goToRegistrationScreen()
-        }
+        loginButton.setOnClickListener { goToLoginScreen() }
+        registerButton.setOnClickListener { goToRegistrationScreen() }
     }
 
     private fun instantiateNavController(view: View){
@@ -57,13 +49,13 @@ class SplashScreenFragment : Fragment() {
         }
     }
 
+    private fun isUserLoggedIn(): Boolean{
+        return false
+    }
+
     private fun openApplication(){
         startActivity(Intent(activity, MainActivity::class.java))
         activity?.finish()
-    }
-
-    private fun isUserLoggedIn(): Boolean{
-        return false
     }
 
     private fun showSigningOptions() {

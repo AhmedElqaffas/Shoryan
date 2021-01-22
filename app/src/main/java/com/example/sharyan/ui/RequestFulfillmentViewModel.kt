@@ -18,9 +18,7 @@ class RequestFulfillmentViewModel: ViewModel() {
         emit(RequestFulfillmentRepo.getDonationDetails(bloodDonationAPI, requestId))
     }
 
-    fun isAlreadyDonatingToThisRequest(requestId: String): Boolean{
-        return CurrentAppUser.pendingRequestId == requestId
-    }
+    fun isAlreadyDonatingToThisRequest(requestId: String) =  CurrentAppUser.pendingRequestId == requestId
 
     fun addUserToDonorsList(requestId: String) = liveData(Dispatchers.IO){
         emit(RequestFulfillmentRepo.addUserToDonorsList(bloodDonationAPI, requestId))

@@ -7,7 +7,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.core.content.ContextCompat.getSystemService
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_login_phone.*
 
 
 class Utility {
@@ -27,7 +26,7 @@ class Utility {
 
         fun displaySnackbarMessage(layout: View,  message: String, duration : Int){
             Snackbar.make(layout, message, duration)
-                .setAction("حسناً") {
+                .setAction(R.string.ok) {
                     // By default, the snackbar will be dismissed
                 }
                 .show()

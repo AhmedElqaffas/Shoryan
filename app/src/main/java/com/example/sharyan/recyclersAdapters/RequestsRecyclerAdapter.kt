@@ -29,7 +29,7 @@ class RequestsRecyclerAdapter(private val requestsRecyclerInteraction: RequestsR
 
         private fun setClickListener(){
             itemView.setOnClickListener{
-                requestsRecyclerInteraction.onItemClicked(getItem(layoutPosition))
+                requestsRecyclerInteraction.onRequestCardClicked(getItem(layoutPosition))
             }
         }
 

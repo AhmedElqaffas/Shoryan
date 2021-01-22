@@ -31,11 +31,7 @@ class LocationPickerViewModel: ViewModel() {
                  try {
                      address = geocoder.getFromLocation(position.latitude, position.longitude, 1)[0]
                  } catch (e: Exception) {
-                     Toast.makeText(
-                         context,
-                         context.resources.getString(R.string.internet_connection),
-                         Toast.LENGTH_LONG
-                     ).show()
+                     Toast.makeText(context, context.resources.getString(R.string.internet_connection), Toast.LENGTH_LONG).show()
                  }
              }
          }

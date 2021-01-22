@@ -25,16 +25,12 @@ class PasswordLoginFragment : Fragment(), LoadingFragmentHolder {
     private lateinit var navController: NavController
     private lateinit var phoneNumber: String
 
-    private val usersLoginViewModel: UsersLoginViewModel by navGraphViewModels(R.id.landing_nav_graph)
+    private val loginViewModel: LoginViewModel by navGraphViewModels(R.id.landing_nav_graph)
 
     private lateinit var loginProcess: LiveData<UserStateWrapper>
     private lateinit var loginObserver: Observer<UserStateWrapper>
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?{
         return inflater.inflate(R.layout.fragment_login_password, container, false)
     }
 
@@ -42,22 +38,14 @@ class PasswordLoginFragment : Fragment(), LoadingFragmentHolder {
         super.onViewCreated(view, savedInstanceState)
 
         instantiateNavController(view)
-        displayPhoneNumber()
-        initializeLoginObserver()
         phoneNumber = requireArguments().get("phoneNumber").toString()
-
-        loginBack.setOnClickListener {
-            navController.popBackStack()
-        }
-
-        passwordEditText.apply {
-            requestFocus()
-            Utility.showSoftKeyboard(requireActivity(), this)
-            setOnFocusChangeListener { view, _ -> passwordEditTextFocusListener(view) }
-        }
+        displayPhoneNumber()
+        setupPasswordEditText()
         submitPasswordFromKeyboard()
-
+        initializeLoginObserver()
         confirmLoginButton.setOnClickListener { checkLogin() }
+        loginBack.setOnClickListener { navController.popBackStack() }
+
     }
 
     private fun instantiateNavController(view: View){
@@ -65,8 +53,21 @@ class PasswordLoginFragment : Fragment(), LoadingFragmentHolder {
     }
 
     private fun displayPhoneNumber(){
-        val phoneNumber = requireArguments().get("phoneNumber")
         enterPasswordSentence.text = resources.getString(R.string.enter_login_password, phoneNumber)
+    }
+
+    private fun setupPasswordEditText(){
+        passwordEditText.apply {
+            requestFocus()
+            Utility.showSoftKeyboard(requireActivity(), this)
+            setOnFocusChangeListener { view, _ -> passwordEditTextFocusListener(view) }
+        }
+    }
+
+    private fun passwordEditTextFocusListener(view: View){
+        if(!view.hasFocus()) {
+            Utility.hideSoftKeyboard(requireActivity(), view)
+        }
     }
 
     private fun submitPasswordFromKeyboard(){
@@ -78,25 +79,28 @@ class PasswordLoginFragment : Fragment(), LoadingFragmentHolder {
          }
     }
 
-    /**
-     * When the password EditText loses focus, hide keyboard
-     */
-    private fun passwordEditTextFocusListener(view: View){
-        if(!view.hasFocus()) {
-            Utility.hideSoftKeyboard(requireActivity(), view)
-        }
-    }
-
     private fun initializeLoginObserver(){
         loginObserver = Observer<UserStateWrapper> {
             toggleLoggingInIndicator()
             it.user?.let { openMainActivity() }
             it.error?.let { message ->
-                Utility.displaySnackbarMessage(passwordScreenLayout,
-                    message,
-                    Snackbar.LENGTH_LONG)
+                Utility.displaySnackbarMessage(passwordScreenLayout, message, Snackbar.LENGTH_LONG)
             }
         }
+    }
+
+    private fun toggleLoggingInIndicator(){
+        val loadingFragment: DialogFragment? = childFragmentManager.findFragmentByTag("loading") as DialogFragment?
+        if(loadingFragment == null)
+            LoadingFragment(this).show(childFragmentManager, "loading")
+        else
+            loadingFragment.dismiss()
+    }
+
+    private fun openMainActivity(){
+        val intent = Intent(activity, MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
     }
 
     /**
@@ -113,7 +117,6 @@ class PasswordLoginFragment : Fragment(), LoadingFragmentHolder {
                 "من فضلك تأكّد من إدخال كلمة السر",
                 Snackbar.LENGTH_LONG)
         }
-
         else {
             verifyCredentials(phoneNumber, password)
         }
@@ -121,23 +124,8 @@ class PasswordLoginFragment : Fragment(), LoadingFragmentHolder {
 
     private fun verifyCredentials(phoneNumber: String, password: String){
         toggleLoggingInIndicator()
-        loginProcess = usersLoginViewModel.verifyCredentials(phoneNumber, password)
+        loginProcess = loginViewModel.verifyCredentials(phoneNumber, password)
         loginProcess.observe(viewLifecycleOwner, loginObserver)
-
-    }
-
-    private fun toggleLoggingInIndicator(){
-        val loadingFragment: DialogFragment? = childFragmentManager.findFragmentByTag("loading") as DialogFragment?
-        if(loadingFragment == null)
-            LoadingFragment(this).show(childFragmentManager, "loading")
-        else
-            loadingFragment.dismiss()
-    }
-
-    private fun openMainActivity(){
-        val intent = Intent(activity, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-        startActivity(intent)
     }
 
     override fun onLoadingFragmentDismissed() {

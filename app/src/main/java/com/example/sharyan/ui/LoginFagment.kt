@@ -21,11 +21,7 @@ class LoginPhoneFragment : Fragment(){
 
     private lateinit var navController: NavController
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_login_phone, container, false)
     }
@@ -33,17 +29,7 @@ class LoginPhoneFragment : Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         instantiateNavController(view)
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        phoneEditText.apply{
-            requestFocus()
-            Utility.showSoftKeyboard(requireActivity(), this)
-            this.addTextChangedListener { observePhoneText(it) }
-            this.setOnFocusChangeListener { view, _ -> phoneEditTextFocusListener(view) }
-        }
+        setupPhoneEditText()
 
         loginBack.setOnClickListener{
             navController.popBackStack()
@@ -62,9 +48,18 @@ class LoginPhoneFragment : Fragment(){
         navController = Navigation.findNavController(view)
     }
 
+    private fun setupPhoneEditText(){
+        phoneEditText.apply{
+            requestFocus()
+            Utility.showSoftKeyboard(requireActivity(), this)
+            this.addTextChangedListener { observePhoneText(it) }
+            this.setOnFocusChangeListener { view, _ -> phoneEditTextFocusListener(view) }
+        }
+    }
+
     /**
-     * Observes changes in the phone number EditText and close keyboard
-     * when the user inputs their complete full number.
+     * Observes changes in the phone number EditText and closes keyboard
+     * when the user inputs their full number.
      */
     private fun observePhoneText(editable: Editable?) {
         if(isValidMobilePhoneEntered(editable.toString())){
@@ -76,9 +71,11 @@ class LoginPhoneFragment : Fragment(){
         }
     }
 
-    /**
-     * When the phone EditText loses focus, hide keyboard
-     */
+    private fun isValidMobilePhoneEntered(phoneNumber: String): Boolean =
+        phoneNumber.length == resources.getInteger(R.integer.phone_number_length)
+                && phoneNumber.matches(Regex("01[0-9]+"))
+
+
     private fun phoneEditTextFocusListener(view: View){
         if(!view.hasFocus()) {
             Utility.hideSoftKeyboard(requireActivity(), view)
@@ -96,10 +93,6 @@ class LoginPhoneFragment : Fragment(){
                 resources.getString(R.string.phone_format_message), Snackbar.LENGTH_LONG)
         }
     }
-
-    private fun isValidMobilePhoneEntered(phoneNumber: String): Boolean =
-        phoneNumber.length == resources.getInteger(R.integer.phone_number_length)
-            && phoneNumber.matches(Regex("01[0-9]+"))
 
     private fun getEditTextValue(editText: EditText):String =  editText.text.toString().trim()
 }
