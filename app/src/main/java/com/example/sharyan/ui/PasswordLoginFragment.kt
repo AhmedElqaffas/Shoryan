@@ -16,9 +16,9 @@ import androidx.navigation.navGraphViewModels
 import com.example.sharyan.R
 import com.example.sharyan.Utility
 import com.example.sharyan.data.UserStateWrapper
+import com.example.sharyan.databinding.FragmentLoginPasswordBinding
+import com.example.sharyan.databinding.LoginBannerBinding
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_login_password.*
-import kotlinx.android.synthetic.main.login_banner.*
 
 class PasswordLoginFragment : Fragment(), LoadingFragmentHolder {
 
@@ -30,8 +30,20 @@ class PasswordLoginFragment : Fragment(), LoadingFragmentHolder {
     private lateinit var loginProcess: LiveData<UserStateWrapper>
     private lateinit var loginObserver: Observer<UserStateWrapper>
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?{
-        return inflater.inflate(R.layout.fragment_login_password, container, false)
+    private var _binding: FragmentLoginPasswordBinding? = null
+    private val binding get() = _binding!!
+    private var loginBannerBinding: LoginBannerBinding? = null
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentLoginPasswordBinding.inflate(inflater, container, false)
+        loginBannerBinding = binding.passwordLoginBanner
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+        loginBannerBinding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -43,8 +55,8 @@ class PasswordLoginFragment : Fragment(), LoadingFragmentHolder {
         setupPasswordEditText()
         submitPasswordFromKeyboard()
         initializeLoginObserver()
-        confirmLoginButton.setOnClickListener { checkLogin() }
-        loginBack.setOnClickListener { navController.popBackStack() }
+        binding.confirmLoginButton.setOnClickListener { checkLogin() }
+        loginBannerBinding!!.loginBack.setOnClickListener { navController.popBackStack() }
 
     }
 
@@ -53,11 +65,11 @@ class PasswordLoginFragment : Fragment(), LoadingFragmentHolder {
     }
 
     private fun displayPhoneNumber(){
-        enterPasswordSentence.text = resources.getString(R.string.enter_login_password, phoneNumber)
+        binding.enterPasswordSentence.text = resources.getString(R.string.enter_login_password, phoneNumber)
     }
 
     private fun setupPasswordEditText(){
-        passwordEditText.apply {
+        binding.passwordEditText.apply {
             requestFocus()
             Utility.showSoftKeyboard(requireActivity(), this)
             setOnFocusChangeListener { view, _ -> passwordEditTextFocusListener(view) }
@@ -71,9 +83,9 @@ class PasswordLoginFragment : Fragment(), LoadingFragmentHolder {
     }
 
     private fun submitPasswordFromKeyboard(){
-         passwordEditText.setOnEditorActionListener{ _, actionId, _ ->
+        binding.passwordEditText.setOnEditorActionListener{ _, actionId, _ ->
              if(actionId == EditorInfo.IME_ACTION_DONE){
-                 confirmLoginButton.performClick()
+                 binding.confirmLoginButton.performClick()
              }
              false
          }
@@ -84,7 +96,7 @@ class PasswordLoginFragment : Fragment(), LoadingFragmentHolder {
             toggleLoggingInIndicator()
             it.user?.let { openMainActivity() }
             it.error?.let { message ->
-                Utility.displaySnackbarMessage(passwordScreenLayout, message, Snackbar.LENGTH_LONG)
+                Utility.displaySnackbarMessage(binding.passwordScreenLayout, message, Snackbar.LENGTH_LONG)
             }
         }
     }
@@ -111,9 +123,9 @@ class PasswordLoginFragment : Fragment(), LoadingFragmentHolder {
      */
 
     private fun checkLogin() {
-        val password = passwordEditText.text.toString().trim()
+        val password = binding.passwordEditText.text.toString().trim()
         if(password.isEmpty()){
-            Utility.displaySnackbarMessage(passwordScreenLayout,
+            Utility.displaySnackbarMessage(binding.passwordScreenLayout,
                 "من فضلك تأكّد من إدخال كلمة السر",
                 Snackbar.LENGTH_LONG)
         }

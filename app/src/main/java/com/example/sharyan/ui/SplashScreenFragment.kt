@@ -10,8 +10,7 @@ import android.view.animation.AnimationUtils
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.sharyan.R
-import kotlinx.android.synthetic.main.fragment_splash_screen.*
-
+import com.example.sharyan.databinding.FragmentSplashScreenBinding
 
 class SplashScreenFragment : Fragment() {
 
@@ -19,21 +18,30 @@ class SplashScreenFragment : Fragment() {
     // Used to display the animation only when the fragment is first created, otherwise skip animation
     private var firstTimeOpened = false
 
+    private var _binding: FragmentSplashScreenBinding? = null
+    private val binding get() = _binding!!
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentSplashScreenBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         firstTimeOpened = true
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?{
-        return inflater.inflate(R.layout.fragment_splash_screen, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         instantiateNavController(view)
         openApplicationOrShowSigningOptions()
-        loginButton.setOnClickListener { goToLoginScreen() }
-        registerButton.setOnClickListener { goToRegistrationScreen() }
+        binding.loginButton.setOnClickListener { goToLoginScreen() }
+        binding.registerButton.setOnClickListener { goToRegistrationScreen() }
     }
 
     private fun instantiateNavController(view: View){
@@ -77,15 +85,15 @@ class SplashScreenFragment : Fragment() {
     private fun translateLogoUpwards(duration: Long){
         val translateAnim = AnimationUtils.loadAnimation(activity, R.anim.anim_splash_screen)
         translateAnim.duration = duration
-        splashScreenLogo.startAnimation(translateAnim)
+        binding.splashScreenLogo.startAnimation(translateAnim)
     }
 
     /**
      * The buttons are gradually shown to shown to the user by setting the alpha = 1
      */
     private fun showButtons(duration: Long, startDelay: Long){
-        loginButton.animate().alpha(1f).setDuration(duration).setStartDelay(startDelay).start()
-        registerButton.animate().alpha(1f).setDuration(duration).setStartDelay(startDelay).start()
+        binding.loginButton.animate().alpha(1f).setDuration(duration).setStartDelay(startDelay).start()
+        binding.registerButton.animate().alpha(1f).setDuration(duration).setStartDelay(startDelay).start()
     }
 
     private fun goToLoginScreen(){

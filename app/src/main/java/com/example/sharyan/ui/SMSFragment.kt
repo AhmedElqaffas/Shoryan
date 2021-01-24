@@ -10,17 +10,28 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.sharyan.R
 import com.example.sharyan.Utility
-import kotlinx.android.synthetic.main.fragment_sms.*
-import kotlinx.android.synthetic.main.login_banner.*
-
+import com.example.sharyan.databinding.FragmentSmsBinding
+import com.example.sharyan.databinding.LoginBannerBinding
 
 class SMSFragment : Fragment() {
 
     private lateinit var navController: NavController
     private var phoneNumber = ""
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_sms, container, false)
+    private var _binding: FragmentSmsBinding? = null
+    private val binding get() = _binding!!
+    private var loginBannerBinding: LoginBannerBinding? = null
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentSmsBinding.inflate(inflater, container, false)
+        loginBannerBinding = binding.smsLoginBanner
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+        loginBannerBinding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -29,7 +40,7 @@ class SMSFragment : Fragment() {
         phoneNumber = requireArguments().get("phoneNumber") as String
         displayPhoneNumber()
         setPinListener()
-        loginBack.setOnClickListener { navController.popBackStack() }
+        loginBannerBinding!!.loginBack.setOnClickListener { navController.popBackStack() }
     }
 
     private fun initializeNavController(view: View) {
@@ -37,12 +48,12 @@ class SMSFragment : Fragment() {
     }
 
     private fun displayPhoneNumber(){
-        enterCodeSentence.text = resources.getString(R.string.enter_code, phoneNumber)
+        binding.enterCodeSentence.text = resources.getString(R.string.enter_code, phoneNumber)
     }
 
     private fun setPinListener(){
-        verificationCodeInput.setOnPinEnteredListener {
-            verificationCodeInput.clearFocus()
+        binding.verificationCodeInput.setOnPinEnteredListener {
+            binding.verificationCodeInput.clearFocus()
             Toast.makeText(requireContext(), "Entered full", Toast.LENGTH_SHORT).show()
         }
     }
@@ -53,9 +64,9 @@ class SMSFragment : Fragment() {
     }
 
     private fun setupEditTextFocus(){
-        verificationCodeInput.requestFocus()
-        Utility.showSoftKeyboard(context, verificationCodeInput)
-        verificationCodeInput.setOnFocusChangeListener { v, hasFocus ->
+        binding.verificationCodeInput.requestFocus()
+        Utility.showSoftKeyboard(context, binding.verificationCodeInput)
+        binding.verificationCodeInput.setOnFocusChangeListener { v, hasFocus ->
             if(!hasFocus){
                 Utility.hideSoftKeyboard(requireActivity(), v)
             }
