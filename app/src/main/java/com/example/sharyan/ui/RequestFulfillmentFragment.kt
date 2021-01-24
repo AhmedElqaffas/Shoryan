@@ -10,6 +10,7 @@ import com.example.sharyan.R
 import com.example.sharyan.data.DonationAbility
 import com.example.sharyan.data.DonationDetails
 import com.example.sharyan.data.DonationRequest
+import com.example.sharyan.databinding.FragmentRequestFulfillmentBinding
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
@@ -54,10 +55,14 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
     private val requestViewModel: RequestFulfillmentViewModel by viewModels()
     private lateinit var mapInstance: GoogleMap
     private var snackbar: Snackbar? = null
+    private lateinit var binding: FragmentRequestFulfillmentBinding
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_request_fulfillment, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        binding = FragmentRequestFulfillmentBinding.inflate(inflater, container, false)
+        binding.viewmodel = requestViewModel
+        binding.englishArabicConverter = EnglishToArabicConverter()
+        binding.lifecycleOwner = this
+        return binding.root
     }
 
     override fun onDestroyView() {
@@ -120,20 +125,6 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
     }
 
     private fun getDonationDetails(){
-        if(requestViewModel.isAlreadyDonatingToThisRequest(request.id)){
-            showCancelAndConfirmButtons()
-        }
-        fetchRequestDetails()
-    }
-
-    private fun showCancelAndConfirmButtons(){
-        donateButton.visibility = View.GONE
-        waitingConfirmationSentence.visibility = View.VISIBLE
-        cancelDonationButton.visibility = View.VISIBLE
-        confirmDonationButton.visibility = View.VISIBLE
-    }
-
-    private fun fetchRequestDetails(){
         apiCallJob = CoroutineScope(Dispatchers.Main).launch {
             requestViewModel.getDonationDetails(request.id).observe(viewLifecycleOwner){
                 if(it != null){
@@ -158,29 +149,13 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
 
     private fun donationDetailsReceived(donationDetails: DonationDetails){
         request = donationDetails.request
-        displayRequestDetails()
+        requestDetailsLayout.visibility = View.VISIBLE
+        showDonationDisabilityReasonIfExists(donationDetails.donationAbility)
         updateMapLocation()
         disableShimmer()
-        enableOrDisableDonation(donationDetails.donationAbility)
-        dismissSnackBar()
+        snackbar?.dismiss()
     }
 
-    private fun displayRequestDetails(){
-        requestBloodType.text = request.bloodType
-        requesterName.text = request.requester?.name?.getFullName()
-        requestLocation.text = resources.getString(R.string.address_full,
-            request.bloodBank?.name,
-            EnglishToArabicConverter().convertDigits(request.bloodBank?.location?.buildingNumber.toString()),
-            request.bloodBank?.location?.streetName,
-            request.bloodBank?.location?.region,
-            request.bloodBank?.location?.governorate)
-        val remainingBags = request.numberOfBagsRequired!! - request.numberOfBagsFulfilled!!
-        requestBagsRequired.text = resources.getString(R.string.blood_bags,
-            EnglishToArabicConverter().convertDigits(remainingBags.toString()))
-        personsDonatingToRequest.text = resources.getString(R.string.persons_going,
-            EnglishToArabicConverter().convertDigits(request.numberOfComingDonors.toString()))
-        requestDetailsLayout.visibility = View.VISIBLE
-    }
 
     private fun updateMapLocation(){
         mapInstance.apply {
@@ -192,89 +167,43 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
     }
 
     private fun disableShimmer(){
-        requestDetailsShimmer.visibility = View.INVISIBLE
+        binding.requestDetailsShimmer.visibility = View.INVISIBLE
+        binding.requestDetailsShimmer.stopShimmer()
     }
 
-    private fun enableOrDisableDonation(donationAbility: DonationAbility) {
-        if(donationAbility.canUserDonate && !requestViewModel.isAlreadyDonatingToThisRequest(request.id)){
-            enableDonation()
-        }
-        else if(!donationAbility.canUserDonate){
+    private fun showDonationDisabilityReasonIfExists(donationAbility: DonationAbility) {
+        if(!donationAbility.canUserDonate){
             showIndefiniteMessage(donationAbility.reasonForDisability!!)
-            disableDonation()
         }
-    }
-
-    private fun enableDonation(){
-        donateButton.visibility = View.VISIBLE
-        donateButton.alpha = 1.0f
-        donateButton.isEnabled = true
-        waitingConfirmationSentence.visibility = View.GONE
-        cancelDonationButton.visibility = View.GONE
-        confirmDonationButton.visibility = View.GONE
-    }
-
-    private fun disableDonation(){
-        donateButton.visibility = View.VISIBLE
-        donateButton.isEnabled = false
-        donateButton.alpha = 0.5f
-        waitingConfirmationSentence.visibility = View.GONE
-        cancelDonationButton.visibility = View.GONE
-        confirmDonationButton.visibility = View.GONE
-    }
-
-    private fun dismissSnackBar(){
-        snackbar?.dismiss()
     }
 
     private fun startDonation(){
         requestViewModel.addUserToDonorsList(request.id).observe(viewLifecycleOwner){ errorMessage ->
-            if(errorMessage.isNullOrEmpty()){
-                showCancelAndConfirmButtons()
-                requestViewModel.setUserPendingRequest(request.id)
-            }
-            else{
+            if(!errorMessage.isNullOrEmpty()){
                 showDefiniteMessage(errorMessage)
             }
         }
     }
 
     private fun cancelDonation(){
-        suspendButtons(true)
         requestViewModel.cancelDonation(request.id).observe(viewLifecycleOwner){ errorMessage ->
             if(errorMessage.isNullOrEmpty()){
-                enableDonation()
-                requestViewModel.removeUserPendingRequest()
                 showDefiniteMessage("تم الغاء التبرّع")
             }
             else{
                 showDefiniteMessage(errorMessage)
-                suspendButtons(false)
             }
         }
     }
 
     private fun confirmDonation(){
-        suspendButtons(true)
         requestViewModel.confirmDonation(request.id).observe(viewLifecycleOwner){ errorMessage ->
             if(errorMessage.isNullOrEmpty()){
-                requestViewModel.removeUserPendingRequest()
                 showDefiniteMessage("شكراً لتبرّعك")
-                disableDonation()
             }
             else{
                 showDefiniteMessage(errorMessage)
-                suspendButtons(false)
             }
         }
-    }
-
-    /**
-     * Used to disable or enable buttons until a backend query is completed
-     */
-    private fun suspendButtons(shouldSuspendButtons: Boolean){
-        donateButton.isEnabled = !shouldSuspendButtons
-        cancelDonationButton.isEnabled = !shouldSuspendButtons
-        confirmDonationButton.isEnabled = !shouldSuspendButtons
     }
 }

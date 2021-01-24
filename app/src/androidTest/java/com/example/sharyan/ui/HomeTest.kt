@@ -29,7 +29,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4ClassRunner::class)
 class HomeTest {
 
-    // This allows fragments to use by navGraphViewModels()
+    // This allows fragments to use navGraphViewModels()
     private lateinit var navController: TestNavHostController
     private val currentAppUser = CurrentAppUser
     private var home: Home? = null
@@ -99,7 +99,7 @@ class HomeTest {
         try{
             onView(isRoot()).perform(waitForView(R.id.donateButton, 5000))
             assertEquals("User can donate twice",false,true)
-        }catch (e: Exception){
+        }catch (e: Exception) {
             assertEquals(true, true)
         }
     }
