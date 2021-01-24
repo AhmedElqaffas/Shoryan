@@ -28,6 +28,22 @@ class RequestFulfillmentViewModel: ViewModel() {
     // The application is processing a query (contacting backend)
     private val _isInLoadingState = MutableLiveData(true)
     val isInLoadingState: LiveData<Boolean> = _isInLoadingState
+    // The donation details have been loaded
+    private val _areDonationDetailsLoaded = MutableLiveData(false)
+    // The details layout should be visible when the donation details are loaded
+    val donationDetailsLayoutVisibility: LiveData<Int> = Transformations.map(_areDonationDetailsLoaded){
+        when(it){
+            true -> View.VISIBLE
+            false -> View.GONE
+        }
+    }
+    // The shimmer layout should be hidden when the donation details are loaded
+    val shimmerVisibility: LiveData<Int> = Transformations.map(_areDonationDetailsLoaded){
+        when(it){
+            true -> View.GONE
+            false -> View.VISIBLE
+        }
+    }
     // LiveData to observe whether the user is allowed to donate or not, used to control XML views states
     private val _canUserDonate = MutableLiveData(false)
     val canUserDonate: LiveData<Boolean> = _canUserDonate
@@ -85,6 +101,7 @@ class RequestFulfillmentViewModel: ViewModel() {
         _donationDetails.postValue(details)
         emit(details)
         if(details != null){
+            _areDonationDetailsLoaded.postValue(true)
             _isInLoadingState.postValue(false)
             _canUserDonate.postValue(details.donationAbility.canUserDonate)
         }

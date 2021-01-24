@@ -19,7 +19,6 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_request_fulfillment.*
 import kotlinx.android.synthetic.main.fragment_request_fulfillment.design_bottom_sheet
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -77,9 +76,9 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
         showIndefiniteMessage(resources.getString(R.string.checking_donating_ability))
         setupMap()
         getDonationDetails()
-        donateButton.setOnClickListener { startDonation() }
-        cancelDonationButton.setOnClickListener { cancelDonation() }
-        confirmDonationButton.setOnClickListener { confirmDonation() }
+        binding.donateButton.setOnClickListener { startDonation() }
+        binding.cancelDonationButton.setOnClickListener { cancelDonation() }
+        binding.confirmDonationButton.setOnClickListener { confirmDonation() }
     }
 
     private fun getClickedRequest() = requireArguments().getSerializable(ARGUMENT_KEY) as DonationRequest
@@ -116,10 +115,10 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
     }
 
     private fun setMapPaddingWhenLayoutIsReady(){
-        mapFragmentContainer!!.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
+        binding.mapFragmentContainer.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
             override fun onGlobalLayout() {
-                mapFragmentContainer!!.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                mapInstance.setPadding(0, 0, 0, (mapFragmentContainer!!.height/4))
+                binding.mapFragmentContainer.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                mapInstance.setPadding(0, 0, 0, (binding.mapFragmentContainer.height/4))
             }
         })
     }
@@ -149,13 +148,11 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
 
     private fun donationDetailsReceived(donationDetails: DonationDetails){
         request = donationDetails.request
-        requestDetailsLayout.visibility = View.VISIBLE
         showDonationDisabilityReasonIfExists(donationDetails.donationAbility)
         updateMapLocation()
-        disableShimmer()
+        binding.requestDetailsShimmer.stopShimmer()
         snackbar?.dismiss()
     }
-
 
     private fun updateMapLocation(){
         mapInstance.apply {
@@ -164,11 +161,6 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
             moveCamera(CameraUpdateFactory.newLatLng(LatLng(request.bloodBank!!.location.latitude,
                 request.bloodBank!!.location.longitude)))
         }
-    }
-
-    private fun disableShimmer(){
-        binding.requestDetailsShimmer.visibility = View.INVISIBLE
-        binding.requestDetailsShimmer.stopShimmer()
     }
 
     private fun showDonationDisabilityReasonIfExists(donationAbility: DonationAbility) {

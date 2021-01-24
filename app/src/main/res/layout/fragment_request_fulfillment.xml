@@ -21,7 +21,6 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".ui.RequestFulfillmentFragment"
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
             android:id="@+id/design_bottom_sheet">
 
@@ -99,7 +98,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             app:shimmer_auto_start="true"
-                            android:visibility="gone">
+                            android:visibility="@{viewmodel.shimmerVisibility}">
 
                             <include layout="@layout/shimmer_request_details_card" />
                         </com.facebook.shimmer.ShimmerFrameLayout>
@@ -108,7 +107,7 @@
                             android:id="@+id/requestDetailsLayout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:visibility="visible">
+                            android:visibility="@{viewmodel.donationDetailsLayoutVisibility}">
 
                             <TextView
                                 android:id="@+id/requestBloodType"
