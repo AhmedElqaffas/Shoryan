@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.sharyan.BuildConfig
 import com.example.sharyan.R
+import com.example.sharyan.databinding.FragmentMapBinding
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -29,7 +30,6 @@ import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
-import kotlinx.android.synthetic.main.fragment_map.*
 import kotlinx.coroutines.launch
 
 class MapFragment : Fragment() {
@@ -45,6 +45,8 @@ class MapFragment : Fragment() {
      */
     private var newlyMarkedAddress: Address? = null
 
+    private var _binding: FragmentMapBinding? = null
+    private val binding get() = _binding!!
 
     @SuppressLint("PotentialBehaviorOverride")
     private val callback = OnMapReadyCallback { googleMap ->
@@ -97,12 +99,14 @@ class MapFragment : Fragment() {
         locationPickerViewModel.getAddressFromLatLng(requireActivity(), location)
 
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_map, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View{
+        _binding = FragmentMapBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -149,7 +153,7 @@ class MapFragment : Fragment() {
     }
 
     private fun setConfirmLocationButtonListener() {
-        confirmLocationFAB.setOnClickListener {
+        binding.confirmLocationFAB.setOnClickListener {
             newlyMarkedAddress?.let {
                 locationPickerViewModel.setLocation(it)
             }
@@ -158,7 +162,7 @@ class MapFragment : Fragment() {
     }
 
     private fun setGetMyLocationButtonListener(){
-        getMyLocationFAB.setOnClickListener{
+        binding.getMyLocationFAB.setOnClickListener{
             askUserForLocation()
         }
     }

@@ -16,11 +16,10 @@ import com.example.sharyan.R
 import com.example.sharyan.Utility
 import com.example.sharyan.data.DonationRequest
 import com.example.sharyan.data.RequestsFiltersContainer
+import com.example.sharyan.databinding.FragmentHomeBinding
 import com.example.sharyan.recyclersAdapters.RequestsRecyclerAdapter
 import com.example.sharyan.recyclersAdapters.RequestsRecyclerInteraction
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.appbar.toolbarText
-import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.coroutines.*
 
 class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
@@ -36,13 +35,17 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
 
     private var requestsGettingJob: Job = Job()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false)
+    private var _binding: FragmentHomeBinding? = null
+    private val binding get() = _binding!!
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -66,7 +69,7 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
 
     private fun initializeRecyclerViewAdapter(){
         requestsRecyclerAdapter = RequestsRecyclerAdapter(this)
-        requestsRecycler.adapter = requestsRecyclerAdapter
+        binding.requestsRecycler.adapter = requestsRecyclerAdapter
     }
 
     private fun updateUserPendingRequest(){
@@ -97,16 +100,16 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
     }
 
     private fun showRequestsLoadingIndicator(){
-        requestsShimmerContainer.startShimmer()
-        requestsShimmerContainer.visibility = View.VISIBLE
-        requestsRecycler.visibility = View.GONE
+        binding.requestsShimmerContainer.startShimmer()
+        binding.requestsShimmerContainer.visibility = View.VISIBLE
+        binding.requestsRecycler.visibility = View.GONE
     }
 
     private fun hideRequestsLoadingIndicator(){
-        homeSwipeRefresh.isRefreshing = false
-        requestsShimmerContainer.stopShimmer()
-        requestsShimmerContainer.visibility = View.GONE
-        requestsRecycler.visibility = View.VISIBLE
+        binding.homeSwipeRefresh.isRefreshing = false
+        binding.requestsShimmerContainer.stopShimmer()
+        binding.requestsShimmerContainer.visibility = View.GONE
+        binding.requestsRecycler.visibility = View.VISIBLE
     }
 
     override fun onResume(){
@@ -120,22 +123,22 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
     }
 
     private fun setToolbarText(text: String){
-        toolbarText.text = text
+        binding.toolbarText.text = text
     }
 
     private fun setRecyclerViewScrollListener(){
-        requestsRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        binding.requestsRecycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             /* Only enable SwipeRefresh when the recyclerview's first element is visible (when
                the recyclerview reached top) */
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 val firstPos = (recyclerView.layoutManager as LinearLayoutManager)
                     .findFirstCompletelyVisibleItemPosition()
                 if (firstPos > 0) {
-                    homeSwipeRefresh.isEnabled = false
+                    binding.homeSwipeRefresh.isEnabled = false
                 } else {
-                    homeSwipeRefresh.isEnabled = true
+                    binding.homeSwipeRefresh.isEnabled = true
                     if(recyclerView.scrollState == RecyclerView.SCROLL_STATE_DRAGGING)
-                        if(homeSwipeRefresh.isRefreshing)
+                        if(binding.homeSwipeRefresh.isRefreshing)
                             recyclerView.stopScroll()
                 }
             }
@@ -143,14 +146,14 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
     }
 
     private fun setSwipeRefreshListener(){
-        homeSwipeRefresh.setOnRefreshListener{
+        binding.homeSwipeRefresh.setOnRefreshListener{
             resetScrollingToTop()
             getOngoingRequests(true)
         }
     }
 
     private fun setFilterListener(){
-        filter.setOnClickListener {
+        binding.filter.setOnClickListener {
             resetScrollingToTop()
             FilterFragment(this, requestsViewModel.restoreFilter())
                 .show(childFragmentManager, "filterFragment")
@@ -158,12 +161,12 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
     }
 
     private fun resetScrollingToTop(){
-        (requestsRecycler.layoutManager as LinearLayoutManager).scrollToPosition(0)
-        homeAppBar.setExpanded(true)
+        (binding.requestsRecycler.layoutManager as LinearLayoutManager).scrollToPosition(0)
+        binding.homeAppBar.setExpanded(true)
     }
 
     private fun setPendingRequestCardListener(){
-        pendingRequestCard.setOnClickListener {
+        binding.pendingRequestCard.setOnClickListener {
             val userPendingRequest = requestsViewModel.getUserPendingRequest()
             if(userPendingRequest == null){
                 showMessage("ليس لديك طلبات مُعلّقة")
@@ -174,7 +177,7 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
     }
 
     private fun setMyRequestsCardListener(){
-        myRequestsCard.setOnClickListener {
+        binding.myRequestsCard.setOnClickListener {
             val myRequests = requestsViewModel.getUserActiveRequests()
             if(myRequests.isEmpty())
                 showMessage("ليس لديك طلبات حالياً")
@@ -184,7 +187,7 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
     }
 
     private fun showMessage(message: String) =
-        Utility.displaySnackbarMessage(homeParentLayout, message, Snackbar.LENGTH_LONG)
+        Utility.displaySnackbarMessage(binding.homeParentLayout, message, Snackbar.LENGTH_LONG)
 
     private fun openDonationFragment(donationRequest: DonationRequest){
         val fragment = RequestFulfillmentFragment.newInstance(donationRequest)

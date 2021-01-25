@@ -7,20 +7,27 @@ import android.view.*
 import android.widget.LinearLayout
 import android.widget.ToggleButton
 import androidx.core.view.children
-import com.example.sharyan.R
 import com.example.sharyan.data.CurrentAppUser
 import com.example.sharyan.data.RequestsFiltersContainer
+import com.example.sharyan.databinding.FragmentFilterBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kotlinx.android.synthetic.main.fragment_filter.*
 import kotlinx.android.synthetic.main.fragment_filter.design_bottom_sheet
 
 class FilterFragment(private val filterHolder: FilterHolder, private val requestsFiltersContainer: RequestsFiltersContainer?)
     : BottomSheetDialogFragment() {
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_filter, container, false)
+    private var _binding: FragmentFilterBinding? = null
+    private val binding get() = _binding!!
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentFilterBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onDismiss(dialog: DialogInterface) {
@@ -32,8 +39,8 @@ class FilterFragment(private val filterHolder: FilterHolder, private val request
         super.onViewCreated(view, savedInstanceState)
         setWindowSize()
         restoreViewsState(requestsFiltersContainer)
-        clearBloodTypeFilter.setOnClickListener{ clearBloodTypeFilters() }
-        matchingBloodFilterButton.setOnClickListener { chooseCompatibleTypesWithUser() }
+        binding.clearBloodTypeFilter.setOnClickListener{ clearBloodTypeFilters() }
+        binding.matchingBloodFilterButton.setOnClickListener { chooseCompatibleTypesWithUser() }
     }
 
     private fun setWindowSize(){
@@ -64,7 +71,7 @@ class FilterFragment(private val filterHolder: FilterHolder, private val request
     }
 
     private fun restoreBloodTypesFilter(bloodTypesFilter: Set<String>) {
-        bloodTypeFilterLayout.children.forEach { linearLayout ->
+        binding.bloodTypeFilterLayout.children.forEach { linearLayout ->
             (linearLayout as LinearLayout).children.forEach {
                 if(it is ToggleButton && bloodTypesFilter.contains(it.text) ){
                     it.isChecked = true
@@ -74,7 +81,7 @@ class FilterFragment(private val filterHolder: FilterHolder, private val request
     }
 
     private fun clearBloodTypeFilters(){
-        bloodTypeFilterLayout.children.forEach { linearLayout ->
+        binding.bloodTypeFilterLayout.children.forEach { linearLayout ->
             (linearLayout as LinearLayout).children.forEach {
                 if(it is ToggleButton){
                     it.isChecked = false
@@ -85,7 +92,7 @@ class FilterFragment(private val filterHolder: FilterHolder, private val request
 
     private fun getSelectedBloodTypeFiltersSet(): MutableSet<String>{
         val selectedTypes = mutableSetOf<String>()
-        bloodTypeFilterLayout.children.forEach { linearLayout ->
+        binding.bloodTypeFilterLayout.children.forEach { linearLayout ->
             (linearLayout as LinearLayout).children.forEach {
                 if(it is ToggleButton && it.isChecked){
                     selectedTypes.add(it.text.toString())
@@ -107,7 +114,7 @@ class FilterFragment(private val filterHolder: FilterHolder, private val request
                 "AB+" to setOf("AB+")
         )
         val compatibleTypes = compatibilityTable[CurrentAppUser.bloodType!!]
-        bloodTypeFilterLayout.children.forEach { linearLayout ->
+        binding.bloodTypeFilterLayout.children.forEach { linearLayout ->
             (linearLayout as LinearLayout).children.forEach {
                 if(it is ToggleButton){
                     it.isChecked = compatibleTypes!!.contains(it.text)

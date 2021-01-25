@@ -17,10 +17,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.sharyan.R
+import com.example.sharyan.databinding.FragmentRegistrationBinding
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
-import kotlinx.android.synthetic.main.fragment_registration.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -33,31 +33,40 @@ class RegistrationFragment : Fragment(){
     private lateinit var locationPickerViewModel: LocationPickerViewModel
     private var fusedLocationProviderClient: FusedLocationProviderClient? = null
 
+    private var _binding: FragmentRegistrationBinding? = null
+    private val binding get() = _binding!!
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentRegistrationBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initializeLocationPickerViewModel()
         initializeUserLocation()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?{
-        return inflater.inflate(R.layout.fragment_registration, container, false)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         instantiateNavController(view)
         // Setting a click listener for the birthDatePicker button
-        birthDatePicker.setOnClickListener{
+        binding.birthDatePicker.setOnClickListener{
             pickBirthDate()
         }
 
         // Registering the bloodTypePicker TextView for Context Menu
-        registerForContextMenu(bloodTypePicker)
-        bloodTypePicker.setOnClickListener {
+        registerForContextMenu(binding.bloodTypePicker)
+        binding.bloodTypePicker.setOnClickListener {
             it.showContextMenu()
         }
 
-        openMapButton.setOnClickListener {
+        binding.openMapButton.setOnClickListener {
             openLocationPicker()
         }
 
@@ -65,7 +74,7 @@ class RegistrationFragment : Fragment(){
         setConfirmRegistrationButtonListener()
 
         // Destroying fragment when the back button is clicked
-        registrationBack.setOnClickListener{
+        binding.registrationBack.setOnClickListener{
             navController.popBackStack()
         }
     }
@@ -150,7 +159,7 @@ class RegistrationFragment : Fragment(){
             requireActivity(),
             { view, year, monthOfYear, dayOfMonth ->
                 // Display Selected date in the Button's text
-                birthDatePicker.text = "$dayOfMonth/$monthOfYear/$year"
+                binding.birthDatePicker.text = "$dayOfMonth/$monthOfYear/$year"
             },
             currentYear,
             currentMonth,
@@ -172,7 +181,7 @@ class RegistrationFragment : Fragment(){
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
-        bloodTypePicker.text = item.title
+        binding.bloodTypePicker.text = item.title
         return true
     }
 
@@ -182,12 +191,12 @@ class RegistrationFragment : Fragment(){
 
     private fun setAddressText(){
         locationPickerViewModel.locationStringLiveData.observe(viewLifecycleOwner){
-            addressEditText.setText(it)
+            binding.addressEditText.setText(it)
         }
     }
 
     private fun setConfirmRegistrationButtonListener(){
-        confirmRegistrationButton.setOnClickListener {
+        binding.confirmRegistrationButton.setOnClickListener {
             // true should be replaced with checking if entered data is valid and complete
             if(true){
                 goToSMSFragment()
@@ -196,7 +205,7 @@ class RegistrationFragment : Fragment(){
     }
 
     private fun goToSMSFragment(){
-        val phoneNumber = getEditTextValue(registrationPhoneEditText)
+        val phoneNumber = getEditTextValue(binding.registrationPhoneEditText)
         val phoneNumberBundle = bundleOf("phoneNumber" to phoneNumber)
         navController.navigate(R.id.action_registrationFragment_to_SMSFragment, phoneNumberBundle )
     }
