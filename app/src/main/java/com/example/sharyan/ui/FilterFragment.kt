@@ -7,6 +7,7 @@ import android.view.*
 import android.widget.LinearLayout
 import android.widget.ToggleButton
 import androidx.core.view.children
+import com.example.sharyan.data.BloodType
 import com.example.sharyan.data.CurrentAppUser
 import com.example.sharyan.data.RequestsFiltersContainer
 import com.example.sharyan.databinding.FragmentFilterBinding
@@ -70,10 +71,10 @@ class FilterFragment(private val filterHolder: FilterHolder, private val request
         }
     }
 
-    private fun restoreBloodTypesFilter(bloodTypesFilter: Set<String>) {
+    private fun restoreBloodTypesFilter(bloodTypesFilter: Set<BloodType>) {
         binding.bloodTypeFilterLayout.children.forEach { linearLayout ->
             (linearLayout as LinearLayout).children.forEach {
-                if(it is ToggleButton && bloodTypesFilter.contains(it.text) ){
+                if(it is ToggleButton && bloodTypesFilter.contains(BloodType.fromString(it.text.toString())) ){
                     it.isChecked = true
                 }
             }
@@ -90,12 +91,13 @@ class FilterFragment(private val filterHolder: FilterHolder, private val request
         }
     }
 
-    private fun getSelectedBloodTypeFiltersSet(): MutableSet<String>{
-        val selectedTypes = mutableSetOf<String>()
+    private fun getSelectedBloodTypeFiltersSet(): MutableSet<BloodType>{
+        val selectedTypes = mutableSetOf<BloodType>()
         binding.bloodTypeFilterLayout.children.forEach { linearLayout ->
             (linearLayout as LinearLayout).children.forEach {
                 if(it is ToggleButton && it.isChecked){
-                    selectedTypes.add(it.text.toString())
+                    println(it.text.toString())
+                    selectedTypes.add(BloodType.fromString(it.text.toString()))
                 }
             }
         }
@@ -103,21 +105,11 @@ class FilterFragment(private val filterHolder: FilterHolder, private val request
     }
 
     private fun chooseCompatibleTypesWithUser(){
-        val compatibilityTable = mapOf(
-                "O-" to setOf("A-","A+","B-","B+","AB-","AB+","O-","O+"),
-                "O+" to setOf("A+","B+","AB+","O+"),
-                "B-" to setOf("B-","B+","AB-","AB+"),
-                "B+" to setOf("B+","AB+"),
-                "A-" to setOf("A-","A+","AB-","AB+"),
-                "A+" to setOf("A+","AB+"),
-                "AB-" to setOf("AB-","AB+"),
-                "AB+" to setOf("AB+")
-        )
-        val compatibleTypes = compatibilityTable[CurrentAppUser.bloodType!!]
+        val compatibleTypes = CurrentAppUser.bloodType!!.getCompatibleTypes()
         binding.bloodTypeFilterLayout.children.forEach { linearLayout ->
             (linearLayout as LinearLayout).children.forEach {
                 if(it is ToggleButton){
-                    it.isChecked = compatibleTypes!!.contains(it.text)
+                    it.isChecked = compatibleTypes.contains(BloodType.fromString(it.text.toString()))
                 }
             }
         }

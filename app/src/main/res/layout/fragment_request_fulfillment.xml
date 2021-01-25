@@ -124,7 +124,7 @@
                                 app:layout_constraintLeft_toLeftOf="parent"
                                 app:layout_constraintRight_toRightOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
-                                tools:text="@{viewmodel.donationDetails.request.bloodType}" />
+                                tools:text="@{viewmodel.donationDetails.request.bloodType.bloodType}" />
 
                             <TextView
                                 android:id="@+id/requesterName"

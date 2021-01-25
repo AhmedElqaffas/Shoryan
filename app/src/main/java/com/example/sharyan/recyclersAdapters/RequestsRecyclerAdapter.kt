@@ -34,7 +34,7 @@ class RequestsRecyclerAdapter(private val requestsRecyclerInteraction: RequestsR
         }
 
         fun bindRequestData(request: DonationRequest){
-            itemView.request_item_blood_type.text = request.bloodType
+            itemView.request_item_blood_type.text = request.bloodType?.bloodType
             itemView.request_item_name.text = request.requester?.name?.firstName
             itemView.request_item_location.text = request.bloodBank?.name + " - " +
                     request.bloodBank?.location?.region
