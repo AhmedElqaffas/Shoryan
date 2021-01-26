@@ -178,7 +178,7 @@
                                 app:drawableEndCompat="@drawable/ic_blood_drop"
                                 app:layout_constraintRight_toRightOf="@id/pinIcon"
                                 app:layout_constraintTop_toBottomOf="@id/requestLocation"
-                                android:text="@{@string/blood_bags( englishArabicConverter.convertDigits(Integer.toString(viewmodel.donationDetails.request.numberOfBagsRequired -viewmodel.donationDetails.request.numberOfBagsFulfilled)))}" />
+                                android:text="@{@string/blood_bags(viewmodel.numberOfRemainingBags)}" />
 
                             <TextView
                                 android:id="@+id/personsDonatingToRequest"

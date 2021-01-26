@@ -2,6 +2,7 @@ package com.example.sharyan.ui
 
 import android.view.View
 import androidx.lifecycle.*
+import com.example.sharyan.EnglishToArabicConverter
 import com.example.sharyan.data.CurrentAppUser
 import com.example.sharyan.data.DonationDetails
 import com.example.sharyan.networking.RetrofitBloodDonationInterface
@@ -59,6 +60,16 @@ class RequestFulfillmentViewModel: ViewModel() {
             true -> 1f
             false -> 0.5f
         }
+    }
+
+    // Instead of the xml view observing the donationDetails liveData and performing subtraction itself,
+    // this view should observe this liveData which simplifies the xml
+    val numberOfRemainingBags: LiveData<String> = Transformations.map(donationDetails){
+        EnglishToArabicConverter().convertDigits(
+            donationDetails.value?.request?.numberOfBagsRequired
+                ?.minus(donationDetails.value?.request?.numberOfBagsFulfilled!!)
+            .toString()
+        )
     }
 
     init {
@@ -140,7 +151,6 @@ class RequestFulfillmentViewModel: ViewModel() {
     private fun setUserPendingRequest(requestId: String?){
         currentUserPendingRequest.postValue(requestId)
         CurrentAppUser.pendingRequestId = requestId
-        println("THIS SHOULD BE NULL"+CurrentAppUser.pendingRequestId)
     }
 
     private fun removeUserPendingRequest(hasDonated: Boolean){
