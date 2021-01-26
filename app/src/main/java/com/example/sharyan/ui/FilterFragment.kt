@@ -9,14 +9,39 @@ import android.widget.ToggleButton
 import androidx.core.view.children
 import com.example.sharyan.data.BloodType
 import com.example.sharyan.data.CurrentAppUser
+import com.example.sharyan.data.DonationRequest
 import com.example.sharyan.data.RequestsFiltersContainer
 import com.example.sharyan.databinding.FragmentFilterBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.android.synthetic.main.fragment_filter.design_bottom_sheet
 
-class FilterFragment(private val filterHolder: FilterHolder, private val requestsFiltersContainer: RequestsFiltersContainer?)
+class FilterFragment
     : BottomSheetDialogFragment() {
+
+    companion object {
+
+        const val FILTERS_OBJECT = "filters"
+
+        /**
+         * Use this factory method to create a new instance of
+         * this fragment using the provided parameters.
+         *
+         * @param requestsFiltersContainer - An object encapsulating the filters used in this fragment
+         * @return A new instance of fragment FilterFragment.
+         */
+
+        @JvmStatic
+        fun newInstance(requestsFiltersContainer: RequestsFiltersContainer?) =
+            FilterFragment().apply {
+                arguments = Bundle().apply {
+                    putSerializable(FILTERS_OBJECT, requestsFiltersContainer)
+                }
+            }
+    }
+
+    private lateinit var filterHolder: FilterHolder
+    private var requestsFiltersContainer: RequestsFiltersContainer? = null
 
     private var _binding: FragmentFilterBinding? = null
     private val binding get() = _binding!!
@@ -39,6 +64,7 @@ class FilterFragment(private val filterHolder: FilterHolder, private val request
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setWindowSize()
+        getFragmentArguments()
         restoreViewsState(requestsFiltersContainer)
         binding.clearBloodTypeFilter.setOnClickListener{ clearBloodTypeFilters() }
         binding.matchingBloodFilterButton.setOnClickListener { chooseCompatibleTypesWithUser() }
@@ -56,6 +82,11 @@ class FilterFragment(private val filterHolder: FilterHolder, private val request
             behavior.peekHeight = windowHeight
             view?.requestLayout()
         }
+    }
+
+    private fun getFragmentArguments(){
+        filterHolder = parentFragment as FilterHolder
+        requestsFiltersContainer = requireArguments().getSerializable(FILTERS_OBJECT) as RequestsFiltersContainer?
     }
 
     /**
@@ -96,7 +127,6 @@ class FilterFragment(private val filterHolder: FilterHolder, private val request
         binding.bloodTypeFilterLayout.children.forEach { linearLayout ->
             (linearLayout as LinearLayout).children.forEach {
                 if(it is ToggleButton && it.isChecked){
-                    println(it.text.toString())
                     selectedTypes.add(BloodType.fromString(it.text.toString()))
                 }
             }

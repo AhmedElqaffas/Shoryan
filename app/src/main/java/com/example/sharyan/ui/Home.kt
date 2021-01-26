@@ -51,20 +51,15 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         instantiateNavController(view)
-    }
-
-    private fun instantiateNavController(view: View){
-        navController = Navigation.findNavController(view)
-    }
-
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
         initializeRecyclerViewAdapter()
         // Getting ongoingRequests, pending request, my requests,  all in parallel
         updateUserPendingRequest()
         updateMyRequestsList()
         getOngoingRequests()
+    }
+
+    private fun instantiateNavController(view: View){
+        navController = Navigation.findNavController(view)
     }
 
     private fun initializeRecyclerViewAdapter(){
@@ -155,7 +150,7 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
     private fun setFilterListener(){
         binding.filter.setOnClickListener {
             resetScrollingToTop()
-            FilterFragment(this, requestsViewModel.restoreFilter())
+            FilterFragment.newInstance(requestsViewModel.restoreFilter())
                 .show(childFragmentManager, "filterFragment")
         }
     }
