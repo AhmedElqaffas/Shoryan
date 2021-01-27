@@ -4,6 +4,7 @@ import android.graphics.Point
 import android.os.Bundle
 import android.view.*
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.viewModels
 import com.example.sharyan.EnglishToArabicConverter
 import com.example.sharyan.R
@@ -98,9 +99,8 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
     }
 
     private fun showIndefiniteMessage(message: String){
-        snackbar = Snackbar.make(design_bottom_sheet,
-            message,
-            Snackbar.LENGTH_INDEFINITE)
+        snackbar = Snackbar.make(design_bottom_sheet, message, Snackbar.LENGTH_INDEFINITE)
+        ViewCompat.setLayoutDirection(snackbar!!.view, ViewCompat.LAYOUT_DIRECTION_RTL)
         snackbar?.show()
     }
 
@@ -142,6 +142,7 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
             Snackbar.LENGTH_LONG)
             .setAction(R.string.ok){}
             .setActionTextColor(resources.getColor(R.color.colorAccent))
+        ViewCompat.setLayoutDirection(snackbar!!.view, ViewCompat.LAYOUT_DIRECTION_RTL)
         snackbar?.show()
     }
 

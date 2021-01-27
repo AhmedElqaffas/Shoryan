@@ -6,6 +6,7 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.view.ViewCompat
 import com.google.android.material.snackbar.Snackbar
 
 
@@ -25,11 +26,12 @@ class Utility {
         }
 
         fun displaySnackbarMessage(layout: View,  message: String, duration : Int){
-            Snackbar.make(layout, message, duration)
+            val snackbar =  Snackbar.make(layout, message, duration)
                 .setAction(R.string.ok) {
                     // By default, the snackbar will be dismissed
                 }
-                .show()
+            ViewCompat.setLayoutDirection(snackbar.view, ViewCompat.LAYOUT_DIRECTION_RTL)
+            snackbar.show()
         }
     }
 }
