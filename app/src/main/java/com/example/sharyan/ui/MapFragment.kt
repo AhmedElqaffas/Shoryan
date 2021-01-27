@@ -4,11 +4,13 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.location.Address
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -194,8 +196,13 @@ class MapFragment : Fragment() {
 
     @SuppressLint("MissingPermission")
     private fun getUserLastKnownLocation(){
-        fusedLocationProviderClient?.lastLocation?.addOnSuccessListener(requireActivity()) { location ->
-            setLocation(LatLng(location.latitude, location.longitude))
+        fusedLocationProviderClient?.lastLocation?.addOnSuccessListener(requireActivity()) { location: Location? ->
+            if(location != null){
+                setLocation(LatLng(location.latitude, location.longitude))
+            }
+            else{
+                Toast.makeText(requireContext(), R.string.location_failed, Toast.LENGTH_LONG).show()
+            }
         }
     }
 }

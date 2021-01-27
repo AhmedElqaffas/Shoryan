@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.view.*
 import android.view.ContextMenu.ContextMenuInfo
 import android.widget.EditText
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -18,7 +19,9 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.sharyan.R
 import com.example.sharyan.databinding.FragmentRegistrationBinding
+import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.Dispatchers
@@ -33,10 +36,15 @@ class RegistrationFragment : Fragment(){
     private lateinit var locationPickerViewModel: LocationPickerViewModel
     private var fusedLocationProviderClient: FusedLocationProviderClient? = null
 
+
     private var _binding: FragmentRegistrationBinding? = null
     private val binding get() = _binding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = FragmentRegistrationBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -97,7 +105,9 @@ class RegistrationFragment : Fragment(){
     private fun isNoLocationAlreadyStored() = locationPickerViewModel.getCurrentSavedAddress().isEmpty()
 
     private fun askUserForLocation(){
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(
+            requireActivity()
+        )
         if (!isLocationPermissionGranted()){
             requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
         }
@@ -107,11 +117,18 @@ class RegistrationFragment : Fragment(){
     }
 
     private fun isLocationPermissionGranted() =
-        (ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
+        (ContextCompat.checkSelfPermission(
+            requireActivity(),
+            Manifest.permission.ACCESS_FINE_LOCATION
+        )
             == PackageManager.PERMISSION_GRANTED)
 
     // What happens when users accept or deny accessing their location
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray){
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ){
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
@@ -123,8 +140,13 @@ class RegistrationFragment : Fragment(){
 
     @SuppressLint("MissingPermission")
     private fun getUserLastKnownLocation(){
-        fusedLocationProviderClient?.lastLocation?.addOnSuccessListener(requireActivity()) { location ->
-            getUserAddressFromLocation(location)
+        fusedLocationProviderClient?.lastLocation?.addOnSuccessListener(requireActivity()) { location: Location? ->
+            if(location != null){
+                getUserAddressFromLocation(location)
+            }
+            else{
+                Toast.makeText(requireContext(), R.string.location_failed, Toast.LENGTH_LONG).show()
+            }
         }
     }
 
@@ -138,9 +160,16 @@ class RegistrationFragment : Fragment(){
         locationPickerViewModel.locationLatLng = locationLatLng
         lifecycleScope.launch {
             withContext(Dispatchers.IO){
-                val address = locationPickerViewModel.getAddressFromLatLng(requireActivity(), locationLatLng)
+                val address = locationPickerViewModel.getAddressFromLatLng(
+                    requireActivity(),
+                    locationLatLng
+                )
                 address?.let {
-                    locationPickerViewModel.locationStringLiveData.postValue(address.getAddressLine(0))
+                    locationPickerViewModel.locationStringLiveData.postValue(
+                        address.getAddressLine(
+                            0
+                        )
+                    )
                 }
             }
         }
@@ -207,7 +236,7 @@ class RegistrationFragment : Fragment(){
     private fun goToSMSFragment(){
         val phoneNumber = getEditTextValue(binding.registrationPhoneEditText)
         val phoneNumberBundle = bundleOf("phoneNumber" to phoneNumber)
-        navController.navigate(R.id.action_registrationFragment_to_SMSFragment, phoneNumberBundle )
+        navController.navigate(R.id.action_registrationFragment_to_SMSFragment, phoneNumberBundle)
     }
 
     private fun getEditTextValue(editText: EditText):String =  editText.text.toString().trim()

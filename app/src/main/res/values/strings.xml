@@ -38,6 +38,7 @@
     <string name="internet_connection">تأكّد من اتصالك بالإنترنت</string>
     <string name="i_donated">لقد تبرّعت</string>
     <string name="last_name">الاسم الأخير</string>
+    <string name="location_failed">لم نستطع تحديد مكانك</string>
     <string name="login">تسجيل دخول</string>
     <string name="login_code">رمز الدخول</string>
     <string name="login_with_password">الدخول بكلمة السر</string>
