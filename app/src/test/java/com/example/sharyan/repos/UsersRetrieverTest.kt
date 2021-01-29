@@ -3,7 +3,7 @@ package com.example.sharyan.repos
 import com.example.sharyan.data.BloodType
 import com.example.sharyan.data.Name
 import com.example.sharyan.data.User
-import com.example.sharyan.data.UserStateWrapper
+import com.example.sharyan.data.LoginResponse
 import org.junit.Test
 import org.junit.Assert.*
 import org.mockito.Mockito.*
@@ -20,12 +20,12 @@ class UsersRetrieverTest {
     @Spy
     lateinit var usersRetriever: UsersRetriever
 
-    private var correctUserWrapper = UserStateWrapper(
+    private var correctUserWrapper = LoginResponse(
         User("a", Name("Ahmed", "Mohamed"), "1097049699", "pass1", BloodType.ANegative),
         null
     )
 
-    var incorrectUserWrapper = UserStateWrapper(
+    var incorrectUserWrapper = LoginResponse(
         null,
         "خطأ في رقم الهاتف او كلمة السر"
     )
