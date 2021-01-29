@@ -28,7 +28,7 @@ class MyRequestsFragment : Fragment(), RequestsRecyclerInteraction {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestsList = requireArguments().get("requestsIDs") as List<DonationRequest>
+        requestsList = requireArguments().get("requests") as List<DonationRequest>
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {

@@ -190,7 +190,7 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
     }
 
     private fun openMyRequestsFragment(myRequests: List<DonationRequest>) {
-        val requests = bundleOf("requestsIDs" to myRequests)
+        val requests = bundleOf("requests" to myRequests)
         navController.navigate(R.id.action_home_to_myRequestsFragment, requests)
     }
 

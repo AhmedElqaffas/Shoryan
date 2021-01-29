@@ -54,7 +54,7 @@ object OngoingRequestsRetriever {
 
     suspend fun updateMyActiveRequestsList(bloodDonationAPI: RetrofitBloodDonationInterface){
         try{
-            CurrentAppUser.myRequestsIDs = bloodDonationAPI.getUserActiveRequests(CurrentAppUser.id!!)
+            CurrentAppUser.myActiveRequests = bloodDonationAPI.getUserActiveRequests(CurrentAppUser.id!!)
                 .activeRequests.toMutableList()
         }catch (e: Exception){
             Log.e("MyActiveRequestsAPICall", "Couldn't get requests - " + e.message)

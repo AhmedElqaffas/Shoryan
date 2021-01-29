@@ -15,7 +15,7 @@ import androidx.navigation.Navigation
 import androidx.navigation.navGraphViewModels
 import com.example.sharyan.R
 import com.example.sharyan.Utility
-import com.example.sharyan.data.UserStateWrapper
+import com.example.sharyan.data.LoginResponse
 import com.example.sharyan.databinding.FragmentLoginPasswordBinding
 import com.example.sharyan.databinding.LoginBannerBinding
 import com.google.android.material.snackbar.Snackbar
@@ -27,8 +27,8 @@ class PasswordLoginFragment : Fragment(), LoadingFragmentHolder {
 
     private val loginViewModel: LoginViewModel by navGraphViewModels(R.id.landing_nav_graph)
 
-    private lateinit var loginProcess: LiveData<UserStateWrapper>
-    private lateinit var loginObserver: Observer<UserStateWrapper>
+    private lateinit var loginProcess: LiveData<LoginResponse>
+    private lateinit var loginObserver: Observer<LoginResponse>
 
     private var _binding: FragmentLoginPasswordBinding? = null
     private val binding get() = _binding!!
@@ -92,7 +92,7 @@ class PasswordLoginFragment : Fragment(), LoadingFragmentHolder {
     }
 
     private fun initializeLoginObserver(){
-        loginObserver = Observer<UserStateWrapper> {
+        loginObserver = Observer<LoginResponse> {
             toggleLoggingInIndicator()
             it.user?.let { openMainActivity() }
             it.error?.let { message ->
