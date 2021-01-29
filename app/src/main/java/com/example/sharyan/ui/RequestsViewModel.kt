@@ -60,10 +60,6 @@ class RequestsViewModel : ViewModel() {
     }
 
     fun getUserActiveRequests(): List<DonationRequest>{
-        val activeRequestsList = mutableListOf<DonationRequest>()
-        CurrentAppUser.myActiveRequests.forEach {
-            activeRequestsList.add(it)
-        }
-        return activeRequestsList
+        return CurrentAppUser.myActiveRequests
     }
 }
