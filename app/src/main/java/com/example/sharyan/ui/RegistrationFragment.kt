@@ -6,24 +6,27 @@ import android.app.DatePickerDialog
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
+import android.text.Editable
 import android.view.*
 import android.view.ContextMenu.ContextMenuInfo
 import android.widget.EditText
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.sharyan.R
+import com.example.sharyan.Utility
 import com.example.sharyan.databinding.FragmentRegistrationBinding
-import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -63,6 +66,7 @@ class RegistrationFragment : Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         instantiateNavController(view)
+        observeEditTexts()
         // Setting a click listener for the birthDatePicker button
         binding.birthDatePicker.setOnClickListener{
             pickBirthDate()
@@ -175,6 +179,61 @@ class RegistrationFragment : Fragment(){
         }
     }
 
+    private fun observeEditTexts(){
+        binding.registrationFirstNameEditText.addTextChangedListener {
+            observeNameText(binding.registrationFirstNameTextLayout,
+                binding.registrationFirstNameEditText.text.toString()
+            )
+        }
+        binding.registrationLastNameEditText.addTextChangedListener {
+            observeNameText(binding.registrationLastNameTextLayout,
+                binding.registrationLastNameEditText.text.toString()
+            )
+        }
+        binding.registrationPhoneEditText.addTextChangedListener { observePhoneText(it) }
+        binding.registrationPasswordEditText.addTextChangedListener{observePasswordText(it)}
+        binding.confirmPasswordEditText.addTextChangedListener{observeConfirmPasswordText()}
+    }
+
+    private fun observeNameText(editTextLayout: TextInputLayout, text: String) {
+        if(isValidNameEntered(text)){
+            editTextLayout.error = ""
+        }
+        else{
+            editTextLayout.error = resources.getString(R.string.name_format_message)
+        }
+    }
+
+    private fun observePhoneText(editable: Editable?) {
+        if(isValidMobilePhoneEntered(editable.toString())){
+            binding.registrationPhoneTextLayout.error = ""
+            binding.registrationRootLayout.requestFocus()
+            Utility.hideSoftKeyboard(requireActivity(), binding.registrationPhoneEditText)
+        }
+        else{
+            binding.registrationPhoneTextLayout.error = resources.getString(R.string.phone_format_message)
+        }
+    }
+
+    private fun observePasswordText(editable: Editable?){
+        if(isValidPasswordEntered(editable.toString())){
+            binding.passwordTextLayout.error = ""
+        }
+        else{
+            binding.passwordTextLayout.error = resources.getString(R.string.password_format_message)
+        }
+    }
+
+    private fun observeConfirmPasswordText(){
+        if(doPasswordsMatch()){
+            binding.confirmPasswordTextLayout.error = ""
+        }
+        else{
+            binding.confirmPasswordTextLayout.error = resources.getString(R.string.password_mismatch)
+        }
+    }
+
+
     /**
      * This function opens a DatePicker dialog so that the user can select his/her birth date for
      * registration
@@ -227,11 +286,60 @@ class RegistrationFragment : Fragment(){
     private fun setConfirmRegistrationButtonListener(){
         binding.confirmRegistrationButton.setOnClickListener {
             // true should be replaced with checking if entered data is valid and complete
-            if(true){
+            if(areInputsValidAndComplete()){
                 goToSMSFragment()
             }
         }
     }
+
+    private fun areInputsValidAndComplete(): Boolean{
+        var areInputsValidAndComplete = true
+        // Validating first name field
+        if(!isValidNameEntered(binding.registrationFirstNameEditText.text.toString())){
+            areInputsValidAndComplete = false
+            binding.registrationFirstNameTextLayout.error = resources.getString(R.string.name_format_message)
+        }
+        // Validating last name field
+        if(!isValidNameEntered(binding.registrationLastNameEditText.text.toString())){
+            areInputsValidAndComplete = false
+            binding.registrationLastNameTextLayout.error = resources.getString(R.string.name_format_message)
+        }
+        // Validating phone number field
+        if(!isValidMobilePhoneEntered(binding.registrationPhoneEditText.text.toString())){
+            areInputsValidAndComplete = false
+            binding.registrationPhoneTextLayout.error = resources.getString(R.string.phone_format_message)
+        }
+        // Validating location
+        if(locationPickerViewModel.locationStringLiveData.value.isNullOrEmpty()){
+            areInputsValidAndComplete = false
+            binding.addressTextLayout.error = "اختر عنوان تواجدك"
+        }
+        // Validating password
+        if(!isValidPasswordEntered(binding.registrationPasswordEditText.text.toString())){
+            areInputsValidAndComplete = false
+            binding.passwordTextLayout.error = resources.getString(R.string.password_format_message)
+        }
+        // Validating confirm password
+        if(!doPasswordsMatch()){
+            areInputsValidAndComplete = false
+            binding.confirmPasswordTextLayout.error = resources.getString(R.string.password_mismatch)
+        }
+
+        return areInputsValidAndComplete
+    }
+
+    private fun isValidMobilePhoneEntered(phoneNumber: String): Boolean =
+        phoneNumber.length == resources.getInteger(R.integer.phone_number_length)
+                && phoneNumber.matches(Regex("01[0-9]+"))
+
+    private fun isValidNameEntered(name: String): Boolean =
+        name.trim().length > 1 && name.matches(Regex("^[a-zA-Z\\u0621-\\u064A]+"))
+
+    private fun isValidPasswordEntered(password: String): Boolean =
+        password.isNotEmpty()  && !password.contains(" ")
+
+    private fun doPasswordsMatch() = (binding.confirmPasswordEditText.text.toString()
+    == binding.registrationPasswordEditText.text.toString())
 
     private fun goToSMSFragment(){
         val phoneNumber = getEditTextValue(binding.registrationPhoneEditText)

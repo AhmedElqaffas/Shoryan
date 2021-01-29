@@ -4,7 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/registration_bg">
+    android:background="@drawable/registration_bg"
+    android:id="@+id/registrationRootLayout"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:clickable="true">
 
     <ImageView
         android:id="@+id/registrationBack"
@@ -76,7 +80,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/registrationTextView">
+                app:layout_constraintTop_toBottomOf="@id/registrationTextView"
+                app:errorEnabled="true">
 
                 <EditText
                     android:id="@+id/registrationFirstNameEditText"
@@ -98,7 +103,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:theme="@style/hintAppearance"
-                android:layout_marginTop="20dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -296,7 +300,8 @@
                     android:hint="@string/address"
                     android:inputType="text"
                     android:maxLines="1"
-                    android:singleLine="true"/>
+                    android:singleLine="true"
+                    android:focusable="false"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -321,7 +326,9 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/openMapButton">
+                app:layout_constraintTop_toBottomOf="@id/openMapButton"
+                app:passwordToggleEnabled="true"
+                android:layoutDirection="rtl">
 
                 <EditText
                     android:id="@+id/registrationPasswordEditText"
@@ -347,7 +354,9 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/passwordTextLayout">
+                app:layout_constraintTop_toBottomOf="@id/passwordTextLayout"
+                app:passwordToggleEnabled="true"
+                android:layoutDirection="rtl">
 
                 <EditText
                     android:id="@+id/confirmPasswordEditText"
