@@ -14,31 +14,36 @@ import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.navigation.navGraphViewModels
 import com.example.sharyan.R
+import com.example.sharyan.databinding.AppbarBinding
+import com.example.sharyan.databinding.FragmentNewRequestBinding
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.appbar.toolbarText
-import kotlinx.android.synthetic.main.fragment_new_request.*
 import kotlinx.coroutines.*
 
 
 class NewRequestFragment : Fragment() {
     private val newRequestViewModel: NewRequestViewModel by navGraphViewModels(R.id.main_nav_graph)
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_new_request, container, false)
+    private var _binding: FragmentNewRequestBinding? = null
+    private val binding get() = _binding!!
+    private var toolbarBinding: AppbarBinding? = null
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentNewRequestBinding.inflate(inflater, container, false)
+        toolbarBinding = binding.newRequestAppbar
+        return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onDestroyView() {
+        super.onDestroyView()
+        toolbarBinding = null
+        _binding = null
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?){
+        super.onViewCreated(view, savedInstanceState)
         setToolbarText(resources.getString(R.string.new_request))
         enableInput()
         checkIfUserCanRequest()
-
     }
 
     private fun checkIfUserCanRequest() {
@@ -57,51 +62,51 @@ class NewRequestFragment : Fragment() {
     }
 
     private fun enableSubmitButton() {
-        confirmRequestButton.isEnabled = true
+        binding.confirmRequestButton.isEnabled = true
         setConfirmButtonClickListener()
-        confirmRequestButton.setBackgroundResource(R.drawable.button_curved_red)
-        progressBar.visibility = View.GONE
-        checkingPermissionSentence.visibility = View.GONE
+        binding.confirmRequestButton.setBackgroundResource(R.drawable.button_curved_red)
+        binding.progressBar.visibility = View.GONE
+        binding.checkingPermissionSentence.visibility = View.GONE
     }
 
     private fun disableIncDecButtons() {
-        incrementBloodBags.isEnabled = false
-        decrementBloodBags.isEnabled = false
-        bagsNumberEditText.setText("")
-        bagsNumberEditText.isEnabled = false
+        binding.incrementBloodBags.isEnabled = false
+        binding.decrementBloodBags.isEnabled = false
+        binding.bagsNumberEditText.setText("")
+        binding.bagsNumberEditText.isEnabled = false
     }
 
     private fun disableRadioButtons() {
-        plusTypesRadioGroup.children.forEach {
+        binding.plusTypesRadioGroup.children.forEach {
             it.isEnabled = false
-            plusTypesRadioGroup.clearCheck()
+            binding.plusTypesRadioGroup.clearCheck()
         }
-        minusTypesRadioGroup.children.forEach {
+        binding.minusTypesRadioGroup.children.forEach {
             it.isEnabled = false
-            minusTypesRadioGroup.clearCheck()
+            binding.minusTypesRadioGroup.clearCheck()
         }
     }
 
     private fun enableInput() {
         setRadioGroupsMutuallyExclusive()
-        setGovSpinnerAdapter(spinnerGov, R.array.governments)
+        setGovSpinnerAdapter(binding.spinnerGov, R.array.governments)
         setIncDecButtonsClickListeners()
         setConfirmButtonClickListener()
     }
 
     private fun setToolbarText(text: String) {
-        toolbarText.text = text
+        toolbarBinding!!.toolbarText.text = text
     }
 
     private fun setRadioGroupsMutuallyExclusive() {
-        plusTypesRadioGroup.children.forEach {
+        binding.plusTypesRadioGroup.children.forEach {
             it.setOnClickListener {
-                minusTypesRadioGroup.clearCheck()
+                binding.minusTypesRadioGroup.clearCheck()
             }
         }
-        minusTypesRadioGroup.children.forEach {
+        binding.minusTypesRadioGroup.children.forEach {
             it.setOnClickListener {
-                plusTypesRadioGroup.clearCheck()
+                binding.plusTypesRadioGroup.clearCheck()
             }
         }
     }
@@ -142,11 +147,11 @@ class NewRequestFragment : Fragment() {
             id: Long
         ) {
             if (position == 0) {
-                governmentsSpinnerTextView.visibility = View.VISIBLE
+                binding.governmentsSpinnerTextView.visibility = View.VISIBLE
                 disableCitySpinner()
             } else {
-                governmentsSpinnerTextView.visibility = View.GONE
-                val selectedGovernments = spinnerGov.selectedItem.toString()
+                binding.governmentsSpinnerTextView.visibility = View.GONE
+                val selectedGovernments = binding.spinnerGov.selectedItem.toString()
                 enableCitySpinner(selectedGovernments)
             }
         }
@@ -162,13 +167,13 @@ class NewRequestFragment : Fragment() {
             id: Long
         ) {
             if (position == 0) {
-                citySpinnerTextView.visibility = View.VISIBLE
-                bloodBankSpinnerLayout.setBackgroundResource(R.drawable.spinner_grey_curve)
-                bloodBankSpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_grey)
+                binding.citySpinnerTextView.visibility = View.VISIBLE
+                binding.bloodBankSpinnerLayout.setBackgroundResource(R.drawable.spinner_grey_curve)
+                binding.bloodBankSpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_grey)
             } else {
-                citySpinnerTextView.visibility = View.GONE
-                bloodBankSpinnerLayout.setBackgroundResource(R.drawable.spinner_red_curve)
-                bloodBankSpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_big)
+                binding.citySpinnerTextView.visibility = View.GONE
+                binding.bloodBankSpinnerLayout.setBackgroundResource(R.drawable.spinner_red_curve)
+                binding.bloodBankSpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_big)
             }
         }
 
@@ -176,51 +181,53 @@ class NewRequestFragment : Fragment() {
     }
 
     private fun disableGovSpinner() {
-        governmentsSpinnerTextView.visibility = View.VISIBLE
-        spinnerGov.adapter = null
-        governmentsSpinnerLayout.setBackgroundResource(R.drawable.spinner_grey_curve)
-        governmentsSpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_grey)
-        citySpinnerLayout.setBackgroundResource(R.drawable.spinner_grey_curve)
-        citySpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_grey)
-        bloodBankSpinnerLayout.setBackgroundResource(R.drawable.spinner_grey_curve)
-        bloodBankSpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_grey)
+        binding.governmentsSpinnerTextView.visibility = View.VISIBLE
+        binding.spinnerGov.adapter = null
+        binding.governmentsSpinnerLayout.setBackgroundResource(R.drawable.spinner_grey_curve)
+        binding.governmentsSpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_grey)
+        binding.citySpinnerLayout.setBackgroundResource(R.drawable.spinner_grey_curve)
+        binding.citySpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_grey)
+        binding.bloodBankSpinnerLayout.setBackgroundResource(R.drawable.spinner_grey_curve)
+        binding.bloodBankSpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_grey)
     }
 
     private fun enableGovSpinner() {
-        governmentsSpinnerLayout.setBackgroundResource(R.drawable.spinner_red_curve)
-        governmentsSpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_big)
-        setGovSpinnerAdapter(spinnerGov, R.array.governments)
+        binding.governmentsSpinnerLayout.setBackgroundResource(R.drawable.spinner_red_curve)
+        binding.governmentsSpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_big)
+        setGovSpinnerAdapter(binding.spinnerGov, R.array.governments)
     }
 
     private fun disableCitySpinner() {
-        citySpinnerTextView.visibility = View.VISIBLE
-        spinnerCity.adapter = null
-        citySpinnerLayout.setBackgroundResource(R.drawable.spinner_grey_curve)
-        citySpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_grey)
-        bloodBankSpinnerLayout.setBackgroundResource(R.drawable.spinner_grey_curve)
-        bloodBankSpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_grey)
+        with(binding){
+            citySpinnerTextView.visibility = View.VISIBLE
+            spinnerCity.adapter = null
+            citySpinnerLayout.setBackgroundResource(R.drawable.spinner_grey_curve)
+            citySpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_grey)
+            bloodBankSpinnerLayout.setBackgroundResource(R.drawable.spinner_grey_curve)
+            bloodBankSpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_grey)
+        }
     }
 
     private fun enableCitySpinner(selectedGovernment: String) {
-        citySpinnerLayout.setBackgroundResource(R.drawable.spinner_red_curve)
-        citySpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_big)
+        binding.citySpinnerLayout.setBackgroundResource(R.drawable.spinner_red_curve)
+        binding.citySpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_big)
         when (selectedGovernment) {
-            "القاهرة" -> setCitySpinnerAdapter(spinnerCity, R.array.cairo_cities)
-            "الإسكندرية" -> setCitySpinnerAdapter(spinnerCity, R.array.alex_cities)
-            else -> setCitySpinnerAdapter(spinnerCity, R.array.example_cities)
+            "القاهرة" -> setCitySpinnerAdapter(binding.spinnerCity, R.array.cairo_cities)
+            "الإسكندرية" -> setCitySpinnerAdapter(binding.spinnerCity, R.array.alex_cities)
+            else -> setCitySpinnerAdapter(binding.spinnerCity, R.array.example_cities)
         }
     }
 
     private fun setIncDecButtonsClickListeners() {
-        incrementBloodBags.setOnClickListener { incNumOfBloodBags() }
-        decrementBloodBags.setOnClickListener { decNumOfBloodBags() }
+        binding.incrementBloodBags.setOnClickListener { incNumOfBloodBags() }
+        binding.decrementBloodBags.setOnClickListener { decNumOfBloodBags() }
     }
 
     private fun incNumOfBloodBags() {
         val numOfCurrentBloodBags = getCurrentBagsCount()
         if (numOfCurrentBloodBags < 99) {
             val newBagsNumber = numOfCurrentBloodBags + 1
-            bagsNumberEditText.setText(newBagsNumber.toString())
+            binding.bagsNumberEditText.setText(newBagsNumber.toString())
         }
     }
 
@@ -228,16 +235,16 @@ class NewRequestFragment : Fragment() {
         val numOfCurrentBloodBags = getCurrentBagsCount()
         if (numOfCurrentBloodBags > 1) {
             val newBagsNumber = numOfCurrentBloodBags - 1
-            bagsNumberEditText.setText(newBagsNumber.toString())
+            binding.bagsNumberEditText.setText(newBagsNumber.toString())
         }
     }
 
     fun getCurrentBagsCount(): Int {
-        return bagsNumberEditText.text.toString().trim().toIntOrNull() ?: 0
+        return binding.bagsNumberEditText.text.toString().trim().toIntOrNull() ?: 0
     }
 
     private fun setConfirmButtonClickListener() {
-        confirmRequestButton.setOnClickListener {
+        binding.confirmRequestButton.setOnClickListener {
             if (isBloodTypeSelected() and isBagsCountSet() and isLocationSelected()) {
                 showMessage("تم الطلب بنجاح", successFlag = true)
             } else {
@@ -247,8 +254,8 @@ class NewRequestFragment : Fragment() {
     }
 
     private fun isBloodTypeSelected(): Boolean {
-        return ((plusTypesRadioGroup.checkedRadioButtonId != -1)
-                or (minusTypesRadioGroup.checkedRadioButtonId != -1))
+        return ((binding.plusTypesRadioGroup.checkedRadioButtonId != -1)
+                or (binding.minusTypesRadioGroup.checkedRadioButtonId != -1))
     }
 
     private fun isBagsCountSet(): Boolean {
@@ -256,7 +263,7 @@ class NewRequestFragment : Fragment() {
     }
 
     private fun isLocationSelected(): Boolean {
-        return isSpinnerValueSelected(spinnerGov) and isSpinnerValueSelected(spinnerCity)
+        return isSpinnerValueSelected(binding.spinnerGov) and isSpinnerValueSelected(binding.spinnerCity)
     }
 
     private fun isSpinnerValueSelected(spinner: Spinner): Boolean {
@@ -265,14 +272,14 @@ class NewRequestFragment : Fragment() {
 
     private fun showMessage(message: String, successFlag: Boolean = false) {
         if (successFlag)
-            Snackbar.make(scrollView, message, Snackbar.LENGTH_LONG)
+            Snackbar.make(binding.scrollView, message, Snackbar.LENGTH_LONG)
                 .setAction("اظهر بيانات الطلب") {
                     // Starting the MyRequestDetailsActivity
                     openRequestDetails()
                 }
                 .show()
         else
-            Snackbar.make(scrollView, message, Snackbar.LENGTH_LONG)
+            Snackbar.make(binding.scrollView, message, Snackbar.LENGTH_LONG)
                 .setAction("حسناً") {
                     // By default, the snackbar will be dismissed
                 }
@@ -282,17 +289,17 @@ class NewRequestFragment : Fragment() {
     private fun openRequestDetails() {
         val intent = Intent(context, MyRequestDetailsActivity::class.java)
         intent.putExtra("bloodType", getSelectedBloodType().text.toString())
-        intent.putExtra("gov", getSelectedItemFromSpinner(spinnerGov))
-        intent.putExtra("city", getSelectedItemFromSpinner(spinnerCity))
+        intent.putExtra("gov", getSelectedItemFromSpinner(binding.spinnerGov))
+        intent.putExtra("city", getSelectedItemFromSpinner(binding.spinnerCity))
         intent.putExtra("bloodBagsCount", getCurrentBagsCount())
         startActivity(intent)
     }
 
     private fun getSelectedBloodType(): RadioButton =
-            if (plusTypesRadioGroup.checkedRadioButtonId != -1)
-                plusTypesRadioGroup.findViewById(plusTypesRadioGroup.checkedRadioButtonId)
+            if (binding.plusTypesRadioGroup.checkedRadioButtonId != -1)
+                binding.plusTypesRadioGroup.findViewById(binding.plusTypesRadioGroup.checkedRadioButtonId)
             else
-                minusTypesRadioGroup.findViewById(minusTypesRadioGroup.checkedRadioButtonId)
+                binding.minusTypesRadioGroup.findViewById(binding.minusTypesRadioGroup.checkedRadioButtonId)
 
 
     private fun getSelectedItemFromSpinner(spinner : Spinner): String? {

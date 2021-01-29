@@ -7,18 +7,29 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.navGraphViewModels
 import com.example.sharyan.R
+import com.example.sharyan.databinding.AppbarBinding
+import com.example.sharyan.databinding.FragmentNotificationsBinding
 import com.example.sharyan.recyclersAdapters.NotificationsRecyclerAdapter
-import kotlinx.android.synthetic.main.appbar.toolbarText
-import kotlinx.android.synthetic.main.fragment_notifications.*
 
 class Notifications : Fragment() {
 
     private lateinit var notificationsRecyclerAdapter: NotificationsRecyclerAdapter
     private val notificationsViewModel: NotificationsViewModel by navGraphViewModels(R.id.main_nav_graph)
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?):View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_notifications, container, false)
+    private var _binding: FragmentNotificationsBinding? = null
+    private val binding get() = _binding!!
+    private var toolbarBinding: AppbarBinding? = null
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
+        toolbarBinding = binding.notificationsAppbar
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+        toolbarBinding = null
     }
 
     override fun onResume() {
@@ -29,12 +40,12 @@ class Notifications : Fragment() {
     }
 
     private fun setToolbarText(text: String){
-        toolbarText.text = text
+        toolbarBinding!!.toolbarText.text = text
     }
 
     private fun initializeRecyclerViewAdapter(){
         notificationsRecyclerAdapter = NotificationsRecyclerAdapter()
-        notificationsRecycler.adapter = notificationsRecyclerAdapter
+        binding.notificationsRecycler.adapter = notificationsRecyclerAdapter
     }
 
     private fun showNotifications(){

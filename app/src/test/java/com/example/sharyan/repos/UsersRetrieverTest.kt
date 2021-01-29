@@ -1,5 +1,6 @@
 package com.example.sharyan.repos
 
+import com.example.sharyan.data.BloodType
 import com.example.sharyan.data.Name
 import com.example.sharyan.data.User
 import com.example.sharyan.data.UserStateWrapper
@@ -20,7 +21,7 @@ class UsersRetrieverTest {
     lateinit var usersRetriever: UsersRetriever
 
     private var correctUserWrapper = UserStateWrapper(
-        User("a", Name("Ahmed", "Mohamed"), "1097049699", "pass1", "A-"),
+        User("a", Name("Ahmed", "Mohamed"), "1097049699", "pass1", BloodType.ANegative),
         null
     )
 
@@ -29,7 +30,7 @@ class UsersRetrieverTest {
         "خطأ في رقم الهاتف او كلمة السر"
     )
 
-    private val user = User("a", Name("Ahmed", "Mohamed"), "1097049699", "pass1", "A-")
+    private val user = User("a", Name("Ahmed", "Mohamed"), "1097049699", "pass1", BloodType.ANegative)
     private val list = listOf(user)
     private val correctPhoneNumber = "01097049699"
     private val correctPassword = "pass1"

@@ -3,7 +3,7 @@ package com.example.sharyan.repos
 import android.util.Log
 import com.example.sharyan.data.CurrentAppUser
 import com.example.sharyan.data.DonationRequest
-import com.example.sharyan.data.RequestsFilter
+import com.example.sharyan.data.RequestsFiltersContainer
 import com.example.sharyan.networking.RetrofitBloodDonationInterface
 
 
@@ -12,7 +12,7 @@ object OngoingRequestsRetriever {
     private var  requestsList = listOf<DonationRequest>()
 
     // An object that encapsulates and stores the filters chosen by the user
-    var requestsFilter: RequestsFilter? = null
+    var requestsFiltersContainer: RequestsFiltersContainer? = null
 
     /**
      * Gets the requests from the back-end through the API.

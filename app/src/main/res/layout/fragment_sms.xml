@@ -4,12 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.SMSLoginFragment">
+    tools:context=".ui.SMSFragment"
+    android:focusableInTouchMode="true"
+    android:focusable="true">
 
     <include
+        android:id="@+id/smsLoginBanner"
         layout="@layout/login_banner"/>
 
     <TextView
+        android:id="@+id/smsScreenTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
@@ -17,7 +21,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintVertical_bias="0.25"
-        android:text="@string/login_code"
+        android:text="@string/confirmation_code"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="25sp"
         android:fontFamily="arial"
@@ -33,7 +37,7 @@
         android:layout_marginEnd="20dp"
         app:layout_constraintVertical_bias="0.4"
         android:textAlignment="viewEnd"
-        android:text="@string/enter_login_code"
+        android:text="@string/enter_code"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="17sp"
         android:fontFamily="arial"/>
@@ -53,10 +57,10 @@
         android:inputType="number"
         android:maxLength="@integer/code_length"
         android:textIsSelectable="false"
+        app:pinAnimationType="fromBottom"
         android:textSize="20sp"
-        app:pinLineStroke="2dp"
-        app:pinBackgroundIsSquare="true"
-        app:pinLineColors="@color/colorPrimaryDark"
+        app:pinBackgroundDrawable="@drawable/sms_border"
+        app:pinTextBottomPadding="20dp"
         android:layoutDirection="ltr" />
 
     <TextView

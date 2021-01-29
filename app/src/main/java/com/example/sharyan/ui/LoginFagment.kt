@@ -13,48 +13,45 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.sharyan.R
 import com.example.sharyan.Utility
+import com.example.sharyan.databinding.FragmentLoginPhoneBinding
+import com.example.sharyan.databinding.LoginBannerBinding
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_login_phone.*
-import kotlinx.android.synthetic.main.login_banner.*
 
 class LoginPhoneFragment : Fragment(){
 
     private lateinit var navController: NavController
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_login_phone, container, false)
+    private var _binding: FragmentLoginPhoneBinding? = null
+    private val binding get() = _binding!!
+    private var bannerBinding: LoginBannerBinding? = null
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentLoginPhoneBinding.inflate(inflater, container, false)
+        bannerBinding = binding.includes
+        return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        bannerBinding = null
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         instantiateNavController(view)
-    }
+        setupPhoneEditText()
 
-    override fun onResume() {
-        super.onResume()
-
-        phoneEditText.apply{
-            requestFocus()
-            Utility.showSoftKeyboard(requireActivity(), this)
-            this.addTextChangedListener { observePhoneText(it) }
-            this.setOnFocusChangeListener { view, _ -> phoneEditTextFocusListener(view) }
-        }
-
-        loginBack.setOnClickListener{
+        bannerBinding!!.loginBack.setOnClickListener{
             navController.popBackStack()
         }
 
-        loginWithPasswordButton.setOnClickListener {
+        binding.loginWithPasswordButton.setOnClickListener {
             goToFragmentIfNumberValid(R.id.action_loginFragment_to_loginPasswordFragment)
         }
 
-        loginWithSMSButton.setOnClickListener {
-            goToFragmentIfNumberValid(R.id.action_loginFragment_to_SMSLoginFragment)
+        binding.loginWithSMSButton.setOnClickListener {
+            goToFragmentIfNumberValid(R.id.action_loginFragment_to_SMSFragment)
         }
     }
 
@@ -62,23 +59,34 @@ class LoginPhoneFragment : Fragment(){
         navController = Navigation.findNavController(view)
     }
 
-    /**
-     * Observes changes in the phone number EditText and close keyboard
-     * when the user inputs their complete full number.
-     */
-    private fun observePhoneText(editable: Editable?) {
-        if(isValidMobilePhoneEntered(editable.toString())){
-            loginScreenLayout.requestFocus()
-            phoneTextInputLayout.error = ""
-        }
-        else{
-            phoneTextInputLayout.error = resources.getString(R.string.phone_format_message)
+    private fun setupPhoneEditText(){
+        binding.phoneEditText.apply{
+            requestFocus()
+            Utility.showSoftKeyboard(requireActivity(), this)
+            this.addTextChangedListener { observePhoneText(it) }
+            this.setOnFocusChangeListener { view, _ -> phoneEditTextFocusListener(view) }
         }
     }
 
     /**
-     * When the phone EditText loses focus, hide keyboard
+     * Observes changes in the phone number EditText and closes keyboard
+     * when the user inputs their full number.
      */
+    private fun observePhoneText(editable: Editable?) {
+        if(isValidMobilePhoneEntered(editable.toString())){
+            binding.loginScreenLayout.requestFocus()
+            binding.phoneTextInputLayout.error = ""
+        }
+        else{
+            binding.phoneTextInputLayout.error = resources.getString(R.string.phone_format_message)
+        }
+    }
+
+    private fun isValidMobilePhoneEntered(phoneNumber: String): Boolean =
+        phoneNumber.length == resources.getInteger(R.integer.phone_number_length)
+                && phoneNumber.matches(Regex("01[0-9]+"))
+
+
     private fun phoneEditTextFocusListener(view: View){
         if(!view.hasFocus()) {
             Utility.hideSoftKeyboard(requireActivity(), view)
@@ -86,20 +94,16 @@ class LoginPhoneFragment : Fragment(){
     }
 
     private fun goToFragmentIfNumberValid(fragmentId: Int){
-        val phoneNumber = getEditTextValue(phoneEditText)
+        val phoneNumber = getEditTextValue(binding.phoneEditText)
         if(isValidMobilePhoneEntered(phoneNumber)){
             val phoneNumberBundle = bundleOf("phoneNumber" to phoneNumber)
             navController.navigate(fragmentId, phoneNumberBundle)
         }
         else{
-            Utility.displaySnackbarMessage(loginScreenLayout,
+            Utility.displaySnackbarMessage(binding.loginScreenLayout,
                 resources.getString(R.string.phone_format_message), Snackbar.LENGTH_LONG)
         }
     }
-
-    private fun isValidMobilePhoneEntered(phoneNumber: String): Boolean =
-        phoneNumber.length == resources.getInteger(R.integer.phone_number_length)
-            && phoneNumber.matches(Regex("01[0-9]+"))
 
     private fun getEditTextValue(editText: EditText):String =  editText.text.toString().trim()
 }
