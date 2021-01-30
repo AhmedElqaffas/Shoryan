@@ -2,14 +2,12 @@ package com.example.sharyan.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
+import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
-import android.widget.ArrayAdapter
-import android.widget.RadioButton
-import android.widget.Spinner
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.navigation.navGraphViewModels
@@ -134,6 +132,19 @@ class NewRequestFragment : Fragment() {
 
     }
 
+    private fun setBloodBankSpinnerAdapter(spinner: Spinner, arrayResource: Int) {
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        activity?.let {
+            ArrayAdapter.createFromResource(it, arrayResource, android.R.layout.simple_spinner_item)
+                .also { adapter ->
+                    // Specify the layout to use when the list of choices appears
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    spinner.adapter = adapter
+                    spinner.onItemSelectedListener = bloodBankSpinnerItemSelected()
+                }
+        }
+    }
+
     private fun governmentSpinnerItemSelected() = object : OnItemSelectedListener {
         override fun onItemSelected(
             parentView: AdapterView<*>?,
@@ -163,12 +174,27 @@ class NewRequestFragment : Fragment() {
         ) {
             if (position == 0) {
                 citySpinnerTextView.visibility = View.VISIBLE
-                bloodBankSpinnerLayout.setBackgroundResource(R.drawable.spinner_grey_curve)
-                bloodBankSpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_grey)
+                disableBloodBankSpinner()
             } else {
                 citySpinnerTextView.visibility = View.GONE
-                bloodBankSpinnerLayout.setBackgroundResource(R.drawable.spinner_red_curve)
-                bloodBankSpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_big)
+                enableBloodBankSpinner()
+            }
+        }
+
+        override fun onNothingSelected(parentView: AdapterView<*>?) {}
+    }
+
+    private fun bloodBankSpinnerItemSelected() = object : OnItemSelectedListener {
+        override fun onItemSelected(
+            parentView: AdapterView<*>?,
+            selectedItemView: View,
+            position: Int,
+            id: Long
+        ) {
+            if (position == 0) {
+                bloodBankSpinnerTextView.visibility = View.VISIBLE
+            } else {
+                bloodBankSpinnerTextView.visibility = View.GONE
             }
         }
 
@@ -186,11 +212,6 @@ class NewRequestFragment : Fragment() {
         bloodBankSpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_grey)
     }
 
-    private fun enableGovSpinner() {
-        governmentsSpinnerLayout.setBackgroundResource(R.drawable.spinner_red_curve)
-        governmentsSpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_big)
-        setGovSpinnerAdapter(spinnerGov, R.array.governments)
-    }
 
     private fun disableCitySpinner() {
         citySpinnerTextView.visibility = View.VISIBLE
@@ -210,6 +231,20 @@ class NewRequestFragment : Fragment() {
             else -> setCitySpinnerAdapter(spinnerCity, R.array.example_cities)
         }
     }
+
+    private fun disableBloodBankSpinner() {
+        bloodBankSpinnerTextView.visibility = View.VISIBLE
+        spinnerBloodBank.adapter = null
+        bloodBankSpinnerLayout.setBackgroundResource(R.drawable.spinner_grey_curve)
+        bloodBankSpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_grey)
+    }
+
+    private fun enableBloodBankSpinner() {
+        bloodBankSpinnerLayout.setBackgroundResource(R.drawable.spinner_red_curve)
+        bloodBankSpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_big)
+        setBloodBankSpinnerAdapter(spinnerBloodBank, R.array.example_blood_banks)
+    }
+
 
     private fun setIncDecButtonsClickListeners() {
         incrementBloodBags.setOnClickListener { incNumOfBloodBags() }
@@ -256,7 +291,8 @@ class NewRequestFragment : Fragment() {
     }
 
     private fun isLocationSelected(): Boolean {
-        return isSpinnerValueSelected(spinnerGov) and isSpinnerValueSelected(spinnerCity)
+        return isSpinnerValueSelected(spinnerGov) and isSpinnerValueSelected(spinnerCity) and
+                isSpinnerValueSelected(spinnerBloodBank)
     }
 
     private fun isSpinnerValueSelected(spinner: Spinner): Boolean {
@@ -289,10 +325,10 @@ class NewRequestFragment : Fragment() {
     }
 
     private fun getSelectedBloodType(): RadioButton =
-            if (plusTypesRadioGroup.checkedRadioButtonId != -1)
-                plusTypesRadioGroup.findViewById(plusTypesRadioGroup.checkedRadioButtonId)
-            else
-                minusTypesRadioGroup.findViewById(minusTypesRadioGroup.checkedRadioButtonId)
+        if (plusTypesRadioGroup.checkedRadioButtonId != -1)
+            plusTypesRadioGroup.findViewById(plusTypesRadioGroup.checkedRadioButtonId)
+        else
+            minusTypesRadioGroup.findViewById(minusTypesRadioGroup.checkedRadioButtonId)
 
 
     private fun getSelectedItemFromSpinner(spinner : Spinner): String? {
@@ -300,4 +336,3 @@ class NewRequestFragment : Fragment() {
     }
 
 }
-

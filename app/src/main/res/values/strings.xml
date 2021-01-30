@@ -121,4 +121,10 @@
         <item>مدينة ب</item>
     </string-array>
 
+    <string-array name="example_blood_banks">
+        <item></item>
+        <item>بنك الدم أ</item>
+        <item>بنك الدم ب</item>
+    </string-array>
+
 </resources>
