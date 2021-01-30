@@ -55,7 +55,12 @@ class NewRequestFragment : Fragment() {
         disableRadioButtons()
         disableGovSpinner()
         disableIncDecButtons()
+        disableProgressBar()
         showMessage("نأسف لا يمكنك طلب تبرع بالدم اكثر من ثلاثة مرات في اليوم")
+    }
+
+    private fun disableProgressBar() {
+        binding.progressBar.visibility = View.GONE
     }
 
     private fun enableSubmitButton() {
