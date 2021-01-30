@@ -91,7 +91,7 @@ class NewRequestFragment : Fragment() {
 
     private fun enableInput() {
         setRadioGroupsMutuallyExclusive()
-        setGovSpinnerAdapter(binding.spinnerGov, R.array.governments)
+        setGovSpinnerAdapter(binding.spinnerGov, newRequestViewModel.getGovernotesList())
         setIncDecButtonsClickListeners()
         setConfirmButtonClickListener()
     }
@@ -113,10 +113,10 @@ class NewRequestFragment : Fragment() {
         }
     }
 
-    private fun setGovSpinnerAdapter(spinner: Spinner, arrayResource: Int) {
+    private fun setGovSpinnerAdapter(spinner: Spinner, govList : List<String>) {
         // Create an ArrayAdapter using the string array and a default spinner layout
         activity?.let {
-            ArrayAdapter.createFromResource(it, arrayResource, android.R.layout.simple_spinner_item)
+            val ArrayAdapter = ArrayAdapter(it, android.R.layout.simple_spinner_item, govList)
                 .also { adapter ->
                     // Specify the layout to use when the list of choices appears
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -127,10 +127,10 @@ class NewRequestFragment : Fragment() {
 
     }
 
-    private fun setCitySpinnerAdapter(spinner: Spinner, arrayResource: Int) {
+    private fun setCitySpinnerAdapter(spinner: Spinner, regionsList: List<String>) {
         // Create an ArrayAdapter using the string array and a default spinner layout
         activity?.let {
-            ArrayAdapter.createFromResource(it, arrayResource, android.R.layout.simple_spinner_item)
+            val ArrayAdapter = ArrayAdapter(it, android.R.layout.simple_spinner_item, regionsList)
                 .also { adapter ->
                     // Specify the layout to use when the list of choices appears
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -141,10 +141,10 @@ class NewRequestFragment : Fragment() {
 
     }
 
-    private fun setBloodBankSpinnerAdapter(spinner: Spinner, arrayResource: Int) {
+    private fun setBloodBankSpinnerAdapter(spinner: Spinner, bloodBankList: List<String>) {
         // Create an ArrayAdapter using the string array and a default spinner layout
         activity?.let {
-            ArrayAdapter.createFromResource(it, arrayResource, android.R.layout.simple_spinner_item)
+            val ArrayAdapter = ArrayAdapter(it, android.R.layout.simple_spinner_item, bloodBankList)
                 .also { adapter ->
                     // Specify the layout to use when the list of choices appears
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -189,7 +189,8 @@ class NewRequestFragment : Fragment() {
                 binding.bloodBankSpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_grey)
             } else {
                 binding.citySpinnerTextView.visibility = View.GONE
-                enableBloodBankSpinner()
+                val selectedCity = binding.spinnerCity.selectedItem.toString()
+                enableBloodBankSpinner(selectedCity)
             }
         }
 
@@ -230,7 +231,7 @@ class NewRequestFragment : Fragment() {
     private fun enableGovSpinner() {
         binding.governmentsSpinnerLayout.setBackgroundResource(R.drawable.spinner_red_curve)
         binding.governmentsSpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_big)
-        setGovSpinnerAdapter(binding.spinnerGov, R.array.governments)
+        setGovSpinnerAdapter(binding.spinnerGov, newRequestViewModel.getGovernotesList())
     }
 
     private fun disableCitySpinner() {
@@ -247,11 +248,7 @@ class NewRequestFragment : Fragment() {
     private fun enableCitySpinner(selectedGovernment: String) {
         binding.citySpinnerLayout.setBackgroundResource(R.drawable.spinner_red_curve)
         binding.citySpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_big)
-        when (selectedGovernment) {
-            "القاهرة" -> setCitySpinnerAdapter(binding.spinnerCity, R.array.cairo_cities)
-            "الإسكندرية" -> setCitySpinnerAdapter(binding.spinnerCity, R.array.alex_cities)
-            else -> setCitySpinnerAdapter(binding.spinnerCity, R.array.example_cities)
-        }
+        setCitySpinnerAdapter(binding.spinnerCity, newRequestViewModel.getRegionsList(selectedGovernment))
     }
 
     private fun disableBloodBankSpinner() {
@@ -261,10 +258,10 @@ class NewRequestFragment : Fragment() {
         binding.bloodBankSpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_grey)
     }
 
-    private fun enableBloodBankSpinner() {
+    private fun enableBloodBankSpinner(city : String) {
         binding.bloodBankSpinnerLayout.setBackgroundResource(R.drawable.spinner_red_curve)
         binding.bloodBankSpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_big)
-        setBloodBankSpinnerAdapter(binding.spinnerBloodBank, R.array.example_blood_banks)
+        setBloodBankSpinnerAdapter(binding.spinnerBloodBank, newRequestViewModel.getBloodBanksList(city))
     }
 
 

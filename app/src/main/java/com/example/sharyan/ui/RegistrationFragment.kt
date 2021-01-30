@@ -287,12 +287,10 @@ class RegistrationFragment : Fragment(){
     private fun setConfirmRegistrationButtonListener(){
         binding.confirmRegistrationButton.setOnClickListener {
             // true should be replaced with checking if entered data is valid and complete
-            //if(areInputsValidAndComplete()){
-               // goToSMSFragment()
-            //}
+            if(areInputsValidAndComplete()){
+                goToSMSFragment()
+            }
 
-            // For testing purposes open activity directly
-            startActivity(Intent(context, MainActivity::class.java))
         }
     }
 

@@ -3,6 +3,7 @@ package com.example.sharyan.ui
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.sharyan.R
 import com.example.sharyan.networking.RetrofitBloodDonationInterface
 import com.example.sharyan.networking.RetrofitClient
 import com.example.sharyan.repos.NewRequestRepository
@@ -27,4 +28,24 @@ class NewRequestViewModel : ViewModel() {
 
         return canUserRequest
     }
+
+    fun getGovernotesList() : List<String> {
+        return NewRequestRepository.getGovernoratesList()
+    }
+
+    fun getRegionsList(governorate : String) : List<String>{
+        var regionsList : List<String> = listOf()
+        when (governorate) {
+            "القاهرة" -> regionsList = NewRequestRepository.getCairoRegionsList()
+            "الجيزة" -> regionsList = NewRequestRepository.getGizaRegionsList()
+        }
+
+        return regionsList
+    }
+
+    fun getBloodBanksList(city : String): List<String>{
+
+        return NewRequestRepository.getBloodBanks(city)
+    }
+
 }
