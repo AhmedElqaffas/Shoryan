@@ -85,6 +85,11 @@ class RegistrationFragment : Fragment(), LoadingFragmentHolder{
             it.showContextMenu()
         }
 
+        registerForContextMenu(binding.genderPicker)
+        binding.genderPicker.setOnClickListener {
+            it.showContextMenu()
+        }
+
         binding.openMapButton.setOnClickListener {
             openLocationPicker()
         }
@@ -199,7 +204,7 @@ class RegistrationFragment : Fragment(), LoadingFragmentHolder{
     }
 
     private fun observeNameText(editTextLayout: TextInputLayout, text: String) {
-        if(isValidNameEntered(text)){
+        if(registrationViewModel.isValidNameEntered(text)){
             editTextLayout.error = ""
         }
         else{
@@ -208,7 +213,7 @@ class RegistrationFragment : Fragment(), LoadingFragmentHolder{
     }
 
     private fun observePhoneText(editable: Editable?) {
-        if(isValidMobilePhoneEntered(editable.toString())){
+        if(registrationViewModel.isValidMobilePhoneEntered(editable.toString())){
             binding.registrationPhoneTextLayout.error = ""
             binding.registrationRootLayout.requestFocus()
             Utility.hideSoftKeyboard(requireActivity(), binding.registrationPhoneEditText)
@@ -219,7 +224,7 @@ class RegistrationFragment : Fragment(), LoadingFragmentHolder{
     }
 
     private fun observePasswordText(editable: Editable?){
-        if(isValidPasswordEntered(editable.toString())){
+        if(registrationViewModel.isValidPasswordEntered(editable.toString())){
             binding.passwordTextLayout.error = ""
         }
         else{
@@ -263,15 +268,36 @@ class RegistrationFragment : Fragment(), LoadingFragmentHolder{
      */
     override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenuInfo?) {
         super.onCreateContextMenu(menu, v, menuInfo)
-        val bloodTypesList = resources.getStringArray(R.array.blood_types)
-        menu.setHeaderTitle("اختار فصيلة الدم")
-        for(i in bloodTypesList.indices)
-            menu.add(0, v.id, i, bloodTypesList[i].toString())  //groupId, itemId, order, title
+        if(v == binding.bloodTypePicker) {
+            showBloodTypesList(menu, v)
+        }
+        else if(v == binding.genderPicker){
+            showGenderList(menu, v)
+        }
 
     }
 
+    private fun showBloodTypesList(menu: ContextMenu, v: View) {
+        val bloodTypesList = resources.getStringArray(R.array.blood_types)
+        menu.setHeaderTitle("اختر فصيلة الدم")
+        for(i in bloodTypesList.indices)
+            menu.add(0, v.id, i, bloodTypesList[i].toString())
+    }
+
+    private fun showGenderList(menu: ContextMenu, v: View){
+        val gendersList = resources.getStringArray(R.array.gender)
+        menu.setHeaderTitle("اختر النوع")
+        for(i in gendersList.indices)
+            menu.add(1, v.id, i, gendersList[i].toString())
+    }
+
     override fun onContextItemSelected(item: MenuItem): Boolean {
-        registrationViewModel.setBloodType(item.title.toString())
+        if(item.groupId == 0){
+            registrationViewModel.setBloodType(item.title.toString())
+        }
+        else if(item.groupId == 1){
+            registrationViewModel.setGender(item.title.toString())
+        }
         return true
     }
 
@@ -296,17 +322,17 @@ class RegistrationFragment : Fragment(), LoadingFragmentHolder{
     private fun areInputsValidAndComplete(): Boolean{
         var areInputsValidAndComplete = true
         // Validating first name field
-        if(!isValidNameEntered(binding.registrationFirstNameEditText.text.toString())){
+        if(!registrationViewModel.isValidNameEntered(binding.registrationFirstNameEditText.text.toString())){
             areInputsValidAndComplete = false
             binding.registrationFirstNameTextLayout.error = resources.getString(R.string.name_format_message)
         }
         // Validating last name field
-        if(!isValidNameEntered(binding.registrationLastNameEditText.text.toString())){
+        if(!registrationViewModel.isValidNameEntered(binding.registrationLastNameEditText.text.toString())){
             areInputsValidAndComplete = false
             binding.registrationLastNameTextLayout.error = resources.getString(R.string.name_format_message)
         }
         // Validating phone number field
-        if(!isValidMobilePhoneEntered(binding.registrationPhoneEditText.text.toString())){
+        if(!registrationViewModel.isValidMobilePhoneEntered(binding.registrationPhoneEditText.text.toString())){
             areInputsValidAndComplete = false
             binding.registrationPhoneTextLayout.error = resources.getString(R.string.phone_format_message)
         }
@@ -323,7 +349,7 @@ class RegistrationFragment : Fragment(), LoadingFragmentHolder{
             binding.addressTextLayout.error = "اختر عنوان تواجدك"
         }
         // Validating password
-        if(!isValidPasswordEntered(binding.registrationPasswordEditText.text.toString())){
+        if(!registrationViewModel.isValidPasswordEntered(binding.registrationPasswordEditText.text.toString())){
             areInputsValidAndComplete = false
             binding.passwordTextLayout.error = resources.getString(R.string.password_format_message)
         }
@@ -336,15 +362,6 @@ class RegistrationFragment : Fragment(), LoadingFragmentHolder{
         return areInputsValidAndComplete
     }
 
-    private fun isValidMobilePhoneEntered(phoneNumber: String): Boolean =
-        phoneNumber.length == resources.getInteger(R.integer.phone_number_length)
-                && phoneNumber.matches(Regex("01[0-9]+"))
-
-    private fun isValidNameEntered(name: String): Boolean =
-        name.trim().length > 1 && name.matches(Regex("^[a-zA-Z\\u0621-\\u064A]+"))
-
-    private fun isValidPasswordEntered(password: String): Boolean =
-        password.isNotEmpty()  && !password.contains(" ")
 
     private fun doPasswordsMatch() = (binding.confirmPasswordEditText.text.toString()
             == binding.registrationPasswordEditText.text.toString())
@@ -379,7 +396,7 @@ class RegistrationFragment : Fragment(), LoadingFragmentHolder{
         password = binding.registrationPasswordEditText.text.toString(),
         location = locationPickerViewModel.getLocation(),
         bloodType = registrationViewModel.bloodType.value,
-        gender = Gender.fromString("ذكر"),
+        gender = registrationViewModel.gender.value,
         birthDate = registrationViewModel.getBirthDate()
     )
 

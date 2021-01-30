@@ -246,53 +246,44 @@
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/bloodTypeTextView"/>
 
-                <RadioGroup
-                    android:id="@+id/genderRadioGroup"
+                <TextView
+                    android:id="@+id/genderPicker"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="34dp"
-                    app:layout_constraintHorizontal_bias="0.370"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/bloodTypeTextView">
+                    android:background="@drawable/textview_bg_selector"
+                    android:drawablePadding="10dp"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:layout_marginTop="35dp"
+                    android:text="@{viewmodel.gender.gender}"
+                    android:textColor="#7E7878"
+                    android:textSize="16sp"
+                    app:drawableEndCompat="@drawable/iconfinder_nav_arrow_right_383100_big"
+                    app:layout_constraintLeft_toLeftOf="@id/bloodTypePicker"
+                    app:layout_constraintRight_toRightOf="@id/bloodTypePicker"
+                    app:layout_constraintTop_toBottomOf="@id/bloodTypePicker"/>
 
-                    <RadioButton
-                        android:id="@+id/maleRadioBtn"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginEnd="30dp"
-                        android:buttonTint="@color/colorPrimaryDark"
-                        android:fontFamily="arial"
-                        android:text="@string/male"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="2dp"
+                    android:background="@color/colorPrimaryDark"
+                    android:layout_marginTop="1dp"
+                    app:layout_constraintHorizontal_bias="0.4"
+                    app:layout_constraintLeft_toLeftOf="@id/genderPicker"
+                    app:layout_constraintRight_toRightOf="@id/genderPicker"
+                    app:layout_constraintTop_toBottomOf="@id/genderPicker" />
 
-                    <RadioButton
-                        android:id="@+id/femaleRadioBtn"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="30dp"
-                        android:buttonTint="@color/colorPrimaryDark"
-                        android:fontFamily="arial"
-                        android:text="@string/female"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
-
-                </RadioGroup>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/addressTextLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:theme="@style/hintAppearance"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="20dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/genderRadioGroup"
+                    app:layout_constraintTop_toBottomOf="@id/genderPicker"
                     android:focusable="false">
 
                     <EditText

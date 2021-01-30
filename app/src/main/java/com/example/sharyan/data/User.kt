@@ -28,7 +28,7 @@ enum class Gender(val gender: String): Serializable{
     @SerializedName("Male")
     Male("ذكر"),
     @SerializedName("Female")
-    Female("انثي"),
+    Female("انثى"),
     @SerializedName("None")
     None("اُفضّل عدم القول");
 

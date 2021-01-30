@@ -2,10 +2,7 @@ package com.example.sharyan.ui
 
 import android.util.Log
 import androidx.lifecycle.*
-import com.example.sharyan.data.BirthDate
-import com.example.sharyan.data.BloodType
-import com.example.sharyan.data.RegistrationResponse
-import com.example.sharyan.data.User
+import com.example.sharyan.data.*
 import com.example.sharyan.networking.RetrofitBloodDonationInterface
 import com.example.sharyan.networking.RetrofitClient
 import kotlinx.coroutines.Dispatchers
@@ -17,6 +14,8 @@ class RegistrationViewModel: ViewModel() {
         .create(RetrofitBloodDonationInterface::class.java)
     private val _bloodType = MutableLiveData<BloodType>(BloodType.APositive)
     val bloodType: LiveData<BloodType> = _bloodType
+    private val _gender = MutableLiveData<Gender>(Gender.None)
+    val gender: LiveData<Gender> = _gender
     private val _birthDate = MutableLiveData<BirthDate?>(null)
     val birthDateString: LiveData<String> = Transformations.map(_birthDate){
         when(it){
@@ -43,5 +42,19 @@ class RegistrationViewModel: ViewModel() {
         _birthDate.value = birthDate
     }
 
+    fun setGender(gender: String){
+        _gender.value = Gender.fromString(gender)
+    }
+
     fun getBirthDate() = _birthDate.value
+
+    fun isValidMobilePhoneEntered(phoneNumber: String): Boolean =
+        phoneNumber.length == 11
+                && phoneNumber.matches(Regex("01[0-9]+"))
+
+    fun isValidNameEntered(name: String): Boolean =
+        name.trim().length > 1 && name.matches(Regex("[a-zA-Z]+|[\\u0621-\\u064A]+"))
+
+    fun isValidPasswordEntered(password: String): Boolean =
+        password.isNotEmpty()  && !password.contains(" ")
 }
