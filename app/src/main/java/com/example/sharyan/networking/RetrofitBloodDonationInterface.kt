@@ -37,7 +37,9 @@ interface RetrofitBloodDonationInterface {
     suspend fun addUserToDonorsList(@Path("requestId") requestId: String
                                          ,@Path("userId") userId: String)
 
-
     @POST("users/login")
     suspend fun logUser(@Body loginQuery: LoginQuery): LoginResponse
+
+    @POST("users/signup")
+    suspend fun registerUser(@Body user: User): RegistrationResponse
 }

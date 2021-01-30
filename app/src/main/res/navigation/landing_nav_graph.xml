@@ -54,6 +54,8 @@
         android:label="fragment_sms"
         tools:layout="@layout/fragment_sms">
         <argument android:name="phoneNumber" />
+        <argument android:name="user"
+            app:argType="com.example.sharyan.data.User"/>
     </fragment>
 
     <fragment

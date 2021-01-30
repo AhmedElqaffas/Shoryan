@@ -14,13 +14,17 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.navigation.navGraphViewModels
 import com.example.sharyan.R
 import com.example.sharyan.Utility
+import com.example.sharyan.data.*
 import com.example.sharyan.databinding.FragmentRegistrationBinding
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -33,15 +37,16 @@ import kotlinx.coroutines.withContext
 import java.util.*
 
 
-class RegistrationFragment : Fragment(){
+class RegistrationFragment : Fragment(), LoadingFragmentHolder{
 
     private lateinit var navController: NavController
     private lateinit var locationPickerViewModel: LocationPickerViewModel
+    private val registrationViewModel: RegistrationViewModel by navGraphViewModels(R.id.landing_nav_graph)
     private var fusedLocationProviderClient: FusedLocationProviderClient? = null
-
-
+    private lateinit var registrationProcess: LiveData<RegistrationResponse>
     private var _binding: FragmentRegistrationBinding? = null
     private val binding get() = _binding!!
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,6 +54,8 @@ class RegistrationFragment : Fragment(){
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentRegistrationBinding.inflate(inflater, container, false)
+        _binding!!.viewmodel = registrationViewModel
+        _binding!!.lifecycleOwner = this
         return binding.root
     }
 
@@ -125,7 +132,7 @@ class RegistrationFragment : Fragment(){
             requireActivity(),
             Manifest.permission.ACCESS_FINE_LOCATION
         )
-            == PackageManager.PERMISSION_GRANTED)
+                == PackageManager.PERMISSION_GRANTED)
 
     // What happens when users accept or deny accessing their location
     override fun onRequestPermissionsResult(
@@ -169,11 +176,7 @@ class RegistrationFragment : Fragment(){
                     locationLatLng
                 )
                 address?.let {
-                    locationPickerViewModel.locationStringLiveData.postValue(
-                        address.getAddressLine(
-                            0
-                        )
-                    )
+                    locationPickerViewModel.setLocation(it)
                 }
             }
         }
@@ -245,9 +248,8 @@ class RegistrationFragment : Fragment(){
         val currentDay = c.get(Calendar.DAY_OF_MONTH)
         val dpd = DatePickerDialog(
             requireActivity(),
-            { view, year, monthOfYear, dayOfMonth ->
-                // Display Selected date in the Button's text
-                binding.birthDatePicker.text = "$dayOfMonth/$monthOfYear/$year"
+            { _, year, monthOfYear, dayOfMonth ->
+                registrationViewModel.setBirthDate(BirthDate(year, monthOfYear + 1, dayOfMonth))
             },
             currentYear,
             currentMonth,
@@ -269,7 +271,7 @@ class RegistrationFragment : Fragment(){
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
-        binding.bloodTypePicker.text = item.title
+        registrationViewModel.setBloodType(item.title.toString())
         return true
     }
 
@@ -285,9 +287,8 @@ class RegistrationFragment : Fragment(){
 
     private fun setConfirmRegistrationButtonListener(){
         binding.confirmRegistrationButton.setOnClickListener {
-            // true should be replaced with checking if entered data is valid and complete
             if(areInputsValidAndComplete()){
-                goToSMSFragment()
+                registerUser(createUser())
             }
         }
     }
@@ -308,6 +309,13 @@ class RegistrationFragment : Fragment(){
         if(!isValidMobilePhoneEntered(binding.registrationPhoneEditText.text.toString())){
             areInputsValidAndComplete = false
             binding.registrationPhoneTextLayout.error = resources.getString(R.string.phone_format_message)
+        }
+        // Validating birth date
+        if(registrationViewModel.getBirthDate() == null){
+            areInputsValidAndComplete = false
+            Utility.displaySnackbarMessage(binding.registrationRootLayout,
+                "ادخل تاريخ ميلادك",
+                Snackbar.LENGTH_SHORT)
         }
         // Validating location
         if(locationPickerViewModel.locationStringLiveData.value.isNullOrEmpty()){
@@ -339,13 +347,51 @@ class RegistrationFragment : Fragment(){
         password.isNotEmpty()  && !password.contains(" ")
 
     private fun doPasswordsMatch() = (binding.confirmPasswordEditText.text.toString()
-    == binding.registrationPasswordEditText.text.toString())
+            == binding.registrationPasswordEditText.text.toString())
 
-    private fun goToSMSFragment(){
+
+    private fun registerUser(user: User){
+        toggleLoggingInIndicator()
+        registrationProcess = registrationViewModel.registerUser(user)
+        registrationProcess.observe(viewLifecycleOwner){
+            toggleLoggingInIndicator()
+            it.error?.apply {
+                Utility.displaySnackbarMessage(binding.registrationRootLayout, this, Snackbar.LENGTH_LONG)
+            }
+            it.id?.apply {
+                goToSMSFragment(user)
+            }
+        }
+    }
+
+    private fun toggleLoggingInIndicator(){
+        val loadingFragment: DialogFragment? = childFragmentManager.findFragmentByTag("loading") as DialogFragment?
+        if(loadingFragment == null)
+            LoadingFragment(this).show(childFragmentManager, "loading")
+        else
+            loadingFragment.dismiss()
+    }
+
+    private fun createUser() = User(
+        name = Name(binding.registrationFirstNameEditText.text.toString().trim(),
+            binding.registrationLastNameEditText.text.toString().trim()),
+        phoneNumber = binding.registrationPhoneEditText.text.toString().trim().substring(1),
+        password = binding.registrationPasswordEditText.text.toString(),
+        location = locationPickerViewModel.getLocation(),
+        bloodType = registrationViewModel.bloodType.value,
+        gender = Gender.fromString("ذكر"),
+        birthDate = registrationViewModel.getBirthDate()
+    )
+
+    private fun goToSMSFragment(user: User){
         val phoneNumber = getEditTextValue(binding.registrationPhoneEditText)
         val phoneNumberBundle = bundleOf("phoneNumber" to phoneNumber)
         navController.navigate(R.id.action_registrationFragment_to_SMSFragment, phoneNumberBundle)
     }
 
     private fun getEditTextValue(editText: EditText):String =  editText.text.toString().trim()
+
+    override fun onLoadingFragmentDismissed(){
+        registrationProcess.removeObservers(viewLifecycleOwner)
+    }
 }

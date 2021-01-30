@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.sharyan.R
+import com.example.sharyan.data.Location
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -17,9 +18,13 @@ class LocationPickerViewModel: ViewModel() {
 
     val locationStringLiveData: MutableLiveData<String> = MutableLiveData("")
     var locationLatLng = LatLng(30.041517, 31.234525)
+    private lateinit var region: String
+    private lateinit var governorate: String
 
     fun setLocation(location: Address){
-        locationStringLiveData.value = location.getAddressLine(0)?: ""
+        locationStringLiveData.postValue(location.getAddressLine(0)?: "")
+        region = location.subAdminArea
+        governorate = location.adminArea
         locationLatLng = LatLng(location.latitude, location.longitude)
     }
 
@@ -35,15 +40,11 @@ class LocationPickerViewModel: ViewModel() {
                  }
              }
          }
-         println(address)
-         println(address?.subLocality)
-         println(address?.featureName)
-         println(address?.thoroughfare)
-         println(address?.locality)
-         println(address?.subAdminArea)
-         println(address?.adminArea)
+
          return address
     }
 
     fun getCurrentSavedAddress(): String = locationStringLiveData.value!!
+
+    fun getLocation() = Location(governorate, region, locationLatLng.latitude, locationLatLng.longitude)
 }
