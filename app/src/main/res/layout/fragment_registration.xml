@@ -5,7 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/registration_bg"
-    tools:context=".ui.RegistrationActivity">
+    android:id="@+id/registrationRootLayout"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:clickable="true">
 
     <ImageView
         android:id="@+id/registrationBack"
@@ -48,6 +51,8 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
             android:paddingBottom="20dp">
 
             <TextView
@@ -67,7 +72,7 @@
                 app:layout_constraintVertical_bias="0.07" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/registrationNameTextLayout"
+                android:id="@+id/registrationFirstNameTextLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:theme="@style/hintAppearance"
@@ -75,17 +80,43 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/registrationTextView">
+                app:layout_constraintTop_toBottomOf="@id/registrationTextView"
+                app:errorEnabled="true">
 
                 <EditText
-                    android:id="@+id/registrationNameEditText"
+                    android:id="@+id/registrationFirstNameEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/colorPrimaryDark"
                     android:drawableEnd="@mipmap/username"
                     android:paddingEnd="20dp"
                     android:drawablePadding="16dp"
-                    android:hint="@string/username"
+                    android:hint="@string/first_name"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:singleLine="true" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/registrationLastNameTextLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:theme="@style/hintAppearance"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/registrationFirstNameTextLayout">
+
+                <EditText
+                    android:id="@+id/registrationLastNameEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/colorPrimaryDark"
+                    android:drawableEnd="@mipmap/username"
+                    android:paddingEnd="20dp"
+                    android:drawablePadding="16dp"
+                    android:hint="@string/last_name"
                     android:inputType="text"
                     android:maxLines="1"
                     android:singleLine="true" />
@@ -101,7 +132,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/registrationNameTextLayout"
+                app:layout_constraintTop_toBottomOf="@id/registrationLastNameTextLayout"
 >
 
                 <EditText
@@ -255,7 +286,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/genderRadioGroup">
+                app:layout_constraintTop_toBottomOf="@id/genderRadioGroup"
+                android:focusable="false">
 
                 <EditText
                     android:id="@+id/addressEditText"
@@ -268,9 +300,22 @@
                     android:hint="@string/address"
                     android:inputType="text"
                     android:maxLines="1"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:focusable="false"/>
 
             </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                android:id="@+id/openMapButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/addressTextLayout"
+                app:layout_constraintLeft_toLeftOf="@id/registrationTextView"
+                app:layout_constraintRight_toRightOf="@id/registrationTextView"
+                android:background="@drawable/button_curved_red"
+                android:text="@string/change_location"
+                android:textColor="#FFFFFF"
+                android:layout_weight="5"/>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/passwordTextLayout"
@@ -281,7 +326,9 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/addressTextLayout">
+                app:layout_constraintTop_toBottomOf="@id/openMapButton"
+                app:passwordToggleEnabled="true"
+                android:layoutDirection="rtl">
 
                 <EditText
                     android:id="@+id/registrationPasswordEditText"
@@ -307,7 +354,9 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/passwordTextLayout">
+                app:layout_constraintTop_toBottomOf="@id/passwordTextLayout"
+                app:passwordToggleEnabled="true"
+                android:layoutDirection="rtl">
 
                 <EditText
                     android:id="@+id/confirmPasswordEditText"

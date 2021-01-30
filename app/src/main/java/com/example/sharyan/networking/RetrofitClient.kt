@@ -11,7 +11,7 @@ object RetrofitClient {
         if (retrofitClient == null) {
             retrofitClient = Retrofit
                 .Builder()
-                .baseUrl("https://pacific-springs-77989.herokuapp.com")
+                .baseUrl("https://pacific-springs-77989.herokuapp.com/api/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(OkHttpClient.Builder().build())
                 .build()

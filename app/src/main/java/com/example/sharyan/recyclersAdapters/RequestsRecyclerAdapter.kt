@@ -29,14 +29,15 @@ class RequestsRecyclerAdapter(private val requestsRecyclerInteraction: RequestsR
 
         private fun setClickListener(){
             itemView.setOnClickListener{
-                requestsRecyclerInteraction.onItemClicked(getItem(layoutPosition))
+                requestsRecyclerInteraction.onRequestCardClicked(getItem(layoutPosition))
             }
         }
 
         fun bindRequestData(request: DonationRequest){
-            itemView.request_item_blood_type.text = request.bloodType
-            itemView.request_item_name.text = request.requester.name?.firstName
-            itemView.request_item_location.text = request.donationLocation.region
+            itemView.request_item_blood_type.text = request.bloodType?.bloodType
+            itemView.request_item_name.text = request.requester?.name?.firstName
+            itemView.request_item_location.text = request.bloodBank?.name + " - " +
+                    request.bloodBank?.location?.region
         }
     }
 }

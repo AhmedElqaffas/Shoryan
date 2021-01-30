@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.MyRequestsFragment"
+    android:id="@+id/myRequestsLayout">
+
+    <include android:id="@+id/homeAppbar"
+        layout="@layout/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:paddingBottom="20dp"
+        app:layout_constraintVertical_bias="0"/>
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/requestsShimmerContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/homeAppbar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="30dp"
+        app:shimmer_auto_start="true">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <include layout="@layout/shimmer_item_request" />
+            <include layout="@layout/shimmer_item_request"/>
+            <include layout="@layout/shimmer_item_request"/>
+            <include layout="@layout/shimmer_item_request"/>
+            <include layout="@layout/shimmer_item_request"/>
+            <include layout="@layout/shimmer_item_request"/>
+        </LinearLayout>
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/myRequestsRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/homeAppbar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="30dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:orientation="vertical"
+        tools:listitem="@layout/item_request"
+        android:visibility="invisible"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/newRequestFAB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.07"
+        app:layout_constraintVertical_bias="0.93"
+        android:backgroundTint="#FFFFFF"
+        android:src="@drawable/ic_plus"
+        app:maxImageSize="56dp"
+        android:contentDescription="@string/new_request" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

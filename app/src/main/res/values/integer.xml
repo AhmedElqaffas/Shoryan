@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="phone_number_length" type="integer">11</item>
+    <item name="code_length" type="integer">4</item>
 </resources>
