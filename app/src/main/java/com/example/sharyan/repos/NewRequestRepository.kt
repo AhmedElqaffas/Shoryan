@@ -18,6 +18,8 @@ object NewRequestRepository {
     private var cachedGizaRegions : GizaBanks? = null
     private var cachedCairoRegions : CairoBanks? = null
 
+    private var cachedBloodBanksMap : Map<String, String>? = null
+
     suspend fun canUserRequest(userID : String, bloodDonationInterface: RetrofitBloodDonationInterface) : Boolean{
         // This function will contain an API call to determine whether the current user can request a blood donation
         if(cachedCanUserRequest != null)
@@ -46,7 +48,8 @@ object NewRequestRepository {
          *  This function converts a list of blood banks into a map where each blood bank name
          *  maps into a certain ID
          */
-        return bloodBankList?.map { it.name to it.id}?.toMap()
+        cachedBloodBanksMap = bloodBankList?.map { it.name to it.id}?.toMap()
+        return cachedBloodBanksMap
     }
 
     fun getBloodBankNamesList(bloodBankMap : Map<String, String>? ) : List<String>{
@@ -59,10 +62,9 @@ object NewRequestRepository {
         return bloodBankNamesList
     }
 
-    fun getBloodBankID(name : String, bloodBankMap : Map<String, String>) : String? {
-        return bloodBankMap[name]
+    fun getBloodBankID(name : String) : String? {
+        return cachedBloodBanksMap?.get(name)
     }
-
 
     fun getGovernoratesList(): List<String>{
         return listOf("", "القاهرة", "الجيزة")
