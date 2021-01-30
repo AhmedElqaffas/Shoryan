@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 data class RequestCreationStatusResponse(val userCanRequest : UserCanRequest,
                                          val dataBanks : DataBanksDetails)
 
-data class UserCanRequest(val state: Boolean)
+data class UserCanRequest(val state: Boolean, val message: String? = null)
 
 data class DataBanksDetails(@SerializedName("القاهرة") val cairoBanks: CairoBanks,
                             @SerializedName("الجيزة") val gizaBanks: GizaBanks)

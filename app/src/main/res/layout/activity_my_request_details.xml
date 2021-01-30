@@ -29,10 +29,10 @@
         app:layout_constraintVertical_bias="0.244" />
 
     <TextView
-        android:id="@+id/govTextView"
+        android:id="@+id/bagsFulfilledTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="المحافظة: "
+        android:text="وحدات الدم التي تم التبرع بها: "
         android:textColor="#000"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -43,7 +43,7 @@
         app:layout_constraintVertical_bias="0.350" />
 
     <TextView
-        android:id="@+id/cityTextView"
+        android:id="@+id/locationIDTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="المنطقة: "
@@ -71,6 +71,20 @@
         app:layout_constraintVertical_bias="0.550" />
 
     <TextView
+        android:id="@+id/dateTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="تاريخ الطلب: "
+        android:textColor="#000"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.826"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/newRequestAppbar"
+        app:layout_constraintVertical_bias="0.650" />
+
+    <TextView
         android:id="@+id/bloodTypeResult"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -85,7 +99,7 @@
         app:layout_constraintVertical_bias="0.244" />
 
     <TextView
-        android:id="@+id/govResult"
+        android:id="@+id/bagsFulfilledResult"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""
@@ -93,13 +107,13 @@
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.600"
+        app:layout_constraintHorizontal_bias="0.1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/newRequestAppbar"
         app:layout_constraintVertical_bias="0.350" />
 
     <TextView
-        android:id="@+id/cityResult"
+        android:id="@+id/locationResult"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text=""
@@ -107,7 +121,7 @@
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.600"
+        app:layout_constraintHorizontal_bias="0.1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/newRequestAppbar"
         app:layout_constraintVertical_bias="0.450" />
@@ -121,10 +135,24 @@
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.450"
+        app:layout_constraintHorizontal_bias="0.1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/newRequestAppbar"
         app:layout_constraintVertical_bias="0.550" />
+
+    <TextView
+        android:id="@+id/dateResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/newRequestAppbar"
+        app:layout_constraintVertical_bias="0.650" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

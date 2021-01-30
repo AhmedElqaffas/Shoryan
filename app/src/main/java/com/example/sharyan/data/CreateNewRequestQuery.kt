@@ -1,7 +1,7 @@
 package com.example.sharyan.data
 
 data class CreateNewRequestQuery(val bloodType : String,
-                                 val numberOfBagsRequried : Int,
+                                 val numberOfBagsRequired : Int,
                                  val urgent : Boolean,
                                  val requestBy : String,
                                  val donationLocation : String)

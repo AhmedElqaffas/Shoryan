@@ -1,12 +1,8 @@
 package com.example.sharyan.repos
 
-import com.example.sharyan.data.BloodBankResponse
-import com.example.sharyan.data.CairoBanks
-import com.example.sharyan.data.CurrentAppUser
-import com.example.sharyan.data.GizaBanks
+import android.util.Log
+import com.example.sharyan.data.*
 import com.example.sharyan.networking.RetrofitBloodDonationInterface
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 
 
 object NewRequestRepository {
@@ -20,23 +16,25 @@ object NewRequestRepository {
 
     private var cachedBloodBanksMap : Map<String, String>? = null
 
-    suspend fun canUserRequest(userID : String, bloodDonationInterface: RetrofitBloodDonationInterface) : Boolean{
+    suspend fun canUserRequest(userID : String?, bloodDonationInterface: RetrofitBloodDonationInterface) : Boolean{
         // This function will contain an API call to determine whether the current user can request a blood donation
         if(cachedCanUserRequest != null)
             return cachedCanUserRequest!!
         else {
             // The API call
-            val response = bloodDonationInterface.getRequestCreationStatus(CurrentAppUser.id)
+            val response = bloodDonationInterface.getRequestCreationStatus(userID)
             cachedCanUserRequest = response.userCanRequest.state
 
-            // Caching the obtained regions
-            cachedCairoRegions = response.dataBanks.cairoBanks
-            cachedGizaRegions = response.dataBanks.gizaBanks
+            if(cachedCanUserRequest as Boolean) {
+                // Caching the obtained regions
+                cachedCairoRegions = response.dataBanks.cairoBanks
+                cachedGizaRegions = response.dataBanks.gizaBanks
 
-            // Caching the obtained blood banks
-            cachedNasrCityBanks = cachedCairoRegions?.nasrCityBanks
-            cachedMasrGededaBanks = cachedCairoRegions?.masrGededaBanks
-            cachedMoneebBanks = cachedGizaRegions?.moneebBanks
+                // Caching the obtained blood banks
+                cachedNasrCityBanks = cachedCairoRegions?.nasrCityBanks
+                cachedMasrGededaBanks = cachedCairoRegions?.masrGededaBanks
+                cachedMoneebBanks = cachedGizaRegions?.moneebBanks
+            }
         }
 
         return cachedCanUserRequest!!
@@ -62,7 +60,7 @@ object NewRequestRepository {
         return bloodBankNamesList
     }
 
-    fun getBloodBankID(name : String) : String? {
+    fun getBloodBankID(name : String?) : String? {
         return cachedBloodBanksMap?.get(name)
     }
 
@@ -86,6 +84,15 @@ object NewRequestRepository {
             "المنيب" -> bloodBankList = getBloodBankNamesList(converListToMap(cachedMoneebBanks))
         }
         return bloodBankList
+    }
+
+    suspend fun postNewRequest(createNewRequestQuery: CreateNewRequestQuery,
+                               bloodDonationInterface: RetrofitBloodDonationInterface)
+    : CreateNewRequestResponse{
+
+        // The API call
+        return bloodDonationInterface.createNewRequest(createNewRequestQuery)
+
     }
 
 }

@@ -2,6 +2,7 @@ package com.example.sharyan.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.navigation.navGraphViewModels
 import com.example.sharyan.R
+import com.example.sharyan.data.CreateNewRequestResponse
 import com.example.sharyan.databinding.AppbarBinding
 import com.example.sharyan.databinding.FragmentNewRequestBinding
 import com.google.android.material.snackbar.Snackbar
@@ -23,6 +25,8 @@ class NewRequestFragment : Fragment() {
     private var _binding: FragmentNewRequestBinding? = null
     private val binding get() = _binding!!
     private var toolbarBinding: AppbarBinding? = null
+
+    private var createNewRequestResponse : CreateNewRequestResponse? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentNewRequestBinding.inflate(inflater, container, false)
@@ -56,6 +60,7 @@ class NewRequestFragment : Fragment() {
         disableGovSpinner()
         disableIncDecButtons()
         disableProgressBar()
+        binding.checkingPermissionSentence.visibility = View.GONE
         showMessage("نأسف لا يمكنك طلب تبرع بالدم اكثر من ثلاثة مرات في اليوم")
     }
 
@@ -293,10 +298,31 @@ class NewRequestFragment : Fragment() {
     private fun setConfirmButtonClickListener() {
         binding.confirmRequestButton.setOnClickListener {
             if (isBloodTypeSelected() and isBagsCountSet() and isLocationSelected()) {
-                showMessage("تم الطلب بنجاح", successFlag = true)
+                binding.progressBar.visibility = View.VISIBLE
+                createNewRequest()
             } else {
                 showMessage("ارجوك اكمل ادخال البيانات")
             }
+        }
+    }
+
+    private fun createNewRequest() {
+        CoroutineScope(Dispatchers.Main).async {
+            newRequestViewModel.createNewRequest(getSelectedBloodType().text.toString(), getCurrentBagsCount(),
+                getSelectedItemFromSpinner(binding.spinnerBloodBank)).observe(viewLifecycleOwner,
+                { response -> showSuccessMessage(response)})
+
+        }
+    }
+
+    private fun showSuccessMessage(response: CreateNewRequestResponse?) {
+        binding.progressBar.visibility = View.GONE
+        createNewRequestResponse = response
+        if(createNewRequestResponse?.isActive == true)
+            showMessage("لقد تم الطلب بنجاح", true)
+        else{
+            showMessage("نأسف لا يمكنك طلب تبرع بالدم اكثر من ثلاثة مرات في اليوم")
+            disableInput()
         }
     }
 
@@ -336,10 +362,14 @@ class NewRequestFragment : Fragment() {
 
     private fun openRequestDetails() {
         val intent = Intent(context, MyRequestDetailsActivity::class.java)
-        intent.putExtra("bloodType", getSelectedBloodType().text.toString())
-        intent.putExtra("gov", getSelectedItemFromSpinner(binding.spinnerGov))
-        intent.putExtra("city", getSelectedItemFromSpinner(binding.spinnerCity))
-        intent.putExtra("bloodBagsCount", getCurrentBagsCount())
+        intent.putExtra("bloodType", createNewRequestResponse?.bloodType)
+        intent.putExtra("bagsFulfilled", createNewRequestResponse?.numberOfBagsFulfilled)
+        intent.putExtra("bagsRequired", createNewRequestResponse?.numberOfBagsRequired)
+        intent.putExtra("comingDonors", createNewRequestResponse?.numberOfComingDonors)
+        intent.putExtra("date", createNewRequestResponse?.date)
+        intent.putExtra("donationLocation", createNewRequestResponse?.donationLocation)
+        intent.putExtra("requestBy", createNewRequestResponse?.requestBy)
+        intent.putExtra("requestID", createNewRequestResponse?.id)
         startActivity(intent)
     }
 
