@@ -141,7 +141,7 @@ class PasswordLoginFragment : Fragment(), LoadingFragmentHolder {
 
     private fun verifyCredentials(phoneNumber: String, password: String){
         toggleLoggingInIndicator()
-        loginProcess = loginViewModel.verifyCredentials(phoneNumber, password, bloodDonationAPI)
+        loginProcess = loginViewModel.logUser(phoneNumber, password, bloodDonationAPI)
         loginProcess.observe(viewLifecycleOwner, loginObserver)
     }
 

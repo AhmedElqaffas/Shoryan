@@ -73,7 +73,7 @@ class MyRequestDetailsViewModel: ViewModel() {
 
         acceptedRequestMediatorLiveData.addSource(donationDetails){
             // When th details are loaded, set the request id as this liveData value
-                value: DonationDetails -> acceptedRequestMediatorLiveData.setValue(value.request.id)
+                value: DonationDetails -> acceptedRequestMediatorLiveData.setValue(value.request?.id)
         }
     }
 

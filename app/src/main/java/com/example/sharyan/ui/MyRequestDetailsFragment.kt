@@ -149,7 +149,7 @@ class MyRequestDetailsFragment : BottomSheetDialogFragment(){
 
 
     private fun donationDetailsReceived(donationDetails: DonationDetails){
-        donationRequest = donationDetails.request
+        donationRequest = donationDetails.request!!
         updateMapLocation()
         binding.requestDetailsShimmer.stopShimmer()
         snackbar?.dismiss()

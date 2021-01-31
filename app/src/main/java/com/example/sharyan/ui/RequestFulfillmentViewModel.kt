@@ -79,7 +79,7 @@ class RequestFulfillmentViewModel: ViewModel() {
 
         acceptedRequestMediatorLiveData.addSource(donationDetails){
             // When th details are loaded, set the request id as this liveData value
-                value: DonationDetails -> acceptedRequestMediatorLiveData.setValue(value.request.id)
+                value: DonationDetails -> acceptedRequestMediatorLiveData.setValue(value.request?.id)
         }
     }
 
@@ -102,6 +102,7 @@ class RequestFulfillmentViewModel: ViewModel() {
      */
     fun getWaitingDonationViewVisibility(): LiveData<Int> = Transformations.map(acceptedRequestMediatorLiveData){
         when (donationDetails.value?.request?.id) {
+            null -> View.GONE
             currentUserPendingRequest.value -> View.VISIBLE
             else -> View.GONE
         }
@@ -109,9 +110,9 @@ class RequestFulfillmentViewModel: ViewModel() {
 
     fun getDonationDetails(requestId: String) = liveData(Dispatchers.IO) {
         val details = RequestFulfillmentRepo.getDonationDetails(bloodDonationAPI, requestId)
-        _donationDetails.postValue(details)
         emit(details)
-        if(details != null){
+        if(details?.request != null){
+            _donationDetails.postValue(details)
             _areDonationDetailsLoaded.postValue(true)
             _isInLoadingState.postValue(false)
             _canUserDonate.postValue(details.donationAbility.canUserDonate)

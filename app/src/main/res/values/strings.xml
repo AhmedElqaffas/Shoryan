@@ -66,6 +66,7 @@
     <string name="resend_sms"><u>إعادة إرسال الرمز</u></string>
     <string name="settings">الإعدادات</string>
     <string name="submit">تنفيذ</string>
+    <string name="try_again">اعد المحاولة</string>
     <string name="username">الاسم بالكامل</string>
     <string name="waiting_confirmation">انت الان مسجل كمتبرع لهذا الطلب, نحن في انتظار وصولك الي بنك الدم</string>
 

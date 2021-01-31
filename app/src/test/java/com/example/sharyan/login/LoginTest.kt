@@ -60,7 +60,7 @@ class LoginTest {
         // Perform fake api call
         var loginResponse: LoginResponse? = null
         runBlocking{
-            LoginViewModel().verifyCredentials("111", "111", apiTestManager.api).observeForever {
+            LoginViewModel().logUser("111", "111", apiTestManager.api).observeForever {
                 loginResponse = it
             }
             // No idea why this delay is needed, I've disabled internet connection
@@ -87,7 +87,7 @@ class LoginTest {
         // Perform fake api call
         var loginResponse: LoginResponse? = null
         runBlocking{
-            LoginViewModel().verifyCredentials("111", "111", apiTestManager.api).observeForever {
+            LoginViewModel().logUser("111", "111", apiTestManager.api).observeForever {
                 loginResponse = it
             }
             delay(400)
