@@ -32,7 +32,7 @@
     <string name="filter_matching_types">الفصائل التي يمكننى التبرع لها</string>
     <string name="first_name">الاسم الأول</string>
     <string name="gender">النوع</string>
-    <string name="hello_user_greeting">%1$s ،مرحباً</string>
+    <string name="hello_user_greeting">\u200F مرحباً، %1$s</string>
     <string name="home">الرئيسية</string>
     <string name="instructions">تعليمات</string>
     <string name="internet_connection">تأكّد من اتصالك بالإنترنت</string>

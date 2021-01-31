@@ -45,11 +45,13 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding.homeSwipeRefresh.isEnabled = false
         _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.homeSwipeRefresh.isEnabled = true
         instantiateNavController(view)
         initializeRecyclerViewAdapter()
         // Getting ongoingRequests, pending request, my requests,  all in parallel
