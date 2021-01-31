@@ -18,6 +18,8 @@ import com.example.sharyan.Utility
 import com.example.sharyan.data.LoginResponse
 import com.example.sharyan.databinding.FragmentLoginPasswordBinding
 import com.example.sharyan.databinding.LoginBannerBinding
+import com.example.sharyan.networking.RetrofitBloodDonationInterface
+import com.example.sharyan.networking.RetrofitClient
 import com.google.android.material.snackbar.Snackbar
 
 class PasswordLoginFragment : Fragment(), LoadingFragmentHolder {
@@ -26,6 +28,9 @@ class PasswordLoginFragment : Fragment(), LoadingFragmentHolder {
     private lateinit var phoneNumber: String
 
     private val loginViewModel: LoginViewModel by navGraphViewModels(R.id.landing_nav_graph)
+    private var bloodDonationAPI: RetrofitBloodDonationInterface = RetrofitClient
+        .getRetrofitClient()
+        .create(RetrofitBloodDonationInterface::class.java)
 
     private lateinit var loginProcess: LiveData<LoginResponse>
     private lateinit var loginObserver: Observer<LoginResponse>
@@ -136,7 +141,7 @@ class PasswordLoginFragment : Fragment(), LoadingFragmentHolder {
 
     private fun verifyCredentials(phoneNumber: String, password: String){
         toggleLoggingInIndicator()
-        loginProcess = loginViewModel.verifyCredentials(phoneNumber, password)
+        loginProcess = loginViewModel.verifyCredentials(phoneNumber, password, bloodDonationAPI)
         loginProcess.observe(viewLifecycleOwner, loginObserver)
     }
 
