@@ -1,6 +1,7 @@
 package com.example.sharyan.data
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 data class CreateNewRequestResponse(
     val numberOfBagsFulfilled: Int,
@@ -21,4 +22,4 @@ data class CreateNewRequestResponse(
 
     @SerializedName("__v")
     val v: Int,
-)
+) : Serializable

@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.navGraphViewModels
 import com.example.sharyan.R
 import com.example.sharyan.data.CreateNewRequestResponse
+import com.example.sharyan.data.DonationRequest
 import com.example.sharyan.databinding.AppbarBinding
 import com.example.sharyan.databinding.FragmentNewRequestBinding
 import com.google.android.material.snackbar.Snackbar
@@ -26,7 +27,7 @@ class NewRequestFragment : Fragment() {
     private val binding get() = _binding!!
     private var toolbarBinding: AppbarBinding? = null
 
-    private var createNewRequestResponse : CreateNewRequestResponse? = null
+    private var createdRequest : CreateNewRequestResponse? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentNewRequestBinding.inflate(inflater, container, false)
@@ -317,8 +318,8 @@ class NewRequestFragment : Fragment() {
 
     private fun showSuccessMessage(response: CreateNewRequestResponse?) {
         binding.progressBar.visibility = View.GONE
-        createNewRequestResponse = response
-        if(createNewRequestResponse?.isActive == true)
+        createdRequest = response
+        if(createdRequest?.id != null)
             showMessage("لقد تم الطلب بنجاح", true)
         else{
             showMessage("نأسف لا يمكنك طلب تبرع بالدم اكثر من ثلاثة مرات في اليوم")
@@ -361,16 +362,8 @@ class NewRequestFragment : Fragment() {
     }
 
     private fun openRequestDetails() {
-        val intent = Intent(context, MyRequestDetailsActivity::class.java)
-        intent.putExtra("bloodType", createNewRequestResponse?.bloodType)
-        intent.putExtra("bagsFulfilled", createNewRequestResponse?.numberOfBagsFulfilled)
-        intent.putExtra("bagsRequired", createNewRequestResponse?.numberOfBagsRequired)
-        intent.putExtra("comingDonors", createNewRequestResponse?.numberOfComingDonors)
-        intent.putExtra("date", createNewRequestResponse?.date)
-        intent.putExtra("donationLocation", createNewRequestResponse?.donationLocation)
-        intent.putExtra("requestBy", createNewRequestResponse?.requestBy)
-        intent.putExtra("requestID", createNewRequestResponse?.id)
-        startActivity(intent)
+        val fragment = MyRequestDetailsFragment.newInstance(createdRequest!!)
+        fragment.show(childFragmentManager, "requestDetails")
     }
 
     private fun getSelectedBloodType(): RadioButton =

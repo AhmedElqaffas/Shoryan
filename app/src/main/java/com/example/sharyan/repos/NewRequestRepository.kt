@@ -22,19 +22,24 @@ object NewRequestRepository {
             return cachedCanUserRequest!!
         else {
             // The API call
-            val response = bloodDonationInterface.getRequestCreationStatus(userID)
-            cachedCanUserRequest = response.userCanRequest.state
+                try {
+                    val response = bloodDonationInterface.getRequestCreationStatus(userID)
+                    cachedCanUserRequest = response.userCanRequest.state
 
-            if(cachedCanUserRequest as Boolean) {
-                // Caching the obtained regions
-                cachedCairoRegions = response.dataBanks.cairoBanks
-                cachedGizaRegions = response.dataBanks.gizaBanks
+                    if (cachedCanUserRequest as Boolean) {
+                        // Caching the obtained regions
+                        cachedCairoRegions = response.dataBanks.cairoBanks
+                        cachedGizaRegions = response.dataBanks.gizaBanks
 
-                // Caching the obtained blood banks
-                cachedNasrCityBanks = cachedCairoRegions?.nasrCityBanks
-                cachedMasrGededaBanks = cachedCairoRegions?.masrGededaBanks
-                cachedMoneebBanks = cachedGizaRegions?.moneebBanks
-            }
+                        // Caching the obtained blood banks
+                        cachedNasrCityBanks = cachedCairoRegions?.nasrCityBanks
+                        cachedMasrGededaBanks = cachedCairoRegions?.masrGededaBanks
+                        cachedMoneebBanks = cachedGizaRegions?.moneebBanks
+                    }
+                }
+                catch (e: Exception){
+                    cachedCanUserRequest = false
+                }
         }
 
         return cachedCanUserRequest!!
@@ -88,10 +93,14 @@ object NewRequestRepository {
 
     suspend fun postNewRequest(createNewRequestQuery: CreateNewRequestQuery,
                                bloodDonationInterface: RetrofitBloodDonationInterface)
-    : CreateNewRequestResponse{
+    : CreateNewRequestResponse?{
 
         // The API call
-        return bloodDonationInterface.createNewRequest(createNewRequestQuery)
+        return try {
+            bloodDonationInterface.createNewRequest(createNewRequestQuery)
+        } catch(e: Exception){
+            null
+        }
 
     }
 

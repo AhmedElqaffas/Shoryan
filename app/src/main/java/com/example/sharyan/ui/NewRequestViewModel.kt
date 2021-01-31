@@ -8,6 +8,7 @@ import com.example.sharyan.R
 import com.example.sharyan.data.CreateNewRequestQuery
 import com.example.sharyan.data.CreateNewRequestResponse
 import com.example.sharyan.data.CurrentAppUser
+import com.example.sharyan.data.DonationRequest
 import com.example.sharyan.networking.RetrofitBloodDonationInterface
 import com.example.sharyan.networking.RetrofitClient
 import com.example.sharyan.repos.NewRequestRepository
@@ -24,7 +25,7 @@ class NewRequestViewModel : ViewModel() {
         .create(RetrofitBloodDonationInterface::class.java)
 
     private var canUserRequest : MutableLiveData<Boolean> = MutableLiveData<Boolean>()
-    private var createNewRequestResponse : MutableLiveData<CreateNewRequestResponse> = MutableLiveData<CreateNewRequestResponse>()
+    private var createNewRequestResponse : MutableLiveData<CreateNewRequestResponse?> = MutableLiveData<CreateNewRequestResponse?>()
 
 
     suspend fun canUserRequest(): LiveData<Boolean> {
@@ -55,7 +56,7 @@ class NewRequestViewModel : ViewModel() {
     }
 
     suspend fun createNewRequest(bloodType : String,
-                         numberOfBagsRequired : Int, donationLocation : String?) : LiveData<CreateNewRequestResponse> {
+                         numberOfBagsRequired : Int, donationLocation : String?) : LiveData<CreateNewRequestResponse?> {
 
         val bloodBankID = NewRequestRepository.getBloodBankID(donationLocation)
         val newRequestQuery = CreateNewRequestQuery(bloodType, numberOfBagsRequired, false,

@@ -154,4 +154,7 @@
         <item>بنك الدم ب</item>
     </string-array>
 
+    <string name="cancel_request">إلغاء الطلب</string>
+    <string name="your_request">طلبك</string>
+
 </resources>
