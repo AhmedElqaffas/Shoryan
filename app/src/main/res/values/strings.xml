@@ -148,4 +148,13 @@
         <item>مدينة ب</item>
     </string-array>
 
+    <string-array name="example_blood_banks">
+        <item></item>
+        <item>بنك الدم أ</item>
+        <item>بنك الدم ب</item>
+    </string-array>
+
+    <string name="cancel_request">إلغاء الطلب</string>
+    <string name="your_request">طلبك</string>
+
 </resources>

@@ -2,18 +2,18 @@ package com.example.sharyan.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
+import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
-import android.widget.ArrayAdapter
-import android.widget.RadioButton
-import android.widget.Spinner
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.navigation.navGraphViewModels
 import com.example.sharyan.R
+import com.example.sharyan.data.CreateNewRequestResponse
+import com.example.sharyan.data.DonationRequest
 import com.example.sharyan.databinding.AppbarBinding
 import com.example.sharyan.databinding.FragmentNewRequestBinding
 import com.google.android.material.snackbar.Snackbar
@@ -26,6 +26,8 @@ class NewRequestFragment : Fragment() {
     private var _binding: FragmentNewRequestBinding? = null
     private val binding get() = _binding!!
     private var toolbarBinding: AppbarBinding? = null
+
+    private var createdRequest : CreateNewRequestResponse? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentNewRequestBinding.inflate(inflater, container, false)
@@ -58,7 +60,13 @@ class NewRequestFragment : Fragment() {
         disableRadioButtons()
         disableGovSpinner()
         disableIncDecButtons()
+        disableProgressBar()
+        binding.checkingPermissionSentence.visibility = View.GONE
         showMessage("نأسف لا يمكنك طلب تبرع بالدم اكثر من ثلاثة مرات في اليوم")
+    }
+
+    private fun disableProgressBar() {
+        binding.progressBar.visibility = View.GONE
     }
 
     private fun enableSubmitButton() {
@@ -89,7 +97,7 @@ class NewRequestFragment : Fragment() {
 
     private fun enableInput() {
         setRadioGroupsMutuallyExclusive()
-        setGovSpinnerAdapter(binding.spinnerGov, R.array.governments)
+        setGovSpinnerAdapter(binding.spinnerGov, newRequestViewModel.getGovernotesList())
         setIncDecButtonsClickListeners()
         setConfirmButtonClickListener()
     }
@@ -111,10 +119,10 @@ class NewRequestFragment : Fragment() {
         }
     }
 
-    private fun setGovSpinnerAdapter(spinner: Spinner, arrayResource: Int) {
+    private fun setGovSpinnerAdapter(spinner: Spinner, govList : List<String>) {
         // Create an ArrayAdapter using the string array and a default spinner layout
         activity?.let {
-            ArrayAdapter.createFromResource(it, arrayResource, android.R.layout.simple_spinner_item)
+            val ArrayAdapter = ArrayAdapter(it, android.R.layout.simple_spinner_item, govList)
                 .also { adapter ->
                     // Specify the layout to use when the list of choices appears
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -125,10 +133,10 @@ class NewRequestFragment : Fragment() {
 
     }
 
-    private fun setCitySpinnerAdapter(spinner: Spinner, arrayResource: Int) {
+    private fun setCitySpinnerAdapter(spinner: Spinner, regionsList: List<String>) {
         // Create an ArrayAdapter using the string array and a default spinner layout
         activity?.let {
-            ArrayAdapter.createFromResource(it, arrayResource, android.R.layout.simple_spinner_item)
+            val ArrayAdapter = ArrayAdapter(it, android.R.layout.simple_spinner_item, regionsList)
                 .also { adapter ->
                     // Specify the layout to use when the list of choices appears
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -137,6 +145,19 @@ class NewRequestFragment : Fragment() {
                 }
         }
 
+    }
+
+    private fun setBloodBankSpinnerAdapter(spinner: Spinner, bloodBankList: List<String>) {
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        activity?.let {
+            val ArrayAdapter = ArrayAdapter(it, android.R.layout.simple_spinner_item, bloodBankList)
+                .also { adapter ->
+                    // Specify the layout to use when the list of choices appears
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    spinner.adapter = adapter
+                    spinner.onItemSelectedListener = bloodBankSpinnerItemSelected()
+                }
+        }
     }
 
     private fun governmentSpinnerItemSelected() = object : OnItemSelectedListener {
@@ -168,9 +189,31 @@ class NewRequestFragment : Fragment() {
         ) {
             if (position == 0) {
                 binding.citySpinnerTextView.visibility = View.VISIBLE
+                disableBloodBankSpinner()
+                binding.citySpinnerTextView.visibility = View.VISIBLE
                 binding.bloodBankSpinnerLayout.setBackgroundResource(R.drawable.spinner_grey_curve)
                 binding.bloodBankSpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_grey)
             } else {
+                binding.citySpinnerTextView.visibility = View.GONE
+                val selectedCity = binding.spinnerCity.selectedItem.toString()
+                enableBloodBankSpinner(selectedCity)
+            }
+        }
+
+        override fun onNothingSelected(parentView: AdapterView<*>?) {}
+    }
+
+    private fun bloodBankSpinnerItemSelected() = object : OnItemSelectedListener {
+        override fun onItemSelected(
+            parentView: AdapterView<*>?,
+            selectedItemView: View,
+            position: Int,
+            id: Long
+        ) {
+            if (position == 0) {
+                binding.bloodBankSpinnerTextView.visibility = View.VISIBLE
+            } else {
+                binding.bloodBankSpinnerTextView.visibility = View.GONE
                 binding.citySpinnerTextView.visibility = View.GONE
                 binding.bloodBankSpinnerLayout.setBackgroundResource(R.drawable.spinner_red_curve)
                 binding.bloodBankSpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_big)
@@ -194,7 +237,7 @@ class NewRequestFragment : Fragment() {
     private fun enableGovSpinner() {
         binding.governmentsSpinnerLayout.setBackgroundResource(R.drawable.spinner_red_curve)
         binding.governmentsSpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_big)
-        setGovSpinnerAdapter(binding.spinnerGov, R.array.governments)
+        setGovSpinnerAdapter(binding.spinnerGov, newRequestViewModel.getGovernotesList())
     }
 
     private fun disableCitySpinner() {
@@ -211,12 +254,22 @@ class NewRequestFragment : Fragment() {
     private fun enableCitySpinner(selectedGovernment: String) {
         binding.citySpinnerLayout.setBackgroundResource(R.drawable.spinner_red_curve)
         binding.citySpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_big)
-        when (selectedGovernment) {
-            "القاهرة" -> setCitySpinnerAdapter(binding.spinnerCity, R.array.cairo_cities)
-            "الإسكندرية" -> setCitySpinnerAdapter(binding.spinnerCity, R.array.alex_cities)
-            else -> setCitySpinnerAdapter(binding.spinnerCity, R.array.example_cities)
-        }
+        setCitySpinnerAdapter(binding.spinnerCity, newRequestViewModel.getRegionsList(selectedGovernment))
     }
+
+    private fun disableBloodBankSpinner() {
+        binding.bloodBankSpinnerTextView.visibility = View.VISIBLE
+        binding.spinnerBloodBank.adapter = null
+        binding.bloodBankSpinnerLayout.setBackgroundResource(R.drawable.spinner_grey_curve)
+        binding.bloodBankSpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_grey)
+    }
+
+    private fun enableBloodBankSpinner(city : String) {
+        binding.bloodBankSpinnerLayout.setBackgroundResource(R.drawable.spinner_red_curve)
+        binding.bloodBankSpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_big)
+        setBloodBankSpinnerAdapter(binding.spinnerBloodBank, newRequestViewModel.getBloodBanksList(city))
+    }
+
 
     private fun setIncDecButtonsClickListeners() {
         binding.incrementBloodBags.setOnClickListener { incNumOfBloodBags() }
@@ -246,10 +299,31 @@ class NewRequestFragment : Fragment() {
     private fun setConfirmButtonClickListener() {
         binding.confirmRequestButton.setOnClickListener {
             if (isBloodTypeSelected() and isBagsCountSet() and isLocationSelected()) {
-                showMessage("تم الطلب بنجاح", successFlag = true)
+                binding.progressBar.visibility = View.VISIBLE
+                createNewRequest()
             } else {
                 showMessage("ارجوك اكمل ادخال البيانات")
             }
+        }
+    }
+
+    private fun createNewRequest() {
+        CoroutineScope(Dispatchers.Main).async {
+            newRequestViewModel.createNewRequest(getSelectedBloodType().text.toString(), getCurrentBagsCount(),
+                getSelectedItemFromSpinner(binding.spinnerBloodBank)).observe(viewLifecycleOwner,
+                { response -> showSuccessMessage(response)})
+
+        }
+    }
+
+    private fun showSuccessMessage(response: CreateNewRequestResponse?) {
+        binding.progressBar.visibility = View.GONE
+        createdRequest = response
+        if(createdRequest?.id != null)
+            showMessage("لقد تم الطلب بنجاح", true)
+        else{
+            showMessage("نأسف لا يمكنك طلب تبرع بالدم اكثر من ثلاثة مرات في اليوم")
+            disableInput()
         }
     }
 
@@ -263,7 +337,8 @@ class NewRequestFragment : Fragment() {
     }
 
     private fun isLocationSelected(): Boolean {
-        return isSpinnerValueSelected(binding.spinnerGov) and isSpinnerValueSelected(binding.spinnerCity)
+        return isSpinnerValueSelected(binding.spinnerGov) and isSpinnerValueSelected(binding.spinnerCity) and
+                isSpinnerValueSelected(binding.spinnerBloodBank)
     }
 
     private fun isSpinnerValueSelected(spinner: Spinner): Boolean {
@@ -287,12 +362,8 @@ class NewRequestFragment : Fragment() {
     }
 
     private fun openRequestDetails() {
-        val intent = Intent(context, MyRequestDetailsActivity::class.java)
-        intent.putExtra("bloodType", getSelectedBloodType().text.toString())
-        intent.putExtra("gov", getSelectedItemFromSpinner(binding.spinnerGov))
-        intent.putExtra("city", getSelectedItemFromSpinner(binding.spinnerCity))
-        intent.putExtra("bloodBagsCount", getCurrentBagsCount())
-        startActivity(intent)
+        val fragment = MyRequestDetailsFragment.newInstance(createdRequest!!)
+        fragment.show(childFragmentManager, "requestDetails")
     }
 
     private fun getSelectedBloodType(): RadioButton =
@@ -307,4 +378,3 @@ class NewRequestFragment : Fragment() {
     }
 
 }
-

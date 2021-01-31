@@ -1,11 +1,9 @@
 package com.example.sharyan.ui
 
-import android.os.IInterface
 import androidx.lifecycle.*
 import com.example.sharyan.data.CurrentAppUser
 import com.example.sharyan.data.LoginQuery
 import com.example.sharyan.networking.RetrofitBloodDonationInterface
-import com.example.sharyan.networking.RetrofitClient
 import kotlinx.coroutines.Dispatchers
 
 class LoginViewModel : ViewModel() {

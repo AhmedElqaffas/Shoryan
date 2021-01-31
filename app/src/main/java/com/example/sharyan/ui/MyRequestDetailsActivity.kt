@@ -21,14 +21,17 @@ class MyRequestDetailsActivity : AppCompatActivity() {
         val bloodTypeText = intent.extras?.get("bloodType")
         bloodTypeResult.text = bloodTypeText.toString()
 
-        val govText = intent.extras?.get("gov")
-        govResult.text = govText.toString()
+        val bagsFulfilledText = intent.extras?.get("bagsFulfilled")
+        bagsFulfilledResult.text = bagsFulfilledText.toString()
 
-        val cityTypeText = intent.extras?.get("city")
-        cityResult.text = (cityTypeText).toString()
+        val locationTypeText = intent.extras?.get("donationLocation")
+        locationResult.text = (locationTypeText).toString()
 
-        val bagsCountText= intent.extras?.get("bloodBagsCount")
+        val bagsCountText= intent.extras?.get("bagsRequired")
         bagsCountResult.text = bagsCountText.toString()
+
+        val dateText= intent.extras?.get("date")
+        dateResult.text = dateText.toString()
     }
 
     private fun setToolbarText(text: String) {
