@@ -1,400 +1,398 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/registration_bg"
-    android:id="@+id/registrationRootLayout"
-    android:focusable="true"
-    android:focusableInTouchMode="true"
-    android:clickable="true">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <ImageView
-        android:id="@+id/registrationBack"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/back_arrow_icon"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.038"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.038" />
+    <data>
+        <variable name="viewmodel"
+            type="com.example.sharyan.ui.RegistrationViewModel" />
+    </data>
 
-    <ImageView
-        android:id="@+id/registrationAppLogo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/logo"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.52"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.055" />
-
-    <androidx.core.widget.NestedScrollView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:background="@drawable/registration_cardview_bg"
-        android:fillViewport="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.70"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/registrationAppLogo"
-        app:layout_constraintVertical_bias="1.0">
+        android:layout_height="match_parent"
+        android:background="@drawable/registration_bg"
+        android:id="@+id/registrationRootLayout"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:clickable="true">
 
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
+        <ImageView
+            android:id="@+id/registrationBack"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingStart="30dp"
-            android:paddingEnd="30dp"
-            android:paddingBottom="20dp">
+            android:src="@drawable/back_arrow_icon"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.038"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.038" />
 
-            <TextView
-                android:id="@+id/registrationTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="arial"
-                android:text="@string/register"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="25sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.07" />
+        <ImageView
+            android:id="@+id/registrationAppLogo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/logo"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.52"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.055" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/registrationFirstNameTextLayout"
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@drawable/registration_cardview_bg"
+            android:fillViewport="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.70"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/registrationAppLogo"
+            app:layout_constraintVertical_bias="1.0">
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:theme="@style/hintAppearance"
-                android:layout_marginTop="20dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/registrationTextView"
-                app:errorEnabled="true">
+                android:paddingStart="30dp"
+                android:paddingEnd="30dp"
+                android:paddingBottom="20dp">
 
-                <EditText
-                    android:id="@+id/registrationFirstNameEditText"
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/registrationTextView"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@color/colorPrimaryDark"
-                    android:drawableEnd="@mipmap/username"
-                    android:paddingEnd="20dp"
-                    android:drawablePadding="16dp"
-                    android:hint="@string/first_name"
-                    android:inputType="text"
-                    android:maxLines="1"
-                    android:singleLine="true" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/registrationLastNameTextLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:theme="@style/hintAppearance"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/registrationFirstNameTextLayout">
-
-                <EditText
-                    android:id="@+id/registrationLastNameEditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@color/colorPrimaryDark"
-                    android:drawableEnd="@mipmap/username"
-                    android:paddingEnd="20dp"
-                    android:drawablePadding="16dp"
-                    android:hint="@string/last_name"
-                    android:inputType="text"
-                    android:maxLines="1"
-                    android:singleLine="true" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/registrationPhoneTextLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:theme="@style/hintAppearance"
-                android:layout_marginTop="20dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/registrationLastNameTextLayout"
->
-
-                <EditText
-                    android:id="@+id/registrationPhoneEditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@color/colorPrimaryDark"
-                    android:drawableEnd="@mipmap/smartphone"
-                    android:drawablePadding="16dp"
-                    android:paddingEnd="20dp"
-                    android:hint="@string/phone_number"
-                    android:inputType="phone"
-                    android:maxLines="1"
-                    android:singleLine="true" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <TextView
-                android:id="@+id/birthDateTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="arial"
-                android:text="@string/birth_date"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:layout_marginTop="30dp"
-                app:layout_constraintHorizontal_bias="0.948"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/registrationPhoneTextLayout" />
-
-            <Button
-                android:id="@+id/birthDatePicker"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/button_border_bg_selector"
-                android:drawableEnd="@drawable/iconfinder_nav_arrow_right_383100"
-                android:drawablePadding="4dp"
-                android:padding="4dp"
-                android:text="@string/date_initial"
-                android:textColor="#7E7878"
-                android:layout_marginTop="20dp"
-                app:layout_constraintHorizontal_bias="0.4"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/registrationPhoneTextLayout" />
-
-            <TextView
-                android:id="@+id/bloodTypeTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="arial"
-                android:text="@string/blood_type"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:layout_marginTop="35dp"
-                app:layout_constraintHorizontal_bias="0.948"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/birthDateTextView" />
-
-
-            <TextView
-                android:id="@+id/bloodTypePicker"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/textview_bg_selector"
-                android:drawablePadding="10dp"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:layout_marginTop="35dp"
-                android:text="@string/b_plus"
-                android:textColor="#7E7878"
-                android:textSize="16sp"
-                app:drawableEndCompat="@drawable/iconfinder_nav_arrow_right_383100_big"
-                app:layout_constraintHorizontal_bias="0.4"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/birthDateTextView"/>
-
-            <View
-                android:layout_width="69dp"
-                android:layout_height="2dp"
-                android:background="@color/colorPrimaryDark"
-                android:layout_marginTop="1dp"
-                app:layout_constraintHorizontal_bias="0.4"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/bloodTypePicker" />
-
-            <TextView
-                android:id="@+id/genderTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="arial"
-                android:text="@string/gender"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:layout_marginTop="35dp"
-                app:layout_constraintHorizontal_bias="0.948"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/bloodTypeTextView"/>
-
-            <RadioGroup
-                android:id="@+id/genderRadioGroup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="34dp"
-                app:layout_constraintHorizontal_bias="0.370"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/bloodTypeTextView">
-
-                <RadioButton
-                    android:id="@+id/maleRadioBtn"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginEnd="30dp"
-                    android:buttonTint="@color/colorPrimaryDark"
                     android:fontFamily="arial"
-                    android:text="@string/male"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
+                    android:text="@string/register"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="25sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.07" />
 
-                <RadioButton
-                    android:id="@+id/femaleRadioBtn"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/registrationFirstNameTextLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="30dp"
-                    android:buttonTint="@color/colorPrimaryDark"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/hintAppearance"
+                    android:layout_marginTop="20dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/registrationTextView"
+                    app:errorEnabled="true">
+
+                    <EditText
+                        android:id="@+id/registrationFirstNameEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/colorPrimaryDark"
+                        android:drawableEnd="@mipmap/username"
+                        android:paddingEnd="20dp"
+                        android:drawablePadding="16dp"
+                        android:hint="@string/first_name"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:singleLine="true" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/registrationLastNameTextLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/hintAppearance"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/registrationFirstNameTextLayout">
+
+                    <EditText
+                        android:id="@+id/registrationLastNameEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/colorPrimaryDark"
+                        android:drawableEnd="@mipmap/username"
+                        android:paddingEnd="20dp"
+                        android:drawablePadding="16dp"
+                        android:hint="@string/last_name"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:singleLine="true" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/registrationPhoneTextLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/hintAppearance"
+                    android:layout_marginTop="20dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/registrationLastNameTextLayout"
+    >
+
+                    <EditText
+                        android:id="@+id/registrationPhoneEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/colorPrimaryDark"
+                        android:drawableEnd="@mipmap/smartphone"
+                        android:drawablePadding="16dp"
+                        android:paddingEnd="20dp"
+                        android:hint="@string/phone_number"
+                        android:inputType="phone"
+                        android:maxLines="1"
+                        android:singleLine="true" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:id="@+id/birthDateTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:fontFamily="arial"
-                    android:text="@string/female"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
+                    android:text="@string/birth_date"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="30dp"
+                    app:layout_constraintHorizontal_bias="0.948"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/registrationPhoneTextLayout" />
 
-            </RadioGroup>
+                <Button
+                    android:id="@+id/birthDatePicker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/button_border_bg_selector"
+                    android:drawableEnd="@drawable/iconfinder_nav_arrow_right_383100"
+                    android:drawablePadding="4dp"
+                    android:padding="4dp"
+                    android:text="@{viewmodel.birthDateString}"
+                    android:textColor="#7E7878"
+                    android:layout_marginTop="20dp"
+                    app:layout_constraintHorizontal_bias="0.4"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/registrationPhoneTextLayout" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/addressTextLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:theme="@style/hintAppearance"
-                android:layout_marginTop="10dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/genderRadioGroup"
-                android:focusable="false">
+                <TextView
+                    android:id="@+id/bloodTypeTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="arial"
+                    android:text="@string/blood_type"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="35dp"
+                    app:layout_constraintHorizontal_bias="0.948"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/birthDateTextView" />
 
-                <EditText
-                    android:id="@+id/addressEditText"
+
+                <TextView
+                    android:id="@+id/bloodTypePicker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/textview_bg_selector"
+                    android:drawablePadding="10dp"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:layout_marginTop="35dp"
+                    android:text="@{viewmodel.bloodType.bloodType}"
+                    android:textColor="#7E7878"
+                    android:textSize="16sp"
+                    app:drawableEndCompat="@drawable/iconfinder_nav_arrow_right_383100_big"
+                    app:layout_constraintHorizontal_bias="0.4"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/birthDateTextView"/>
+
+                <View
+                    android:layout_width="69dp"
+                    android:layout_height="2dp"
+                    android:background="@color/colorPrimaryDark"
+                    android:layout_marginTop="1dp"
+                    app:layout_constraintHorizontal_bias="0.4"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/bloodTypePicker" />
+
+                <TextView
+                    android:id="@+id/genderTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="arial"
+                    android:text="@string/gender"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="35dp"
+                    app:layout_constraintHorizontal_bias="0.948"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/bloodTypeTextView"/>
+
+                <TextView
+                    android:id="@+id/genderPicker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/textview_bg_selector"
+                    android:drawablePadding="10dp"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:layout_marginTop="35dp"
+                    android:text="@{viewmodel.gender.gender}"
+                    android:textColor="#7E7878"
+                    android:textSize="16sp"
+                    app:drawableEndCompat="@drawable/iconfinder_nav_arrow_right_383100_big"
+                    app:layout_constraintLeft_toLeftOf="@id/bloodTypePicker"
+                    app:layout_constraintRight_toRightOf="@id/bloodTypePicker"
+                    app:layout_constraintTop_toBottomOf="@id/bloodTypePicker"/>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="2dp"
+                    android:background="@color/colorPrimaryDark"
+                    android:layout_marginTop="1dp"
+                    app:layout_constraintHorizontal_bias="0.4"
+                    app:layout_constraintLeft_toLeftOf="@id/genderPicker"
+                    app:layout_constraintRight_toRightOf="@id/genderPicker"
+                    app:layout_constraintTop_toBottomOf="@id/genderPicker" />
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/addressTextLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@color/colorPrimaryDark"
-                    android:drawableEnd="@mipmap/pin"
-                    android:drawablePadding="16dp"
-                    android:paddingEnd="20dp"
-                    android:hint="@string/address"
-                    android:inputType="text"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:focusable="false"/>
+                    android:theme="@style/hintAppearance"
+                    android:layout_marginTop="20dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/genderPicker"
+                    android:focusable="false">
 
-            </com.google.android.material.textfield.TextInputLayout>
+                    <EditText
+                        android:id="@+id/addressEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/colorPrimaryDark"
+                        android:drawableEnd="@mipmap/pin"
+                        android:drawablePadding="16dp"
+                        android:paddingEnd="20dp"
+                        android:hint="@string/address"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:focusable="false"/>
 
-            <Button
-                android:id="@+id/openMapButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/addressTextLayout"
-                app:layout_constraintLeft_toLeftOf="@id/registrationTextView"
-                app:layout_constraintRight_toRightOf="@id/registrationTextView"
-                android:background="@drawable/button_curved_red"
-                android:text="@string/change_location"
-                android:textColor="#FFFFFF"
-                android:layout_weight="5"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/passwordTextLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:theme="@style/hintAppearance"
-                android:layout_marginTop="10dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/openMapButton"
-                app:passwordToggleEnabled="true"
-                android:layoutDirection="rtl">
+                <Button
+                    android:id="@+id/openMapButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/addressTextLayout"
+                    app:layout_constraintLeft_toLeftOf="@id/registrationTextView"
+                    app:layout_constraintRight_toRightOf="@id/registrationTextView"
+                    android:background="@drawable/button_curved_red"
+                    android:text="@string/change_location"
+                    android:textColor="#FFFFFF"
+                    android:layout_weight="5"/>
 
-                <EditText
-                    android:id="@+id/registrationPasswordEditText"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/passwordTextLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@color/colorPrimaryDark"
-                    android:drawableEnd="@mipmap/lock"
-                    android:drawablePadding="16dp"
-                    android:paddingEnd="20dp"
-                    android:hint="@string/password"
-                    android:inputType="textPassword"
-                    android:maxLines="1"
-                    android:singleLine="true" />
+                    android:theme="@style/hintAppearance"
+                    android:layout_marginTop="10dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/openMapButton"
+                    app:passwordToggleEnabled="true"
+                    android:layoutDirection="rtl">
 
-            </com.google.android.material.textfield.TextInputLayout>
+                    <EditText
+                        android:id="@+id/registrationPasswordEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/colorPrimaryDark"
+                        android:drawableEnd="@mipmap/lock"
+                        android:drawablePadding="16dp"
+                        android:paddingEnd="20dp"
+                        android:hint="@string/password"
+                        android:inputType="textPassword"
+                        android:maxLines="1"
+                        android:singleLine="true" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/confirmPasswordTextLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:theme="@style/hintAppearance"
-                android:layout_marginTop="10dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/passwordTextLayout"
-                app:passwordToggleEnabled="true"
-                android:layoutDirection="rtl">
+                </com.google.android.material.textfield.TextInputLayout>
 
-                <EditText
-                    android:id="@+id/confirmPasswordEditText"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/confirmPasswordTextLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@color/colorPrimaryDark"
-                    android:drawableEnd="@mipmap/lock"
-                    android:drawablePadding="16dp"
-                    android:paddingEnd="20dp"
-                    android:hint="@string/confirm_password"
-                    android:inputType="textPassword"
-                    android:maxLines="1"
-                    android:singleLine="true" />
+                    android:theme="@style/hintAppearance"
+                    android:layout_marginTop="10dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/passwordTextLayout"
+                    app:passwordToggleEnabled="true"
+                    android:layoutDirection="rtl">
 
-            </com.google.android.material.textfield.TextInputLayout>
+                    <EditText
+                        android:id="@+id/confirmPasswordEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/colorPrimaryDark"
+                        android:drawableEnd="@mipmap/lock"
+                        android:drawablePadding="16dp"
+                        android:paddingEnd="20dp"
+                        android:hint="@string/confirm_password"
+                        android:inputType="textPassword"
+                        android:maxLines="1"
+                        android:singleLine="true" />
 
-            <Button
-                android:id="@+id/confirmRegistrationButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/button_curved_red"
-                android:fontFamily="arial"
-                android:paddingStart="120dp"
-                android:paddingEnd="120dp"
-                android:text="@string/proceed"
-                android:textAllCaps="false"
-                android:layout_marginBottom="25dp"
-                android:layout_marginTop="25dp"
-                android:textColor="@android:color/white"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/confirmPasswordTextLayout"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.core.widget.NestedScrollView>
+                <Button
+                    android:id="@+id/confirmRegistrationButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/button_curved_red"
+                    android:fontFamily="arial"
+                    android:paddingStart="120dp"
+                    android:paddingEnd="120dp"
+                    android:text="@string/proceed"
+                    android:textAllCaps="false"
+                    android:layout_marginBottom="25dp"
+                    android:layout_marginTop="25dp"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/confirmPasswordTextLayout"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

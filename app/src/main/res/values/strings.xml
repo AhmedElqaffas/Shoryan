@@ -97,6 +97,12 @@
         <item>AB-</item>
     </string-array>
 
+    <string-array name="gender">
+        <item>اُفضّل عدم القول</item>
+        <item>ذكر</item>
+        <item>انثى</item>
+    </string-array>
+
     <string-array name="governments">
         <item></item>
         <item>الإسكندرية</item>

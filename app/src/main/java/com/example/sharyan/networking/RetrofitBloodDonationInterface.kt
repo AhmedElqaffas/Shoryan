@@ -42,4 +42,7 @@ interface RetrofitBloodDonationInterface {
 
     @POST("users/login")
     suspend fun logUser(@Body loginQuery: LoginQuery): LoginResponse
+
+    @POST("users/signup")
+    suspend fun registerUser(@Body user: User): RegistrationResponse
 }
