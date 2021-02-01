@@ -200,14 +200,17 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
         navController.navigate(R.id.action_home_to_myRequestsFragment, requests)
     }
 
+    private fun openMyRequestDetailsFragment(requestId: String){
+        val fragment = MyRequestDetailsFragment.newInstance(requestId)
+        fragment.show(childFragmentManager, "requestDetails")
+    }
+
     override fun onRequestCardClicked(donationRequest: DonationRequest, isMyRequest: Boolean){
         if(!isMyRequest){
             openDonationFragment(donationRequest.id)
         }
         else{
-            Utility.displaySnackbarMessage(binding.homeParentLayout,
-                "Should open MY request status",
-                Snackbar.LENGTH_LONG)
+            openMyRequestDetailsFragment(donationRequest.id)
         }
     }
 

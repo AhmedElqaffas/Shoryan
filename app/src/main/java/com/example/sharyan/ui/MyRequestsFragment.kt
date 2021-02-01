@@ -77,12 +77,7 @@ class MyRequestsFragment : Fragment(), RequestsRecyclerInteraction {
     }
 
     override fun onRequestCardClicked(donationRequest: DonationRequest, isMyRequest: Boolean) {
-        val snackbar = Snackbar.make(binding.myRequestsLayout, "Should Open request details screen", Snackbar.LENGTH_LONG)
-            .setAction("حسناً") {
-                // By default, the snackbar will be dismissed
-            }
-        snackbar.setActionTextColor(resources.getColor(R.color.colorAccent))
-        ViewCompat.setLayoutDirection(snackbar.view, ViewCompat.LAYOUT_DIRECTION_RTL)
-        snackbar.show()
+        val fragment = MyRequestDetailsFragment.newInstance(donationRequest.id)
+        fragment.show(childFragmentManager, "requestDetails")
     }
 }
