@@ -100,6 +100,10 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-contrib:3.2.0-beta01'
     debugImplementation "androidx.fragment:fragment-testing:1.2.5"
     androidTestImplementation "androidx.navigation:navigation-testing:2.3.2"
+    // MockWebServer (retrofit testing)
+    testImplementation "com.squareup.okhttp3:mockwebserver:4.9.0"
+    // Coroutine test rule
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.3.9"
 
     implementation ('com.alimuzaffar.lib:pinentryedittext:2.0.6') {
         // Exclude is needed as we already have androidx.appcompat as a dependency.

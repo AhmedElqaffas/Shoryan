@@ -18,9 +18,6 @@ interface RetrofitBloodDonationInterface {
     @GET("users/{userId}/user-active-requests")
     suspend fun getUserActiveRequests(@Path("userId") userId: String): MyRequestsServerResponse
 
-    @GET("requests/{requestId}")
-    suspend fun getRequestDetails(@Path("requestId") requestId: String): DonationRequest
-
     @GET("requests/{requestId}/user-donation/{userId}")
     suspend fun getDonationDetails(@Path("requestId") requestId: String
                                    ,@Path("userId") userId: String): DonationDetails
@@ -43,7 +40,9 @@ interface RetrofitBloodDonationInterface {
     suspend fun addUserToDonorsList(@Path("requestId") requestId: String
                                          ,@Path("userId") userId: String)
 
-
     @POST("users/login")
     suspend fun logUser(@Body loginQuery: LoginQuery): LoginResponse
+
+    @POST("users/signup")
+    suspend fun registerUser(@Body user: User): RegistrationResponse
 }

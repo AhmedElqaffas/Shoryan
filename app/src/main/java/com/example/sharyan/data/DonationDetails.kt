@@ -2,7 +2,7 @@ package com.example.sharyan.data
 
 import com.google.gson.annotations.SerializedName
 
-data class DonationDetails(val request: DonationRequest,
+data class DonationDetails(val request: DonationRequest?,
                       @SerializedName("userCanDonate") val donationAbility: DonationAbility ) {
 }
 

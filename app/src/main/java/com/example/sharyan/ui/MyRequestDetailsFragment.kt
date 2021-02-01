@@ -80,7 +80,7 @@ class MyRequestDetailsFragment : BottomSheetDialogFragment(){
         setWindowSize()
         setupMap()
         getDonationDetails()
-        binding.cancelRequestButton.setOnClickListener { checkIfUserIsSure()}
+        binding.cancelRequestButton.setOnClickListener {checkIfUserIsSure()}
     }
 
     private fun getClickedRequest() = requireArguments().getSerializable(ARGUMENT_KEY) as CreateNewRequestResponse
@@ -97,12 +97,6 @@ class MyRequestDetailsFragment : BottomSheetDialogFragment(){
             behavior.peekHeight = windowHeight
             view?.requestLayout()
         }
-    }
-
-    private fun showIndefiniteMessage(message: String){
-        snackbar = Snackbar.make(design_bottom_sheet, message, Snackbar.LENGTH_INDEFINITE)
-        ViewCompat.setLayoutDirection(snackbar!!.view, ViewCompat.LAYOUT_DIRECTION_RTL)
-        snackbar?.show()
     }
 
     private fun setupMap(){
@@ -147,12 +141,13 @@ class MyRequestDetailsFragment : BottomSheetDialogFragment(){
         snackbar?.show()
     }
 
-
     private fun donationDetailsReceived(donationDetails: DonationDetails){
-        donationRequest = donationDetails.request
-        updateMapLocation()
-        binding.requestDetailsShimmer.stopShimmer()
-        snackbar?.dismiss()
+        donationDetails.request?.apply {
+            donationRequest = this
+            updateMapLocation()
+            binding.requestDetailsShimmer.stopShimmer()
+            snackbar?.dismiss()
+        }
     }
 
     private fun updateMapLocation(){
@@ -178,10 +173,8 @@ class MyRequestDetailsFragment : BottomSheetDialogFragment(){
     }
 
     private fun checkIfUserIsSure(){
-
         val builder = AlertDialog.Builder(requireActivity())
-        val positiveButtonClick = { dialog: DialogInterface, which: Int -> cancelRequest()
-        }
+        val positiveButtonClick = { dialog: DialogInterface, which: Int -> cancelRequest() }
         with(builder)
         {
             setMessage("هل انت متأكد من انك تريد الغاء الطلب؟")

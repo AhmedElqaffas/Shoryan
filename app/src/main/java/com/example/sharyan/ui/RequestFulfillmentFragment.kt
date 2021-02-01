@@ -99,9 +99,18 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
     }
 
     private fun showIndefiniteMessage(message: String){
-        snackbar = Snackbar.make(design_bottom_sheet, message, Snackbar.LENGTH_INDEFINITE)
+        showMessage(message, Snackbar.LENGTH_INDEFINITE)
+    }
+
+    private fun showDefiniteMessage(message: String){
+        showMessage(message, Snackbar.LENGTH_LONG)
+    }
+
+    private fun showMessage(message: String, duration: Int){
+        snackbar = Snackbar.make(design_bottom_sheet, message, duration)
+        snackbar!!.setActionTextColor(resources.getColor(R.color.colorAccent))
         ViewCompat.setLayoutDirection(snackbar!!.view, ViewCompat.LAYOUT_DIRECTION_RTL)
-        snackbar?.show()
+        snackbar!!.show()
     }
 
     private fun setupMap(){
@@ -124,35 +133,34 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
     }
 
     private fun getDonationDetails(){
+        apiCallJob?.cancel()
         apiCallJob = CoroutineScope(Dispatchers.Main).launch {
             requestViewModel.getDonationDetails(request.id).observe(viewLifecycleOwner){
                 if(it != null){
                     donationDetailsReceived(it)
                 }
                 else{
-                    showDefiniteMessage(resources.getString(R.string.fetching_data_error))
+                    showTryAgainSnackbar(::getDonationDetails)
                 }
             }
         }
     }
 
-    private fun showDefiniteMessage(message: String){
-        snackbar = Snackbar.make(design_bottom_sheet,
-            message,
-            Snackbar.LENGTH_LONG)
-            .setAction(R.string.ok){}
-            .setActionTextColor(resources.getColor(R.color.colorAccent))
-        ViewCompat.setLayoutDirection(snackbar!!.view, ViewCompat.LAYOUT_DIRECTION_RTL)
-        snackbar?.show()
+    private fun showTryAgainSnackbar(whatToTry: () -> Unit){
+        showMessage(resources.getString(R.string.fetching_data_error), Snackbar.LENGTH_INDEFINITE)
+        snackbar!!.setAction(R.string.try_again) {
+             whatToTry()
+        }
     }
 
-
     private fun donationDetailsReceived(donationDetails: DonationDetails){
-        request = donationDetails.request
+        donationDetails.request?.apply {
+            request = this
+            updateMapLocation()
+            binding.requestDetailsShimmer.stopShimmer()
+            snackbar?.dismiss()
+        }
         showDonationDisabilityReasonIfExists(donationDetails.donationAbility)
-        updateMapLocation()
-        binding.requestDetailsShimmer.stopShimmer()
-        snackbar?.dismiss()
     }
 
     private fun updateMapLocation(){

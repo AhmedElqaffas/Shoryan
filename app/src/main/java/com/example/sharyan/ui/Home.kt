@@ -45,11 +45,13 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding.homeSwipeRefresh.isEnabled = false
         _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.homeSwipeRefresh.isEnabled = true
         instantiateNavController(view)
         initializeRecyclerViewAdapter()
         // Getting ongoingRequests, pending request, my requests,  all in parallel
@@ -142,9 +144,13 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
 
     private fun setSwipeRefreshListener(){
         binding.homeSwipeRefresh.setOnRefreshListener{
-            resetScrollingToTop()
-            getOngoingRequests(true)
+            refreshRequests()
         }
+    }
+
+    private fun refreshRequests(){
+        resetScrollingToTop()
+        getOngoingRequests(true)
     }
 
     private fun setFilterListener(){
@@ -194,8 +200,8 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
         navController.navigate(R.id.action_home_to_myRequestsFragment, requests)
     }
 
-    override fun onRequestCardClicked(donationRequest: DonationRequest){
-        if(isNotMyRequest(donationRequest.id)){
+    override fun onRequestCardClicked(donationRequest: DonationRequest, isMyRequest: Boolean){
+        if(!isMyRequest){
             openDonationFragment(donationRequest)
         }
         else{
@@ -210,7 +216,7 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
 
     override fun submitFilters(requestsFiltersContainer: RequestsFiltersContainer?) {
         requestsViewModel.storeFilter(requestsFiltersContainer)
-        getOngoingRequests( true)
+        refreshRequests()
     }
 }
 

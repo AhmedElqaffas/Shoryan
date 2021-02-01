@@ -32,7 +32,7 @@
     <string name="filter_matching_types">الفصائل التي يمكننى التبرع لها</string>
     <string name="first_name">الاسم الأول</string>
     <string name="gender">النوع</string>
-    <string name="hello_user_greeting">%1$s ،مرحباً</string>
+    <string name="hello_user_greeting">\u200F مرحباً، %1$s</string>
     <string name="home">الرئيسية</string>
     <string name="instructions">تعليمات</string>
     <string name="internet_connection">تأكّد من اتصالك بالإنترنت</string>
@@ -66,6 +66,7 @@
     <string name="resend_sms"><u>إعادة إرسال الرمز</u></string>
     <string name="settings">الإعدادات</string>
     <string name="submit">تنفيذ</string>
+    <string name="try_again">اعد المحاولة</string>
     <string name="username">الاسم بالكامل</string>
     <string name="waiting_confirmation">انت الان مسجل كمتبرع لهذا الطلب, نحن في انتظار وصولك الي بنك الدم</string>
 
@@ -94,6 +95,12 @@
         <item>O-</item>
         <item>AB+</item>
         <item>AB-</item>
+    </string-array>
+
+    <string-array name="gender">
+        <item>اُفضّل عدم القول</item>
+        <item>ذكر</item>
+        <item>انثى</item>
     </string-array>
 
     <string-array name="governments">
