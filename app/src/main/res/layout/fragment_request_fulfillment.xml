@@ -236,7 +236,8 @@
                         android:paddingVertical="20dp"
                         android:enabled="@{viewmodel.canUserDonate}"
                         android:visibility="@{viewmodel.donateButtonVisibility}"
-                        android:alpha="@{viewmodel.donateButtonAlpha}"/>
+                        android:alpha="@{viewmodel.donateButtonAlpha}"
+                        android:onClick="@{() -> viewmodel.startDonation(viewmodel.donationDetails.request.id)}"/>
 
                     <TextView
                         android:id="@+id/waitingConfirmationSentence"
@@ -269,7 +270,8 @@
                         android:text="@string/cancel_donation"
                         android:paddingVertical="20dp"
                         android:enabled="@{!viewmodel.isInLoadingState}"
-                        android:visibility="@{viewmodel.getWaitingDonationViewVisibility}" />
+                        android:visibility="@{viewmodel.getWaitingDonationViewVisibility}"
+                        android:onClick="@{() -> viewmodel.cancelDonation(viewmodel.donationDetails.request.id)}"/>
 
                     <Button
                         android:id="@+id/confirmDonationButton"
@@ -287,7 +289,8 @@
                         android:text="@string/i_donated"
                         android:paddingVertical="20dp"
                         android:enabled="@{!viewmodel.isInLoadingState}"
-                        android:visibility="@{viewmodel.getWaitingDonationViewVisibility}" />
+                        android:visibility="@{viewmodel.getWaitingDonationViewVisibility}"
+                        android:onClick="@{() -> viewmodel.confirmDonation(viewmodel.donationDetails.request.id)}"/>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.example.sharyan.ui.CustomScrollView>

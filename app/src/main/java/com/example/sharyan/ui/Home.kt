@@ -168,7 +168,7 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
 
     private fun setPendingRequestCardListener(){
         binding.pendingRequestCard.setOnClickListener {
-            val userPendingRequest = requestsViewModel.getUserPendingRequest()
+            val userPendingRequest = requestsViewModel.getUserPendingRequestId()
             if(userPendingRequest == null){
                 showMessage("ليس لديك طلبات مُعلّقة")
             }
@@ -190,8 +190,8 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
     private fun showMessage(message: String) =
         Utility.displaySnackbarMessage(binding.homeParentLayout, message, Snackbar.LENGTH_LONG)
 
-    private fun openDonationFragment(donationRequest: DonationRequest){
-        val fragment = RequestFulfillmentFragment.newInstance(donationRequest)
+    private fun openDonationFragment(requestId: String){
+        val fragment = RequestFulfillmentFragment.newInstance(requestId)
         fragment.show(childFragmentManager, "requestDetails")
     }
 
@@ -200,21 +200,19 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
         navController.navigate(R.id.action_home_to_myRequestsFragment, requests)
     }
 
-    private fun openMyRequestDetailsFragment(donationRequest: DonationRequest) {
-        val fragment = MyRequestDetailsFragment.newInstance(donationRequest.id)
+    private fun openMyRequestDetailsFragment(requestId: String){
+        val fragment = MyRequestDetailsFragment.newInstance(requestId)
         fragment.show(childFragmentManager, "requestDetails")
     }
 
     override fun onRequestCardClicked(donationRequest: DonationRequest, isMyRequest: Boolean){
-        if(!isMyRequest)
-            openDonationFragment(donationRequest)
-        else
-            openMyRequestDetailsFragment(donationRequest)
+        if(!isMyRequest){
+            openDonationFragment(donationRequest.id)
+        }
+        else{
+            openMyRequestDetailsFragment(donationRequest.id)
+        }
     }
-
-
-    private fun isNotMyRequest(requestId: String) =
-        requestsViewModel.getUserActiveRequests().none { it.id == requestId }
 
     override fun submitFilters(requestsFiltersContainer: RequestsFiltersContainer?) {
         requestsViewModel.storeFilter(requestsFiltersContainer)
