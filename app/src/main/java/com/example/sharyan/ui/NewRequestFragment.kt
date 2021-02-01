@@ -59,10 +59,19 @@ class NewRequestFragment : Fragment() {
     private fun disableInput() {
         disableRadioButtons()
         disableGovSpinner()
+        disableCitySpinner()
+        disableBloodBankSpinner()
         disableIncDecButtons()
         disableProgressBar()
+        disableSubmitButton()
         binding.checkingPermissionSentence.visibility = View.GONE
         showMessage("نأسف لا يمكنك طلب تبرع بالدم اكثر من ثلاثة مرات في اليوم")
+    }
+
+    private fun disableSubmitButton() {
+        binding.confirmRequestButton.isEnabled = false
+        binding.confirmRequestButton.setBackgroundResource(R.drawable.button_disabled_selector)
+        binding.confirmRequestButton.setOnClickListener{}
     }
 
     private fun disableProgressBar() {
