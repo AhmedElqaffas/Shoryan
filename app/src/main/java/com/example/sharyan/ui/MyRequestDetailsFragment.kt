@@ -9,8 +9,6 @@ import android.view.*
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.viewModels
-import androidx.navigation.NavController
-import androidx.navigation.Navigation
 import com.example.sharyan.EnglishToArabicConverter
 import com.example.sharyan.R
 import com.example.sharyan.data.CreateNewRequestResponse

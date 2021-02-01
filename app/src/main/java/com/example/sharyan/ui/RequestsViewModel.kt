@@ -54,10 +54,7 @@ class RequestsViewModel : ViewModel() {
         OngoingRequestsRetriever.updateMyActiveRequestsList(bloodDonationAPI)
     }
 
-    fun getUserPendingRequest(): DonationRequest?{
-        val pendingRequestId = CurrentAppUser.pendingRequestId
-        return if(pendingRequestId != null) DonationRequest(pendingRequestId) else null
-    }
+    fun getUserPendingRequestId() = CurrentAppUser.pendingRequestId
 
     fun getUserActiveRequests(): List<DonationRequest>{
         return CurrentAppUser.myActiveRequests

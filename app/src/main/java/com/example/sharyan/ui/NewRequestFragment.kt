@@ -337,6 +337,7 @@ class NewRequestFragment : Fragment() {
             showMessage("لقد تم الطلب بنجاح", true)
         else{
             showMessage("نأسف لا يمكنك طلب تبرع بالدم اكثر من ثلاثة مرات في اليوم")
+            newRequestViewModel.updateCachedDailyLimitFlag(false)
             disableInput()
         }
     }
@@ -374,7 +375,6 @@ class NewRequestFragment : Fragment() {
                 }
                 .show()
     }
-
     private fun openRequestDetails() {
         val fragment = MyRequestDetailsFragment.newInstance(createdRequest?.id as String)
         fragment.show(childFragmentManager, "requestDetails")

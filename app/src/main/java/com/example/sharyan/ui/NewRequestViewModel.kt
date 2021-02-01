@@ -68,4 +68,9 @@ class NewRequestViewModel : ViewModel() {
         return createNewRequestResponse
     }
 
+    fun updateCachedDailyLimitFlag(newFlag : Boolean){
+        NewRequestRepository.updateCachedDailyLimitFlag(newFlag)
+    }
+
+
 }

@@ -8,9 +8,7 @@ import androidx.core.view.ViewCompat
 import androidx.fragment.app.viewModels
 import com.example.sharyan.EnglishToArabicConverter
 import com.example.sharyan.R
-import com.example.sharyan.data.DonationAbility
 import com.example.sharyan.data.DonationDetails
-import com.example.sharyan.data.DonationRequest
 import com.example.sharyan.databinding.FragmentRequestFulfillmentBinding
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -37,20 +35,19 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
          *
-         * @param donationRequest - The clicked request object.
+         * @param requestId - The clicked request id.
          * @return A new instance of fragment RequestDetailsFragment.
          */
 
         @JvmStatic
-        fun newInstance(donationRequest: DonationRequest) =
+        fun newInstance(requestId: String) =
             RequestFulfillmentFragment().apply {
                 arguments = Bundle().apply {
-                    putSerializable(ARGUMENT_KEY, donationRequest)
+                    putString(ARGUMENT_KEY, requestId)
                 }
             }
     }
 
-    private lateinit var request: DonationRequest
     private var apiCallJob: Job? = null
     private val requestViewModel: RequestFulfillmentViewModel by viewModels()
     private lateinit var mapInstance: GoogleMap
@@ -72,17 +69,14 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        request = getClickedRequest()
         setWindowSize()
-        showIndefiniteMessage(resources.getString(R.string.checking_donating_ability))
+        showIndefiniteMessage(resources.getString(R.string.loading_details))
         setupMap()
         getDonationDetails()
-        binding.donateButton.setOnClickListener { startDonation() }
-        binding.cancelDonationButton.setOnClickListener { cancelDonation() }
-        binding.confirmDonationButton.setOnClickListener { confirmDonation() }
+        observeMessages()
     }
 
-    private fun getClickedRequest() = requireArguments().getSerializable(ARGUMENT_KEY) as DonationRequest
+    private fun getClickedRequest() = requireArguments().getString(ARGUMENT_KEY)!!
 
     private fun setWindowSize(){
         dialog?.also {
@@ -108,6 +102,7 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
 
     private fun showMessage(message: String, duration: Int){
         snackbar = Snackbar.make(design_bottom_sheet, message, duration)
+        snackbar!!.setAction(R.string.ok){}
         snackbar!!.setActionTextColor(resources.getColor(R.color.colorAccent))
         ViewCompat.setLayoutDirection(snackbar!!.view, ViewCompat.LAYOUT_DIRECTION_RTL)
         snackbar!!.show()
@@ -135,7 +130,7 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
     private fun getDonationDetails(){
         apiCallJob?.cancel()
         apiCallJob = CoroutineScope(Dispatchers.Main).launch {
-            requestViewModel.getDonationDetails(request.id).observe(viewLifecycleOwner){
+            requestViewModel.getDonationDetails(getClickedRequest()).observe(viewLifecycleOwner){
                 if(it != null){
                     donationDetailsReceived(it)
                 }
@@ -155,55 +150,27 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
 
     private fun donationDetailsReceived(donationDetails: DonationDetails){
         donationDetails.request?.apply {
-            request = this
-            updateMapLocation()
+            updateMapLocation(LatLng(this.bloodBank!!.location.latitude, this.bloodBank.location.longitude))
             binding.requestDetailsShimmer.stopShimmer()
             snackbar?.dismiss()
         }
-        showDonationDisabilityReasonIfExists(donationDetails.donationAbility)
     }
 
-    private fun updateMapLocation(){
+    private fun updateMapLocation(location: LatLng){
         mapInstance.apply {
-            addMarker(MarkerOptions().position(LatLng(request.bloodBank!!.location.latitude,
-                request.bloodBank!!.location.longitude)))
-            moveCamera(CameraUpdateFactory.newLatLng(LatLng(request.bloodBank!!.location.latitude,
-                request.bloodBank!!.location.longitude)))
+            addMarker(MarkerOptions().position(location))
+            moveCamera(CameraUpdateFactory.newLatLng(location))
         }
     }
 
-    private fun showDonationDisabilityReasonIfExists(donationAbility: DonationAbility) {
-        if(!donationAbility.canUserDonate){
-            showIndefiniteMessage(donationAbility.reasonForDisability!!)
-        }
-    }
-
-    private fun startDonation(){
-        requestViewModel.addUserToDonorsList(request.id).observe(viewLifecycleOwner){ errorMessage ->
-            if(!errorMessage.isNullOrEmpty()){
-                showDefiniteMessage(errorMessage)
-            }
-        }
-    }
-
-    private fun cancelDonation(){
-        requestViewModel.cancelDonation(request.id).observe(viewLifecycleOwner){ errorMessage ->
-            if(errorMessage.isNullOrEmpty()){
-                showDefiniteMessage("تم الغاء التبرّع")
-            }
-            else{
-                showDefiniteMessage(errorMessage)
-            }
-        }
-    }
-
-    private fun confirmDonation(){
-        requestViewModel.confirmDonation(request.id).observe(viewLifecycleOwner){ errorMessage ->
-            if(errorMessage.isNullOrEmpty()){
-                showDefiniteMessage("شكراً لتبرّعك")
-            }
-            else{
-                showDefiniteMessage(errorMessage)
+    /**
+     * Observes messages published by the viewmodel and shows them to the user in the form of
+     * a snackbar
+     */
+    private fun observeMessages(){
+        requestViewModel.message.observe(viewLifecycleOwner){
+            it?.let { message ->
+                showDefiniteMessage(message)
             }
         }
     }

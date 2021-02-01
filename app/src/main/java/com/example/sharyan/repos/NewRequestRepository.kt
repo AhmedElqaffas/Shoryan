@@ -104,4 +104,8 @@ object NewRequestRepository {
 
     }
 
+    fun updateCachedDailyLimitFlag(newFlag: Boolean) {
+        cachedCanUserRequest = newFlag
+    }
+
 }
