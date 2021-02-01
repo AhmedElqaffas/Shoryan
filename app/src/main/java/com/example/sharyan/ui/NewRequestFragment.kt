@@ -1,8 +1,6 @@
 package com.example.sharyan.ui
 
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +11,6 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.navGraphViewModels
 import com.example.sharyan.R
 import com.example.sharyan.data.CreateNewRequestResponse
-import com.example.sharyan.data.DonationRequest
 import com.example.sharyan.databinding.AppbarBinding
 import com.example.sharyan.databinding.FragmentNewRequestBinding
 import com.google.android.material.snackbar.Snackbar
@@ -59,10 +56,19 @@ class NewRequestFragment : Fragment() {
     private fun disableInput() {
         disableRadioButtons()
         disableGovSpinner()
+        disableCitySpinner()
+        disableBloodBankSpinner()
         disableIncDecButtons()
         disableProgressBar()
+        disableSubmitButton()
         binding.checkingPermissionSentence.visibility = View.GONE
         showMessage("نأسف لا يمكنك طلب تبرع بالدم اكثر من ثلاثة مرات في اليوم")
+    }
+
+    private fun disableSubmitButton() {
+        binding.confirmRequestButton.isEnabled = false
+        binding.confirmRequestButton.setBackgroundResource(R.drawable.button_disabled_selector)
+        binding.confirmRequestButton.setOnClickListener{}
     }
 
     private fun disableProgressBar() {
@@ -82,15 +88,19 @@ class NewRequestFragment : Fragment() {
         binding.decrementBloodBags.isEnabled = false
         binding.bagsNumberEditText.setText("")
         binding.bagsNumberEditText.isEnabled = false
+        binding.incrementBloodBags.setBackgroundResource(R.drawable.button_blood_type_disabled)
+        binding.decrementBloodBags.setBackgroundResource(R.drawable.button_blood_type_disabled)
     }
 
     private fun disableRadioButtons() {
         binding.plusTypesRadioGroup.children.forEach {
             it.isEnabled = false
+            it.setBackgroundResource(R.drawable.button_blood_type_disabled)
             binding.plusTypesRadioGroup.clearCheck()
         }
         binding.minusTypesRadioGroup.children.forEach {
             it.isEnabled = false
+            it.setBackgroundResource(R.drawable.button_blood_type_disabled)
             binding.minusTypesRadioGroup.clearCheck()
         }
     }
@@ -360,9 +370,8 @@ class NewRequestFragment : Fragment() {
                 }
                 .show()
     }
-
     private fun openRequestDetails() {
-        val fragment = MyRequestDetailsFragment.newInstance(createdRequest!!.id)
+        val fragment = MyRequestDetailsFragment.newInstance(createdRequest?.id as String)
         fragment.show(childFragmentManager, "requestDetails")
     }
 
