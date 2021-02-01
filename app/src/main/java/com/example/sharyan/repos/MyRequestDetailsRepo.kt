@@ -7,18 +7,6 @@ import java.lang.Exception
 
 object MyRequestDetailsRepo {
 
-    suspend fun getDonationDetails(bloodDonationAPI: RetrofitBloodDonationInterface
-                                   ,requestId: String): DonationDetails?{
-
-        return try{
-            bloodDonationAPI.getDonationDetails(requestId, CurrentAppUser.id!!)
-        }catch(e: Exception){
-
-            null
-        }
-    }
-
-
      fun cancelRequest(bloodDonationAPI: RetrofitBloodDonationInterface
                                ,requestId: String): String?{
 

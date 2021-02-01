@@ -375,7 +375,8 @@ class NewRequestFragment : Fragment() {
                 .show()
     }
     private fun openRequestDetails() {
-        val fragment = MyRequestDetailsFragment.newInstance(createdRequest?.id as String)
+        val fragment = RequestFulfillmentFragment.newInstance(createdRequest!!.id,
+            RequestFulfillmentFragment.MY_REQUEST_BINDING )
         fragment.show(childFragmentManager, "requestDetails")
     }
 

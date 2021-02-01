@@ -77,7 +77,8 @@ class MyRequestsFragment : Fragment(), RequestsRecyclerInteraction {
     }
 
     override fun onRequestCardClicked(donationRequest: DonationRequest, isMyRequest: Boolean) {
-        val fragment = MyRequestDetailsFragment.newInstance(donationRequest.id)
+        val fragment = RequestFulfillmentFragment.newInstance(donationRequest.id,
+            RequestFulfillmentFragment.MY_REQUEST_BINDING)
         fragment.show(childFragmentManager, "requestDetails")
     }
 }

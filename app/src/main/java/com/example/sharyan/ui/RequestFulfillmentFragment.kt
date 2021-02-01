@@ -5,10 +5,15 @@ import android.os.Bundle
 import android.view.*
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.core.view.ViewCompat
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import com.example.sharyan.BR
 import com.example.sharyan.EnglishToArabicConverter
 import com.example.sharyan.R
 import com.example.sharyan.data.DonationDetails
+import com.example.sharyan.databinding.FragmentMyRequestDetailsBinding
 import com.example.sharyan.databinding.FragmentRequestFulfillmentBinding
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -19,8 +24,6 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_request_fulfillment.design_bottom_sheet
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -29,7 +32,10 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
 
     companion object {
 
-        const val ARGUMENT_KEY = "request"
+         const val ARGUMENT_REQUEST_KEY = "request"
+         const val ARGUMENT_BINDING_KEY = "binding"
+        const val MY_REQUEST_BINDING = "myRequestFragment"
+        const val REQUEST_FULFILLMENT_BINDING = "requestFulfillmentFragment"
 
         /**
          * Use this factory method to create a new instance of
@@ -40,24 +46,37 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
          */
 
         @JvmStatic
-        fun newInstance(requestId: String) =
+        fun newInstance(requestId: String, binding: String) =
             RequestFulfillmentFragment().apply {
                 arguments = Bundle().apply {
-                    putString(ARGUMENT_KEY, requestId)
+                    putString(ARGUMENT_REQUEST_KEY, requestId)
+                    putString(ARGUMENT_BINDING_KEY, binding)
                 }
             }
     }
 
     private var apiCallJob: Job? = null
-    private val requestViewModel: RequestFulfillmentViewModel by viewModels()
+    //private val requestViewModel: RequestDetailsViewModel by viewModels()
+    private val requestFulfillmentViewModel: RequestFulfillmentViewModel by viewModels()
+    private val myRequestDetailsViewModel: MyRequestDetailsViewModel by viewModels()
     private lateinit var mapInstance: GoogleMap
     private var snackbar: Snackbar? = null
-    private lateinit var binding: FragmentRequestFulfillmentBinding
+    private lateinit var binding: ViewDataBinding
+    private var fragmentType: String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = FragmentRequestFulfillmentBinding.inflate(inflater, container, false)
-        binding.viewmodel = requestViewModel
-        binding.englishArabicConverter = EnglishToArabicConverter()
+        fragmentType = requireArguments().getString(ARGUMENT_BINDING_KEY)!!
+        if(fragmentType == MY_REQUEST_BINDING){
+            binding = DataBindingUtil.inflate(inflater,R.layout.fragment_my_request_details , container, false) as FragmentMyRequestDetailsBinding
+            binding.setVariable(BR.viewmodel, myRequestDetailsViewModel)
+            observeMessages(myRequestDetailsViewModel)
+        }
+        else{
+            binding = DataBindingUtil.inflate(inflater,R.layout.fragment_request_fulfillment , container, false) as FragmentRequestFulfillmentBinding
+            binding.setVariable(BR.viewmodel, requestFulfillmentViewModel)
+            observeMessages(requestFulfillmentViewModel)
+        }
+        binding.setVariable(BR.englishArabicConverter, EnglishToArabicConverter())
         binding.lifecycleOwner = this
         return binding.root
     }
@@ -70,13 +89,11 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setWindowSize()
-        showIndefiniteMessage(resources.getString(R.string.loading_details))
         setupMap()
         getDonationDetails()
-        observeMessages()
     }
 
-    private fun getClickedRequest() = requireArguments().getString(ARGUMENT_KEY)!!
+    private fun getClickedRequest() = requireArguments().getString(ARGUMENT_REQUEST_KEY)!!
 
     private fun setWindowSize(){
         dialog?.also {
@@ -90,10 +107,6 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
             behavior.peekHeight = windowHeight
             view?.requestLayout()
         }
-    }
-
-    private fun showIndefiniteMessage(message: String){
-        showMessage(message, Snackbar.LENGTH_INDEFINITE)
     }
 
     private fun showDefiniteMessage(message: String){
@@ -119,24 +132,39 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
     }
 
     private fun setMapPaddingWhenLayoutIsReady(){
-        binding.mapFragmentContainer.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                binding.mapFragmentContainer.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                mapInstance.setPadding(0, 0, 0, (binding.mapFragmentContainer.height/4))
-            }
-        })
+        when(binding){
+            is FragmentRequestFulfillmentBinding -> (binding as FragmentRequestFulfillmentBinding).mapFragmentContainer.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    (binding as FragmentRequestFulfillmentBinding).mapFragmentContainer.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                    mapInstance.setPadding(0, 0, 0, (binding as FragmentRequestFulfillmentBinding).mapFragmentContainer.height/4)
+                }
+            })
+
+            is FragmentMyRequestDetailsBinding -> (binding as FragmentMyRequestDetailsBinding).mapFragmentContainer.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    (binding as FragmentMyRequestDetailsBinding).mapFragmentContainer.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                    mapInstance.setPadding(0, 0, 0, (binding as FragmentMyRequestDetailsBinding).mapFragmentContainer.height/4)
+                }
+            })
+        }
     }
 
     private fun getDonationDetails(){
         apiCallJob?.cancel()
-        apiCallJob = CoroutineScope(Dispatchers.Main).launch {
-            requestViewModel.getDonationDetails(getClickedRequest()).observe(viewLifecycleOwner){
-                if(it != null){
-                    donationDetailsReceived(it)
-                }
-                else{
-                    showTryAgainSnackbar(::getDonationDetails)
-                }
+        apiCallJob = lifecycleScope.launch {
+            when(binding){
+                is FragmentRequestFulfillmentBinding -> observeDonationDetails(requestFulfillmentViewModel)
+                is FragmentMyRequestDetailsBinding -> observeDonationDetails(myRequestDetailsViewModel)
+            }
+        }
+    }
+
+    private suspend fun observeDonationDetails(viewModel: RequestDetailsViewModel){
+        viewModel.getDonationDetails(getClickedRequest()).observe(viewLifecycleOwner) {
+            if (it != null) {
+                donationDetailsReceived(it)
+            } else {
+                showTryAgainSnackbar(::getDonationDetails)
             }
         }
     }
@@ -144,15 +172,17 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
     private fun showTryAgainSnackbar(whatToTry: () -> Unit){
         showMessage(resources.getString(R.string.fetching_data_error), Snackbar.LENGTH_INDEFINITE)
         snackbar!!.setAction(R.string.try_again) {
-             whatToTry()
+            whatToTry()
         }
     }
 
     private fun donationDetailsReceived(donationDetails: DonationDetails){
         donationDetails.request?.apply {
             updateMapLocation(LatLng(this.bloodBank!!.location.latitude, this.bloodBank.location.longitude))
-            binding.requestDetailsShimmer.stopShimmer()
-            snackbar?.dismiss()
+            when(binding){
+                is FragmentRequestFulfillmentBinding -> (binding as FragmentRequestFulfillmentBinding).requestDetailsShimmer.stopShimmer()
+                is FragmentMyRequestDetailsBinding -> (binding as FragmentMyRequestDetailsBinding).requestDetailsShimmer.stopShimmer()
+            }
         }
     }
 
@@ -167,8 +197,8 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
      * Observes messages published by the viewmodel and shows them to the user in the form of
      * a snackbar
      */
-    private fun observeMessages(){
-        requestViewModel.message.observe(viewLifecycleOwner){
+    private fun observeMessages(viewModel: RequestDetailsViewModel){
+        viewModel.message.observe(viewLifecycleOwner){
             it?.let { message ->
                 showDefiniteMessage(message)
             }
