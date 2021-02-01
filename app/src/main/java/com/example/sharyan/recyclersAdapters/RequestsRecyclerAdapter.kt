@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sharyan.R
+import com.example.sharyan.data.CurrentAppUser
 import com.example.sharyan.data.DonationRequest
 import kotlinx.android.synthetic.main.item_request.view.*
 
@@ -29,9 +30,12 @@ class RequestsRecyclerAdapter(private val requestsRecyclerInteraction: RequestsR
 
         private fun setClickListener(){
             itemView.setOnClickListener{
-                requestsRecyclerInteraction.onRequestCardClicked(getItem(layoutPosition))
+                val request = getItem(layoutPosition)
+                requestsRecyclerInteraction.onRequestCardClicked(request, isMyRequest(request))
             }
         }
+
+        private fun isMyRequest(item: DonationRequest) = item.requester?.id == CurrentAppUser.id
 
         fun bindRequestData(request: DonationRequest){
             itemView.request_item_blood_type.text = request.bloodType?.bloodType

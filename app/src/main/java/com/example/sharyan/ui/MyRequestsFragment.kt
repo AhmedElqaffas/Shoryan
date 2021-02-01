@@ -76,7 +76,7 @@ class MyRequestsFragment : Fragment(), RequestsRecyclerInteraction {
         binding.homeAppbar.toolbarText.text = text
     }
 
-    override fun onRequestCardClicked(donationRequest: DonationRequest) {
+    override fun onRequestCardClicked(donationRequest: DonationRequest, isMyRequest: Boolean) {
         val snackbar = Snackbar.make(binding.myRequestsLayout, "Should Open request details screen", Snackbar.LENGTH_LONG)
             .setAction("حسناً") {
                 // By default, the snackbar will be dismissed

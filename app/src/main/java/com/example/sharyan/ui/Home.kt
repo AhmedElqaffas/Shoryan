@@ -144,9 +144,13 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
 
     private fun setSwipeRefreshListener(){
         binding.homeSwipeRefresh.setOnRefreshListener{
-            resetScrollingToTop()
-            getOngoingRequests(true)
+            refreshRequests()
         }
+    }
+
+    private fun refreshRequests(){
+        resetScrollingToTop()
+        getOngoingRequests(true)
     }
 
     private fun setFilterListener(){
@@ -196,8 +200,8 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
         navController.navigate(R.id.action_home_to_myRequestsFragment, requests)
     }
 
-    override fun onRequestCardClicked(donationRequest: DonationRequest){
-        if(isNotMyRequest(donationRequest.id)){
+    override fun onRequestCardClicked(donationRequest: DonationRequest, isMyRequest: Boolean){
+        if(!isMyRequest){
             openDonationFragment(donationRequest)
         }
         else{
@@ -212,7 +216,7 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
 
     override fun submitFilters(requestsFiltersContainer: RequestsFiltersContainer?) {
         requestsViewModel.storeFilter(requestsFiltersContainer)
-        getOngoingRequests( true)
+        refreshRequests()
     }
 }
 
