@@ -1,6 +1,7 @@
 package com.example.sharyan.ui
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -91,15 +92,19 @@ class NewRequestFragment : Fragment() {
         binding.decrementBloodBags.isEnabled = false
         binding.bagsNumberEditText.setText("")
         binding.bagsNumberEditText.isEnabled = false
+        binding.incrementBloodBags.setBackgroundResource(R.drawable.button_blood_type_disabled)
+        binding.decrementBloodBags.setBackgroundResource(R.drawable.button_blood_type_disabled)
     }
 
     private fun disableRadioButtons() {
         binding.plusTypesRadioGroup.children.forEach {
             it.isEnabled = false
+            it.setBackgroundResource(R.drawable.button_blood_type_disabled)
             binding.plusTypesRadioGroup.clearCheck()
         }
         binding.minusTypesRadioGroup.children.forEach {
             it.isEnabled = false
+            it.setBackgroundResource(R.drawable.button_blood_type_disabled)
             binding.minusTypesRadioGroup.clearCheck()
         }
     }
