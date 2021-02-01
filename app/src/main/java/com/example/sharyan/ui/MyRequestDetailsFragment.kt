@@ -40,20 +40,20 @@ class MyRequestDetailsFragment : BottomSheetDialogFragment(){
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
          *
-         * @param donationRequest - The clicked request object.
+         * @param requestID - The clicked request object's ID.
          * @return A new instance of fragment RequestDetailsFragment.
          */
 
         @JvmStatic
-        fun newInstance(donationRequest: CreateNewRequestResponse) =
+        fun newInstance(requestID : String) =
             MyRequestDetailsFragment().apply {
                 arguments = Bundle().apply {
-                    putSerializable(ARGUMENT_KEY, donationRequest)
+                    putString(ARGUMENT_KEY, requestID)
                 }
             }
     }
 
-    private lateinit var request: CreateNewRequestResponse
+    private lateinit var requestID: String
     private lateinit var donationRequest: DonationRequest
     private var apiCallJob: Job? = null
     private val requestViewModel: MyRequestDetailsViewModel by viewModels()
@@ -76,14 +76,14 @@ class MyRequestDetailsFragment : BottomSheetDialogFragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        request = getClickedRequest()
+        requestID = getClickedRequest()
         setWindowSize()
         setupMap()
         getDonationDetails()
         binding.cancelRequestButton.setOnClickListener {checkIfUserIsSure()}
     }
 
-    private fun getClickedRequest() = requireArguments().getSerializable(ARGUMENT_KEY) as CreateNewRequestResponse
+    private fun getClickedRequest(): String = requireArguments().getString(ARGUMENT_KEY) as String
 
     private fun setWindowSize(){
         dialog?.also {
@@ -120,7 +120,7 @@ class MyRequestDetailsFragment : BottomSheetDialogFragment(){
 
     private fun getDonationDetails(){
         apiCallJob = CoroutineScope(Dispatchers.Main).launch {
-            requestViewModel.getDonationDetails(request.id).observe(viewLifecycleOwner){
+            requestViewModel.getDonationDetails(requestID).observe(viewLifecycleOwner){
                 if(it != null){
                     donationDetailsReceived(it)
                 }
@@ -161,7 +161,7 @@ class MyRequestDetailsFragment : BottomSheetDialogFragment(){
 
 
     private fun cancelRequest(){
-        requestViewModel.cancelRequest(request.id).observe(viewLifecycleOwner){ errorMessage ->
+        requestViewModel.cancelRequest(requestID).observe(viewLifecycleOwner){ errorMessage ->
             if(errorMessage.isNullOrEmpty()){
                 showDefiniteMessage("تم الغاء الطلب")
                 requireActivity().onBackPressed()
