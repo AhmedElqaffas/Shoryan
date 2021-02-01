@@ -161,7 +161,7 @@ class MyRequestDetailsFragment : BottomSheetDialogFragment(){
 
 
     private fun cancelRequest(){
-        requestViewModel.cancelRequest(requestID).observe(viewLifecycleOwner){ errorMessage ->
+        /*requestViewModel.cancelRequest().observe(viewLifecycleOwner){ errorMessage ->
             if(errorMessage.isNullOrEmpty()){
                 showDefiniteMessage("تم الغاء الطلب")
                 closeBottomSheetDialog()
@@ -169,7 +169,7 @@ class MyRequestDetailsFragment : BottomSheetDialogFragment(){
             else{
                 showDefiniteMessage(errorMessage)
             }
-        }
+        }*/
     }
 
     private fun closeBottomSheetDialog() {

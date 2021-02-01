@@ -51,6 +51,10 @@ open class RequestDetailsViewModel: ViewModel() {
     protected val _message = MutableLiveData<String?>(null)
     val message: LiveData<String?> = _message
 
+    // Set to true when the current BottomSheetFragment should be dismissed
+    protected val _shouldDismiss = MutableLiveData<Boolean>(false)
+    val shouldDismissFragment: LiveData<Boolean> = _shouldDismiss
+
     protected var bloodDonationAPI: RetrofitBloodDonationInterface = RetrofitClient
         .getRetrofitClient()
         .create(RetrofitBloodDonationInterface::class.java)

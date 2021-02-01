@@ -34,47 +34,50 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
 
          const val ARGUMENT_REQUEST_KEY = "request"
          const val ARGUMENT_BINDING_KEY = "binding"
-        const val MY_REQUEST_BINDING = "myRequestFragment"
-        const val REQUEST_FULFILLMENT_BINDING = "requestFulfillmentFragment"
+        const val MY_REQUEST_BINDING = 1
+        const val REQUEST_FULFILLMENT_BINDING = 2
 
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
          *
          * @param requestId - The clicked request id.
+         * @param binding - A integer to select which xml layout to inflate, 1: fragment_my_request_details,
+         * 2: fragment_request_fulfillment
          * @return A new instance of fragment RequestDetailsFragment.
          */
 
         @JvmStatic
-        fun newInstance(requestId: String, binding: String) =
+        fun newInstance(requestId: String, binding: Int) =
             RequestFulfillmentFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARGUMENT_REQUEST_KEY, requestId)
-                    putString(ARGUMENT_BINDING_KEY, binding)
+                    putInt(ARGUMENT_BINDING_KEY, binding)
                 }
             }
     }
 
     private var apiCallJob: Job? = null
-    //private val requestViewModel: RequestDetailsViewModel by viewModels()
     private val requestFulfillmentViewModel: RequestFulfillmentViewModel by viewModels()
     private val myRequestDetailsViewModel: MyRequestDetailsViewModel by viewModels()
     private lateinit var mapInstance: GoogleMap
     private var snackbar: Snackbar? = null
     private lateinit var binding: ViewDataBinding
-    private var fragmentType: String = ""
+    private var fragmentType: Int = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        fragmentType = requireArguments().getString(ARGUMENT_BINDING_KEY)!!
+        fragmentType = requireArguments().getInt(ARGUMENT_BINDING_KEY)
         if(fragmentType == MY_REQUEST_BINDING){
             binding = DataBindingUtil.inflate(inflater,R.layout.fragment_my_request_details , container, false) as FragmentMyRequestDetailsBinding
             binding.setVariable(BR.viewmodel, myRequestDetailsViewModel)
             observeMessages(myRequestDetailsViewModel)
+            listenForDismissRequest(myRequestDetailsViewModel)
         }
         else{
             binding = DataBindingUtil.inflate(inflater,R.layout.fragment_request_fulfillment , container, false) as FragmentRequestFulfillmentBinding
             binding.setVariable(BR.viewmodel, requestFulfillmentViewModel)
             observeMessages(requestFulfillmentViewModel)
+            listenForDismissRequest(requestFulfillmentViewModel)
         }
         binding.setVariable(BR.englishArabicConverter, EnglishToArabicConverter())
         binding.lifecycleOwner = this
@@ -202,6 +205,20 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
             it?.let { message ->
                 showDefiniteMessage(message)
             }
+        }
+    }
+
+    private fun listenForDismissRequest(viewModel: RequestDetailsViewModel){
+        viewModel.shouldDismissFragment.observe(viewLifecycleOwner){
+            if(it){
+                closeBottomSheetDialog()
+            }
+        }
+    }
+
+    private fun closeBottomSheetDialog() {
+        requireParentFragment().childFragmentManager.findFragmentByTag("requestDetails")?.let {
+            requireParentFragment().childFragmentManager.beginTransaction().remove(it).commit()
         }
     }
 }
