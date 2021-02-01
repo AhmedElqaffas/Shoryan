@@ -9,6 +9,7 @@ import com.example.sharyan.networking.RetrofitBloodDonationInterface
 import com.example.sharyan.networking.RetrofitClient
 import com.example.sharyan.repos.RequestFulfillmentRepo
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class RequestFulfillmentViewModel: ViewModel() {
@@ -72,6 +73,10 @@ class RequestFulfillmentViewModel: ViewModel() {
         )
     }
 
+    // Publishes messages for the subscribed fragments to show
+    private val _message = MutableLiveData<String?>(null)
+    val message: LiveData<String?> = _message
+
     init {
         acceptedRequestMediatorLiveData.addSource(currentUserPendingRequest){
                 value: String? -> acceptedRequestMediatorLiveData.setValue(value)
@@ -116,36 +121,37 @@ class RequestFulfillmentViewModel: ViewModel() {
             _areDonationDetailsLoaded.postValue(true)
             _isInLoadingState.postValue(false)
             _canUserDonate.postValue(details.donationAbility.canUserDonate)
+            _message.postValue(details.donationAbility.reasonForDisability)
         }
     }
 
-    fun addUserToDonorsList(requestId: String) = liveData(Dispatchers.IO){
+    fun startDonation(requestId: String) = viewModelScope.launch{
         _isInLoadingState.postValue(true)
         val processResultError = RequestFulfillmentRepo.addUserToDonorsList(bloodDonationAPI, requestId)
         if(processResultError.isNullOrEmpty()){
             setUserPendingRequest(requestId)
         }
-        emit(processResultError)
+        _message.postValue(processResultError)
         _isInLoadingState.postValue(false)
     }
 
-    fun confirmDonation(requestId: String) = liveData(Dispatchers.IO){
+    fun confirmDonation(requestId: String) = viewModelScope.launch{
         _isInLoadingState.postValue(true)
         val processResultError = RequestFulfillmentRepo.confirmDonation(bloodDonationAPI, requestId)
         if(processResultError.isNullOrEmpty()){
             removeUserPendingRequest(true)
         }
-        emit(processResultError)
+        _message.postValue(processResultError?: "شكراً لتبرّعك")
         _isInLoadingState.postValue(false)
     }
 
-    fun cancelDonation(requestId: String) = liveData(Dispatchers.IO){
+    fun cancelDonation(requestId: String) = viewModelScope.launch{
         _isInLoadingState.postValue(true)
         val processResultError = RequestFulfillmentRepo.cancelDonation(bloodDonationAPI, requestId)
         if(processResultError.isNullOrEmpty()){
             removeUserPendingRequest(false)
         }
-        emit(processResultError)
+        _message.postValue(processResultError?: "تم الغاء التبرّع")
         _isInLoadingState.postValue(false)
     }
 
@@ -156,7 +162,7 @@ class RequestFulfillmentViewModel: ViewModel() {
 
     private fun removeUserPendingRequest(hasDonated: Boolean){
         setUserPendingRequest(null)
-        // User can't donate again if he has already donated
+        // User can't donate again if they have already donated
         _canUserDonate.postValue(!hasDonated)
     }
 }

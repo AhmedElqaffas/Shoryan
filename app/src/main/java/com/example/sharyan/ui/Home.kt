@@ -168,7 +168,7 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
 
     private fun setPendingRequestCardListener(){
         binding.pendingRequestCard.setOnClickListener {
-            val userPendingRequest = requestsViewModel.getUserPendingRequest()
+            val userPendingRequest = requestsViewModel.getUserPendingRequestId()
             if(userPendingRequest == null){
                 showMessage("ليس لديك طلبات مُعلّقة")
             }
@@ -190,8 +190,8 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
     private fun showMessage(message: String) =
         Utility.displaySnackbarMessage(binding.homeParentLayout, message, Snackbar.LENGTH_LONG)
 
-    private fun openDonationFragment(donationRequest: DonationRequest){
-        val fragment = RequestFulfillmentFragment.newInstance(donationRequest)
+    private fun openDonationFragment(requestId: String){
+        val fragment = RequestFulfillmentFragment.newInstance(requestId)
         fragment.show(childFragmentManager, "requestDetails")
     }
 
@@ -202,7 +202,7 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
 
     override fun onRequestCardClicked(donationRequest: DonationRequest, isMyRequest: Boolean){
         if(!isMyRequest){
-            openDonationFragment(donationRequest)
+            openDonationFragment(donationRequest.id)
         }
         else{
             Utility.displaySnackbarMessage(binding.homeParentLayout,
@@ -210,9 +210,6 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
                 Snackbar.LENGTH_LONG)
         }
     }
-
-    private fun isNotMyRequest(requestId: String) =
-        requestsViewModel.getUserActiveRequests().none { it.id == requestId }
 
     override fun submitFilters(requestsFiltersContainer: RequestsFiltersContainer?) {
         requestsViewModel.storeFilter(requestsFiltersContainer)
