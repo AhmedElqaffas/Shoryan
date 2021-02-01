@@ -2,12 +2,15 @@ package com.example.sharyan.ui
 
 import android.app.AlertDialog
 import android.content.DialogInterface
+import android.content.Intent
 import android.graphics.Point
 import android.os.Bundle
 import android.view.*
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.viewModels
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import com.example.sharyan.EnglishToArabicConverter
 import com.example.sharyan.R
 import com.example.sharyan.data.CreateNewRequestResponse
@@ -52,7 +55,6 @@ class MyRequestDetailsFragment : BottomSheetDialogFragment(){
                 }
             }
     }
-
     private lateinit var requestID: String
     private lateinit var donationRequest: DonationRequest
     private var apiCallJob: Job? = null
@@ -164,12 +166,18 @@ class MyRequestDetailsFragment : BottomSheetDialogFragment(){
         requestViewModel.cancelRequest(requestID).observe(viewLifecycleOwner){ errorMessage ->
             if(errorMessage.isNullOrEmpty()){
                 showDefiniteMessage("تم الغاء الطلب")
-                requireActivity().onBackPressed()
+                closeBottomSheetDialog()
             }
             else{
                 showDefiniteMessage(errorMessage)
             }
         }
+    }
+
+    private fun closeBottomSheetDialog() {
+        val activity = requireActivity()
+        activity.startActivity(Intent(activity, MainActivity::class.java))
+        activity.finish()
     }
 
     private fun checkIfUserIsSure(){
