@@ -191,8 +191,8 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
         Utility.displaySnackbarMessage(binding.homeParentLayout, message, Snackbar.LENGTH_LONG)
 
     private fun openDonationFragment(requestId: String){
-        val fragment = RequestFulfillmentFragment.newInstance(requestId,
-            RequestFulfillmentFragment.REQUEST_FULFILLMENT_BINDING)
+        val fragment = RequestDetailsFragment.newInstance(requestId,
+            RequestDetailsFragment.REQUEST_FULFILLMENT_BINDING)
         fragment.show(childFragmentManager, "requestDetails")
     }
 
@@ -202,7 +202,7 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
     }
 
     private fun openMyRequestDetailsFragment(requestId: String){
-        val fragment = RequestFulfillmentFragment.newInstance(requestId, RequestFulfillmentFragment.MY_REQUEST_BINDING)
+        val fragment = RequestDetailsFragment.newInstance(requestId, RequestDetailsFragment.MY_REQUEST_BINDING)
         fragment.show(childFragmentManager, "requestDetails")
     }
 

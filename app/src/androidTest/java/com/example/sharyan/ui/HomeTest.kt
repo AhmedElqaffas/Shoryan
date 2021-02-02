@@ -146,7 +146,7 @@ class HomeTest {
         Thread.sleep(1000)
         // Dismiss fragment
         // Get fragment instance
-        val requestFragment = home!!.childFragmentManager.findFragmentByTag("requestDetails") as RequestFulfillmentFragment
+        val requestFragment = home!!.childFragmentManager.findFragmentByTag("requestDetails") as RequestDetailsFragment
         requestFragment.dismiss()
 
         // Open it from quick access menu

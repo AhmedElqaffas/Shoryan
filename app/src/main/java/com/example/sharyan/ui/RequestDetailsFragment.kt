@@ -28,7 +28,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 
-class RequestFulfillmentFragment : BottomSheetDialogFragment(){
+class RequestDetailsFragment : BottomSheetDialogFragment(){
 
     companion object {
 
@@ -49,7 +49,7 @@ class RequestFulfillmentFragment : BottomSheetDialogFragment(){
 
         @JvmStatic
         fun newInstance(requestId: String, binding: Int) =
-            RequestFulfillmentFragment().apply {
+            RequestDetailsFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARGUMENT_REQUEST_KEY, requestId)
                     putInt(ARGUMENT_BINDING_KEY, binding)
