@@ -1,9 +1,6 @@
 package com.example.sharyan.ui
 
-import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +11,6 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.navGraphViewModels
 import com.example.sharyan.R
 import com.example.sharyan.data.CreateNewRequestResponse
-import com.example.sharyan.data.DonationRequest
 import com.example.sharyan.databinding.AppbarBinding
 import com.example.sharyan.databinding.FragmentNewRequestBinding
 import com.google.android.material.snackbar.Snackbar
@@ -376,8 +372,8 @@ class NewRequestFragment : Fragment() {
                 .show()
     }
     private fun openRequestDetails() {
-        val fragment = RequestFulfillmentFragment.newInstance(createdRequest!!.id,
-            RequestFulfillmentFragment.MY_REQUEST_BINDING )
+        val fragment = RequestDetailsFragment.newInstance(createdRequest!!.id,
+            RequestDetailsFragment.MY_REQUEST_BINDING )
         fragment.show(childFragmentManager, "requestDetails")
     }
 

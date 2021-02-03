@@ -5,7 +5,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.ViewCompat
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.sharyan.R
@@ -14,7 +13,6 @@ import com.example.sharyan.databinding.AppbarBinding
 import com.example.sharyan.databinding.FragmentMyRequestsBinding
 import com.example.sharyan.recyclersAdapters.RequestsRecyclerAdapter
 import com.example.sharyan.recyclersAdapters.RequestsRecyclerInteraction
-import com.google.android.material.snackbar.Snackbar
 
 class MyRequestsFragment : Fragment(), RequestsRecyclerInteraction {
 
@@ -77,8 +75,8 @@ class MyRequestsFragment : Fragment(), RequestsRecyclerInteraction {
     }
 
     override fun onRequestCardClicked(donationRequest: DonationRequest, isMyRequest: Boolean) {
-        val fragment = RequestFulfillmentFragment.newInstance(donationRequest.id,
-            RequestFulfillmentFragment.MY_REQUEST_BINDING)
+        val fragment = RequestDetailsFragment.newInstance(donationRequest.id,
+            RequestDetailsFragment.MY_REQUEST_BINDING)
         fragment.show(childFragmentManager, "requestDetails")
     }
 }
