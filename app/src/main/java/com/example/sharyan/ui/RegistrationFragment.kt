@@ -368,10 +368,10 @@ class RegistrationFragment : Fragment(), LoadingFragmentHolder{
 
 
     private fun registerUser(user: User){
-        toggleLoggingInIndicator()
+        toggleLoadingIndicator()
         registrationProcess = registrationViewModel.registerUser(user)
         registrationProcess.observe(viewLifecycleOwner){
-            toggleLoggingInIndicator()
+            toggleLoadingIndicator()
             it.error?.apply {
                 Utility.displaySnackbarMessage(binding.registrationRootLayout, this, Snackbar.LENGTH_LONG)
             }
@@ -381,7 +381,7 @@ class RegistrationFragment : Fragment(), LoadingFragmentHolder{
         }
     }
 
-    private fun toggleLoggingInIndicator(){
+    private fun toggleLoadingIndicator(){
         val loadingFragment: DialogFragment? = childFragmentManager.findFragmentByTag("loading") as DialogFragment?
         if(loadingFragment == null)
             LoadingFragment(this).show(childFragmentManager, "loading")
