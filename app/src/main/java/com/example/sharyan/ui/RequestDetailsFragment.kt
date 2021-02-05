@@ -32,8 +32,8 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
 
     companion object {
 
-         const val ARGUMENT_REQUEST_KEY = "request"
-         const val ARGUMENT_BINDING_KEY = "binding"
+        const val ARGUMENT_REQUEST_KEY = "request"
+        const val ARGUMENT_BINDING_KEY = "binding"
         const val MY_REQUEST_BINDING = 1
         const val REQUEST_FULFILLMENT_BINDING = 2
 
@@ -182,10 +182,6 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
     private fun donationDetailsReceived(donationDetails: DonationDetails){
         donationDetails.request?.apply {
             updateMapLocation(LatLng(this.bloodBank!!.location.latitude, this.bloodBank.location.longitude))
-            when(binding){
-                is FragmentRequestFulfillmentBinding -> (binding as FragmentRequestFulfillmentBinding).requestDetailsShimmer.stopShimmer()
-                is FragmentMyRequestDetailsBinding -> (binding as FragmentMyRequestDetailsBinding).requestDetailsShimmer.stopShimmer()
-            }
         }
     }
 

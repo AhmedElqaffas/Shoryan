@@ -98,7 +98,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             app:shimmer_auto_start="true"
-                            android:visibility="@{viewmodel.shimmerVisibility}">
+                            android:visibility="@{viewmodel.shimmerVisibility}"
+                            app:isShimmerActive="@{!viewmodel.areDonationDetailsLoaded}">
 
                             <include layout="@layout/shimmer_request_details_card" />
                         </com.facebook.shimmer.ShimmerFrameLayout>

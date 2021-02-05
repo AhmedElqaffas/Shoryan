@@ -7,7 +7,7 @@ import com.example.sharyan.data.RequestsFiltersContainer
 import com.example.sharyan.networking.RetrofitBloodDonationInterface
 
 
-object OngoingRequestsRetriever {
+object OngoingRequestsRepo {
 
     private var  requestsList = listOf<DonationRequest>()
 

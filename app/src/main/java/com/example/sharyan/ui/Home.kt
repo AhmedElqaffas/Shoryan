@@ -40,6 +40,8 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        binding.viewmodel = requestsViewModel
+        binding.lifecycleOwner = this
         return binding.root
     }
 
@@ -87,26 +89,12 @@ class Home : Fragment(), RequestsRecyclerInteraction, FilterHolder{
 
     private fun getOngoingRequests(refresh: Boolean = false){
         requestsGettingJob.cancel()
-        showRequestsLoadingIndicator()
         requestsGettingJob = viewLifecycleOwner.lifecycleScope.launch {
             requestsViewModel.getOngoingRequests(refresh).observe(viewLifecycleOwner, {
-                hideRequestsLoadingIndicator()
+                binding.homeSwipeRefresh.isRefreshing = false
                 requestsRecyclerAdapter.submitList(it)
             })
         }
-    }
-
-    private fun showRequestsLoadingIndicator(){
-        binding.requestsShimmerContainer.startShimmer()
-        binding.requestsShimmerContainer.visibility = View.VISIBLE
-        binding.requestsRecycler.visibility = View.GONE
-    }
-
-    private fun hideRequestsLoadingIndicator(){
-        binding.homeSwipeRefresh.isRefreshing = false
-        binding.requestsShimmerContainer.stopShimmer()
-        binding.requestsShimmerContainer.visibility = View.GONE
-        binding.requestsRecycler.visibility = View.VISIBLE
     }
 
     override fun onResume(){

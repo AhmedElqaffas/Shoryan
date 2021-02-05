@@ -22,6 +22,7 @@ open class RequestDetailsViewModel: ViewModel() {
     val isInLoadingState: LiveData<Boolean> = _isInLoadingState
     // The donation details have been loaded
     private val _areDonationDetailsLoaded = MutableLiveData(false)
+    val areDonationDetailsLoaded = _areDonationDetailsLoaded
     // The details layout should be visible when the donation details are loaded
     val donationDetailsLayoutVisibility: LiveData<Int> = Transformations.map(_areDonationDetailsLoaded){
         when(it){
