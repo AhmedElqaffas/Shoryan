@@ -5,7 +5,7 @@
 
     <data>
         <variable name="viewmodel"
-            type="com.example.sharyan.ui.RequestsViewModel" />
+            type="com.example.shoryan.viewmodels.RequestsViewModel" />
     </data>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -160,7 +160,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:context=".ui.Home"
+                tools:context=".ui.HomeFragment"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
                     <TextView

@@ -6,9 +6,9 @@
     <data>
 
         <variable name="viewmodel"
-            type="com.example.sharyan.ui.RequestFulfillmentViewModel" />
+            type="com.example.shoryan.viewmodels.RequestFulfillmentViewModel" />
         <variable name="englishArabicConverter"
-            type="com.example.sharyan.EnglishToArabicConverter"/>
+            type="com.example.shoryan.EnglishToArabicConverter"/>
 
     </data>
 
@@ -38,7 +38,7 @@
                 android:textSize="25sp"
                 android:textStyle="bold" />
 
-            <com.example.sharyan.ui.CustomScrollView
+            <com.example.shoryan.ui.CustomScrollView
                 android:id="@+id/requestDetailsScrollView"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -294,7 +294,7 @@
                         android:onClick="@{() -> viewmodel.confirmDonation(viewmodel.donationDetails.request.id)}"/>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
-            </com.example.sharyan.ui.CustomScrollView>
+            </com.example.shoryan.ui.CustomScrollView>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/home"
-        android:name="com.example.sharyan.ui.Home"
+        android:name="com.example.shoryan.ui.HomeFragment"
         android:label="Home"
         tools:layout="@layout/fragment_home"
         app:defaultNavHost="true">
@@ -21,32 +21,32 @@
 
     <fragment
         android:id="@+id/newRequest"
-        android:name="com.example.sharyan.ui.NewRequestFragment"
+        android:name="com.example.shoryan.ui.NewRequestFragment"
         android:label="New Request"
         tools:layout="@layout/fragment_new_request"/>
 
     <fragment
         android:id="@+id/notifications"
-        android:name="com.example.sharyan.ui.Notifications"
+        android:name="com.example.shoryan.ui.NotificationsFragment"
         android:label="Notifications"
         tools:layout="@layout/fragment_notifications" />
 
     <fragment
         android:id="@+id/profile"
-        android:name="com.example.sharyan.ui.Profile"
+        android:name="com.example.shoryan.ui.ProfileFragment"
         android:label="Profile"
         tools:layout="@layout/fragment_profile" />
 
     <fragment
         android:id="@+id/myRequestsFragment"
-        android:name="com.example.sharyan.ui.MyRequestsFragment"
+        android:name="com.example.shoryan.ui.MyRequestsFragment"
         android:label="fragment_my_requests"
         tools:layout="@layout/fragment_my_requests" >
         <action
             android:id="@+id/action_myRequestsFragment_to_newRequest"
             app:destination="@id/newRequest" />
         <argument android:name="requestsIDs"
-            app:argType="com.example.sharyan.data.DonationRequest"/>
+            app:argType="com.example.shoryan.data.DonationRequest"/>
 
     </fragment>
 </navigation>

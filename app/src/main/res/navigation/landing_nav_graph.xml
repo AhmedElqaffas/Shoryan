@@ -6,7 +6,7 @@
     app:startDestination="@id/splashScreenFragment">
     <fragment
         android:id="@+id/splashScreenFragment"
-        android:name="com.example.sharyan.ui.SplashScreenFragment"
+        android:name="com.example.shoryan.ui.SplashScreenFragment"
         android:label="SplashScreenFragment" >
         <action
             android:id="@+id/action_splashScreenFragment_to_loginFragment"
@@ -22,7 +22,7 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.example.sharyan.ui.LoginPhoneFragment"
+        android:name="com.example.shoryan.ui.LoginPhoneFragment"
         android:label="LoginFragment" >
         <action
             android:id="@+id/action_loginFragment_to_SMSFragment"
@@ -38,7 +38,7 @@
 
     <fragment
         android:id="@+id/registrationFragment"
-        android:name="com.example.sharyan.ui.RegistrationFragment"
+        android:name="com.example.shoryan.ui.RegistrationFragment"
         android:label="RegistrationFragment" >
         <action
             android:id="@+id/action_registrationFragment_to_mapFragment"
@@ -50,23 +50,23 @@
 
     <fragment
         android:id="@+id/SMSFragment"
-        android:name="com.example.sharyan.ui.SMSFragment"
+        android:name="com.example.shoryan.ui.SMSFragment"
         android:label="fragment_sms"
         tools:layout="@layout/fragment_sms">
         <argument android:name="phoneNumber" />
         <argument android:name="user"
-            app:argType="com.example.sharyan.data.User"/>
+            app:argType="com.example.shoryan.data.User"/>
     </fragment>
 
     <fragment
         android:id="@+id/loginPasswordFragment"
-        android:name="com.example.sharyan.ui.PasswordLoginFragment"
+        android:name="com.example.shoryan.ui.PasswordLoginFragment"
         android:label="fragment_login_password"
         tools:layout="@layout/fragment_login_password" />
 
     <fragment
         android:id="@+id/mapFragment"
-        android:name="com.example.sharyan.ui.MapFragment"
+        android:name="com.example.shoryan.ui.MapFragment"
         android:label="fragment_map"
         tools:layout="@layout/fragment_map" />
 </navigation>
