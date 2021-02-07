@@ -11,8 +11,10 @@ class RegistrationTestDataProvider {
         @JvmStatic
         fun validNumbers(): MutableIterator<Array<String>>{
             val testData: ArrayList<Array<String>> = arrayListOf()
-            testData.add(arrayOf("01012345678"))
+            testData.add(arrayOf("01112345678"))
             testData.add(arrayOf("01000000000"))
+            testData.add(arrayOf("01287089347"))
+            testData.add(arrayOf("01567789342"))
             return testData.iterator()
         }
 
@@ -21,21 +23,16 @@ class RegistrationTestDataProvider {
         fun invalidNumbers(method: Method): MutableIterator<Array<String>>{
             val testData: ArrayList<Array<String>> = arrayListOf()
             when (method.name) {
-                "isValidMobilePhoneEntered() WITH number having more than 11 digits RETURN false" -> {
-                    testData.add(arrayOf("010123456780"))
-                    testData.add(arrayOf("0100000000000"))
-                }
-                "isValidMobilePhoneEntered() WITH number having less than 11 digits RETURN false" -> {
-                    testData.add(arrayOf(""))
-                    testData.add(arrayOf(" "))
-                    testData.add(arrayOf("01"))
-                    testData.add(arrayOf("0100000008"))
-                }
-                "isValidMobilePhoneEntered() WITH non-leading 01 RETURN false" -> {
+
+                "isValidMobilePhoneEntered() WITH non-Egyptian prefix RETURN false" -> {
                     testData.add(arrayOf("1111111111"))
                     testData.add(arrayOf("11111111111"))
                     testData.add(arrayOf("00000000000"))
                     testData.add(arrayOf("02100000000"))
+                    testData.add(arrayOf("0100000000"))
+                    testData.add(arrayOf("01200000000000000"))
+                    testData.add(arrayOf("51097027697"))
+                    testData.add(arrayOf("01378650144"))
                 }
                 "isValidMobilePhoneEntered() WITH string containing non digits RETURN false" -> {
                     testData.add(arrayOf("01-97856966"))
@@ -59,13 +56,18 @@ class RegistrationTestDataProvider {
             val testData: ArrayList<Array<String>> = arrayListOf()
             testData.add(arrayOf("عمرو"))
             testData.add(arrayOf("شاةثي"))
-            testData.add(arrayOf("دجحخهععغفقثصضشسيبلاألأآلآإلإاتنمكطظزوةىلارؤءئذ"))
+            testData.add(arrayOf("ألأآلآإلإاتةىلارؤءئذ"))
+            testData.add(arrayOf("نمكطظزو"))
+            testData.add(arrayOf("دجحخهععغفقثصضشسيبلا"))
             testData.add(arrayOf("عبدالحق"))
+            testData.add(arrayOf("عبد الحق"))
             testData.add(arrayOf("احمـــد"))
             testData.add(arrayOf("ahmed"))
             testData.add(arrayOf("Omar"))
+            testData.add(arrayOf("HODA"))
             testData.add(arrayOf("ZiAD"))
             testData.add(arrayOf("joe"))
+            testData.add(arrayOf("مصطفى شعبان"))
             return testData.iterator()
         }
 
@@ -74,13 +76,17 @@ class RegistrationTestDataProvider {
         fun invalidNames(method: Method): MutableIterator<Array<String>>{
             val testData: ArrayList<Array<String>> = arrayListOf()
             when (method.name) {
-                "isValidNameEntered() WITH name having space in middle RETURN false" -> {
+                "isValidNameEntered() WITH name having multiple space RETURN false" -> {
                     testData.add(arrayOf("                "))
-                    testData.add(arrayOf("مصطفى شعبان"))
-                    testData.add(arrayOf("yasser rizk"))
                     testData.add(arrayOf("yasser     rizk"))
-                    testData.add(arrayOf(" osame"))
                     testData.add(arrayOf(" yasser     rizk"))
+                    testData.add(arrayOf("محمد     عصمت"))
+                    testData.add(arrayOf("يوسف  شوبير"))
+                    testData.add(arrayOf(" شوبير"))
+                    testData.add(arrayOf("سيب "))
+                    testData.add(arrayOf(" سيب "))
+                    testData.add(arrayOf("yasser rizk"))
+                    testData.add(arrayOf(" osame"))
                 }
                 "isValidNameEntered() WITH string having special characters RETURN false" -> {
                     testData.add(arrayOf("___"))
@@ -113,12 +119,17 @@ class RegistrationTestDataProvider {
         @JvmStatic
         fun validPasswords(): MutableIterator<Array<String>>{
             val testData: ArrayList<Array<String>> = arrayListOf()
-            testData.add(arrayOf("عمرو"))
-            testData.add(arrayOf("youssef"))
+            testData.add(arrayOf("AnaWadgamed7"))
+            testData.add(arrayOf("Killer78"))
+            testData.add(arrayOf("Killeer0"))
+            testData.add(arrayOf("9NoobMaster"))
+            testData.add(arrayOf("9Noob____Master"))
+            testData.add(arrayOf("Noob____Master7"))
+            testData.add(arrayOf("XXXX**hoho**XXXXX5....?"))
             return testData.iterator()
         }
 
-        @DataProvider(name = "invalidPasswords_spaces", parallel = true)
+        @DataProvider(name = "invalidPasswords", parallel = true)
         @JvmStatic
         fun invalidPasswordsSpaces(): MutableIterator<Array<String>>{
             val testData: ArrayList<Array<String>> = arrayListOf()
@@ -128,6 +139,13 @@ class RegistrationTestDataProvider {
             testData.add(arrayOf("ahmed "))
             testData.add(arrayOf("os ama"))
             testData.add(arrayOf(" am   r "))
+            testData.add(arrayOf("SherifPassword"))
+            testData.add(arrayOf("SSVSD3242340....SDC"))
+            testData.add(arrayOf("anasmallbas8"))
+            testData.add(arrayOf("7777777777777"))
+            testData.add(arrayOf("عمرووووووووووووووووووووووووو"))
+            testData.add(arrayOf("youssefffffffffffffffffff"))
+            testData.add(arrayOf("XXXX****XXXXX5....?"))
             return testData.iterator()
         }
     }

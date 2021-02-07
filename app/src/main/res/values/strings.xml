@@ -48,12 +48,12 @@
     <string name="my_requests">طلباتي</string>
     <string name="my_old_requests">طلباتي السابقة</string>
     <string name="my_request_details">تفاصيل طلب التبرع بالدم</string>
-    <string name="name_format_message"> تأكّد من عدم وجود مسافات او أرقام او رموز</string>
+    <string name="name_format_message"> تأكّد من عدم وجود أرقام او رموز</string>
     <string name="new_request">طلب جديد</string>
     <string name="notifications">الإشعارات</string>
     <string name="ok">حسناً</string>
     <string name="password">كلمة السر</string>
-    <string name="password_format_message">كلمة السر لا يمكن ان تحتوي مسافات</string>
+    <string name="password_format_message">\u200F كلمة السر يجب ان تتكون على الاقل من 8 احرف بدون مسافات منهم: \n - حرف انجليزي كبير \n - حرف انجليزي صغير \n - رقم انجليزي</string>
     <string name="password_mismatch">كلمة السر غير متطابقة</string>
     <string name="pending_request">في انتظارك</string>
     <string name="persons_going">\u200F %1$s أشخاص في طريقهم للتبرّع</string>

@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.view.*
 import android.view.ContextMenu.ContextMenuInfo
-import android.widget.EditText
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
@@ -26,6 +25,7 @@ import com.example.sharyan.R
 import com.example.sharyan.Utility
 import com.example.sharyan.data.*
 import com.example.sharyan.databinding.FragmentRegistrationBinding
+import com.example.sharyan.getStringWithoutAdditionalSpaces
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
@@ -190,12 +190,12 @@ class RegistrationFragment : Fragment(), LoadingFragmentHolder{
     private fun observeEditTexts(){
         binding.registrationFirstNameEditText.addTextChangedListener {
             observeNameText(binding.registrationFirstNameTextLayout,
-                binding.registrationFirstNameEditText.text.toString()
+                binding.registrationFirstNameEditText.getStringWithoutAdditionalSpaces()
             )
         }
         binding.registrationLastNameEditText.addTextChangedListener {
             observeNameText(binding.registrationLastNameTextLayout,
-                binding.registrationLastNameEditText.text.toString()
+                binding.registrationLastNameEditText.getStringWithoutAdditionalSpaces()
             )
         }
         binding.registrationPhoneEditText.addTextChangedListener { observePhoneText(it) }
@@ -322,17 +322,17 @@ class RegistrationFragment : Fragment(), LoadingFragmentHolder{
     private fun areInputsValidAndComplete(): Boolean{
         var areInputsValidAndComplete = true
         // Validating first name field
-        if(!registrationViewModel.isValidNameEntered(binding.registrationFirstNameEditText.text.toString())){
+        if(!registrationViewModel.isValidNameEntered(binding.registrationFirstNameEditText.getStringWithoutAdditionalSpaces())){
             areInputsValidAndComplete = false
             binding.registrationFirstNameTextLayout.error = resources.getString(R.string.name_format_message)
         }
         // Validating last name field
-        if(!registrationViewModel.isValidNameEntered(binding.registrationLastNameEditText.text.toString())){
+        if(!registrationViewModel.isValidNameEntered(binding.registrationLastNameEditText.getStringWithoutAdditionalSpaces())){
             areInputsValidAndComplete = false
             binding.registrationLastNameTextLayout.error = resources.getString(R.string.name_format_message)
         }
         // Validating phone number field
-        if(!registrationViewModel.isValidMobilePhoneEntered(binding.registrationPhoneEditText.text.toString())){
+        if(!registrationViewModel.isValidMobilePhoneEntered(binding.registrationPhoneEditText.getStringWithoutAdditionalSpaces())){
             areInputsValidAndComplete = false
             binding.registrationPhoneTextLayout.error = resources.getString(R.string.phone_format_message)
         }
@@ -390,9 +390,9 @@ class RegistrationFragment : Fragment(), LoadingFragmentHolder{
     }
 
     private fun createUser() = User(
-        name = Name(binding.registrationFirstNameEditText.text.toString().trim(),
-            binding.registrationLastNameEditText.text.toString().trim()),
-        phoneNumber = binding.registrationPhoneEditText.text.toString().trim().substring(1),
+        name = Name(binding.registrationFirstNameEditText.getStringWithoutAdditionalSpaces(),
+            binding.registrationLastNameEditText.getStringWithoutAdditionalSpaces()),
+        phoneNumber = binding.registrationPhoneEditText.getStringWithoutAdditionalSpaces().substring(1),
         password = binding.registrationPasswordEditText.text.toString(),
         location = locationPickerViewModel.getLocation(),
         bloodType = registrationViewModel.bloodType.value,
@@ -401,12 +401,10 @@ class RegistrationFragment : Fragment(), LoadingFragmentHolder{
     )
 
     private fun goToSMSFragment(user: User){
-        val phoneNumber = getEditTextValue(binding.registrationPhoneEditText)
+        val phoneNumber = binding.registrationPhoneEditText.getStringWithoutAdditionalSpaces()
         val phoneNumberBundle = bundleOf("phoneNumber" to phoneNumber)
         navController.navigate(R.id.action_registrationFragment_to_SMSFragment, phoneNumberBundle)
     }
-
-    private fun getEditTextValue(editText: EditText):String =  editText.text.toString().trim()
 
     override fun onLoadingFragmentDismissed(){
         registrationProcess.removeObservers(viewLifecycleOwner)

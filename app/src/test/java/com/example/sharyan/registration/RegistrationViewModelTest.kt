@@ -14,17 +14,7 @@ class RegistrationViewModelTest {
     }
 
     @Test(dataProvider = "invalidNumbers", dataProviderClass =RegistrationTestDataProvider::class)
-    fun `isValidMobilePhoneEntered() WITH number having more than 11 digits RETURN false`(phoneNumber: String) {
-        assertEquals(false, registrationViewModel.isValidMobilePhoneEntered(phoneNumber))
-    }
-
-    @Test(dataProvider = "invalidNumbers", dataProviderClass =RegistrationTestDataProvider::class)
-    fun `isValidMobilePhoneEntered() WITH number having less than 11 digits RETURN false`(phoneNumber: String) {
-        assertEquals(false, registrationViewModel.isValidMobilePhoneEntered(phoneNumber))
-    }
-
-    @Test(dataProvider = "invalidNumbers", dataProviderClass =RegistrationTestDataProvider::class)
-    fun `isValidMobilePhoneEntered() WITH non-leading 01 RETURN false`(phoneNumber: String) {
+    fun `isValidMobilePhoneEntered() WITH non-Egyptian prefix RETURN false`(phoneNumber: String) {
         assertEquals(false, registrationViewModel.isValidMobilePhoneEntered(phoneNumber))
     }
 
@@ -34,12 +24,12 @@ class RegistrationViewModelTest {
     }
 
     @Test(dataProvider = "validNames", dataProviderClass = RegistrationTestDataProvider::class)
-    fun `isValidNameEntered() WITH name having no spaces, special chars, or digits RETURN true`(name: String) {
+    fun `isValidNameEntered() WITH name having no multiple spaces, special chars, or digits RETURN true`(name: String) {
         assertEquals(true, registrationViewModel.isValidNameEntered(name))
     }
 
     @Test(dataProvider = "invalidNames", dataProviderClass = RegistrationTestDataProvider::class)
-    fun `isValidNameEntered() WITH name having space RETURN false`(name: String) {
+    fun `isValidNameEntered() WITH name having multiple space RETURN false`(name: String) {
         assertEquals(false, registrationViewModel.isValidNameEntered(name))
     }
 
@@ -68,8 +58,8 @@ class RegistrationViewModelTest {
         assertEquals(true, registrationViewModel.isValidPasswordEntered(password))
     }
 
-    @Test(dataProvider = "invalidPasswords_spaces", dataProviderClass = RegistrationTestDataProvider::class)
-    fun `isValidPasswordEntered() WITH password containing spaces RETURN false`(password: String){
+    @Test(dataProvider = "invalidPasswords", dataProviderClass = RegistrationTestDataProvider::class)
+    fun `isValidPasswordEntered() WITH invalid password RETURN false`(password: String){
         assertEquals(false, registrationViewModel.isValidPasswordEntered(password))
     }
 }
