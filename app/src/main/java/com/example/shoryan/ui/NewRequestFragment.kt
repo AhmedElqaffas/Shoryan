@@ -32,6 +32,8 @@ class NewRequestFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentNewRequestBinding.inflate(inflater, container, false)
+        binding.viewmodel = newRequestViewModel
+        binding.lifecycleOwner = this
         toolbarBinding = binding.newRequestAppbar
         return binding.root
     }
@@ -67,9 +69,7 @@ class NewRequestFragment : Fragment() {
         disableCitySpinner()
         disableBloodBankSpinner()
         disableIncDecButtons()
-        disableProgressBar()
         disableSubmitButton()
-        binding.checkingPermissionSentence.visibility = View.GONE
         showMessage("نأسف لا يمكنك طلب تبرع بالدم اكثر من ثلاثة مرات في اليوم")
     }
 
@@ -79,16 +79,10 @@ class NewRequestFragment : Fragment() {
         binding.confirmRequestButton.setOnClickListener{}
     }
 
-    private fun disableProgressBar() {
-        binding.progressBar.visibility = View.GONE
-    }
-
     private fun enableSubmitButton() {
         binding.confirmRequestButton.isEnabled = true
         setConfirmButtonClickListener()
         binding.confirmRequestButton.setBackgroundResource(R.drawable.button_curved_red)
-        binding.progressBar.visibility = View.GONE
-        binding.checkingPermissionSentence.visibility = View.GONE
     }
 
     private fun disableIncDecButtons() {
