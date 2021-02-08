@@ -7,12 +7,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.shoryan.EnglishToArabicConverter
-import com.example.shoryan.R
-import com.example.shoryan.data.CurrentAppUser
 import com.example.shoryan.databinding.FragmentProfileBinding
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.networking.RetrofitClient
 import com.example.shoryan.viewmodels.ProfileViewModel
+import com.example.shoryan.viewmodels.ProfileViewModelFactory
 
 
 class ProfileFragment : Fragment() {
@@ -21,7 +20,7 @@ class ProfileFragment : Fragment() {
             .getRetrofitClient()
             .create(RetrofitBloodDonationInterface::class.java)
 
-    private val profileViewModel: ProfileViewModel by viewModels()
+    private val profileViewModel: ProfileViewModel by viewModels{ProfileViewModelFactory(bloodDonationAPI)}
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
@@ -45,6 +44,6 @@ class ProfileFragment : Fragment() {
     }
 
     private fun fetchUserData(){
-        profileViewModel.getProfileData(bloodDonationAPI)
+        profileViewModel.getProfileData()
     }
 }
