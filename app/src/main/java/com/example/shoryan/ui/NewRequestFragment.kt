@@ -8,7 +8,9 @@ import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.navGraphViewModels
+import com.example.shoryan.AndroidUtility
 import com.example.shoryan.R
 import com.example.shoryan.data.CreateNewRequestResponse
 import com.example.shoryan.databinding.AppbarBinding
@@ -26,6 +28,7 @@ class NewRequestFragment : Fragment() {
     private var toolbarBinding: AppbarBinding? = null
 
     private var createdRequest : CreateNewRequestResponse? = null
+    private var snackbar: Snackbar? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentNewRequestBinding.inflate(inflater, container, false)
@@ -37,6 +40,7 @@ class NewRequestFragment : Fragment() {
         super.onDestroyView()
         toolbarBinding = null
         _binding = null
+        snackbar?.dismiss()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?){
@@ -44,12 +48,15 @@ class NewRequestFragment : Fragment() {
         setToolbarText(resources.getString(R.string.new_request))
         enableInput()
         checkIfUserCanRequest()
+        observeMessages()
     }
 
     private fun checkIfUserCanRequest() {
-        CoroutineScope(Dispatchers.Main).async {
+        lifecycleScope.launch {
             newRequestViewModel.canUserRequest().observe(viewLifecycleOwner, { canUserRequest ->
-                if (!canUserRequest) disableInput() else enableSubmitButton()
+                canUserRequest?.let {
+                  if(it) enableSubmitButton() else disableInput()
+                }
             })
         }
     }
@@ -108,7 +115,7 @@ class NewRequestFragment : Fragment() {
 
     private fun enableInput() {
         setRadioGroupsMutuallyExclusive()
-        setGovSpinnerAdapter(binding.spinnerGov, newRequestViewModel.getGovernotesList())
+        setGovSpinnerAdapter(binding.spinnerGov, newRequestViewModel.getGovernoratesList())
         setIncDecButtonsClickListeners()
         setConfirmButtonClickListener()
     }
@@ -133,7 +140,7 @@ class NewRequestFragment : Fragment() {
     private fun setGovSpinnerAdapter(spinner: Spinner, govList : List<String>) {
         // Create an ArrayAdapter using the string array and a default spinner layout
         activity?.let {
-            val ArrayAdapter = ArrayAdapter(it, android.R.layout.simple_spinner_item, govList)
+            ArrayAdapter(it, android.R.layout.simple_spinner_item, govList)
                 .also { adapter ->
                     // Specify the layout to use when the list of choices appears
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -141,13 +148,12 @@ class NewRequestFragment : Fragment() {
                     spinner.onItemSelectedListener = governmentSpinnerItemSelected()
                 }
         }
-
     }
 
     private fun setCitySpinnerAdapter(spinner: Spinner, regionsList: List<String>) {
         // Create an ArrayAdapter using the string array and a default spinner layout
         activity?.let {
-            val ArrayAdapter = ArrayAdapter(it, android.R.layout.simple_spinner_item, regionsList)
+            ArrayAdapter(it, android.R.layout.simple_spinner_item, regionsList)
                 .also { adapter ->
                     // Specify the layout to use when the list of choices appears
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -155,13 +161,12 @@ class NewRequestFragment : Fragment() {
                     spinner.onItemSelectedListener = citySpinnerItemSelected()
                 }
         }
-
     }
 
     private fun setBloodBankSpinnerAdapter(spinner: Spinner, bloodBankList: List<String>) {
         // Create an ArrayAdapter using the string array and a default spinner layout
         activity?.let {
-            val ArrayAdapter = ArrayAdapter(it, android.R.layout.simple_spinner_item, bloodBankList)
+            ArrayAdapter(it, android.R.layout.simple_spinner_item, bloodBankList)
                 .also { adapter ->
                     // Specify the layout to use when the list of choices appears
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -245,12 +250,6 @@ class NewRequestFragment : Fragment() {
         binding.bloodBankSpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_grey)
     }
 
-    private fun enableGovSpinner() {
-        binding.governmentsSpinnerLayout.setBackgroundResource(R.drawable.spinner_red_curve)
-        binding.governmentsSpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_big)
-        setGovSpinnerAdapter(binding.spinnerGov, newRequestViewModel.getGovernotesList())
-    }
-
     private fun disableCitySpinner() {
         with(binding){
             citySpinnerTextView.visibility = View.VISIBLE
@@ -319,11 +318,10 @@ class NewRequestFragment : Fragment() {
     }
 
     private fun createNewRequest() {
-        CoroutineScope(Dispatchers.Main).async {
+        lifecycleScope.launch{
             newRequestViewModel.createNewRequest(getSelectedBloodType().text.toString(), getCurrentBagsCount(),
                 getSelectedItemFromSpinner(binding.spinnerBloodBank)).observe(viewLifecycleOwner,
                 { response -> showSuccessMessage(response)})
-
         }
     }
 
@@ -366,11 +364,7 @@ class NewRequestFragment : Fragment() {
                 }
                 .show()
         else
-            Snackbar.make(binding.scrollView, message, Snackbar.LENGTH_LONG)
-                .setAction("حسناً") {
-                    // By default, the snackbar will be dismissed
-                }
-                .show()
+            AndroidUtility.displaySnackbarMessage(binding.scrollView, message, Snackbar.LENGTH_LONG)
     }
     private fun openRequestDetails() {
         val fragment = RequestDetailsFragment.newInstance(
@@ -389,6 +383,26 @@ class NewRequestFragment : Fragment() {
 
     private fun getSelectedItemFromSpinner(spinner : Spinner): String? {
         return spinner.selectedItem?.toString()
+    }
+
+    /**
+     * Observes messages published by the viewmodel and shows them to the user in the form of
+     * a snackbar
+     */
+    private fun observeMessages(){
+        newRequestViewModel.message.observe(viewLifecycleOwner){
+            it?.let { message ->
+                // flag that the message is received
+                newRequestViewModel.consumeMessage()
+                if(message == resources.getString(R.string.connection_error)){
+                    snackbar = AndroidUtility.makeTryAgainSnackbar(binding.scrollView, message, ::checkIfUserCanRequest)
+                    snackbar!!.show()
+                }
+                else {
+                    showMessage(message)
+                }
+            }
+        }
     }
 
 }

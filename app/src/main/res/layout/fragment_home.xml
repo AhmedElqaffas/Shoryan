@@ -6,12 +6,18 @@
     <data>
         <variable name="viewmodel"
             type="com.example.shoryan.viewmodels.RequestsViewModel" />
+        <variable
+            name="fragment"
+            type="com.example.shoryan.ui.HomeFragment"/>
     </data>
+
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/homeSwipeRefresh">
+        android:id="@+id/homeSwipeRefresh"
+        app:onRefreshListener="@{() -> fragment.refreshRequests()}">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_height="match_parent"
         android:layout_width="match_parent"

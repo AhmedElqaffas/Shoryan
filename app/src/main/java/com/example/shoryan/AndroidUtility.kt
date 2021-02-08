@@ -35,7 +35,7 @@ class AndroidUtility {
             snackbar.show()
         }
 
-        fun showTryAgainSnackbar(view: View, message: String, whatToTry: () -> Unit){
+        fun makeTryAgainSnackbar(view: View, message: String, whatToTry: () -> Unit): Snackbar{
             val snackbar =  Snackbar.make(view,
                 message,
                 Snackbar.LENGTH_INDEFINITE)
@@ -43,7 +43,7 @@ class AndroidUtility {
                 whatToTry()
             }
             ViewCompat.setLayoutDirection(snackbar.view, ViewCompat.LAYOUT_DIRECTION_RTL)
-            snackbar.show()
+            return snackbar
         }
     }
 }

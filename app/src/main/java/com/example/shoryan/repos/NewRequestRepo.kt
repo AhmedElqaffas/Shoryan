@@ -1,11 +1,13 @@
 package com.example.shoryan.repos
 
+import android.util.Log
 import com.example.shoryan.data.*
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 
 
 object NewRequestRepo {
 
+    private val TAG = javaClass.simpleName
     private var cachedCanUserRequest : Boolean? = null
     private var cachedNasrCityBanks : List<BloodBankResponse>? = null
     private var cachedMasrGededaBanks : List<BloodBankResponse>? = null
@@ -15,7 +17,7 @@ object NewRequestRepo {
 
     private var cachedBloodBanksMap : Map<String, String>? = null
 
-    suspend fun canUserRequest(userID : String?, bloodDonationInterface: RetrofitBloodDonationInterface) : Boolean{
+    suspend fun canUserRequest(userID : String?, bloodDonationInterface: RetrofitBloodDonationInterface) : Boolean?{
         // This function will contain an API call to determine whether the current user can request a blood donation
         if(cachedCanUserRequest != null)
             return cachedCanUserRequest!!
@@ -37,11 +39,11 @@ object NewRequestRepo {
                     }
                 }
                 catch (e: Exception){
-                    cachedCanUserRequest = false
+                    Log.e(TAG, "Couldn't get response: ${e.message}")
                 }
         }
 
-        return cachedCanUserRequest!!
+        return cachedCanUserRequest
     }
 
 

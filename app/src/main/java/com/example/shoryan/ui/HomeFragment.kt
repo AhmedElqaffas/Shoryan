@@ -43,19 +43,18 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         binding.viewmodel = requestsViewModel
+        binding.fragment = this
         binding.lifecycleOwner = this
         return binding.root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding.homeSwipeRefresh.isEnabled = false
         _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.homeSwipeRefresh.isEnabled = true
         instantiateNavController(view)
         initializeRecyclerViewAdapter()
         // Getting ongoingRequests, pending request, my requests,  all in parallel
@@ -103,7 +102,6 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
         super.onResume()
         setToolbarText(resources.getString(R.string.home))
         setRecyclerViewScrollListener()
-        setSwipeRefreshListener()
         setFilterListener()
         setPendingRequestCardListener()
         setMyRequestsCardListener()
@@ -132,13 +130,7 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
         })
     }
 
-    private fun setSwipeRefreshListener(){
-        binding.homeSwipeRefresh.setOnRefreshListener{
-            refreshRequests()
-        }
-    }
-
-    private fun refreshRequests(){
+    fun refreshRequests(){
         resetScrollingToTop()
         getOngoingRequests(true)
     }

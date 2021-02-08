@@ -1,8 +1,10 @@
 package com.example.shoryan.viewmodels
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import com.example.shoryan.R
 import com.example.shoryan.data.CreateNewRequestQuery
 import com.example.shoryan.data.CreateNewRequestResponse
 import com.example.shoryan.data.CurrentAppUser
@@ -16,24 +18,29 @@ import kotlinx.coroutines.async
 //const val USER_ID = "5fcfae9e52cbea7f6cb65a16"
  val USER_ID = CurrentAppUser.id
 
-class NewRequestViewModel : ViewModel() {
+class NewRequestViewModel(application: Application) : AndroidViewModel(application) {
     private var bloodDonationAPI: RetrofitBloodDonationInterface = RetrofitClient
         .getRetrofitClient()
         .create(RetrofitBloodDonationInterface::class.java)
 
-    private var canUserRequest : MutableLiveData<Boolean> = MutableLiveData<Boolean>()
+    private var canUserRequest : MutableLiveData<Boolean?> = MutableLiveData<Boolean?>()
     private var createNewRequestResponse : MutableLiveData<CreateNewRequestResponse?> = MutableLiveData<CreateNewRequestResponse?>()
+    private val _message = MutableLiveData<String?>()
+    val message: LiveData<String?> = _message
 
-
-    suspend fun canUserRequest(): LiveData<Boolean> {
+    suspend fun canUserRequest(): LiveData<Boolean?> {
         CoroutineScope(Dispatchers.IO).async{
-            canUserRequest.postValue(NewRequestRepo.canUserRequest(USER_ID, bloodDonationAPI))
+            val serverResult = NewRequestRepo.canUserRequest(USER_ID, bloodDonationAPI)
+            canUserRequest.postValue(serverResult)
+            if(serverResult == null){
+                _message.postValue(getApplication<Application>().resources.getString(R.string.connection_error))
+            }
         }.await()
 
         return canUserRequest
     }
 
-    fun getGovernotesList() : List<String> {
+    fun getGovernoratesList() : List<String> {
         return NewRequestRepo.getGovernoratesList()
     }
 
@@ -69,5 +76,11 @@ class NewRequestViewModel : ViewModel() {
         NewRequestRepo.updateCachedDailyLimitFlag(newFlag)
     }
 
-
+    /**
+     * Used to indicate that the message is received. This method sets the message to null to avoid
+     * having it stuck in the system.
+     */
+    fun consumeMessage(){
+        _message.postValue(null)
+    }
 }
