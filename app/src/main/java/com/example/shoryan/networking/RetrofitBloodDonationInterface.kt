@@ -45,4 +45,7 @@ interface RetrofitBloodDonationInterface {
 
     @POST("users/signup")
     suspend fun registerUser(@Body user: User): RegistrationResponse
+
+    @GET("users/{userId}")
+    suspend fun getUserProfileData(@Path("userId") userId: String): CurrentAppUser
 }

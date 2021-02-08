@@ -5,19 +5,32 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.example.shoryan.EnglishToArabicConverter
 import com.example.shoryan.R
 import com.example.shoryan.data.CurrentAppUser
 import com.example.shoryan.databinding.FragmentProfileBinding
+import com.example.shoryan.networking.RetrofitBloodDonationInterface
+import com.example.shoryan.networking.RetrofitClient
+import com.example.shoryan.viewmodels.ProfileViewModel
 
 
 class ProfileFragment : Fragment() {
+
+    private val bloodDonationAPI: RetrofitBloodDonationInterface = RetrofitClient
+            .getRetrofitClient()
+            .create(RetrofitBloodDonationInterface::class.java)
+
+    private val profileViewModel: ProfileViewModel by viewModels()
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
+        binding.viewmodel = profileViewModel
+        binding.englishArabicConverter = EnglishToArabicConverter()
+        binding.lifecycleOwner = this
         return binding.root
     }
 
@@ -28,22 +41,10 @@ class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        displayInformation()
+        fetchUserData()
     }
 
-    private fun displayInformation(){
-        displayGreeting()
-        displayStats()
-    }
-
-    private fun displayGreeting(){
-        binding.profileGreeting.text = resources.getString(R.string.hello_user_greeting, CurrentAppUser.name?.firstName)
-    }
-
-    private fun displayStats(){
-        with(binding){
-            pointsNumber.text = EnglishToArabicConverter().convertDigits(CurrentAppUser.points.toString())
-            donationsNumber.text = EnglishToArabicConverter().convertDigits(CurrentAppUser.numberOfDonations.toString())
-        }
+    private fun fetchUserData(){
+        profileViewModel.getProfileData(bloodDonationAPI)
     }
 }
