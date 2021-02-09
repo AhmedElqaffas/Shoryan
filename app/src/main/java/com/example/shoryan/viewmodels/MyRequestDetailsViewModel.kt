@@ -5,11 +5,17 @@ import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.*
 import com.example.shoryan.data.ViewEvent
+import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.repos.MyRequestDetailsRepo
 import kotlinx.coroutines.launch
 
 
-class MyRequestDetailsViewModel: RequestDetailsViewModel() {
+class MyRequestDetailsViewModel(): RequestDetailsViewModel() {
+
+    constructor(bloodDonationAPI: RetrofitBloodDonationInterface, requestId: String) : this(){
+        this.bloodDonationAPI = bloodDonationAPI
+        this.requestId = requestId
+    }
 
     fun showAlertDialog(view: View){
         val builder = AlertDialog.Builder(view.context)
@@ -24,7 +30,7 @@ class MyRequestDetailsViewModel: RequestDetailsViewModel() {
 
     private fun cancelRequest(view: View) = viewModelScope.launch{
         _isInLoadingState.postValue(true)
-        val processResultError = MyRequestDetailsRepo.cancelRequest(bloodDonationAPI, donationDetails.value!!.request!!.id)
+        val processResultError = MyRequestDetailsRepo.cancelRequest(bloodDonationAPI, requestId)
         processResultError?.apply { _eventsFlow.emit(ViewEvent.ShowSnackBar(this)) }
         _isInLoadingState.postValue(false)
         if(processResultError.isNullOrEmpty()){
@@ -42,3 +48,9 @@ class MyRequestDetailsViewModel: RequestDetailsViewModel() {
     }
 }
 
+class MyRequestDetailsViewModelFactory(private val bloodDonationAPI: RetrofitBloodDonationInterface,
+                                     private val requestId: String): ViewModelProvider.Factory{
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        return MyRequestDetailsViewModel(bloodDonationAPI, requestId) as T
+    }
+}

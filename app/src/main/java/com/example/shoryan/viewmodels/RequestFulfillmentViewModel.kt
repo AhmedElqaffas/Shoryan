@@ -5,11 +5,12 @@ import androidx.lifecycle.*
 import com.example.shoryan.data.CurrentAppUser
 import com.example.shoryan.data.DonationDetails
 import com.example.shoryan.data.ViewEvent
+import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.repos.RequestFulfillmentRepo
 import kotlinx.coroutines.launch
 
 
-class RequestFulfillmentViewModel: RequestDetailsViewModel() {
+class RequestFulfillmentViewModel(): RequestDetailsViewModel() {
 
     // Instead of changing the CurrentAppUser repo to have a liveData, I created this liveData member
     // to observe changes
@@ -38,8 +39,13 @@ class RequestFulfillmentViewModel: RequestDetailsViewModel() {
 
         acceptedRequestMediatorLiveData.addSource(donationDetails){
             // When th details are loaded, set the request id as this liveData value
-                value: DonationDetails -> acceptedRequestMediatorLiveData.setValue(value.request?.id)
+                value: DonationDetails? -> acceptedRequestMediatorLiveData.setValue(value?.request?.id)
         }
+    }
+
+    constructor(bloodDonationAPI: RetrofitBloodDonationInterface, requestId: String) : this(){
+        this.bloodDonationAPI = bloodDonationAPI
+        this.requestId = requestId
     }
 
     override suspend fun getDonationDetails(requestId: String): LiveData<DonationDetails?> {
@@ -121,5 +127,12 @@ class RequestFulfillmentViewModel: RequestDetailsViewModel() {
         setUserPendingRequest(null)
         // User can't donate again if they have already donated
         _canUserDonate.postValue(!hasDonated)
+    }
+}
+
+class RequestFulfillmentViewModelFactory(private val bloodDonationAPI: RetrofitBloodDonationInterface,
+                                       private val requestId: String): ViewModelProvider.Factory{
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        return RequestFulfillmentViewModel(bloodDonationAPI, requestId) as T
     }
 }

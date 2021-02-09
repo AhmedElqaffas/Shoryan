@@ -1,42 +1,26 @@
 package com.example.shoryan.viewmodels
 
-import android.view.View
 import androidx.lifecycle.*
 import com.example.shoryan.EnglishToArabicConverter
 import com.example.shoryan.data.DonationDetails
 import com.example.shoryan.data.Location
 import com.example.shoryan.data.ViewEvent
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
-import com.example.shoryan.networking.RetrofitClient
 import com.example.shoryan.repos.RequestFulfillmentRepo
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
-open class RequestDetailsViewModel: ViewModel() {
+open class RequestDetailsViewModel(): ViewModel() {
 
-    private val _donationDetails =  MutableLiveData<DonationDetails>()
-    val donationDetails: LiveData<DonationDetails> = _donationDetails
+    private val _donationDetails =  MutableLiveData<DonationDetails?>()
+    val donationDetails: LiveData<DonationDetails?> = _donationDetails
     // The application is processing a query (contacting backend)
     protected val _isInLoadingState = MutableLiveData(true)
     val isInLoadingState: LiveData<Boolean> = _isInLoadingState
     // The donation details have been loaded
     private val _areDonationDetailsLoaded = MutableLiveData(false)
     val areDonationDetailsLoaded = _areDonationDetailsLoaded
-    // The details layout should be visible when the donation details are loaded
-    val donationDetailsLayoutVisibility: LiveData<Int> = Transformations.map(_areDonationDetailsLoaded){
-        when(it){
-            true -> View.VISIBLE
-            false -> View.GONE
-        }
-    }
-    // The shimmer layout should be hidden when the donation details are loaded
-    val shimmerVisibility: LiveData<Int> = Transformations.map(_areDonationDetailsLoaded){
-        when(it){
-            true -> View.GONE
-            false -> View.VISIBLE
-        }
-    }
     // Instead of the xml view observing the donationDetails liveData and performing subtraction itself,
     // this view should observe this liveData which simplifies the xml
     val numberOfRemainingBags: LiveData<String> = Transformations.map(donationDetails){
@@ -51,9 +35,13 @@ open class RequestDetailsViewModel: ViewModel() {
     protected val _eventsFlow = MutableSharedFlow<ViewEvent>()
     val eventsFlow = _eventsFlow.asSharedFlow()
 
-    protected var bloodDonationAPI: RetrofitBloodDonationInterface = RetrofitClient
-        .getRetrofitClient()
-        .create(RetrofitBloodDonationInterface::class.java)
+    protected lateinit var bloodDonationAPI: RetrofitBloodDonationInterface
+    protected lateinit var requestId: String
+
+    constructor(bloodDonationAPI: RetrofitBloodDonationInterface, requestId: String) : this(){
+        this.bloodDonationAPI = bloodDonationAPI
+        this.requestId = requestId
+    }
 
     open suspend fun getDonationDetails(requestId: String): LiveData<DonationDetails?> {
         val details = RequestFulfillmentRepo.getDonationDetails(bloodDonationAPI, requestId)

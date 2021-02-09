@@ -15,9 +15,9 @@ import com.example.shoryan.R
 import com.example.shoryan.data.ViewEvent
 import com.example.shoryan.databinding.FragmentMyRequestDetailsBinding
 import com.example.shoryan.databinding.FragmentRequestFulfillmentBinding
-import com.example.shoryan.viewmodels.MyRequestDetailsViewModel
-import com.example.shoryan.viewmodels.RequestDetailsViewModel
-import com.example.shoryan.viewmodels.RequestFulfillmentViewModel
+import com.example.shoryan.networking.RetrofitBloodDonationInterface
+import com.example.shoryan.networking.RetrofitClient
+import com.example.shoryan.viewmodels.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
@@ -62,9 +62,16 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
             }
     }
 
+    private var bloodDonationAPI: RetrofitBloodDonationInterface = RetrofitClient
+            .getRetrofitClient()
+            .create(RetrofitBloodDonationInterface::class.java)
     private var apiCallJob: Job? = null
-    private val requestFulfillmentViewModel: RequestFulfillmentViewModel by viewModels()
-    private val myRequestDetailsViewModel: MyRequestDetailsViewModel by viewModels()
+    private val requestFulfillmentViewModel: RequestFulfillmentViewModel by viewModels{
+        RequestFulfillmentViewModelFactory(bloodDonationAPI, requireArguments().getString(ARGUMENT_REQUEST_KEY)!!)
+    }
+    private val myRequestDetailsViewModel: MyRequestDetailsViewModel by viewModels{
+        MyRequestDetailsViewModelFactory(bloodDonationAPI, requireArguments().getString(ARGUMENT_REQUEST_KEY)!!)
+    }
     private lateinit var mapInstance: GoogleMap
     private var snackbar: Snackbar? = null
     private lateinit var binding: ViewDataBinding

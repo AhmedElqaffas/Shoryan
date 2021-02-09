@@ -98,7 +98,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             app:shimmer_auto_start="true"
-                            android:visibility="@{viewmodel.shimmerVisibility}">
+                            app:isVisible="@{!viewmodel.areDonationDetailsLoaded}">
 
                             <include layout="@layout/shimmer_request_details_card" />
                         </com.facebook.shimmer.ShimmerFrameLayout>
@@ -109,7 +109,7 @@
                             android:layout_height="wrap_content"
                             android:padding="5dp"
                             android:layout_marginBottom="10dp"
-                            android:visibility="@{viewmodel.donationDetailsLayoutVisibility}">
+                            app:isVisible="@{viewmodel.areDonationDetailsLoaded}">
 
                             <TextView
                                 android:id="@+id/requestBloodType"
