@@ -4,6 +4,7 @@ import android.view.View
 import androidx.lifecycle.*
 import com.example.shoryan.data.CurrentAppUser
 import com.example.shoryan.data.DonationDetails
+import com.example.shoryan.data.ViewEvent
 import com.example.shoryan.repos.RequestFulfillmentRepo
 import kotlinx.coroutines.launch
 
@@ -43,11 +44,17 @@ class RequestFulfillmentViewModel: RequestDetailsViewModel() {
 
     override suspend fun getDonationDetails(requestId: String): LiveData<DonationDetails?> {
         val details = super.getDonationDetails(requestId)
-        if(details.value?.request != null){
+        if(areDetailsFetchedSuccessfully(details.value)){
             _canUserDonate.postValue(details.value?.donationAbility?.canUserDonate)
+            showDonationDisabilityReasonIfExists(details.value)
         }
-        _message.value = details.value?.donationAbility?.reasonForDisability
         return details
+    }
+
+    private suspend fun showDonationDisabilityReasonIfExists(details: DonationDetails?) {
+        details?.donationAbility?.reasonForDisability?.apply {
+            _eventsFlow.emit(ViewEvent.ShowSnackBar(this))
+        }
     }
 
     /**
@@ -81,7 +88,7 @@ class RequestFulfillmentViewModel: RequestDetailsViewModel() {
         if(processResultError.isNullOrEmpty()){
             setUserPendingRequest(requestId)
         }
-        _message.postValue(processResultError)
+        processResultError?.apply { _eventsFlow.emit(ViewEvent.ShowSnackBar(this)) }
         _isInLoadingState.postValue(false)
     }
 
@@ -91,7 +98,7 @@ class RequestFulfillmentViewModel: RequestDetailsViewModel() {
         if(processResultError.isNullOrEmpty()){
             removeUserPendingRequest(true)
         }
-        _message.postValue(processResultError?: "شكراً لتبرّعك")
+        _eventsFlow.emit(ViewEvent.ShowSnackBar(processResultError?: "شكراً لتبرّعك"))
         _isInLoadingState.postValue(false)
     }
 
@@ -101,7 +108,7 @@ class RequestFulfillmentViewModel: RequestDetailsViewModel() {
         if(processResultError.isNullOrEmpty()){
             removeUserPendingRequest(false)
         }
-        _message.postValue(processResultError?: "تم الغاء التبرّع")
+        _eventsFlow.emit(ViewEvent.ShowSnackBar(processResultError?: "تم الغاء التبرّع"))
         _isInLoadingState.postValue(false)
     }
 

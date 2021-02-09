@@ -4,19 +4,19 @@ import android.view.View
 import androidx.lifecycle.*
 import com.example.shoryan.EnglishToArabicConverter
 import com.example.shoryan.data.DonationDetails
+import com.example.shoryan.data.Location
+import com.example.shoryan.data.ViewEvent
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.networking.RetrofitClient
 import com.example.shoryan.repos.RequestFulfillmentRepo
+import com.google.android.gms.maps.model.LatLng
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 
 open class RequestDetailsViewModel: ViewModel() {
 
-    // Private mutable liveData for the donation details obtained from the repository
     private val _donationDetails =  MutableLiveData<DonationDetails>()
-    // A public liveData for the XML views to observe, the separation of the live data to two
-    // (private mutable and public immutable) was used in a google codelab, so I thought it may
-    // be best practice to do it
     val donationDetails: LiveData<DonationDetails> = _donationDetails
-
     // The application is processing a query (contacting backend)
     protected val _isInLoadingState = MutableLiveData(true)
     val isInLoadingState: LiveData<Boolean> = _isInLoadingState
@@ -37,7 +37,6 @@ open class RequestDetailsViewModel: ViewModel() {
             false -> View.VISIBLE
         }
     }
-
     // Instead of the xml view observing the donationDetails liveData and performing subtraction itself,
     // this view should observe this liveData which simplifies the xml
     val numberOfRemainingBags: LiveData<String> = Transformations.map(donationDetails){
@@ -48,13 +47,9 @@ open class RequestDetailsViewModel: ViewModel() {
         )
     }
 
-    // Publishes messages for the subscribed fragments to show
-    protected val _message = MutableLiveData<String?>(null)
-    val message: LiveData<String?> = _message
-
-    // Set to true when the current BottomSheetFragment should be dismissed
-    protected val _shouldDismiss = MutableLiveData<Boolean>(false)
-    val shouldDismissFragment: LiveData<Boolean> = _shouldDismiss
+    // A mechanism to push events to the fragment
+    protected val _eventsFlow = MutableSharedFlow<ViewEvent>()
+    val eventsFlow = _eventsFlow.asSharedFlow()
 
     protected var bloodDonationAPI: RetrofitBloodDonationInterface = RetrofitClient
         .getRetrofitClient()
@@ -62,11 +57,26 @@ open class RequestDetailsViewModel: ViewModel() {
 
     open suspend fun getDonationDetails(requestId: String): LiveData<DonationDetails?> {
         val details = RequestFulfillmentRepo.getDonationDetails(bloodDonationAPI, requestId)
-        if(details?.request != null){
+        if(areDetailsFetchedSuccessfully(details)){
             _donationDetails.value = details
             _areDonationDetailsLoaded.value = true
             _isInLoadingState.value = false
+            updateMapLocation(details!!.request!!.bloodBank!!.location)
+        }else{
+            announceCommunicationFailure()
         }
         return MutableLiveData<DonationDetails?>(details)
+    }
+
+    protected fun areDetailsFetchedSuccessfully(details: DonationDetails?): Boolean {
+        return details?.request != null
+    }
+
+    private suspend fun updateMapLocation(location: Location){
+        _eventsFlow.emit(ViewEvent.UpdateMapLocation(LatLng(location.latitude, location.longitude)))
+    }
+
+    private suspend fun announceCommunicationFailure(){
+        _eventsFlow.emit(ViewEvent.ShowTryAgainSnackBar())
     }
 }

@@ -13,11 +13,14 @@ import androidx.navigation.navGraphViewModels
 import com.example.shoryan.AndroidUtility
 import com.example.shoryan.R
 import com.example.shoryan.data.CreateNewRequestResponse
+import com.example.shoryan.data.ViewEvent
 import com.example.shoryan.databinding.AppbarBinding
 import com.example.shoryan.databinding.FragmentNewRequestBinding
 import com.example.shoryan.viewmodels.NewRequestViewModel
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 
 class NewRequestFragment : Fragment() {
@@ -26,7 +29,6 @@ class NewRequestFragment : Fragment() {
     private var _binding: FragmentNewRequestBinding? = null
     private val binding get() = _binding!!
     private var toolbarBinding: AppbarBinding? = null
-
     private var createdRequest : CreateNewRequestResponse? = null
     private var snackbar: Snackbar? = null
 
@@ -50,7 +52,7 @@ class NewRequestFragment : Fragment() {
         setToolbarText(resources.getString(R.string.new_request))
         enableInput()
         checkIfUserCanRequest()
-        observeMessages()
+        observeEvents()
     }
 
     private fun checkIfUserCanRequest() {
@@ -379,24 +381,19 @@ class NewRequestFragment : Fragment() {
         return spinner.selectedItem?.toString()
     }
 
-    /**
-     * Observes messages published by the viewmodel and shows them to the user in the form of
-     * a snackbar
-     */
-    private fun observeMessages(){
-        newRequestViewModel.message.observe(viewLifecycleOwner){
-            it?.let { message ->
-                // flag that the message is received
-                newRequestViewModel.consumeMessage()
-                if(message == resources.getString(R.string.connection_error)){
-                    snackbar = AndroidUtility.makeTryAgainSnackbar(binding.scrollView, message, ::checkIfUserCanRequest)
-                    snackbar!!.show()
-                }
-                else {
-                    showMessage(message)
-                }
+    private fun observeEvents(){
+        newRequestViewModel.eventsFlow.onEach {
+            when(it){
+                is ViewEvent.ShowSnackBar -> {showMessage(it.text)}
+                is ViewEvent.ShowTryAgainSnackBar -> {showTryAgainMessage(it.text)}
             }
-        }
+
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+    }
+
+    private fun showTryAgainMessage(message: String){
+        snackbar = AndroidUtility.makeTryAgainSnackbar(binding.scrollView, message, ::checkIfUserCanRequest)
+        snackbar!!.show()
     }
 
 }

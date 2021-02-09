@@ -12,7 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.shoryan.BR
 import com.example.shoryan.EnglishToArabicConverter
 import com.example.shoryan.R
-import com.example.shoryan.data.DonationDetails
+import com.example.shoryan.data.ViewEvent
 import com.example.shoryan.databinding.FragmentMyRequestDetailsBinding
 import com.example.shoryan.databinding.FragmentRequestFulfillmentBinding
 import com.example.shoryan.viewmodels.MyRequestDetailsViewModel
@@ -28,6 +28,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_request_fulfillment.design_bottom_sheet
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 
@@ -73,14 +75,12 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
         if(fragmentType == MY_REQUEST_BINDING){
             binding = DataBindingUtil.inflate(inflater,R.layout.fragment_my_request_details , container, false) as FragmentMyRequestDetailsBinding
             binding.setVariable(BR.viewmodel, myRequestDetailsViewModel)
-            observeMessages(myRequestDetailsViewModel)
-            listenForDismissRequest(myRequestDetailsViewModel)
+            observeViewModelEvents(myRequestDetailsViewModel)
         }
         else{
             binding = DataBindingUtil.inflate(inflater,R.layout.fragment_request_fulfillment , container, false) as FragmentRequestFulfillmentBinding
             binding.setVariable(BR.viewmodel, requestFulfillmentViewModel)
-            observeMessages(requestFulfillmentViewModel)
-            listenForDismissRequest(requestFulfillmentViewModel)
+            observeViewModelEvents(requestFulfillmentViewModel)
         }
         binding.setVariable(BR.englishArabicConverter, EnglishToArabicConverter())
         binding.lifecycleOwner = this
@@ -96,7 +96,7 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
         super.onViewCreated(view, savedInstanceState)
         setWindowSize()
         setupMap()
-        getDonationDetails()
+        fetchDonationDetails()
     }
 
     private fun getClickedRequest() = requireArguments().getString(ARGUMENT_REQUEST_KEY)!!
@@ -120,7 +120,7 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
     }
 
     private fun showMessage(message: String, duration: Int){
-        snackbar = Snackbar.make(design_bottom_sheet, message, duration)
+        snackbar = Snackbar.make(binding.root, message, duration)
         snackbar!!.setAction(R.string.ok){}
         snackbar!!.setActionTextColor(resources.getColor(R.color.colorAccent))
         ViewCompat.setLayoutDirection(snackbar!!.view, ViewCompat.LAYOUT_DIRECTION_RTL)
@@ -155,22 +155,12 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
         }
     }
 
-    private fun getDonationDetails(){
+    private fun fetchDonationDetails(){
         apiCallJob?.cancel()
         apiCallJob = lifecycleScope.launch {
             when(binding){
-                is FragmentRequestFulfillmentBinding -> observeDonationDetails(requestFulfillmentViewModel)
-                is FragmentMyRequestDetailsBinding -> observeDonationDetails(myRequestDetailsViewModel)
-            }
-        }
-    }
-
-    private suspend fun observeDonationDetails(viewModel: RequestDetailsViewModel){
-        viewModel.getDonationDetails(getClickedRequest()).observe(viewLifecycleOwner) {
-            if (it != null) {
-                donationDetailsReceived(it)
-            } else {
-                showTryAgainSnackbar(::getDonationDetails)
+                is FragmentRequestFulfillmentBinding -> requestFulfillmentViewModel.getDonationDetails(getClickedRequest())
+                is FragmentMyRequestDetailsBinding -> myRequestDetailsViewModel.getDonationDetails(getClickedRequest())
             }
         }
     }
@@ -182,12 +172,6 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
         }
     }
 
-    private fun donationDetailsReceived(donationDetails: DonationDetails){
-        donationDetails.request?.apply {
-            updateMapLocation(LatLng(this.bloodBank!!.location.latitude, this.bloodBank.location.longitude))
-        }
-    }
-
     private fun updateMapLocation(location: LatLng){
         mapInstance.apply {
             addMarker(MarkerOptions().position(location))
@@ -195,25 +179,17 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
         }
     }
 
-    /**
-     * Observes messages published by the viewmodel and shows them to the user in the form of
-     * a snackbar
-     */
-    private fun observeMessages(viewModel: RequestDetailsViewModel){
-        viewModel.message.observe(viewLifecycleOwner){
-            it?.let { message ->
-                showDefiniteMessage(message)
+    private fun observeViewModelEvents(viewModel: RequestDetailsViewModel){
+        viewModel.eventsFlow.onEach {
+            when(it){
+                is ViewEvent.ShowTryAgainSnackBar -> showTryAgainSnackbar { fetchDonationDetails() }
+                is ViewEvent.ShowSnackBar -> showDefiniteMessage(it.text)
+                is ViewEvent.UpdateMapLocation -> updateMapLocation(it.latlng)
+                ViewEvent.DismissFragment -> closeBottomSheetDialog()
             }
-        }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
-    private fun listenForDismissRequest(viewModel: RequestDetailsViewModel){
-        viewModel.shouldDismissFragment.observe(viewLifecycleOwner){
-            if(it){
-                closeBottomSheetDialog()
-            }
-        }
-    }
 
     private fun closeBottomSheetDialog() {
         requireParentFragment().childFragmentManager.findFragmentByTag("requestDetails")?.let {

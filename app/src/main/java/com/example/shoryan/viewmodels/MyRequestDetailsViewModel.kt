@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.*
+import com.example.shoryan.data.ViewEvent
 import com.example.shoryan.repos.MyRequestDetailsRepo
 import kotlinx.coroutines.launch
 
@@ -24,7 +25,7 @@ class MyRequestDetailsViewModel: RequestDetailsViewModel() {
     private fun cancelRequest(view: View) = viewModelScope.launch{
         _isInLoadingState.postValue(true)
         val processResultError = MyRequestDetailsRepo.cancelRequest(bloodDonationAPI, donationDetails.value!!.request!!.id)
-        _message.postValue(processResultError)
+        processResultError?.apply { _eventsFlow.emit(ViewEvent.ShowSnackBar(this)) }
         _isInLoadingState.postValue(false)
         if(processResultError.isNullOrEmpty()){
             dismissFragment()
@@ -32,8 +33,8 @@ class MyRequestDetailsViewModel: RequestDetailsViewModel() {
         }
     }
 
-    private fun dismissFragment(){
-        _shouldDismiss.postValue(true)
+    private suspend fun dismissFragment(){
+        _eventsFlow.emit(ViewEvent.DismissFragment)
     }
 
     private fun showSuccessToast(view: View){
