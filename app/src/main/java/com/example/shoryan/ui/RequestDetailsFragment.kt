@@ -26,7 +26,6 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_request_fulfillment.design_bottom_sheet
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -72,23 +71,28 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
     private val myRequestDetailsViewModel: MyRequestDetailsViewModel by viewModels{
         MyRequestDetailsViewModelFactory(bloodDonationAPI, requireArguments().getString(ARGUMENT_REQUEST_KEY)!!)
     }
+
+    private val viewModelsMap: Map<Int, RequestDetailsViewModel> by lazy{
+        mapOf(
+                (MY_REQUEST_BINDING to myRequestDetailsViewModel),
+                (REQUEST_FULFILLMENT_BINDING to requestFulfillmentViewModel)
+        )
+    }
+
     private lateinit var mapInstance: GoogleMap
     private var snackbar: Snackbar? = null
     private lateinit var binding: ViewDataBinding
     private var fragmentType: Int = 0
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        fragmentType = requireArguments().getInt(ARGUMENT_BINDING_KEY)
-        if(fragmentType == MY_REQUEST_BINDING){
-            binding = DataBindingUtil.inflate(inflater,R.layout.fragment_my_request_details , container, false) as FragmentMyRequestDetailsBinding
-            binding.setVariable(BR.viewmodel, myRequestDetailsViewModel)
-            observeViewModelEvents(myRequestDetailsViewModel)
+        fragmentType = getFragmentType()
+        binding = if(fragmentType == MY_REQUEST_BINDING){
+            FragmentMyRequestDetailsBinding.inflate(inflater)
         }
         else{
-            binding = DataBindingUtil.inflate(inflater,R.layout.fragment_request_fulfillment , container, false) as FragmentRequestFulfillmentBinding
-            binding.setVariable(BR.viewmodel, requestFulfillmentViewModel)
-            observeViewModelEvents(requestFulfillmentViewModel)
+            FragmentRequestFulfillmentBinding.inflate(inflater)
         }
+        binding.setVariable(BR.viewmodel, viewModelsMap[getFragmentType()]!!)
         binding.setVariable(BR.englishArabicConverter, EnglishToArabicConverter())
         binding.lifecycleOwner = this
         return binding.root
@@ -104,7 +108,10 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
         setWindowSize()
         setupMap()
         fetchDonationDetails()
+        observeViewModelEvents(viewModelsMap[getFragmentType()]!!)
     }
+
+    private fun getFragmentType() = requireArguments().getInt(ARGUMENT_BINDING_KEY)
 
     private fun getClickedRequest() = requireArguments().getString(ARGUMENT_REQUEST_KEY)!!
 
@@ -115,8 +122,9 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
             val display: Display = window!!.windowManager.defaultDisplay
             display.getSize(size)
             val windowHeight = size.y
-            design_bottom_sheet.layoutParams.height = (windowHeight)
-            val behavior = BottomSheetBehavior.from<View>(design_bottom_sheet)
+            val bottomSheetView = binding.root.findViewById(R.id.design_bottom_sheet) as View
+            bottomSheetView.layoutParams.height = (windowHeight)
+            val behavior = BottomSheetBehavior.from(bottomSheetView)
             behavior.peekHeight = windowHeight
             view?.requestLayout()
         }
@@ -140,6 +148,7 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
             mapInstance = it
             it.apply {
                 setMapPaddingWhenLayoutIsReady()
+                observeMapLocation(viewModelsMap[getFragmentType()]!!)
             }
         }
     }
@@ -165,10 +174,7 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
     private fun fetchDonationDetails(){
         apiCallJob?.cancel()
         apiCallJob = lifecycleScope.launch {
-            when(binding){
-                is FragmentRequestFulfillmentBinding -> requestFulfillmentViewModel.getDonationDetails(getClickedRequest())
-                is FragmentMyRequestDetailsBinding -> myRequestDetailsViewModel.getDonationDetails(getClickedRequest())
-            }
+            viewModelsMap[getFragmentType()]?.apply { getDonationDetails(getClickedRequest()) }
         }
     }
 
@@ -179,10 +185,15 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
         }
     }
 
-    private fun updateMapLocation(location: LatLng){
+    private fun observeMapLocation(viewModel: RequestDetailsViewModel){
         mapInstance.apply {
-            addMarker(MarkerOptions().position(location))
-            moveCamera(CameraUpdateFactory.newLatLng(location))
+            viewModel.donationDetails.observe(viewLifecycleOwner){
+                it?.request?.bloodBank?.location?.let { location ->
+                    val latLng = LatLng(location.latitude, location.longitude)
+                    addMarker(MarkerOptions().position(latLng))
+                    moveCamera(CameraUpdateFactory.newLatLng(latLng))
+                }
+            }
         }
     }
 
@@ -191,7 +202,6 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
             when(it){
                 is ViewEvent.ShowTryAgainSnackBar -> showTryAgainSnackbar { fetchDonationDetails() }
                 is ViewEvent.ShowSnackBar -> showDefiniteMessage(it.text)
-                is ViewEvent.UpdateMapLocation -> updateMapLocation(it.latlng)
                 ViewEvent.DismissFragment -> closeBottomSheetDialog()
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)

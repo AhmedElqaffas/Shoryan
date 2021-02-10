@@ -38,18 +38,12 @@ open class RequestDetailsViewModel(): ViewModel() {
     protected lateinit var bloodDonationAPI: RetrofitBloodDonationInterface
     protected lateinit var requestId: String
 
-    constructor(bloodDonationAPI: RetrofitBloodDonationInterface, requestId: String) : this(){
-        this.bloodDonationAPI = bloodDonationAPI
-        this.requestId = requestId
-    }
-
     open suspend fun getDonationDetails(requestId: String): LiveData<DonationDetails?> {
         val details = RequestFulfillmentRepo.getDonationDetails(bloodDonationAPI, requestId)
         if(areDetailsFetchedSuccessfully(details)){
             _donationDetails.value = details
             _areDonationDetailsLoaded.value = true
             _isInLoadingState.value = false
-            updateMapLocation(details!!.request!!.bloodBank!!.location)
         }else{
             announceCommunicationFailure()
         }
@@ -58,10 +52,6 @@ open class RequestDetailsViewModel(): ViewModel() {
 
     protected fun areDetailsFetchedSuccessfully(details: DonationDetails?): Boolean {
         return details?.request != null
-    }
-
-    private suspend fun updateMapLocation(location: Location){
-        _eventsFlow.emit(ViewEvent.UpdateMapLocation(LatLng(location.latitude, location.longitude)))
     }
 
     private suspend fun announceCommunicationFailure(){
