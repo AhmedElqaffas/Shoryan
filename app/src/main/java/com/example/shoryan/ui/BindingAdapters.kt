@@ -3,6 +3,7 @@ package com.example.shoryan.ui
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.databinding.BindingAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.facebook.shimmer.ShimmerFrameLayout
 
 class BindingAdapters {
@@ -21,6 +22,15 @@ class BindingAdapters {
                 view.visibility = View.VISIBLE
             else
                 view.visibility = View.GONE
+        }
+
+
+        @JvmStatic
+        @BindingAdapter("setAdapter")
+        fun RecyclerView.bindRecyclerViewAdapter(adapter: RecyclerView.Adapter<*>) {
+            this.run {
+                this.adapter = adapter
+            }
         }
     }
 }

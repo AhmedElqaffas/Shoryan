@@ -1,29 +1,29 @@
 package com.example.shoryan.ui.recyclersAdapters
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.shoryan.R
 import com.example.shoryan.data.CurrentAppUser
 import com.example.shoryan.data.DonationRequest
+import com.example.shoryan.databinding.ItemRequestBinding
 import com.example.shoryan.interfaces.RequestsRecyclerInteraction
-import kotlinx.android.synthetic.main.item_request.view.*
 
 class RequestsRecyclerAdapter(private val requestsRecyclerInteraction: RequestsRecyclerInteraction):
     ListAdapter<DonationRequest, RequestsRecyclerAdapter.RequestViewHolder>(RequestsRecyclerDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RequestViewHolder {
-        return RequestViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_request, parent, false))
+        val inflater = LayoutInflater.from(parent.context)
+        val binding = ItemRequestBinding.inflate(inflater, parent, false)
+        return RequestViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: RequestViewHolder, position: Int) {
         holder.bindRequestData(getItem(position))
     }
 
-    inner class RequestViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
+    inner class RequestViewHolder(val binding: ItemRequestBinding): RecyclerView.ViewHolder(binding.root){
 
         init{
             setClickListener()
@@ -39,10 +39,7 @@ class RequestsRecyclerAdapter(private val requestsRecyclerInteraction: RequestsR
         private fun isMyRequest(item: DonationRequest) = item.requester?.id == CurrentAppUser.id
 
         fun bindRequestData(request: DonationRequest){
-            itemView.request_item_blood_type.text = request.bloodType?.bloodType
-            itemView.request_item_name.text = request.requester?.name?.firstName
-            itemView.request_item_location.text = request.bloodBank?.name + " - " +
-                    request.bloodBank?.location?.region
+            binding.item = request
         }
     }
 }

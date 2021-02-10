@@ -27,7 +27,7 @@ import kotlinx.coroutines.*
 class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
 
     private lateinit var navController: NavController
-    private lateinit var requestsRecyclerAdapter: RequestsRecyclerAdapter
+    private val requestsRecyclerAdapter = RequestsRecyclerAdapter(this)
 
     // viewModels() connects the viewModel to the fragment, so, when the user navigates to another
     // tab using bottom navigation, the fragment is destroyed and therefore the attached viewModel
@@ -43,6 +43,7 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         binding.viewmodel = requestsViewModel
+        binding.adapter = requestsRecyclerAdapter
         binding.fragment = this
         binding.lifecycleOwner = this
         return binding.root
@@ -56,7 +57,6 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         instantiateNavController(view)
-        initializeRecyclerViewAdapter()
         // Getting ongoingRequests, pending request, my requests,  all in parallel
         updateUserPendingRequest()
         updateMyRequestsList()
@@ -65,11 +65,6 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
 
     private fun instantiateNavController(view: View){
         navController = Navigation.findNavController(view)
-    }
-
-    private fun initializeRecyclerViewAdapter(){
-        requestsRecyclerAdapter = RequestsRecyclerAdapter(this)
-        binding.requestsRecycler.adapter = requestsRecyclerAdapter
     }
 
     private fun updateUserPendingRequest(){
@@ -100,15 +95,10 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
 
     override fun onResume(){
         super.onResume()
-        setToolbarText(resources.getString(R.string.home))
         setRecyclerViewScrollListener()
         setFilterListener()
         setPendingRequestCardListener()
         setMyRequestsCardListener()
-    }
-
-    private fun setToolbarText(text: String){
-        binding.toolbarText.text = text
     }
 
     private fun setRecyclerViewScrollListener(){

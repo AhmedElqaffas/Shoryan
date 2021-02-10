@@ -9,6 +9,9 @@
         <variable
             name="fragment"
             type="com.example.shoryan.ui.HomeFragment"/>
+        <variable
+            name="adapter"
+            type="com.example.shoryan.ui.recyclersAdapters.RequestsRecyclerAdapter"/>
     </data>
 
 
@@ -235,7 +238,8 @@
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     android:orientation="vertical"
                     tools:listitem="@layout/item_request"
-                    android:visibility="@{viewmodel.recyclerVisibility}"/>
+                    android:visibility="@{viewmodel.recyclerVisibility}"
+                    app:setAdapter="@{adapter}"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
