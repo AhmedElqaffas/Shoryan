@@ -46,5 +46,12 @@ class LocationPickerViewModel: ViewModel() {
 
     fun getCurrentSavedAddress(): String = locationStringLiveData.value!!
 
-    fun getLocation() = Location(governorate, region, locationLatLng.latitude, locationLatLng.longitude)
+    fun getLocation(): Location?{
+        return try{
+            Location(governorate, region, locationLatLng.latitude, locationLatLng.longitude)
+        }
+        catch(e: Exception){
+            null
+        }
+    }
 }

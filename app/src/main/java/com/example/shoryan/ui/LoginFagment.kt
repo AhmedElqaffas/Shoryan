@@ -5,16 +5,17 @@ import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.shoryan.AndroidUtility
+import com.example.shoryan.InputValidator
 import com.example.shoryan.R
 import com.example.shoryan.databinding.FragmentLoginPhoneBinding
 import com.example.shoryan.databinding.LoginBannerBinding
+import com.example.shoryan.getStringWithoutAdditionalSpaces
 import com.google.android.material.snackbar.Snackbar
 
 class LoginPhoneFragment : Fragment(){
@@ -73,7 +74,7 @@ class LoginPhoneFragment : Fragment(){
      * when the user inputs their full number.
      */
     private fun observePhoneText(editable: Editable?) {
-        if(isValidMobilePhoneEntered(editable.toString())){
+        if(InputValidator.isValidMobilePhoneEntered(editable.toString())){
             binding.loginScreenLayout.requestFocus()
             binding.phoneTextInputLayout.error = ""
         }
@@ -82,11 +83,6 @@ class LoginPhoneFragment : Fragment(){
         }
     }
 
-    private fun isValidMobilePhoneEntered(phoneNumber: String): Boolean =
-        phoneNumber.length == resources.getInteger(R.integer.phone_number_length)
-                && phoneNumber.matches(Regex("01[0-9]+"))
-
-
     private fun phoneEditTextFocusListener(view: View){
         if(!view.hasFocus()) {
             AndroidUtility.hideSoftKeyboard(requireActivity(), view)
@@ -94,8 +90,8 @@ class LoginPhoneFragment : Fragment(){
     }
 
     private fun goToFragmentIfNumberValid(fragmentId: Int){
-        val phoneNumber = getEditTextValue(binding.phoneEditText)
-        if(isValidMobilePhoneEntered(phoneNumber)){
+        val phoneNumber = binding.phoneEditText.getStringWithoutAdditionalSpaces()
+        if(InputValidator.isValidMobilePhoneEntered(phoneNumber)){
             val phoneNumberBundle = bundleOf("phoneNumber" to phoneNumber)
             navController.navigate(fragmentId, phoneNumberBundle)
         }
@@ -104,6 +100,4 @@ class LoginPhoneFragment : Fragment(){
                 resources.getString(R.string.phone_format_message), Snackbar.LENGTH_LONG)
         }
     }
-
-    private fun getEditTextValue(editText: EditText):String =  editText.text.toString().trim()
 }

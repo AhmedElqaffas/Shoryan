@@ -18,11 +18,9 @@ class AndroidUtility {
             imm!!.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
         }
 
-        fun hideSoftKeyboard(activity: Activity, view: View){
-            if(activity.currentFocus !is EditText) {
-                val inputMethodManager = getSystemService(activity, InputMethodManager::class.java)!!
-                inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
-            }
+        fun hideSoftKeyboard(context: Context, view: View){
+            val inputMethodManager = getSystemService(context, InputMethodManager::class.java)!!
+            inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
         }
 
         fun displaySnackbarMessage(layout: View,  message: String, duration : Int){

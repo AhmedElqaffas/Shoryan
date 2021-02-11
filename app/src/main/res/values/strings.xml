@@ -12,6 +12,7 @@
     <string name="checking_requesting_permission">جاري التأكد من عدد طلباتك اليوم</string>
     <string name="checking_donating_ability">جاري التأكد من قدرتك على تلبية الطلب</string>
     <string name="choose_location">اختر المكان</string>
+    <string name="choose_your_location">اختر عنوان تواجدك</string>
     <string name="clear">مسح</string>
     <string name="confirmation_code">رمز التأكيد</string>
     <string name="confirm_password">تأكيد كلمة السر</string>

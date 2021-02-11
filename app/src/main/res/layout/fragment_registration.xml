@@ -87,7 +87,9 @@
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/registrationTextView"
-                    app:errorEnabled="true">
+                    app:errorEnabled="true"
+                    app:errorMessage="@{@string/name_format_message}"
+                    app:errorCondition="@{viewmodel.shouldShowFirstNameError}">
 
                     <EditText
                         android:id="@+id/registrationFirstNameEditText"
@@ -100,7 +102,9 @@
                         android:hint="@string/first_name"
                         android:inputType="text"
                         android:maxLines="1"
-                        android:singleLine="true" />
+                        android:singleLine="true"
+                        android:text="@{viewmodel.firstName}"
+                        app:onTextChanged="@{viewmodel.observeFirstNameText}"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -112,7 +116,10 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/registrationFirstNameTextLayout">
+                    app:layout_constraintTop_toBottomOf="@id/registrationFirstNameTextLayout"
+                    app:errorEnabled="true"
+                    app:errorMessage="@{@string/name_format_message}"
+                    app:errorCondition="@{viewmodel.shouldShowLastNameError}">
 
                     <EditText
                         android:id="@+id/registrationLastNameEditText"
@@ -125,7 +132,9 @@
                         android:hint="@string/last_name"
                         android:inputType="text"
                         android:maxLines="1"
-                        android:singleLine="true" />
+                        android:singleLine="true"
+                        android:text="@{viewmodel.lastName}"
+                        app:onTextChanged="@{viewmodel.observeLastNameText}"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -139,7 +148,9 @@
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/registrationLastNameTextLayout"
-    >
+                    app:errorEnabled="true"
+                    app:errorMessage="@{@string/phone_format_message}"
+                    app:errorCondition="@{viewmodel.shouldShowPhoneNumberError}">
 
                     <EditText
                         android:id="@+id/registrationPhoneEditText"
@@ -153,7 +164,9 @@
                         android:inputType="phone"
                         android:maxLines="1"
                         android:maxLength="@integer/phone_number_length"
-                        android:singleLine="true" />
+                        android:singleLine="true"
+                        android:text="@{viewmodel.phoneNumber}"
+                        app:onTextChanged="@{viewmodel.observePhoneText}"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -285,7 +298,10 @@
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/genderPicker"
-                    android:focusable="false">
+                    android:focusable="false"
+                    app:errorEnabled="true"
+                    app:errorMessage="@{@string/choose_your_location}"
+                    app:errorCondition='@{viewmodel.addressLiveData == null}'>
 
                     <EditText
                         android:id="@+id/addressEditText"
@@ -326,7 +342,9 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/openMapButton"
                     app:passwordToggleEnabled="true"
-                    android:layoutDirection="rtl">
+                    android:layoutDirection="rtl"
+                    app:errorCondition="@{viewmodel.shouldShowPasswordError}"
+                    app:errorMessage="@{@string/password_format_message}">
 
                     <EditText
                         android:id="@+id/registrationPasswordEditText"
@@ -339,7 +357,9 @@
                         android:hint="@string/password"
                         android:inputType="textPassword"
                         android:maxLines="1"
-                        android:singleLine="true" />
+                        android:singleLine="true"
+                        android:text="@{viewmodel.password}"
+                        app:onTextChanged="@{viewmodel.observePasswordText}"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -354,7 +374,9 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/passwordTextLayout"
                     app:passwordToggleEnabled="true"
-                    android:layoutDirection="rtl">
+                    android:layoutDirection="rtl"
+                    app:errorCondition="@{viewmodel.shouldShowConfirmPasswordError}"
+                    app:errorMessage="@{@string/password_mismatch}">
 
                     <EditText
                         android:id="@+id/confirmPasswordEditText"
@@ -367,7 +389,9 @@
                         android:hint="@string/confirm_password"
                         android:inputType="textPassword"
                         android:maxLines="1"
-                        android:singleLine="true" />
+                        android:singleLine="true"
+                        android:text="@{viewmodel.confirmPassword}"
+                        app:onTextChanged="@{viewmodel.observeConfirmPasswordText}"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -389,7 +413,8 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/confirmPasswordTextLayout"/>
+                    app:layout_constraintTop_toBottomOf="@id/confirmPasswordTextLayout"
+                    android:onClick="@{() -> viewmodel.tryRegisterUser()}"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
