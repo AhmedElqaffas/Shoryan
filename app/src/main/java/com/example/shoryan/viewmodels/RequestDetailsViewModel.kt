@@ -13,6 +13,13 @@ import kotlinx.coroutines.flow.asSharedFlow
 
 open class RequestDetailsViewModel(): ViewModel() {
 
+    sealed class RequestDetailsViewEvent{
+        data class ShowSnackBar(val text: String): RequestDetailsViewEvent()
+        data class ShowTryAgainSnackBar(val text: String = "فشل في الاتصال بالشبكة"): RequestDetailsViewEvent()
+        object DismissFragment: RequestDetailsViewEvent()
+        data class CallPatient(val phoneNumber: String): RequestDetailsViewEvent()
+    }
+
     private val _donationDetails =  MutableLiveData<DonationDetails?>()
     val donationDetails: LiveData<DonationDetails?> = _donationDetails
     // The application is processing a query (contacting backend)
@@ -32,7 +39,7 @@ open class RequestDetailsViewModel(): ViewModel() {
     }
 
     // A mechanism to push events to the fragment
-    protected val _eventsFlow = MutableSharedFlow<ViewEvent>()
+    protected val _eventsFlow = MutableSharedFlow<RequestDetailsViewEvent>()
     val eventsFlow = _eventsFlow.asSharedFlow()
 
     protected lateinit var bloodDonationAPI: RetrofitBloodDonationInterface
@@ -55,6 +62,6 @@ open class RequestDetailsViewModel(): ViewModel() {
     }
 
     private suspend fun announceCommunicationFailure(){
-        _eventsFlow.emit(ViewEvent.ShowTryAgainSnackBar())
+        _eventsFlow.emit(RequestDetailsViewEvent.ShowTryAgainSnackBar())
     }
 }

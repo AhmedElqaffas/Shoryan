@@ -1,18 +1,18 @@
 package com.example.shoryan.ui
 
+import android.content.Intent
 import android.graphics.Point
+import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.core.view.ViewCompat
-import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.shoryan.BR
 import com.example.shoryan.EnglishToArabicConverter
 import com.example.shoryan.R
-import com.example.shoryan.data.ViewEvent
 import com.example.shoryan.databinding.FragmentMyRequestDetailsBinding
 import com.example.shoryan.databinding.FragmentRequestFulfillmentBinding
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
@@ -200,9 +200,10 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
     private fun observeViewModelEvents(viewModel: RequestDetailsViewModel){
         viewModel.eventsFlow.onEach {
             when(it){
-                is ViewEvent.ShowTryAgainSnackBar -> showTryAgainSnackbar { fetchDonationDetails() }
-                is ViewEvent.ShowSnackBar -> showDefiniteMessage(it.text)
-                ViewEvent.DismissFragment -> closeBottomSheetDialog()
+                is RequestDetailsViewModel.RequestDetailsViewEvent.ShowTryAgainSnackBar -> showTryAgainSnackbar { fetchDonationDetails() }
+                is RequestDetailsViewModel.RequestDetailsViewEvent.ShowSnackBar -> showDefiniteMessage(it.text)
+                RequestDetailsViewModel.RequestDetailsViewEvent.DismissFragment -> closeBottomSheetDialog()
+                is RequestDetailsViewModel.RequestDetailsViewEvent.CallPatient -> openDialerApp(it.phoneNumber)
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
@@ -212,5 +213,12 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
         requireParentFragment().childFragmentManager.findFragmentByTag("requestDetails")?.let {
             requireParentFragment().childFragmentManager.beginTransaction().remove(it).commit()
         }
+    }
+
+    private fun openDialerApp(phoneNumber: String){
+        val intent = Intent(Intent.ACTION_DIAL).apply {
+            data = Uri.parse("tel:$phoneNumber")
+        }
+        requireActivity().startActivity(intent)
     }
 }

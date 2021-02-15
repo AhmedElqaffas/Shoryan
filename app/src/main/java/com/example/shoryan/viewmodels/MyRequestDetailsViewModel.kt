@@ -31,7 +31,7 @@ class MyRequestDetailsViewModel(): RequestDetailsViewModel() {
     private fun cancelRequest(view: View) = viewModelScope.launch{
         _isInLoadingState.postValue(true)
         val processResultError = MyRequestDetailsRepo.cancelRequest(bloodDonationAPI, requestId)
-        processResultError?.apply { _eventsFlow.emit(ViewEvent.ShowSnackBar(this)) }
+        processResultError?.apply { _eventsFlow.emit(RequestDetailsViewEvent.ShowSnackBar(this)) }
         _isInLoadingState.postValue(false)
         if(processResultError.isNullOrEmpty()){
             dismissFragment()
@@ -40,7 +40,7 @@ class MyRequestDetailsViewModel(): RequestDetailsViewModel() {
     }
 
     private suspend fun dismissFragment(){
-        _eventsFlow.emit(ViewEvent.DismissFragment)
+        _eventsFlow.emit(RequestDetailsViewEvent.DismissFragment)
     }
 
     private fun showSuccessToast(view: View){

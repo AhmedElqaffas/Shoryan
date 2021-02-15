@@ -59,7 +59,7 @@ class RequestFulfillmentViewModel(): RequestDetailsViewModel() {
 
     private suspend fun showDonationDisabilityReasonIfExists(details: DonationDetails?) {
         details?.donationAbility?.reasonForDisability?.apply {
-            _eventsFlow.emit(ViewEvent.ShowSnackBar(this))
+            _eventsFlow.emit(RequestDetailsViewEvent.ShowSnackBar(this))
         }
     }
 
@@ -94,7 +94,7 @@ class RequestFulfillmentViewModel(): RequestDetailsViewModel() {
         if(processResultError.isNullOrEmpty()){
             setUserPendingRequest(requestId)
         }
-        processResultError?.apply { _eventsFlow.emit(ViewEvent.ShowSnackBar(this)) }
+        processResultError?.apply { _eventsFlow.emit(RequestDetailsViewEvent.ShowSnackBar(this)) }
         _isInLoadingState.postValue(false)
     }
 
@@ -104,7 +104,7 @@ class RequestFulfillmentViewModel(): RequestDetailsViewModel() {
         if(processResultError.isNullOrEmpty()){
             removeUserPendingRequest(true)
         }
-        _eventsFlow.emit(ViewEvent.ShowSnackBar(processResultError?: "شكراً لتبرّعك"))
+        _eventsFlow.emit(RequestDetailsViewEvent.ShowSnackBar(processResultError?: "شكراً لتبرّعك"))
         _isInLoadingState.postValue(false)
     }
 
@@ -114,7 +114,7 @@ class RequestFulfillmentViewModel(): RequestDetailsViewModel() {
         if(processResultError.isNullOrEmpty()){
             removeUserPendingRequest(false)
         }
-        _eventsFlow.emit(ViewEvent.ShowSnackBar(processResultError?: "تم الغاء التبرّع"))
+        _eventsFlow.emit(RequestDetailsViewEvent.ShowSnackBar(processResultError?: "تم الغاء التبرّع"))
         _isInLoadingState.postValue(false)
     }
 
@@ -127,6 +127,13 @@ class RequestFulfillmentViewModel(): RequestDetailsViewModel() {
         setUserPendingRequest(null)
         // User can't donate again if they have already donated
         _canUserDonate.postValue(!hasDonated)
+    }
+
+
+    fun callPatient(phoneNumber: String){
+        viewModelScope.launch {
+            _eventsFlow.emit(RequestDetailsViewEvent.CallPatient(phoneNumber))
+        }
     }
 }
 
