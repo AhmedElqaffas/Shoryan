@@ -17,6 +17,9 @@
         <action
             android:id="@+id/action_home_to_newRequest"
             app:destination="@id/newRequest" />
+        <action
+            android:id="@+id/action_home_to_rewardsFragment"
+            app:destination="@id/rewardsFragment" />
     </fragment>
 
     <fragment
@@ -49,4 +52,8 @@
             app:argType="com.example.shoryan.data.DonationRequest"/>
 
     </fragment>
+    <fragment
+        android:id="@+id/rewardsFragment"
+        android:name="com.example.shoryan.ui.RewardsFragment"
+        android:label="RewardsFragment" />
 </navigation>

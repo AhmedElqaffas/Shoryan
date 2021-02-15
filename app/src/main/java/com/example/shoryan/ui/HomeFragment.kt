@@ -99,6 +99,7 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
         setFilterListener()
         setPendingRequestCardListener()
         setMyRequestsCardListener()
+        setRewardsCardListener()
     }
 
     private fun setRecyclerViewScrollListener(){
@@ -179,6 +180,16 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
         val fragment =
             RequestDetailsFragment.newInstance(requestId, RequestDetailsFragment.MY_REQUEST_BINDING)
         fragment.show(childFragmentManager, "requestDetails")
+    }
+
+    private fun setRewardsCardListener(){
+        binding.redeemRewardsCard.setOnClickListener {
+            openRewardsFragment()
+        }
+    }
+
+    private fun openRewardsFragment(){
+        navController.navigate(R.id.action_home_to_rewardsFragment)
     }
 
     override fun onRequestCardClicked(donationRequest: DonationRequest, isMyRequest: Boolean){
