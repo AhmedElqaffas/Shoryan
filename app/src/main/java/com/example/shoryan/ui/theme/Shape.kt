@@ -8,5 +8,5 @@ import androidx.compose.ui.unit.dp
 val ShoryanShapes = Shapes(
     small = CutCornerShape(topStart = 8.dp),
     medium = CutCornerShape(topStart = 24.dp),
-    large = RoundedCornerShape(40.dp)
+    large = RoundedCornerShape(22.dp)
 )

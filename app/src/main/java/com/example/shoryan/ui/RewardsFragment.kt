@@ -9,28 +9,26 @@ import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CutCornerShape
+import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.Brush.Companion.linearGradient
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.Dimension
 import androidx.fragment.app.viewModels
 import com.example.shoryan.EnglishToArabicConverter
 import com.example.shoryan.R
@@ -41,6 +39,7 @@ import com.example.shoryan.ui.composables.AppBar
 import com.example.shoryan.ui.theme.Gray
 import com.example.shoryan.ui.theme.Shimmer
 import com.example.shoryan.ui.theme.ShoryanTheme
+import com.example.shoryan.ui.theme.shimmer
 import com.example.shoryan.viewmodels.RedeemingRewardsViewModel
 import com.example.shoryan.viewmodels.RedeemingRewardsViewModelFactory
 import dev.chrisbanes.accompanist.coil.CoilImage
@@ -132,31 +131,41 @@ class RewardsFragment : Fragment() {
 
     @Composable
     fun Reward(reward: Reward){
-        Card(
-            backgroundColor = Color.Transparent,
-            shape = MaterialTheme.shapes.large,
-            modifier = Modifier.clickable(
-                interactionState = InteractionState(),
-                indication = null,
-                onClick = {showToast(reward.points.toString())}
-            )
+        Column(
+            modifier = Modifier
+                .clickable(
+                    interactionState = InteractionState(),
+                    indication = null,
+                    onClick = {showToast(reward.points.toString())}
+                )
                 .width(250.dp)
-                .fillMaxHeight(0.95f)
-                .padding(20.dp),
-            elevation = 12.dp
+                .padding(20.dp)
         ) {
-
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.BottomCenter
-            ){
-                RewardImage(reward.imageLink)
-                Column{
-                    RewardTitle(reward.rewardName)
-                    RewardPoints(reward.points)
+            Card(
+                shape = MaterialTheme.shapes.large,
+                modifier = Modifier.fillMaxHeight(0.9f),
+                elevation = 12.dp
+            ) {
+                Box(
+                    contentAlignment = Alignment.BottomCenter
+                ) {
+                    RewardImage(reward.imageLink)
+                    Column(modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(0.4f)
+                        .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp))
+                        .background(Color.White)
+                        .padding(top= 5.dp)
+                    ) {
+                        RewardTitle(reward.rewardName)
+                        Spacer(modifier = Modifier.height(5.dp))
+                        //RewardDetails(reward.rewardName, reward.points)
+                        RewardPoints(reward.points)
+                    }
                 }
             }
         }
+
     }
 
 
@@ -172,52 +181,75 @@ class RewardsFragment : Fragment() {
 
     @Composable
     fun RewardTitle(rewardName: String){
-        TextWithBackground(
-            backgroundColor = MaterialTheme.colors.secondary.copy(alpha = 0.7f),
-            text = rewardName,
-            textColor = Color.White
-        )
-    }
-
-    @Composable
-    fun TextWithBackground(backgroundColor: Color, text: String, textColor: Color){
         Text(
-            text = text,
+            text = rewardName,
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.h6,
-            color = textColor,
+            color = MaterialTheme.colors.primary,
             modifier = Modifier.fillMaxWidth()
-                .background(backgroundColor, shape = RoundedCornerShape(5.dp))
         )
     }
 
-    @Composable
-    fun RewardPoints(points: Int){
-        PointsProgress(points, rewardsViewModel.userPoints)
-    }
+    /*@Composable
+    fun RewardDetails(rewardName: String, requiredPoints: Int){
+
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize()
+        )
+        {
+            LinearProgressIndicator(
+                modifier = Modifier
+                    .rotate(-90f)
+                    .heightIn(70.dp, 100.dp)
+                    .preferredWidth(70.dp),
+                progress = remember(calculation = {getPointsPercentage(requiredPoints, userPoints)}),
+                backgroundColor = Color.Red,
+                color = Color.Green
+            )
+            Column() {
+                RewardTitle(rewardName)
+                RewardPoints(requiredPoints, userPoints)
+            }
+        }
+    }*/
 
     @Composable
-    private fun PointsProgress(requiredPoints: Int, userPoints: Int){
-        Box(contentAlignment = Alignment.Center)
-        {
-            val height = 20f
-            LinearProgressIndicator(
-                modifier = Modifier.fillMaxWidth().height(height.dp).scale(scaleY = (height/3f), scaleX = 1f),
+    fun RewardPoints(requiredPoints: Int){
+        val userPoints = remember{rewardsViewModel.userPoints}
+        androidx.constraintlayout.compose.ConstraintLayout(
+            modifier = Modifier.fillMaxSize()
+        ){
+            val (progress, pointsText) = createRefs()
+            val startGuideline = createGuidelineFromStart(0f)
+            val endGuideline = createGuidelineFromStart(0.6f)
+            CircularProgressIndicator(
                 progress = remember(calculation = {getPointsPercentage(requiredPoints, userPoints)}),
-                color = Color.Green,
-                backgroundColor = Color.White
+                color = MaterialTheme.colors.primaryVariant,
+                strokeWidth = 15.dp,
+                modifier = Modifier
+                    .constrainAs(progress)
+                    {
+                        linkTo(start = startGuideline, end = endGuideline)
+                        width = Dimension.fillToConstraints
+                        centerVerticallyTo(parent)
+                    }
+                    .rotate(270f) // To start progress from left instead of top
+
+
+
             )
             Text(
                 text = remember {
-                    "\u200F النقاط: ${EnglishToArabicConverter().convertDigits(userPoints.toString())} \\ " +
+                    "\u200Fالنقاط\n${EnglishToArabicConverter().convertDigits(userPoints.toString())} \\ " +
                             EnglishToArabicConverter().convertDigits(requiredPoints.toString())
                 },
-                    textAlign = TextAlign.Center,
-                    style = TextStyle(
-                        color = Color.Black,
-                        fontSize = 20.sp,
-                        fontFamily = FontFamily(Font(R.font.arial))
-                    )
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.h6,
+                color = MaterialTheme.colors.secondary,
+                modifier = Modifier.constrainAs(pointsText){
+                    centerTo(parent)
+                }
             )
         }
     }
@@ -229,7 +261,8 @@ class RewardsFragment : Fragment() {
     private fun getPointsPercentage(requiredPoints: Int, userPoints: Int): Float{
         return try{
                 val percentage = (userPoints * 1.0 / requiredPoints * 1.0).toFloat()
-                if(percentage > 1.0f) 1.0f else percentage
+            // The *0.5 is to scale the percentage to in semi-circle progress bar instead of full-circle
+                if(percentage > 1.0f) 0.5f else percentage * 0.5f
         }catch (e: ArithmeticException){
             0f
         }
@@ -256,5 +289,10 @@ class RewardsFragment : Fragment() {
                     .background(brush = brush)
             )
         }
+    }
+
+    private val SemiCircle = GenericShape { size, _ ->
+        moveTo(size.width, size.height/2f)
+        arcTo(Rect(0f, 0f, size.width, size.height), 0f, -180f, true)
     }
 }
