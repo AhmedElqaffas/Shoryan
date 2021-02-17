@@ -51,6 +51,7 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        requestsGettingJob.cancel()
         _binding = null
     }
 
