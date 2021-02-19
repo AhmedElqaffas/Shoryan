@@ -231,8 +231,8 @@ class RewardsFragment : Fragment() {
                     .constrainAs(progress)
                     {
                         linkTo(start = startGuideline, end = endGuideline)
+                        bottom.linkTo(parent.bottom)
                         width = Dimension.fillToConstraints
-                        centerVerticallyTo(parent)
                     }
                     .rotate(270f) // To start progress from left instead of top
 
@@ -248,7 +248,8 @@ class RewardsFragment : Fragment() {
                 style = MaterialTheme.typography.h6,
                 color = MaterialTheme.colors.secondary,
                 modifier = Modifier.constrainAs(pointsText){
-                    centerTo(parent)
+                    bottom.linkTo(parent.bottom)
+                    centerHorizontallyTo(parent)
                 }
             )
         }
