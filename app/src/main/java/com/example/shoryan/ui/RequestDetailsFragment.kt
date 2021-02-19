@@ -8,15 +8,16 @@ import android.view.*
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.core.view.ViewCompat
 import androidx.databinding.ViewDataBinding
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.shoryan.BR
 import com.example.shoryan.EnglishToArabicConverter
 import com.example.shoryan.R
 import com.example.shoryan.databinding.FragmentMyRequestDetailsBinding
 import com.example.shoryan.databinding.FragmentRequestFulfillmentBinding
+import com.example.shoryan.di.AppComponent
+import com.example.shoryan.di.MyApplication
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
-import com.example.shoryan.networking.RetrofitClient
 import com.example.shoryan.viewmodels.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -30,6 +31,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
 class RequestDetailsFragment : BottomSheetDialogFragment(){
@@ -61,16 +63,16 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
             }
     }
 
-    private var bloodDonationAPI: RetrofitBloodDonationInterface = RetrofitClient
-            .getRetrofitClient()
-            .create(RetrofitBloodDonationInterface::class.java)
-    private var apiCallJob: Job? = null
-    private val requestFulfillmentViewModel: RequestFulfillmentViewModel by viewModels{
-        RequestFulfillmentViewModelFactory(bloodDonationAPI, requireArguments().getString(ARGUMENT_REQUEST_KEY)!!)
+
+    private val appComponent: AppComponent by lazy {
+        (activity?.application as MyApplication).appComponent
     }
-    private val myRequestDetailsViewModel: MyRequestDetailsViewModel by viewModels{
-        MyRequestDetailsViewModelFactory(bloodDonationAPI, requireArguments().getString(ARGUMENT_REQUEST_KEY)!!)
-    }
+
+    @Inject
+    lateinit var bloodDonationAPI: RetrofitBloodDonationInterface
+
+    private lateinit var requestFulfillmentViewModel: RequestFulfillmentViewModel
+    private lateinit var myRequestDetailsViewModel: MyRequestDetailsViewModel
 
     private val viewModelsMap: Map<Int, RequestDetailsViewModel> by lazy{
         mapOf(
@@ -79,15 +81,23 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
         )
     }
 
+    private var apiCallJob: Job? = null
     private lateinit var mapInstance: GoogleMap
     private var snackbar: Snackbar? = null
     private lateinit var binding: ViewDataBinding
     private var fragmentType: Int = 0
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        appComponent.inject(this)
+        initializeMyRequestViewModel()
+        initializeRequestFulfillmentViewModel()
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         fragmentType = getFragmentType()
         binding = if(fragmentType == MY_REQUEST_BINDING){
-            FragmentMyRequestDetailsBinding.inflate(inflater)
+           FragmentMyRequestDetailsBinding.inflate(inflater)
         }
         else{
             FragmentRequestFulfillmentBinding.inflate(inflater)
@@ -114,6 +124,20 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
     private fun getFragmentType() = requireArguments().getInt(ARGUMENT_BINDING_KEY)
 
     private fun getClickedRequest() = requireArguments().getString(ARGUMENT_REQUEST_KEY)!!
+
+    private fun initializeRequestFulfillmentViewModel(){
+        val factory = RequestFulfillmentViewModelFactory(
+            bloodDonationAPI, requireArguments().getString(ARGUMENT_REQUEST_KEY)!!
+        )
+        requestFulfillmentViewModel = ViewModelProvider(this, factory).get(RequestFulfillmentViewModel::class.java)
+    }
+
+    private fun initializeMyRequestViewModel(){
+        val factory = MyRequestDetailsViewModelFactory(
+            bloodDonationAPI, requireArguments().getString(ARGUMENT_REQUEST_KEY)!!
+        )
+        myRequestDetailsViewModel = ViewModelProvider(this, factory).get(MyRequestDetailsViewModel::class.java)
+    }
 
     private fun setWindowSize(){
         dialog?.also {

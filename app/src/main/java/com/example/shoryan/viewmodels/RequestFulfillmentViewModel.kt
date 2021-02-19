@@ -4,10 +4,10 @@ import android.view.View
 import androidx.lifecycle.*
 import com.example.shoryan.data.CurrentAppUser
 import com.example.shoryan.data.DonationDetails
-import com.example.shoryan.data.ViewEvent
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.repos.RequestFulfillmentRepo
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
 class RequestFulfillmentViewModel(): RequestDetailsViewModel() {
@@ -43,7 +43,8 @@ class RequestFulfillmentViewModel(): RequestDetailsViewModel() {
         }
     }
 
-    constructor(bloodDonationAPI: RetrofitBloodDonationInterface, requestId: String) : this(){
+    @Inject constructor(bloodDonationAPI: RetrofitBloodDonationInterface,
+                        requestId: String) : this(){
         this.bloodDonationAPI = bloodDonationAPI
         this.requestId = requestId
     }
@@ -137,8 +138,9 @@ class RequestFulfillmentViewModel(): RequestDetailsViewModel() {
     }
 }
 
-class RequestFulfillmentViewModelFactory(private val bloodDonationAPI: RetrofitBloodDonationInterface,
-                                       private val requestId: String): ViewModelProvider.Factory{
+class RequestFulfillmentViewModelFactory @Inject constructor(
+    private val bloodDonationAPI: RetrofitBloodDonationInterface,
+    private val requestId: String): ViewModelProvider.Factory{
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return RequestFulfillmentViewModel(bloodDonationAPI, requestId) as T
     }

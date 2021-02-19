@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.*
-import com.example.shoryan.data.ViewEvent
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.repos.MyRequestDetailsRepo
 import kotlinx.coroutines.launch
@@ -12,7 +11,8 @@ import kotlinx.coroutines.launch
 
 class MyRequestDetailsViewModel(): RequestDetailsViewModel() {
 
-    constructor(bloodDonationAPI: RetrofitBloodDonationInterface, requestId: String) : this(){
+    constructor(bloodDonationAPI: RetrofitBloodDonationInterface,
+                requestId: String) : this(){
         this.bloodDonationAPI = bloodDonationAPI
         this.requestId = requestId
     }
@@ -48,8 +48,9 @@ class MyRequestDetailsViewModel(): RequestDetailsViewModel() {
     }
 }
 
-class MyRequestDetailsViewModelFactory(private val bloodDonationAPI: RetrofitBloodDonationInterface,
-                                     private val requestId: String): ViewModelProvider.Factory{
+class MyRequestDetailsViewModelFactory(
+    private val bloodDonationAPI: RetrofitBloodDonationInterface,
+    private val requestId: String): ViewModelProvider.Factory{
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return MyRequestDetailsViewModel(bloodDonationAPI, requestId) as T
     }
