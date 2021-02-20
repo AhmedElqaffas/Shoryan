@@ -1,5 +1,6 @@
 package com.example.shoryan.ui
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Point
 import android.net.Uri
@@ -87,8 +88,8 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
     private lateinit var binding: ViewDataBinding
     private var fragmentType: Int = 0
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
         appComponent.inject(this)
         initializeMyRequestViewModel()
         initializeRequestFulfillmentViewModel()

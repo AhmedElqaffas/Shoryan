@@ -7,9 +7,11 @@ import javax.inject.Singleton
 
 @Singleton
 @ApplicationScope
-@Component(modules = [RetrofitModule::class])
+@Component(modules = [RetrofitModule::class, AppSubComponents::class])
 interface AppComponent {
 
+    fun loginComponent(): LoginComponent.Factory
     fun getApiInterface(): RetrofitBloodDonationInterface
+
     fun inject(fragment: RequestDetailsFragment)
 }

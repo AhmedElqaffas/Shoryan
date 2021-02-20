@@ -1,5 +1,6 @@
 package com.example.shoryan.ui
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -12,27 +13,24 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.navigation.navGraphViewModels
 import com.example.shoryan.AndroidUtility
 import com.example.shoryan.R
 import com.example.shoryan.data.LoginResponse
 import com.example.shoryan.databinding.FragmentLoginPasswordBinding
 import com.example.shoryan.databinding.LoginBannerBinding
-import com.example.shoryan.networking.RetrofitBloodDonationInterface
-import com.example.shoryan.networking.RetrofitClient
+import com.example.shoryan.di.MyApplication
 import com.example.shoryan.interfaces.LoadingFragmentHolder
 import com.example.shoryan.viewmodels.LoginViewModel
 import com.google.android.material.snackbar.Snackbar
+import javax.inject.Inject
 
 class PasswordLoginFragment : Fragment(), LoadingFragmentHolder {
 
     private lateinit var navController: NavController
     private lateinit var phoneNumber: String
 
-    private val loginViewModel: LoginViewModel by navGraphViewModels(R.id.landing_nav_graph)
-    private var bloodDonationAPI: RetrofitBloodDonationInterface = RetrofitClient
-        .getRetrofitClient()
-        .create(RetrofitBloodDonationInterface::class.java)
+    @Inject
+    lateinit var loginViewModel: LoginViewModel
 
     private lateinit var loginProcess: LiveData<LoginResponse>
     private lateinit var loginObserver: Observer<LoginResponse>
@@ -40,6 +38,11 @@ class PasswordLoginFragment : Fragment(), LoadingFragmentHolder {
     private var _binding: FragmentLoginPasswordBinding? = null
     private val binding get() = _binding!!
     private var loginBannerBinding: LoginBannerBinding? = null
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        (requireActivity().application as MyApplication).appComponent.loginComponent().create().inject(this)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentLoginPasswordBinding.inflate(inflater, container, false)
@@ -143,7 +146,7 @@ class PasswordLoginFragment : Fragment(), LoadingFragmentHolder {
 
     private fun verifyCredentials(phoneNumber: String, password: String){
         toggleLoggingInIndicator()
-        loginProcess = loginViewModel.logUser(phoneNumber, password, bloodDonationAPI)
+        loginProcess = loginViewModel.logUser(phoneNumber, password)
         loginProcess.observe(viewLifecycleOwner, loginObserver)
     }
 

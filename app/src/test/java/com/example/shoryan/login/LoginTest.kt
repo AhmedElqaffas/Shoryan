@@ -28,6 +28,7 @@ class LoginTest {
     var instantExecutorRule = InstantTaskExecutorRule()
 
     private lateinit var server : MockWebServer
+    private lateinit var viewModel: LoginViewModel
     private val user = User(name= Name("شريف", "أشرف"),
         points=0,
         id = "60130dbd9ed8840004bcf483",
@@ -55,12 +56,14 @@ class LoginTest {
         }
         // Setup RetrofitClient
         val apiTestManager = ApiTestManager(server.url("").toString())
+        // Setup ViewModel
+        viewModel = LoginViewModel(apiTestManager.api)
 
         // Act
         // Perform fake api call
         var loginResponse: LoginResponse? = null
         runBlocking{
-            LoginViewModel().logUser("111", "111", apiTestManager.api).observeForever {
+            viewModel.logUser("111", "111").observeForever {
                 loginResponse = it
             }
             // No idea why this delay is needed, I've disabled internet connection
@@ -82,12 +85,14 @@ class LoginTest {
         }
         // Setup RetrofitClient
         val apiTestManager = ApiTestManager(server.url("").toString())
+        // Setup ViewModel
+        viewModel = LoginViewModel(apiTestManager.api)
 
         // Act
         // Perform fake api call
         var loginResponse: LoginResponse? = null
         runBlocking{
-            LoginViewModel().logUser("111", "111", apiTestManager.api).observeForever {
+            viewModel.logUser("111", "111").observeForever {
                 loginResponse = it
             }
             delay(400)
