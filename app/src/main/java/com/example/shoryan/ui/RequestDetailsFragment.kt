@@ -9,7 +9,6 @@ import android.view.*
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.core.view.ViewCompat
 import androidx.databinding.ViewDataBinding
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.shoryan.BR
 import com.example.shoryan.EnglishToArabicConverter
@@ -71,9 +70,10 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
 
     @Inject
     lateinit var bloodDonationAPI: RetrofitBloodDonationInterface
-
-    private lateinit var requestFulfillmentViewModel: RequestFulfillmentViewModel
-    private lateinit var myRequestDetailsViewModel: MyRequestDetailsViewModel
+    @Inject
+    lateinit var requestFulfillmentViewModel: RequestFulfillmentViewModel
+    @Inject
+    lateinit var myRequestDetailsViewModel: MyRequestDetailsViewModel
 
     private val viewModelsMap: Map<Int, RequestDetailsViewModel> by lazy{
         mapOf(
@@ -90,9 +90,7 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        appComponent.inject(this)
-        initializeMyRequestViewModel()
-        initializeRequestFulfillmentViewModel()
+        initializeViewModel()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -126,18 +124,8 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
 
     private fun getClickedRequest() = requireArguments().getString(ARGUMENT_REQUEST_KEY)!!
 
-    private fun initializeRequestFulfillmentViewModel(){
-        val factory = RequestFulfillmentViewModelFactory(
-            bloodDonationAPI, requireArguments().getString(ARGUMENT_REQUEST_KEY)!!
-        )
-        requestFulfillmentViewModel = ViewModelProvider(this, factory).get(RequestFulfillmentViewModel::class.java)
-    }
-
-    private fun initializeMyRequestViewModel(){
-        val factory = MyRequestDetailsViewModelFactory(
-            bloodDonationAPI, requireArguments().getString(ARGUMENT_REQUEST_KEY)!!
-        )
-        myRequestDetailsViewModel = ViewModelProvider(this, factory).get(MyRequestDetailsViewModel::class.java)
+    private fun initializeViewModel(){
+        appComponent.requestDetailsComponent().create(getClickedRequest()).inject(this)
     }
 
     private fun setWindowSize(){

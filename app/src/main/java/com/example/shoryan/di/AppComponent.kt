@@ -11,7 +11,7 @@ import javax.inject.Singleton
 interface AppComponent {
 
     fun loginComponent(): LoginComponent.Factory
+    fun registrationComponent(): RegistrationComponent.Factory
+    fun requestDetailsComponent(): RequestDetailsComponent.Factory
     fun getApiInterface(): RetrofitBloodDonationInterface
-
-    fun inject(fragment: RequestDetailsFragment)
 }

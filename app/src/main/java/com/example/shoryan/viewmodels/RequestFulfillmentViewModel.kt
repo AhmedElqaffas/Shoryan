@@ -8,9 +8,13 @@ import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.repos.RequestFulfillmentRepo
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Named
 
 
-class RequestFulfillmentViewModel(): RequestDetailsViewModel() {
+class RequestFulfillmentViewModel @Inject constructor(
+        bloodDonationAPI: RetrofitBloodDonationInterface,
+        @Named("requestId") requestId: String
+): RequestDetailsViewModel(bloodDonationAPI, requestId) {
 
     // Instead of changing the CurrentAppUser repo to have a liveData, I created this liveData member
     // to observe changes
@@ -41,12 +45,6 @@ class RequestFulfillmentViewModel(): RequestDetailsViewModel() {
             // When th details are loaded, set the request id as this liveData value
                 value: DonationDetails? -> acceptedRequestMediatorLiveData.setValue(value?.request?.id)
         }
-    }
-
-    @Inject constructor(bloodDonationAPI: RetrofitBloodDonationInterface,
-                        requestId: String) : this(){
-        this.bloodDonationAPI = bloodDonationAPI
-        this.requestId = requestId
     }
 
     override suspend fun getDonationDetails(requestId: String): LiveData<DonationDetails?> {
@@ -135,13 +133,5 @@ class RequestFulfillmentViewModel(): RequestDetailsViewModel() {
         viewModelScope.launch {
             _eventsFlow.emit(RequestDetailsViewEvent.CallPatient(phoneNumber))
         }
-    }
-}
-
-class RequestFulfillmentViewModelFactory @Inject constructor(
-    private val bloodDonationAPI: RetrofitBloodDonationInterface,
-    private val requestId: String): ViewModelProvider.Factory{
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return RequestFulfillmentViewModel(bloodDonationAPI, requestId) as T
     }
 }

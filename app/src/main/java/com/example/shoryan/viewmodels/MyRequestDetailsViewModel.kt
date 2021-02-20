@@ -7,15 +7,14 @@ import androidx.lifecycle.*
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.repos.MyRequestDetailsRepo
 import kotlinx.coroutines.launch
+import javax.inject.Inject
+import javax.inject.Named
 
 
-class MyRequestDetailsViewModel(): RequestDetailsViewModel() {
-
-    constructor(bloodDonationAPI: RetrofitBloodDonationInterface,
-                requestId: String) : this(){
-        this.bloodDonationAPI = bloodDonationAPI
-        this.requestId = requestId
-    }
+class MyRequestDetailsViewModel@Inject constructor(
+        bloodDonationAPI: RetrofitBloodDonationInterface,
+        @Named("requestId") requestId: String
+): RequestDetailsViewModel(bloodDonationAPI, requestId) {
 
     fun showAlertDialog(view: View){
         val builder = AlertDialog.Builder(view.context)
@@ -45,13 +44,5 @@ class MyRequestDetailsViewModel(): RequestDetailsViewModel() {
 
     private fun showSuccessToast(view: View){
         Toast.makeText(view.context, "تم الغاء الطلب", Toast.LENGTH_LONG).show()
-    }
-}
-
-class MyRequestDetailsViewModelFactory(
-    private val bloodDonationAPI: RetrofitBloodDonationInterface,
-    private val requestId: String): ViewModelProvider.Factory{
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return MyRequestDetailsViewModel(bloodDonationAPI, requestId) as T
     }
 }

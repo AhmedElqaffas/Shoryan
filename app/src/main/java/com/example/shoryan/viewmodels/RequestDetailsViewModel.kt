@@ -11,7 +11,8 @@ import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
-open class RequestDetailsViewModel(): ViewModel() {
+open class RequestDetailsViewModel(protected val bloodDonationAPI: RetrofitBloodDonationInterface,
+                                   protected val requestId: String): ViewModel() {
 
     sealed class RequestDetailsViewEvent{
         data class ShowSnackBar(val text: String): RequestDetailsViewEvent()
@@ -41,9 +42,6 @@ open class RequestDetailsViewModel(): ViewModel() {
     // A mechanism to push events to the fragment
     protected val _eventsFlow = MutableSharedFlow<RequestDetailsViewEvent>()
     val eventsFlow = _eventsFlow.asSharedFlow()
-
-    protected lateinit var bloodDonationAPI: RetrofitBloodDonationInterface
-    protected lateinit var requestId: String
 
     open suspend fun getDonationDetails(requestId: String): LiveData<DonationDetails?> {
         val details = RequestFulfillmentRepo.getDonationDetails(bloodDonationAPI, requestId)
