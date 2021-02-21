@@ -12,13 +12,13 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:scaleType="fitXY"
-        android:src="@mipmap/logo_picture"
+        android:src="@mipmap/logo_untinted"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintVertical_bias="0.498"
-        app:layout_constraintWidth_percent="0.825"
+        app:layout_constraintWidth_percent="0.8"
         app:layout_constraintHeight_percent="0.44"/>
 
     <Button

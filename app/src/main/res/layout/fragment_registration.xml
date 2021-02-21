@@ -32,26 +32,24 @@
             android:id="@+id/registrationAppLogo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/logo"
+            android:src="@mipmap/logo_untinted"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.52"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.055" />
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintVertical_bias="0.06"/>
 
         <androidx.core.widget.NestedScrollView
+            android:id="@+id/formScrollView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:background="@drawable/registration_cardview_bg"
             android:fillViewport="true"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.70"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/registrationAppLogo"
-            app:layout_constraintVertical_bias="1.0">
+            app:layout_constraintVertical_bias="1.0"
+            app:layout_constraintTop_toBottomOf="@id/registrationAppLogo">
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
