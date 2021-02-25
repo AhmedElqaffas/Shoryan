@@ -10,6 +10,6 @@ val RedLight = Color(0xffED5A5A)
 val Shimmer = Color(0xffDDDDDD)
 val Gray = Color(0xff707070)
 
-@Composable
+
 val Colors.shimmer: Color
     get() = if (isLight) Shimmer else Shimmer

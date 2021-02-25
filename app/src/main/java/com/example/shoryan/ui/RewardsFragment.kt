@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Column
@@ -18,14 +19,17 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.Brush.Companion.linearGradient
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.Dimension
@@ -76,7 +80,8 @@ class RewardsFragment : Fragment() {
 
     @Composable
     fun BackgroundImage(){
-        Image(imageFromResource(resources, R.drawable.wooden_bg),
+        ImageVector
+        Image(painter = painterResource(id = R.drawable.wooden_bg),
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.FillBounds,
             contentDescription = null
@@ -134,8 +139,6 @@ class RewardsFragment : Fragment() {
         Column(
             modifier = Modifier
                 .clickable(
-                    interactionState = InteractionState(),
-                    indication = null,
                     onClick = {showToast(reward.points.toString())}
                 )
                 .width(250.dp)
@@ -159,7 +162,6 @@ class RewardsFragment : Fragment() {
                     ) {
                         RewardTitle(reward.rewardName)
                         Spacer(modifier = Modifier.height(5.dp))
-                        //RewardDetails(reward.rewardName, reward.points)
                         RewardPoints(reward.points)
                     }
                 }
@@ -167,7 +169,6 @@ class RewardsFragment : Fragment() {
         }
 
     }
-
 
     @Composable
     fun RewardImage(imageLink: String){
@@ -190,30 +191,6 @@ class RewardsFragment : Fragment() {
         )
     }
 
-    /*@Composable
-    fun RewardDetails(rewardName: String, requiredPoints: Int){
-
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxSize()
-        )
-        {
-            LinearProgressIndicator(
-                modifier = Modifier
-                    .rotate(-90f)
-                    .heightIn(70.dp, 100.dp)
-                    .preferredWidth(70.dp),
-                progress = remember(calculation = {getPointsPercentage(requiredPoints, userPoints)}),
-                backgroundColor = Color.Red,
-                color = Color.Green
-            )
-            Column() {
-                RewardTitle(rewardName)
-                RewardPoints(requiredPoints, userPoints)
-            }
-        }
-    }*/
-
     @Composable
     fun RewardPoints(requiredPoints: Int){
         val userPoints = remember{rewardsViewModel.userPoints}
@@ -235,8 +212,6 @@ class RewardsFragment : Fragment() {
                         width = Dimension.fillToConstraints
                     }
                     .rotate(270f) // To start progress from left instead of top
-
-
 
             )
             Text(
@@ -271,7 +246,7 @@ class RewardsFragment : Fragment() {
 
     @Composable
     fun RewardsShimmer(){
-        val colorsList = listOf(
+        /*val colorsList = listOf(
             Gray, Shimmer, Gray
         )
 
@@ -279,16 +254,33 @@ class RewardsFragment : Fragment() {
             colorsList,
             start = Offset(200f,200f),
             end = Offset(400f,400f),
-        )
+        )*/
 
-        Surface(shape = MaterialTheme.shapes.large, color = Color.Transparent) {
-            Spacer(
-                modifier = Modifier
-                    .width(250.dp)
-                    .fillMaxHeight(0.85f)
-                    .padding(vertical = 0.dp, horizontal = 20.dp)
-                    .background(brush = brush)
+        val infiniteTransition = rememberInfiniteTransition()
+        val alpha by infiniteTransition.animateFloat(
+            initialValue = 0f,
+            targetValue = 1f,
+            animationSpec = infiniteRepeatable(
+                animation = keyframes {
+                    durationMillis = 1000
+                    0.7f at 500
+                },
+                repeatMode = RepeatMode.Reverse
             )
+        )
+        Column(
+            modifier = Modifier
+                .width(250.dp)
+                .padding(20.dp)
+        ) {
+            Card(
+                shape = MaterialTheme.shapes.large,
+                modifier = Modifier
+                    .fillMaxHeight(0.9f)
+                    .fillMaxWidth(),
+                backgroundColor = Shimmer.copy(alpha),
+                border = null
+            ){}
         }
     }
 

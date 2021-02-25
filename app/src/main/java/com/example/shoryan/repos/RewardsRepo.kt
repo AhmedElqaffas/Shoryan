@@ -12,7 +12,7 @@ object RewardsRepo {
     }
 
     private suspend fun initializeRewardsListFromBackend(): List<Reward>{
-        delay(2000)
+        delay(7000)
         cachedList = listOf(
             Reward("اوكازيون اوكازيون اوكازيون", 99, "https://homepages.cae.wisc.edu/~ece533/images/zelda.png"),
             Reward("الشفاطة السحرية", 20, "https://homepages.cae.wisc.edu/~ece533/images/arctichare.png"),
