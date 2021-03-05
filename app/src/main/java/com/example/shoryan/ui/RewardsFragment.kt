@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyRow
@@ -31,6 +32,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.Dimension
 import androidx.fragment.app.viewModels
@@ -139,6 +143,8 @@ class RewardsFragment : Fragment() {
         Column(
             modifier = Modifier
                 .clickable(
+                    interactionSource = MutableInteractionSource(),
+                    indication = null,
                     onClick = {showToast(reward.points.toString())}
                 )
                 .width(250.dp)
@@ -246,42 +252,53 @@ class RewardsFragment : Fragment() {
 
     @Composable
     fun RewardsShimmer(){
-        /*val colorsList = listOf(
+        val colorsList = listOf(
             Gray, Shimmer, Gray
         )
 
+        val offsetX by animateShimmer(0f, 200f)
+        val endX by animateShimmer(50f, 250f)
+        val offsetY by animateShimmer(0f, 1800f)
+        val endY by animateShimmer(50f, 1850f)
+
         val brush = linearGradient(
             colorsList,
-            start = Offset(200f,200f),
-            end = Offset(400f,400f),
-        )*/
-
-        val infiniteTransition = rememberInfiniteTransition()
-        val alpha by infiniteTransition.animateFloat(
-            initialValue = 0f,
-            targetValue = 1f,
-            animationSpec = infiniteRepeatable(
-                animation = keyframes {
-                    durationMillis = 1000
-                    0.7f at 500
-                },
-                repeatMode = RepeatMode.Reverse
-            )
+            start = Offset(offsetX,offsetY),
+            end = Offset(endX,endY),
         )
         Column(
             modifier = Modifier
                 .width(250.dp)
                 .padding(20.dp)
+                .fillMaxHeight()
         ) {
             Card(
                 shape = MaterialTheme.shapes.large,
                 modifier = Modifier
                     .fillMaxHeight(0.9f)
-                    .fillMaxWidth(),
-                backgroundColor = Shimmer.copy(alpha),
-                border = null
-            ){}
+                    .fillMaxWidth()
+                    .clip(MaterialTheme.shapes.large)
+                    .background(brush),
+                border = null,
+                backgroundColor = Color.Transparent
+            ){
+            }
         }
+    }
+
+    @Composable
+    private fun animateShimmer(initialValue: Float, targetValue: Float): State<Float> {
+        val infiniteTransition = rememberInfiniteTransition()
+        return infiniteTransition.animateFloat(
+            initialValue = initialValue,
+            targetValue = targetValue,
+            animationSpec = infiniteRepeatable(
+                animation = keyframes {
+                    durationMillis = 800
+                },
+                repeatMode = RepeatMode.Reverse
+            )
+        )
     }
 
     private val SemiCircle = GenericShape { size, _ ->
