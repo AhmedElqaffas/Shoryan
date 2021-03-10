@@ -3,7 +3,6 @@ package com.example.shoryan.data
 object CurrentAppUser: User(null,null,null,null, null) {
 
     var pendingRequestId: String? = null
-    var myActiveRequests =  mutableListOf<DonationRequest>()
 
     fun initializeUser(user: User){
         id = user.id

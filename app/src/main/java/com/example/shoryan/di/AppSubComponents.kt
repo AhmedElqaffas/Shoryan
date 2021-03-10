@@ -5,6 +5,7 @@ import dagger.Module
 @Module(subcomponents = [
     LoginComponent::class,
     RegistrationComponent::class,
-    RequestDetailsComponent::class
+    RequestDetailsComponent::class,
+    MyRequestsComponent::class
 ])
 class AppSubComponents

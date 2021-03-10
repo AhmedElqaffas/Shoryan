@@ -64,13 +64,6 @@ class RequestsViewModel : ViewModel() {
         OngoingRequestsRepo.updateUserPendingRequest(bloodDonationAPI)
     }
 
-    suspend fun updateMyRequestsList(){
-        OngoingRequestsRepo.updateMyActiveRequestsList(bloodDonationAPI)
-    }
-
     fun getUserPendingRequestId() = CurrentAppUser.pendingRequestId
 
-    fun getUserActiveRequests(): List<DonationRequest>{
-        return CurrentAppUser.myActiveRequests
-    }
 }

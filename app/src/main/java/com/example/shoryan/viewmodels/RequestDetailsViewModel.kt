@@ -10,6 +10,7 @@ import com.example.shoryan.repos.RequestFulfillmentRepo
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 
 open class RequestDetailsViewModel(protected val bloodDonationAPI: RetrofitBloodDonationInterface,
                                    protected val requestId: String): ViewModel() {
@@ -61,5 +62,11 @@ open class RequestDetailsViewModel(protected val bloodDonationAPI: RetrofitBlood
 
     private suspend fun announceCommunicationFailure(){
         _eventsFlow.emit(RequestDetailsViewEvent.ShowTryAgainSnackBar())
+    }
+
+      fun refresh(){
+        viewModelScope.launch {
+            getDonationDetails(requestId)
+        }
     }
 }

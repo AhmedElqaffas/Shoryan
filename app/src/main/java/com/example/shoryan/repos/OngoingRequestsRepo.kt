@@ -51,13 +51,4 @@ object OngoingRequestsRepo {
             Log.e("pendingRequestAPICall", "Couldn't get request - " + e.message)
         }
     }
-
-    suspend fun updateMyActiveRequestsList(bloodDonationAPI: RetrofitBloodDonationInterface){
-        try{
-            CurrentAppUser.myActiveRequests = bloodDonationAPI.getUserActiveRequests(CurrentAppUser.id!!)
-                .activeRequests.toMutableList()
-        }catch (e: Exception){
-            Log.e("MyActiveRequestsAPICall", "Couldn't get requests - " + e.message)
-        }
-    }
 }

@@ -57,9 +57,8 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         instantiateNavController(view)
-        // Getting ongoingRequests, pending request, my requests,  all in parallel
+        // Getting ongoingRequests and pending request, in parallel
         updateUserPendingRequest()
-        updateMyRequestsList()
         getOngoingRequests()
     }
 
@@ -71,14 +70,6 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
         viewLifecycleOwner.lifecycleScope.launch {
             withContext(Dispatchers.IO){
                 requestsViewModel.updateUserPendingRequest()
-            }
-        }
-    }
-
-    private fun updateMyRequestsList(){
-        viewLifecycleOwner.lifecycleScope.launch {
-            withContext(Dispatchers.IO) {
-                requestsViewModel.updateMyRequestsList()
             }
         }
     }
@@ -151,11 +142,7 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
 
     private fun setMyRequestsCardListener(){
         binding.myRequestsCard.setOnClickListener {
-            val myRequests = requestsViewModel.getUserActiveRequests()
-            if(myRequests.isEmpty())
-                showMessage("ليس لديك طلبات حالياً")
-            else
-                openMyRequestsFragment(myRequests)
+            openMyRequestsFragment()
         }
     }
 
@@ -170,9 +157,8 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
         fragment.show(childFragmentManager, "requestDetails")
     }
 
-    private fun openMyRequestsFragment(myRequests: List<DonationRequest>) {
-        val requests = bundleOf("requests" to myRequests)
-        navController.navigate(R.id.action_home_to_myRequestsFragment, requests)
+    private fun openMyRequestsFragment() {
+        navController.navigate(R.id.action_home_to_myRequestsFragment)
     }
 
     private fun openMyRequestDetailsFragment(requestId: String){

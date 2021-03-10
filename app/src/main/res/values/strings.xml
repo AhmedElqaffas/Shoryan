@@ -14,6 +14,7 @@
     <string name="choose_location">اختر المكان</string>
     <string name="choose_your_location">اختر عنوان تواجدك</string>
     <string name="clear">مسح</string>
+    <string name="click_here_to_try_again">"فشل في الحصول على البيانات \n   اضغط هنا لإعادة المحاولة"</string>
     <string name="confirmation_code">رمز التأكيد</string>
     <string name="confirm_password">تأكيد كلمة السر</string>
     <string name="connection_error">فشل في الاتصال بالشبكة</string>
@@ -71,6 +72,7 @@
     <string name="try_again">اعد المحاولة</string>
     <string name="username">الاسم بالكامل</string>
     <string name="waiting_confirmation">انت الان مسجل كمتبرع لهذا الطلب, نحن في انتظار وصولك الي بنك الدم</string>
+    <string name="you_have_no_requests">"لا يوجد لديك طلبات حالية \n   اضغط هنا للتحديث"</string>
 
 
     <string name="a_plus">A+</string>

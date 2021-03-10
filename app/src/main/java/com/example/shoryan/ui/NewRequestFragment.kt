@@ -9,6 +9,8 @@ import android.widget.AdapterView.OnItemSelectedListener
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.navigation.navGraphViewModels
 import com.example.shoryan.AndroidUtility
 import com.example.shoryan.R
@@ -25,7 +27,7 @@ import kotlinx.coroutines.flow.onEach
 
 class NewRequestFragment : Fragment() {
     private val newRequestViewModel: NewRequestViewModel by navGraphViewModels(R.id.main_nav_graph)
-
+    private lateinit var navController: NavController
     private var _binding: FragmentNewRequestBinding? = null
     private val binding get() = _binding!!
     private var toolbarBinding: AppbarBinding? = null
@@ -49,10 +51,15 @@ class NewRequestFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?){
         super.onViewCreated(view, savedInstanceState)
+        initializeNavController(view)
         setToolbarText(resources.getString(R.string.new_request))
         enableInput()
         checkIfUserCanRequest()
         observeEvents()
+    }
+
+    private fun initializeNavController(view: View){
+        navController = Navigation.findNavController(view)
     }
 
     private fun checkIfUserCanRequest() {
@@ -354,20 +361,16 @@ class NewRequestFragment : Fragment() {
     private fun showMessage(message: String, successFlag: Boolean = false) {
         if (successFlag)
             Snackbar.make(binding.scrollView, message, Snackbar.LENGTH_LONG)
-                .setAction("اظهر بيانات الطلب") {
+                .setAction("اظهر طلباتي الحالية") {
                     // Starting the MyRequestDetailsActivity
-                    openRequestDetails()
+                    openMyRequestsFragment()
                 }
                 .show()
         else
             AndroidUtility.displaySnackbarMessage(binding.scrollView, message, Snackbar.LENGTH_LONG)
     }
-    private fun openRequestDetails() {
-        val fragment = RequestDetailsFragment.newInstance(
-            createdRequest!!.id,
-            RequestDetailsFragment.MY_REQUEST_BINDING
-        )
-        fragment.show(childFragmentManager, "requestDetails")
+    private fun openMyRequestsFragment() {
+        navController.navigate(R.id.action_newRequest_to_myRequestsFragment)
     }
 
     private fun getSelectedBloodType(): RadioButton =

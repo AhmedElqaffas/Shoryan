@@ -23,7 +23,11 @@
         android:id="@+id/newRequest"
         android:name="com.example.shoryan.ui.NewRequestFragment"
         android:label="New Request"
-        tools:layout="@layout/fragment_new_request"/>
+        tools:layout="@layout/fragment_new_request">
+        <action
+            android:id="@+id/action_newRequest_to_myRequestsFragment"
+            app:destination="@id/myRequestsFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/notifications"
