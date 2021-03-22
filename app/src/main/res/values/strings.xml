@@ -1,3 +1,171 @@
 <resources>
-    <string name="app_name">Sharyan</string>
+    <string name="app_name">Shoryan</string>
+    <string name="address">العنوان</string>
+    <string name="address_full">\u200F %1$s : %2$s %3$s - %4$s - %5$s</string>
+    <string name="back">رجوع</string>
+    <string name="bags_number">عدد الوحدات</string>
+    <string name="birth_date">تاريخ الميلاد</string>
+    <string name="blood_bags">\u200F %1$s أكياس دم</string>
+    <string name="blood_type">فصيلة الدم</string>
+    <string name="cancel_donation">إلغاء التبرّع</string>
+    <string name="change_location">تغيير الموقع</string>
+    <string name="checking_requesting_permission">جاري التأكد من عدد طلباتك اليوم</string>
+    <string name="checking_donating_ability">جاري التأكد من قدرتك على تلبية الطلب</string>
+    <string name="choose_location">اختر المكان</string>
+    <string name="choose_your_location">اختر عنوان تواجدك</string>
+    <string name="clear">مسح</string>
+    <string name="click_here_to_try_again">"فشل في الحصول على البيانات \n   اضغط هنا لإعادة المحاولة"</string>
+    <string name="confirmation_code">رمز التأكيد</string>
+    <string name="confirm_password">تأكيد كلمة السر</string>
+    <string name="connection_error">فشل في الاتصال بالشبكة</string>
+    <string name="current_location">الموقع الحالي</string>
+    <string name="date_initial">DD-MM-YYYY</string>
+    <string name="donate">تبرّع</string>
+    <string name="donations">التبرّعات</string>
+    <string name="donation_constraint">يمكنك طلب دم ثلاث مرات فقط خلال اليوم</string>
+    <string name="donation_request">طلب تبرّع بالدم</string>%1$s
+    <string name="enter_code">\u200F قم بإدخال الرمز المرسل الى \n %1$s</string>
+    <string name="enter_login_password">\u200F قم بإدخال كلمة السر الخاصة بالرقم \n %1$s</string>
+    <string name="faq">أسئلة متواردة</string>
+    <string name="female">أنثي</string>
+    <string name="fetching_data_error">فشل في الحصول علي البيانات</string>
+    <string name="filter"><u>فلترة</u></string>
+    <string name="filter_according">تصنيف حسب</string>
+    <string name="filter_matching_types">الفصائل التي يمكننى التبرع لها</string>
+    <string name="first_name">الاسم الأول</string>
+    <string name="gender">النوع</string>
+    <string name="hello_user_greeting">\u200F مرحباً، %1$s</string>
+    <string name="home">الرئيسية</string>
+    <string name="instructions">تعليمات</string>
+    <string name="internet_connection">تأكّد من اتصالك بالإنترنت</string>
+    <string name="i_donated">لقد تبرّعت</string>
+    <string name="last_name">الاسم الأخير</string>
+    <string name="loading_details">جاري تحميل البيانات</string>
+    <string name="location_failed">لم نستطع تحديد مكانك</string>
+    <string name="login">تسجيل دخول</string>
+    <string name="login_code">رمز الدخول</string>
+    <string name="login_with_password">الدخول بكلمة السر</string>
+    <string name="login_with_sms">الدخول برسالة نصية</string>
+    <string name="male">ّذكر</string>
+    <string name="my_requests">طلباتي</string>
+    <string name="my_old_requests">طلباتي السابقة</string>
+    <string name="my_request_details">تفاصيل طلب التبرع بالدم</string>
+    <string name="name_format_message"> تأكّد من عدم وجود أرقام او رموز</string>
+    <string name="new_request">طلب جديد</string>
+    <string name="notifications">الإشعارات</string>
+    <string name="ok">حسناً</string>
+    <string name="password">كلمة السر</string>
+    <string name="password_format_message">\u200F كلمة السر يجب ان تتكون على الاقل من 8 احرف بدون مسافات منهم: \n - حرف انجليزي كبير \n - حرف انجليزي صغير \n - رقم انجليزي</string>
+    <string name="password_mismatch">كلمة السر غير متطابقة</string>
+    <string name="pending_request">في انتظارك</string>
+    <string name="persons_going">\u200F %1$s أشخاص في طريقهم للتبرّع</string>
+    <string name="phone_format_message">تأكد من إدخال رقم بهذا الشكل: 01xxxxxxxxx</string>
+    <string name="phone_number">رقم المحمول</string>
+    <string name="points">النقاط</string>
+    <string name="proceed">استمرار</string>
+    <string name="profile">حسابي</string>
+    <string name="register">إنشاء حساب جديد</string>
+    <string name="requests">الطلبات</string>
+    <string name="resend_sms"><u>إعادة إرسال الرمز</u></string>
+    <string name="settings">الإعدادات</string>
+    <string name="submit">تنفيذ</string>
+    <string name="try_again">اعد المحاولة</string>
+    <string name="username">الاسم بالكامل</string>
+    <string name="waiting_confirmation">انت الان مسجل كمتبرع لهذا الطلب, نحن في انتظار وصولك الي بنك الدم</string>
+    <string name="you_have_no_requests">"لا يوجد لديك طلبات حالية \n   اضغط هنا للتحديث"</string>
+
+
+    <string name="a_plus">A+</string>
+    <string name="b_plus">B+</string>
+    <string name="ab_plus">AB+</string>
+    <string name="o_plus">O+</string>
+
+    <string name="a_minus">A-</string>
+    <string name="b_minus">B-</string>
+    <string name="ab_minus">AB-</string>
+    <string name="o_minus">O-</string>
+
+    <string name="choose_governorate">اختر المحافظة</string>
+    <string name="choose_city">اختر المنطقة</string>
+    <string name="choose_blood_bank">اختر بنك الدم</string>
+
+
+    <string-array name="blood_types">
+        <item>A+</item>
+        <item>A-</item>
+        <item>B+</item>
+        <item>B-</item>
+        <item>O+</item>
+        <item>O-</item>
+        <item>AB+</item>
+        <item>AB-</item>
+    </string-array>
+
+    <string-array name="gender">
+        <item>اُفضّل عدم القول</item>
+        <item>ذكر</item>
+        <item>انثى</item>
+    </string-array>
+
+    <string-array name="governments">
+        <item></item>
+        <item>الإسكندرية</item>
+        <item>الإسماعيلية</item>
+        <item>أسوان</item>
+        <item>أسيوط</item>
+        <item>البحر الأحمر</item>
+        <item>البحيرة</item>
+        <item>بني سويف</item>
+        <item>بورسعيد</item>
+        <item>جنوب سيناء</item>
+        <item>الجيزة</item>
+        <item>الدقهلية</item>
+        <item>دمياط</item>
+        <item>سوهاج</item>
+        <item>السويس</item>
+        <item>الشرقية</item>
+        <item>شمال سيناء</item>
+        <item>الغربية</item>
+        <item>الفيوم</item>
+        <item>القاهرة</item>
+        <item>القليوبية</item>
+        <item>قنا</item>
+        <item>كفر الشيخ</item>
+        <item>مطروح</item>
+        <item>المنوفية</item>
+        <item>المنيا</item>
+        <item>الوادي الجديد</item>
+    </string-array>
+
+    <string-array name="cairo_cities">
+        <item></item>
+        <item>مدينة نصر</item>
+        <item>مصر الجديدة</item>
+        <item>التجمع الخامس</item>
+        <item>العباسية</item>
+    </string-array>
+
+    <string-array name="alex_cities">
+        <item></item>
+        <item>سيدي بشر</item>
+        <item>سموحة</item>
+        <item>ستانلي</item>
+        <item>شدس</item>
+    </string-array>
+
+    <string-array name="example_cities">
+        <item></item>
+        <item>مدينة أ</item>
+        <item>مدينة ب</item>
+    </string-array>
+
+    <string-array name="example_blood_banks">
+        <item></item>
+        <item>بنك الدم أ</item>
+        <item>بنك الدم ب</item>
+    </string-array>
+
+    <string name="cancel_request">إلغاء الطلب</string>
+    <string name="your_request">طلبك</string>
+
 </resources>

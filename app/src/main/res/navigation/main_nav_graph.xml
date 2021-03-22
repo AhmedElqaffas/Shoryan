@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_nav_graph"
+    app:startDestination="@id/home">
+
+    <fragment
+        android:id="@+id/home"
+        android:name="com.example.shoryan.ui.HomeFragment"
+        android:label="Home"
+        tools:layout="@layout/fragment_home"
+        app:defaultNavHost="true">
+        <action
+            android:id="@+id/action_home_to_myRequestsFragment"
+            app:destination="@id/myRequestsFragment"/>
+        <action
+            android:id="@+id/action_home_to_newRequest"
+            app:destination="@id/newRequest" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/newRequest"
+        android:name="com.example.shoryan.ui.NewRequestFragment"
+        android:label="New Request"
+        tools:layout="@layout/fragment_new_request">
+        <action
+            android:id="@+id/action_newRequest_to_myRequestsFragment"
+            app:destination="@id/myRequestsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/notifications"
+        android:name="com.example.shoryan.ui.NotificationsFragment"
+        android:label="Notifications"
+        tools:layout="@layout/fragment_notifications" />
+
+    <fragment
+        android:id="@+id/profile"
+        android:name="com.example.shoryan.ui.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile" />
+
+    <fragment
+        android:id="@+id/myRequestsFragment"
+        android:name="com.example.shoryan.ui.MyRequestsFragment"
+        android:label="fragment_my_requests"
+        tools:layout="@layout/fragment_my_requests" >
+        <action
+            android:id="@+id/action_myRequestsFragment_to_newRequest"
+            app:destination="@id/newRequest" />
+        <argument android:name="requestsIDs"
+            app:argType="com.example.shoryan.data.DonationRequest"/>
+
+    </fragment>
+</navigation>
