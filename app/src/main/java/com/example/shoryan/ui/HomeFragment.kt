@@ -168,12 +168,16 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
     }
 
     override fun onRequestCardClicked(donationRequest: DonationRequest, isMyRequest: Boolean){
+        if(childFragmentManager.findFragmentByTag("requestDetails") != null){
+            return
+        }
         if(!isMyRequest){
             openDonationFragment(donationRequest.id)
         }
         else{
             openMyRequestDetailsFragment(donationRequest.id)
         }
+
     }
 
     override fun submitFilters(requestsFiltersContainer: RequestsFiltersContainer?) {

@@ -96,6 +96,9 @@ class MyRequestsFragment : Fragment(), RequestsRecyclerInteraction {
     }
 
     override fun onRequestCardClicked(donationRequest: DonationRequest, isMyRequest: Boolean) {
+        if(childFragmentManager.findFragmentByTag("requestDetails") != null){
+            return
+        }
         val fragment = RequestDetailsFragment.newInstance(
             donationRequest.id,
             RequestDetailsFragment.MY_REQUEST_BINDING
