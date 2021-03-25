@@ -39,17 +39,17 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.Dimension
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import com.example.shoryan.EnglishToArabicConverter
 import com.example.shoryan.R
 import com.example.shoryan.data.Reward
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.networking.RetrofitClient
 import com.example.shoryan.ui.composables.AppBar
-import com.example.shoryan.ui.theme.Gray
-import com.example.shoryan.ui.theme.Shimmer
-import com.example.shoryan.ui.theme.ShoryanTheme
-import com.example.shoryan.ui.theme.shimmer
+import com.example.shoryan.ui.theme.*
 import com.example.shoryan.viewmodels.RedeemingRewardsViewModel
 import com.example.shoryan.viewmodels.RedeemingRewardsViewModelFactory
 import dev.chrisbanes.accompanist.coil.CoilImage
@@ -60,6 +60,14 @@ class RewardsFragment : Fragment() {
         RedeemingRewardsViewModelFactory(
             RetrofitClient.getRetrofitClient().create(RetrofitBloodDonationInterface::class.java)
         )
+    }
+
+    private lateinit var navController: NavController
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        navController = Navigation.findNavController(view)
     }
 
     @ExperimentalFoundationApi
@@ -79,25 +87,15 @@ class RewardsFragment : Fragment() {
     @ExperimentalFoundationApi
     @Composable
     fun RewardsScreen(){
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight()){
-                AppBar(resources.getString(R.string.rewards))
-                RewardsList(rewardsViewModel)
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+        ){
+            AppBar(resources.getString(R.string.rewards), Modifier.fillMaxWidth())
+            RewardsList(rewardsViewModel)
         }
     }
-
-    /*@Composable
-    fun BackgroundImage(){
-        ImageVector
-        Image(painter = painterResource(id = R.drawable.wooden_bg),
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.FillBounds,
-            contentDescription = null
-        )
-    }*/
-
 
     @ExperimentalFoundationApi
     @Composable
@@ -124,26 +122,6 @@ class RewardsFragment : Fragment() {
         }
     }
 
-    /*@Composable
-    fun RewardsList(rewardsViewModel: RedeemingRewardsViewModel){
-        val rewardsList: List<Reward> by rewardsViewModel.rewardsList.collectAsState(listOf())
-        LazyRow(
-            modifier = Modifier.fillMaxWidth().fillMaxHeight(),
-            verticalAlignment = Alignment.CenterVertically,
-        ){
-            if(rewardsList.isEmpty()){
-                items(3){
-                    RewardsShimmer()
-                }
-            }
-            else{
-                items(rewardsList.size) { index ->
-                    Reward(rewardsList[index])
-                }
-            }
-        }
-    }*/
-
     @Composable
     fun Reward(reward: Reward){
         Column(
@@ -151,7 +129,7 @@ class RewardsFragment : Fragment() {
                 .clickable(
                     interactionSource = MutableInteractionSource(),
                     indication = null,
-                    onClick = { showToast(reward.points.toString()) }
+                    onClick = { onRewardClicked(reward) }
                 )
                 .padding(10.dp),
             verticalArrangement = Arrangement.Center,
@@ -171,8 +149,6 @@ class RewardsFragment : Fragment() {
                     .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)),
                     verticalArrangement = Arrangement.Bottom
                 ) {
-                    //RewardTitle(reward.rewardName)
-                    //Spacer(modifier = Modifier.height(5.dp))
                     Column(
                         modifier = Modifier
                             .height(30.dp)
@@ -182,13 +158,17 @@ class RewardsFragment : Fragment() {
                         verticalArrangement = Arrangement.Bottom,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ){
-                        RewardPoints(reward.points)
+                        if(reward.points > rewardsViewModel.userPoints){
+                            RewardPoints(reward.points - rewardsViewModel.userPoints)
+                        }
+                        else{
+                            RewardRedeemable()
+                        }
                     }
                 }
                 Box(
                     contentAlignment = Alignment.TopCenter
                 ) {
-
                     RewardImage(reward.imageLink)
                 }
             }
@@ -209,62 +189,39 @@ class RewardsFragment : Fragment() {
     }
 
     @Composable
-    fun RewardTitle(rewardName: String){
+    fun RewardPoints(remainingPoints: Int){
         Text(
-            text = rewardName,
+            text = remember {
+                "\u200Fتحتاج ${EnglishToArabicConverter().convertDigits(remainingPoints.toString())} " +
+                        "نقطة اضافية"
+            },
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.h6,
-            color = MaterialTheme.colors.primary,
-            modifier = Modifier.fillMaxWidth()
+            style = MaterialTheme.typography.subtitle2,
+            color = Gray
         )
     }
 
     @Composable
-    fun RewardPoints(requiredPoints: Int){
-        val userPoints = remember{rewardsViewModel.userPoints}
-        Column(
-        ){
-            //val (progress, pointsText) = createRefs()
-            //val startGuideline = createGuidelineFromStart(0f)
-            //val endGuideline = createGuidelineFromStart(0.6f)
-            /*CircularProgressIndicator(
-                progress = remember(calculation = {getPointsPercentage(requiredPoints, userPoints)}),
-                color = MaterialTheme.colors.primaryVariant,
-                strokeWidth = 15.dp,
-                modifier = Modifier
-                    .constrainAs(progress)
-                    {
-                        linkTo(start = startGuideline, end = endGuideline)
-                        bottom.linkTo(parent.bottom)
-                        width = Dimension.fillToConstraints
-                    }
-                    .rotate(270f) // To start progress from left instead of top
-
-            )*/
+    fun RewardRedeemable(){
+        Row(){
             Text(
-                text = remember {
-                    "\u200Fتحتاج ${EnglishToArabicConverter().convertDigits(userPoints.toString())} " +
-                            "نقطة اضافية"
-                },
+                text = resources.getString(R.string.redeemable),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.subtitle2,
-                color = Gray
+                color = DarkGreen,
+            )
+
+            Image(
+                painterResource(R.drawable.ic_check),
+                contentDescription = "Check Mark",
+                modifier = Modifier.padding(5.dp, 0.dp, 0.dp, 0.dp )
             )
         }
     }
 
-    private fun showToast(message: String){
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun getPointsPercentage(requiredPoints: Int, userPoints: Int): Float{
-        return try{
-                val percentage = (userPoints * 1.0 / requiredPoints * 1.0).toFloat()
-            // The *0.5 is to scale the percentage to in semi-circle progress bar instead of full-circle
-                if(percentage > 1.0f) 0.5f else percentage * 0.5f
-        }catch (e: ArithmeticException){
-            0f
-        }
+    private fun onRewardClicked(reward: Reward){
+        val bundle = bundleOf(Pair("reward", reward))
+        navController.navigate(R.id.action_rewardsFragment_to_redeemRewardFragment, bundle)
     }
 
     @Composable
@@ -310,10 +267,5 @@ class RewardsFragment : Fragment() {
                 repeatMode = RepeatMode.Reverse
             )
         )
-    }
-
-    private val SemiCircle = GenericShape { size, _ ->
-        moveTo(size.width, size.height/2f)
-        arcTo(Rect(0f, 0f, size.width, size.height), 0f, -180f, true)
     }
 }

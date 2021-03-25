@@ -7,6 +7,7 @@
     <string name="birth_date">تاريخ الميلاد</string>
     <string name="blood_bags">\u200F %1$s أكياس دم</string>
     <string name="blood_type">فصيلة الدم</string>
+    <string name="branches">الفروع</string>
     <string name="cancel_donation">إلغاء التبرّع</string>
     <string name="change_location">تغيير الموقع</string>
     <string name="checking_requesting_permission">جاري التأكد من عدد طلباتك اليوم</string>
@@ -61,10 +62,13 @@
     <string name="persons_going">\u200F %1$s أشخاص في طريقهم للتبرّع</string>
     <string name="phone_format_message">تأكد من إدخال رقم بهذا الشكل: 01xxxxxxxxx</string>
     <string name="phone_number">رقم المحمول</string>
+    <string name="point">\u200F %1$d نقاط </string>
     <string name="points">النقاط</string>
     <string name="proceed">استمرار</string>
     <string name="profile">حسابي</string>
     <string name="register">إنشاء حساب جديد</string>
+    <string name="redeemable">يمكنك الإسترداد</string>
+    <string name="redeem">استرد العرض</string>
     <string name="requests">الطلبات</string>
     <string name="resend_sms"><u>إعادة إرسال الرمز</u></string>
     <string name="rewards">المكافآت</string>
@@ -168,5 +172,4 @@
 
     <string name="cancel_request">إلغاء الطلب</string>
     <string name="your_request">طلبك</string>
-
 </resources>
