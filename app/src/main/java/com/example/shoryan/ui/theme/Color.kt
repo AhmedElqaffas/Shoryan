@@ -11,5 +11,6 @@ val Shimmer = Color(0xffDDDDDD)
 val Gray = Color(0xFFADACAC)
 
 
+
 val Colors.shimmer: Color
     get() = if (isLight) Shimmer else Shimmer

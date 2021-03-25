@@ -11,7 +11,9 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.GenericShape
@@ -60,6 +62,7 @@ class RewardsFragment : Fragment() {
         )
     }
 
+    @ExperimentalFoundationApi
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
@@ -73,16 +76,19 @@ class RewardsFragment : Fragment() {
         }
     }
 
+    @ExperimentalFoundationApi
     @Composable
     fun RewardsScreen(){
-            BackgroundImage()
-            Column(Modifier.fillMaxWidth().fillMaxHeight()){
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()){
                 AppBar(resources.getString(R.string.rewards))
                 RewardsList(rewardsViewModel)
         }
     }
 
-    @Composable
+    /*@Composable
     fun BackgroundImage(){
         ImageVector
         Image(painter = painterResource(id = R.drawable.wooden_bg),
@@ -90,22 +96,22 @@ class RewardsFragment : Fragment() {
             contentScale = ContentScale.FillBounds,
             contentDescription = null
         )
-    }
+    }*/
 
 
-    /*@ExperimentalFoundationApi
+    @ExperimentalFoundationApi
     @Composable
     fun RewardsList(rewardsViewModel: RedeemingRewardsViewModel){
         val rewardsList: List<Reward> by rewardsViewModel.rewardsList.collectAsState(listOf())
         Box(modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center){
             LazyVerticalGrid(
-                cells = GridCells.Fixed(2),
+                cells = GridCells.Adaptive(150.dp),
                 contentPadding = PaddingValues(horizontal = 0.dp, vertical = 30.dp),
                 modifier = Modifier.fillMaxWidth(0.9f)
             ){
                 if(rewardsList.isEmpty()){
-                    items(5){
+                    items(6){
                         RewardsShimmer()
                     }
                 }
@@ -116,9 +122,9 @@ class RewardsFragment : Fragment() {
                 }
             }
         }
-    }*/
+    }
 
-    @Composable
+    /*@Composable
     fun RewardsList(rewardsViewModel: RedeemingRewardsViewModel){
         val rewardsList: List<Reward> by rewardsViewModel.rewardsList.collectAsState(listOf())
         LazyRow(
@@ -136,7 +142,7 @@ class RewardsFragment : Fragment() {
                 }
             }
         }
-    }
+    }*/
 
     @Composable
     fun Reward(reward: Reward){
@@ -145,31 +151,45 @@ class RewardsFragment : Fragment() {
                 .clickable(
                     interactionSource = MutableInteractionSource(),
                     indication = null,
-                    onClick = {showToast(reward.points.toString())}
+                    onClick = { showToast(reward.points.toString()) }
                 )
-                .width(250.dp)
-                .padding(20.dp)
+                .padding(10.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+
         ) {
             Card(
                 shape = MaterialTheme.shapes.large,
-                modifier = Modifier.fillMaxHeight(0.9f),
-                elevation = 12.dp
+                modifier = Modifier
+                    .height(200.dp)
+                    .width(150.dp),
+                elevation = 12.dp,
             ) {
-                Box(
-                    contentAlignment = Alignment.BottomCenter
+                Column(modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp)
+                    .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)),
+                    verticalArrangement = Arrangement.Bottom
                 ) {
-                    RewardImage(reward.imageLink)
-                    Column(modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(0.4f)
-                        .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp))
-                        .background(Color.White)
-                        .padding(top= 5.dp)
-                    ) {
-                        RewardTitle(reward.rewardName)
-                        Spacer(modifier = Modifier.height(5.dp))
+                    //RewardTitle(reward.rewardName)
+                    //Spacer(modifier = Modifier.height(5.dp))
+                    Column(
+                        modifier = Modifier
+                            .height(30.dp)
+                            .fillMaxWidth()
+                            .background(Color.White)
+                            .padding(0.dp, 0.dp, 0.dp, 8.dp),
+                        verticalArrangement = Arrangement.Bottom,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ){
                         RewardPoints(reward.points)
                     }
+                }
+                Box(
+                    contentAlignment = Alignment.TopCenter
+                ) {
+
+                    RewardImage(reward.imageLink)
                 }
             }
         }
@@ -182,7 +202,9 @@ class RewardsFragment : Fragment() {
             data = imageLink,
             contentDescription = null,
             contentScale = ContentScale.FillBounds,
-            modifier = Modifier.clip(MaterialTheme.shapes.large),
+            modifier = Modifier
+                .clip(MaterialTheme.shapes.large)
+                .height(150.dp),
         )
     }
 
@@ -200,13 +222,12 @@ class RewardsFragment : Fragment() {
     @Composable
     fun RewardPoints(requiredPoints: Int){
         val userPoints = remember{rewardsViewModel.userPoints}
-        androidx.constraintlayout.compose.ConstraintLayout(
-            modifier = Modifier.fillMaxSize()
+        Column(
         ){
-            val (progress, pointsText) = createRefs()
-            val startGuideline = createGuidelineFromStart(0f)
-            val endGuideline = createGuidelineFromStart(0.6f)
-            CircularProgressIndicator(
+            //val (progress, pointsText) = createRefs()
+            //val startGuideline = createGuidelineFromStart(0f)
+            //val endGuideline = createGuidelineFromStart(0.6f)
+            /*CircularProgressIndicator(
                 progress = remember(calculation = {getPointsPercentage(requiredPoints, userPoints)}),
                 color = MaterialTheme.colors.primaryVariant,
                 strokeWidth = 15.dp,
@@ -219,19 +240,15 @@ class RewardsFragment : Fragment() {
                     }
                     .rotate(270f) // To start progress from left instead of top
 
-            )
+            )*/
             Text(
                 text = remember {
-                    "\u200Fالنقاط\n${EnglishToArabicConverter().convertDigits(userPoints.toString())} \\ " +
-                            EnglishToArabicConverter().convertDigits(requiredPoints.toString())
+                    "\u200Fتحتاج ${EnglishToArabicConverter().convertDigits(userPoints.toString())} " +
+                            "نقطة اضافية"
                 },
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.h6,
-                color = MaterialTheme.colors.secondary,
-                modifier = Modifier.constrainAs(pointsText){
-                    bottom.linkTo(parent.bottom)
-                    centerHorizontallyTo(parent)
-                }
+                style = MaterialTheme.typography.subtitle2,
+                color = Gray
             )
         }
     }
@@ -266,23 +283,17 @@ class RewardsFragment : Fragment() {
             start = Offset(offsetX,offsetY),
             end = Offset(endX,endY),
         )
-        Column(
+        Card(
+            shape = MaterialTheme.shapes.large,
             modifier = Modifier
-                .width(250.dp)
-                .padding(20.dp)
-                .fillMaxHeight()
+                .width(150.dp)
+                .padding(10.dp)
+                .height(200.dp)
+                .clip(MaterialTheme.shapes.large)
+                .background(brush),
+            border = null,
+            backgroundColor = Color.Transparent
         ) {
-            Card(
-                shape = MaterialTheme.shapes.large,
-                modifier = Modifier
-                    .fillMaxHeight(0.9f)
-                    .fillMaxWidth()
-                    .clip(MaterialTheme.shapes.large)
-                    .background(brush),
-                border = null,
-                backgroundColor = Color.Transparent
-            ){
-            }
         }
     }
 
