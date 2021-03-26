@@ -19,8 +19,10 @@ class RedeemingRewardsViewModel(): ViewModel() {
     get() { return CurrentAppUser.points }
 
     private val redeemingDuration: Long = 1000 * 60 * 5 // 5 minutes for the user to show the store
+    // If the reward is not being redeemed, this value will be null, else it will be equal
+    // to the timestamp when the reward redeeming has started
     var currentRewardRedeemingStartTime: Long? = null
-    val currentTime = liveData{
+    private val currentTime = liveData{
         while (true){
             emit(System.currentTimeMillis())
             delay(1000)
@@ -34,16 +36,18 @@ class RedeemingRewardsViewModel(): ViewModel() {
         else return@map it <= currentRewardRedeemingStartTime!! + redeemingDuration
     }
 
+    // Formats the remaining time into a string to be displayed in the RedeemReward fragment
     val remainingTimeString: LiveData<String> = Transformations.map(currentTime){
-        if(isBeingRedeemed.value == true){
-            return@map (((currentRewardRedeemingStartTime!! + redeemingDuration) - it) / 60000).toInt().toString()+
+            return@map "0"+(((currentRewardRedeemingStartTime!! + redeemingDuration) - it) / 60000).toInt().toString()+
                     ":" +
                     ((((currentRewardRedeemingStartTime!! + redeemingDuration) - it) % 60000)
                         / 1000 ).toInt().toString()
-        }
-        else{
-            "00:00"
-        }
+    }
+
+    // The ratio of the time remaining/ total time; it is used in the RedeemReward fragment progress bar
+    val remainingTimeRatio: LiveData<Float> = Transformations.map(currentTime){
+        val ratio = (((currentRewardRedeemingStartTime!! + redeemingDuration) - it) / (redeemingDuration * 1.0))
+        return@map ratio.toFloat()
     }
 
     constructor(bloodDonationAPI: RetrofitBloodDonationInterface): this(){

@@ -62,8 +62,9 @@
     <string name="persons_going">\u200F %1$s أشخاص في طريقهم للتبرّع</string>
     <string name="phone_format_message">تأكد من إدخال رقم بهذا الشكل: 01xxxxxxxxx</string>
     <string name="phone_number">رقم المحمول</string>
-    <string name="point">\u200F %1$d نقاط </string>
+    <string name="point">\u200F %1$d نقطة </string>
     <string name="points">النقاط</string>
+    <string name="points_remaining">\u200F تحتاج %1$d نقطة اضافية</string>
     <string name="proceed">استمرار</string>
     <string name="profile">حسابي</string>
     <string name="register">إنشاء حساب جديد</string>

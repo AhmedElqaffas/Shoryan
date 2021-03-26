@@ -10,15 +10,11 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color.Companion.Black
-import androidx.compose.ui.graphics.Color.Companion.White
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
@@ -40,6 +36,8 @@ import com.example.shoryan.viewmodels.RedeemingRewardsViewModelFactory
 import dev.chrisbanes.accompanist.coil.CoilImage
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.scale
 
 class RedeemRewardFragment : Fragment() {
     private val viewModel: RedeemingRewardsViewModel by viewModels {
@@ -85,17 +83,18 @@ class RedeemRewardFragment : Fragment() {
                     .padding(0.dp, 0.dp, 0.dp, 10.dp)
                     .fillMaxSize()
             ){
+                val isBeingRedeemed: Boolean by viewModel.isBeingRedeemed.observeAsState(false)
                 ConstraintLayout(Modifier.fillMaxSize()) {
                     val parentLayout = this
                     val ( appBar, points, cover, logo, description, branches, button,
                     timer) = createRefs()
                     CoverImage(parentLayout, cover)
                     AppBar(parentLayout, appBar)
-                    RewardPoints(parentLayout, points, cover)
+                    if(!isBeingRedeemed) UserPoints(parentLayout, points, cover)
                     Logo(parentLayout, logo, cover, "https://homepages.cae.wisc.edu/~ece533/images/zelda.png")
                     OfferDescription(parentLayout, description, logo)
                     Branches(parentLayout, branches, logo)
-                    RewardRedeemingStatus(parentLayout, branches, button, timer)
+                    RewardRedeemingStatus(parentLayout, branches, button, timer, isBeingRedeemed)
                 }
             }
         }
@@ -144,7 +143,7 @@ class RedeemRewardFragment : Fragment() {
     }
 
     @Composable
-    fun RewardPoints(
+    fun UserPoints(
         parentLayout: ConstraintLayoutScope,
         pointsReference: ConstrainedLayoutReference,
         coverReference: ConstrainedLayoutReference
@@ -153,7 +152,7 @@ class RedeemRewardFragment : Fragment() {
             Surface(
                 modifier = Modifier
                     .clip(RoundedCornerShape(bottomEnd = 25.dp, topEnd = 25.dp))
-                    .background(White)
+                    .background(Color.White)
                     .padding(25.dp, 15.dp, 15.dp, 10.dp)
                     .constrainAs(pointsReference) {
                         start.linkTo(coverReference.start)
@@ -161,10 +160,10 @@ class RedeemRewardFragment : Fragment() {
                     }
             ) {
                 Text(
-                    text = resources.getString(R.string.point, 2000),
+                    text = resources.getString(R.string.point, viewModel.userPoints),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.subtitle1,
-                    color = Black,
+                    color = Color.Black,
                 )
             }
         }
@@ -205,7 +204,7 @@ class RedeemRewardFragment : Fragment() {
                     text = "احصل على 20 جنيه خصم فوري",
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.subtitle2,
-                    color = Black,
+                    color = Color.Black,
                     modifier = Modifier.constrainAs(descriptionReference){
                         centerVerticallyTo(logoReference)
                         end.linkTo(logoReference.start, margin = 15.dp)
@@ -217,13 +216,13 @@ class RedeemRewardFragment : Fragment() {
         @Composable
         fun Branches(parentLayout: ConstraintLayoutScope,
                      branchesReference: ConstrainedLayoutReference,
-                     logoReference: ConstrainedLayoutReference) {
+                     logoReference: ConstrainedLayoutReference){
 
             parentLayout.apply{
                 Text(
                     text = resources.getString(R.string.branches),
                     style = MaterialTheme.typography.subtitle1,
-                    color = Black,
+                    color = Color.Black,
                     modifier = Modifier.constrainAs(branchesReference){
                         end.linkTo(logoReference.end)
                         top.linkTo(logoReference.bottom, 40.dp)
@@ -237,50 +236,83 @@ class RedeemRewardFragment : Fragment() {
         parentLayout: ConstraintLayoutScope,
         branches: ConstrainedLayoutReference,
         button: ConstrainedLayoutReference,
-        timer: ConstrainedLayoutReference
+        timer: ConstrainedLayoutReference,
+        isBeingRedeemed: Boolean
     ){
-
-        val isBeingRedeemed: Boolean by viewModel.isBeingRedeemed.observeAsState(false)
         if(isBeingRedeemed){
             RemainingTime(parentLayout, timer, branches)
         }
         else{
-            RedeemButton(parentLayout, button, branches)
+            if(canUserRedeemReward())
+                RedeemButton(parentLayout, button, branches)
+            else
+                InsufficientPointsButton(parentLayout, button, branches)
         }
     }
 
-        @Composable
-        fun RedeemButton(
-            parentLayout: ConstraintLayoutScope,
-            buttonReference: ConstrainedLayoutReference,
-            branchesReference: ConstrainedLayoutReference
-        ) {
-            parentLayout.apply{
-                Button(
-                    onClick = {
-                        with(sharedPref!!.edit()) {
-                            val redeemingStartTime = System.currentTimeMillis()
-                            putString(reward.id, redeemingStartTime.toString())
-                            apply()
-                            viewModel.currentRewardRedeemingStartTime = redeemingStartTime
-                    }},
-                    contentPadding = PaddingValues(20.dp),
-                    shape = RoundedCornerShape(29.dp),
-                    modifier = Modifier
-                        .width(350.dp)
-                        .constrainAs(buttonReference) {
-                            top.linkTo(branchesReference.bottom)
-                            centerHorizontallyTo(parent)
-                        }
-                ){
-                    Text(
-                        text = resources.getString(R.string.redeem),
-                        style = MaterialTheme.typography.subtitle1,
-                        color = White
-                    )
-                }
+    @Composable
+    fun RedeemButton(
+        parentLayout: ConstraintLayoutScope,
+        buttonReference: ConstrainedLayoutReference,
+        branchesReference: ConstrainedLayoutReference
+    ) {
+        RewardButton(
+            parentLayout,
+            buttonReference,
+            branchesReference,
+            true,
+            resources.getString(R.string.redeem),
+            ::onRedeemButtonClicked
+        )
+
+    }
+
+    @Composable
+    fun InsufficientPointsButton(
+        parentLayout: ConstraintLayoutScope,
+        buttonReference: ConstrainedLayoutReference,
+        branchesReference: ConstrainedLayoutReference
+    ) {
+        RewardButton(
+            parentLayout,
+            buttonReference,
+            branchesReference,
+            false,
+            resources.getString(R.string.points_remaining, reward.points- viewModel.userPoints),
+            {}
+        )
+    }
+
+    @Composable
+    fun RewardButton(
+        parentLayout: ConstraintLayoutScope,
+        buttonReference: ConstrainedLayoutReference,
+        branchesReference: ConstrainedLayoutReference,
+        enabled: Boolean,
+        text: String,
+        onClick: () -> Unit
+    ){
+        parentLayout.apply{
+            Button(
+                onClick = onClick,
+                enabled = enabled,
+                contentPadding = PaddingValues(20.dp),
+                shape = RoundedCornerShape(29.dp),
+                modifier = Modifier
+                    .width(350.dp)
+                    .constrainAs(buttonReference) {
+                        top.linkTo(branchesReference.bottom)
+                        centerHorizontallyTo(parent)
+                    }
+            ){
+                Text(
+                    text = text,
+                    style = MaterialTheme.typography.subtitle1,
+                    color = Color.White
+                )
             }
         }
+    }
 
     @Composable
     fun RemainingTime(
@@ -294,28 +326,45 @@ class RedeemRewardFragment : Fragment() {
                     .constrainAs(timerReference) {
                         top.linkTo(branchesReference.bottom, margin = 45.dp)
                         centerHorizontallyTo(parent)
-                    }
+                    },
+                horizontalAlignment = Alignment.CenterHorizontally
             ){
-                val remainingTime: String by viewModel.remainingTimeString.observeAsState("")
+                val remainingTimeString: String by viewModel.remainingTimeString.observeAsState("")
+                val remainingTimeRatio: Float by viewModel.remainingTimeRatio.observeAsState(1f)
                 Text(
-                    text = remainingTime,
+                    text = remainingTimeString,
                     style = MaterialTheme.typography.h4,
-                    color = Black,
+                    color = Color.Black,
                     textAlign = TextAlign.Center
                 )
                 Spacer(Modifier.requiredHeight(10.dp))
-
+                LinearProgressIndicator(
+                    progress = remainingTimeRatio,
+                    backgroundColor = Color.White,
+                    color = MaterialTheme.colors.primary,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(5.dp))
+                        .border(BorderStroke(1.dp, Color.LightGray), RoundedCornerShape(5.dp))
+                        .requiredWidth(350.dp)
+                        .scale(1f, 4f)
+                        .requiredHeight(14.dp)
+                )
             }
         }
     }
 
-    /*private fun redeemingTimedout(): Boolean{
-        if(currentRedeeming == null){
-            return true
+    private fun onRedeemButtonClicked(){
+        saveCurrentTime()
+    }
+
+    private fun saveCurrentTime(){
+        with(sharedPref!!.edit()) {
+            val redeemingStartTime = System.currentTimeMillis()
+            putString(reward.id, redeemingStartTime.toString())
+            apply()
+            viewModel.currentRewardRedeemingStartTime = redeemingStartTime
         }
-        else{
-            val redeemingStartTime = currentRedeeming!!.toLong()
-            return  redeemingStartTime + redeemingDuration <= System.currentTimeMillis()
-        }
-    }*/
+    }
+
+    private fun canUserRedeemReward() = viewModel.userPoints >= reward.points
 }
