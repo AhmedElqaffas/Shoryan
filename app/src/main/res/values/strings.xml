@@ -27,7 +27,6 @@
     <string name="donation_request">طلب تبرّع بالدم</string>%1$s
     <string name="enter_code">\u200F قم بإدخال الرمز المرسل الى \n %1$s</string>
     <string name="enter_login_password">\u200F قم بإدخال كلمة السر الخاصة بالرقم \n %1$s</string>
-    <string name="faq">أسئلة متواردة</string>
     <string name="female">أنثي</string>
     <string name="fetching_data_error">فشل في الحصول علي البيانات</string>
     <string name="filter"><u>فلترة</u></string>
@@ -37,7 +36,6 @@
     <string name="gender">النوع</string>
     <string name="hello_user_greeting">\u200F مرحباً، %1$s</string>
     <string name="home">الرئيسية</string>
-    <string name="instructions">تعليمات</string>
     <string name="internet_connection">تأكّد من اتصالك بالإنترنت</string>
     <string name="i_donated">لقد تبرّعت</string>
     <string name="last_name">الاسم الأخير</string>
@@ -62,9 +60,8 @@
     <string name="persons_going">\u200F %1$s أشخاص في طريقهم للتبرّع</string>
     <string name="phone_format_message">تأكد من إدخال رقم بهذا الشكل: 01xxxxxxxxx</string>
     <string name="phone_number">رقم المحمول</string>
-    <string name="point">\u200F %1$d نقطة </string>
+    <string name="point">\u200F %1$s نقطة </string>
     <string name="points">النقاط</string>
-    <string name="points_remaining">\u200F تحتاج %1$d نقطة اضافية</string>
     <string name="proceed">استمرار</string>
     <string name="profile">حسابي</string>
     <string name="register">إنشاء حساب جديد</string>
@@ -76,7 +73,6 @@
     <string name="settings">الإعدادات</string>
     <string name="submit">تنفيذ</string>
     <string name="try_again">اعد المحاولة</string>
-    <string name="username">الاسم بالكامل</string>
     <string name="waiting_confirmation">انت الان مسجل كمتبرع لهذا الطلب, نحن في انتظار وصولك الي بنك الدم</string>
     <string name="you_have_no_requests">"لا يوجد لديك طلبات حالية \n   اضغط هنا للتحديث"</string>
 

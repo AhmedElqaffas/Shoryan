@@ -29,6 +29,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import com.example.shoryan.EnglishToArabicConverter
 import com.example.shoryan.R
 import com.example.shoryan.data.Reward
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
@@ -170,7 +171,7 @@ class RewardsFragment : Fragment() {
     @Composable
     fun RewardPoints(rewardPoints: Int){
         Text(
-            text = resources.getString(R.string.point, rewardPoints),
+            text = resources.getString(R.string.point, EnglishToArabicConverter().convertDigits(rewardPoints.toString())),
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.subtitle2,
             color = Gray

@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable name="viewmodel"
+            type="com.example.shoryan.viewmodels.RequestsViewModel" />
+        <variable
+            name="fragment"
+            type="com.example.shoryan.ui.HomeFragment"/>
+        <variable
+            name="adapter"
+            type="com.example.shoryan.ui.recyclersAdapters.RequestsRecyclerAdapter"/>
+    </data>
+
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/homeSwipeRefresh"
+        app:onRefreshListener="@{() -> fragment.refreshRequests()}">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:id="@+id/homeParentLayout">
+            <androidx.coordinatorlayout.widget.CoordinatorLayout android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:background="@android:color/white"
+                android:id="@+id/coodinatorLayout">
+
+                <com.google.android.material.appbar.AppBarLayout
+                    android:id="@+id/homeAppBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/CustomActionBar"
+                    android:background="@android:color/white"
+                    android:elevation="0dp">
+
+
+                    <androidx.appcompat.widget.Toolbar
+                        android:id="@+id/homeToolbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_scrollFlags="scroll|enterAlways"
+                        app:contentInsetStart="0dp"
+                        app:contentInsetEnd="0dp">
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@android:color/white"
+                            app:layout_scrollFlags="scroll|enterAlways">
+
+                            <TextView
+                                android:id="@+id/toolbarText"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                app:layout_constraintTop_toTopOf="parent"
+                                android:paddingBottom="20dp"
+                                android:textSize="25sp"
+                                android:textColor="@android:color/white"
+                                android:textAlignment="center"
+                                android:fontFamily="arial"
+                                android:text="@string/home"
+                                android:textStyle="bold"
+                                android:background="@drawable/appbar_background"/>
+
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                app:layout_constraintTop_toBottomOf="@id/toolbarText"
+                                android:layout_marginTop="40dp"
+                                android:id="@+id/homeCardsLayout"
+                                android:gravity="fill_horizontal"
+                                android:paddingVertical="8dp">
+
+                                <View
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:visibility="invisible"/>
+
+                                <androidx.cardview.widget.CardView
+                                    android:id="@+id/myRequestsCard"
+                                    android:layout_width="100dp"
+                                    android:layout_height="100dp"
+                                    app:cardCornerRadius="24dp"
+                                    android:layout_weight="1.5">
+
+                                    <androidx.constraintlayout.widget.ConstraintLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:background="@mipmap/gradient_home_cards">
+
+                                        <ImageView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:src="@mipmap/requests"
+                                            android:adjustViewBounds="true"/>
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            app:layout_constraintLeft_toLeftOf="parent"
+                                            app:layout_constraintRight_toRightOf="parent"
+                                            app:layout_constraintBottom_toBottomOf="parent"
+                                            android:layout_marginBottom="5dp"
+                                            android:text="@string/my_requests"
+                                            android:gravity="center_horizontal|bottom"
+                                            android:fontFamily="arial"
+                                            android:textColor="#FFFFFF"
+                                            android:textSize="16sp"
+                                            android:textStyle="bold"/>
+
+                                    </androidx.constraintlayout.widget.ConstraintLayout>
+                                </androidx.cardview.widget.CardView>
+
+                                <View
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:visibility="invisible"/>
+
+                                <androidx.cardview.widget.CardView
+                                    android:id="@+id/pendingRequestCard"
+                                    android:layout_width="100dp"
+                                    android:layout_height="100dp"
+                                    app:cardCornerRadius="24dp"
+                                    android:layout_weight="1.5">
+
+                                    <androidx.constraintlayout.widget.ConstraintLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:background="@mipmap/gradient_home_cards">
+
+                                        <ImageView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:src="@mipmap/pending_request_icon"
+                                            android:adjustViewBounds="true"/>
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            app:layout_constraintLeft_toLeftOf="parent"
+                                            app:layout_constraintRight_toRightOf="parent"
+                                            app:layout_constraintBottom_toBottomOf="parent"
+                                            android:layout_marginBottom="5dp"
+                                            android:text="@string/pending_request"
+                                            android:gravity="center_horizontal|bottom"
+                                            android:fontFamily="arial"
+                                            android:textColor="#FFFFFF"
+                                            android:textSize="16sp"
+                                            android:textStyle="bold"/>
+
+                                    </androidx.constraintlayout.widget.ConstraintLayout>
+                                </androidx.cardview.widget.CardView>
+
+                                <View
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:visibility="invisible"/>
+
+                                <androidx.cardview.widget.CardView
+                                    android:id="@+id/redeemRewardsCard"
+                                    android:layout_width="100dp"
+                                    android:layout_height="100dp"
+                                    app:cardCornerRadius="24dp"
+                                    android:elevation="0dp"
+                                    android:layout_weight="1.5">
+
+                                    <androidx.constraintlayout.widget.ConstraintLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:background="@mipmap/gradient_home_cards">
+
+                                        <ImageView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:src="@mipmap/redeem_icon"
+                                            android:adjustViewBounds="true"/>
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            app:layout_constraintLeft_toLeftOf="parent"
+                                            app:layout_constraintRight_toRightOf="parent"
+                                            app:layout_constraintBottom_toBottomOf="parent"
+                                            android:layout_marginBottom="5dp"
+                                            android:text="@string/rewards"
+                                            android:gravity="center_horizontal|bottom"
+                                            android:fontFamily="arial"
+                                            android:textColor="#FFFFFF"
+                                            android:textSize="16sp"
+                                            android:textStyle="bold"/>
+
+                                    </androidx.constraintlayout.widget.ConstraintLayout>
+                                </androidx.cardview.widget.CardView>
+                                <View
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:visibility="invisible"/>
+                            </LinearLayout>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </androidx.appcompat.widget.Toolbar>
+                </com.google.android.material.appbar.AppBarLayout>
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    tools:context=".ui.HomeFragment"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+                    <TextView
+                        android:id="@+id/requestsWord"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        android:layout_marginTop="30dp"
+                        app:layout_constraintHorizontal_bias="0.05"
+                        android:text="@string/requests"
+                        android:textSize="25sp"
+                        android:fontFamily="arial"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:id="@+id/filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toTopOf="@id/requestsWord"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintHorizontal_bias="0.89"
+                        android:text="@string/filter_according"
+                        android:textSize="14sp"
+                        android:fontFamily="arial"
+                        android:textColor="#000000"
+                        android:textStyle="bold"
+                        android:background="@drawable/curved_gray_border_eleven_dp"
+                        app:drawableStartCompat="@drawable/ic_filter"
+                        android:drawablePadding="10dp"
+                        android:padding="10dp"/>
+
+                    <com.facebook.shimmer.ShimmerFrameLayout
+                        android:id="@+id/requestsShimmerContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        app:layout_constraintTop_toBottomOf="@id/requestsWord"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:layout_marginTop="30dp"
+                        app:shimmer_auto_start="true"
+                        android:visibility="@{viewmodel.shimmerVisibility}"
+                        app:isShimmerActive="@{!viewmodel.areRequestsLoaded}">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                            <include layout="@layout/shimmer_item_request" />
+                            <include layout="@layout/shimmer_item_request"/>
+                            <include layout="@layout/shimmer_item_request"/>
+                            <include layout="@layout/shimmer_item_request"/>
+                            <include layout="@layout/shimmer_item_request"/>
+                            <include layout="@layout/shimmer_item_request"/>
+                        </LinearLayout>
+                    </com.facebook.shimmer.ShimmerFrameLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/requestsRecycler"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        app:layout_constraintTop_toBottomOf="@id/requestsWord"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:layout_marginTop="30dp"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        android:orientation="vertical"
+                        tools:listitem="@layout/item_request"
+                        android:visibility="@{viewmodel.recyclerVisibility}"
+                        app:setAdapter="@{adapter}"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.coordinatorlayout.widget.CoordinatorLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+</layout>
+

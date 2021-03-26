@@ -217,7 +217,8 @@
                         android:textColor="#000000"
                         android:text="@string/cancel_request"
                         android:paddingVertical="20dp"
-                        android:onClick="@{(view) -> viewmodel.showAlertDialog(view)}"/>
+                        android:onClick="@{(view) -> viewmodel.showAlertDialog(view)}"
+                        android:textAllCaps="false"/>
 
 
                 </androidx.constraintlayout.widget.ConstraintLayout>

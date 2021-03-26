@@ -38,6 +38,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.scale
+import com.example.shoryan.EnglishToArabicConverter
 
 class RedeemRewardFragment : Fragment() {
     private val viewModel: RedeemingRewardsViewModel by viewModels {
@@ -160,7 +161,7 @@ class RedeemRewardFragment : Fragment() {
                     }
             ) {
                 Text(
-                    text = resources.getString(R.string.point, viewModel.userPoints),
+                    text = resources.getString(R.string.point, EnglishToArabicConverter().convertDigits(viewModel.userPoints.toString())),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.subtitle1,
                     color = Color.Black,
