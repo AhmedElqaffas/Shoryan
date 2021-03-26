@@ -279,7 +279,7 @@ class RedeemRewardFragment : Fragment() {
             buttonReference,
             branchesReference,
             false,
-            resources.getString(R.string.points_remaining, reward.points- viewModel.userPoints),
+            resources.getString(R.string.points_remaining, EnglishToArabicConverter().convertDigits((reward.points- viewModel.userPoints).toString())),
             {}
         )
     }

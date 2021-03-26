@@ -62,6 +62,7 @@
     <string name="phone_number">رقم المحمول</string>
     <string name="point">\u200F %1$s نقطة </string>
     <string name="points">النقاط</string>
+    <string name="points_remaining">تحتاج %1$s نقطة اضافية</string>
     <string name="proceed">استمرار</string>
     <string name="profile">حسابي</string>
     <string name="register">إنشاء حساب جديد</string>

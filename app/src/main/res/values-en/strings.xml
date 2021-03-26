@@ -63,6 +63,7 @@
     <string name="phone_number">Mobile Number</string>
     <string name="point">%1$s points</string>
     <string name="points">Points</string>
+    <string name="points_remaining">%1$s extra points needed</string>
     <string name="proceed">Proceed</string>
     <string name="profile">Profile</string>
     <string name="register">Register</string>

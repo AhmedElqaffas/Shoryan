@@ -50,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/phone_number"
                 android:inputType="number"
-                android:drawableEnd="@mipmap/smartphone"
+                android:drawableStart="@mipmap/smartphone"
                 android:drawablePadding="12dp"
                 android:backgroundTint="@color/colorPrimaryDark"
                 android:maxLines="1"
