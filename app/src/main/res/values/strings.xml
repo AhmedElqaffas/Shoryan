@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Shoryan</string>
+    <string name="app_name">شريان</string>
     <string name="address">العنوان</string>
     <string name="address_full">\u200F %1$s : %2$s %3$s - %4$s - %5$s</string>
     <string name="back">رجوع</string>

@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -38,6 +39,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.text.intl.Locale
 import com.example.shoryan.EnglishToArabicConverter
 
 class RedeemRewardFragment : Fragment() {
@@ -62,6 +64,7 @@ class RedeemRewardFragment : Fragment() {
             currentRedeeming = sharedPref!!.getString(reward.id, null)
             currentRedeeming?.let{
                 viewModel.currentRewardRedeemingStartTime = it.toLong()
+                viewModel.startTimer()
             }
         return ComposeView(requireContext()).apply {
             setContent {
@@ -96,6 +99,24 @@ class RedeemRewardFragment : Fragment() {
                     OfferDescription(parentLayout, description, logo)
                     Branches(parentLayout, branches, logo)
                     RewardRedeemingStatus(parentLayout, branches, button, timer, isBeingRedeemed)
+                }
+            }
+        }
+
+        Row(
+            verticalAlignment  = Alignment.Bottom,
+            modifier = Modifier
+                .height(70.dp),
+        ){
+            val redeemingStartSuccess: RedeemingRewardsViewModel.RedeemingState
+                    by viewModel.rewardRedeemingState.collectAsState(RedeemingRewardsViewModel.RedeemingState.NOT_REDEEMING)
+            when(redeemingStartSuccess) {
+                RedeemingRewardsViewModel.RedeemingState.STARTED -> {
+                    saveCurrentTime()
+                    viewModel.startTimer()
+                }
+                RedeemingRewardsViewModel.RedeemingState.FAILED -> {
+                    ShowSnackbar()
                 }
             }
         }
@@ -152,11 +173,11 @@ class RedeemRewardFragment : Fragment() {
         parentLayout.apply {
             Surface(
                 modifier = Modifier
-                    .clip(RoundedCornerShape(bottomEnd = 25.dp, topEnd = 25.dp))
+                    .clip(RoundedCornerShape(bottomStart = 25.dp, topStart = 25.dp))
                     .background(Color.White)
                     .padding(25.dp, 15.dp, 15.dp, 10.dp)
                     .constrainAs(pointsReference) {
-                        start.linkTo(coverReference.start)
+                        end.linkTo(coverReference.end)
                         top.linkTo(parent.top, margin = 70.dp)
                     }
             ) {
@@ -188,7 +209,7 @@ class RedeemRewardFragment : Fragment() {
                     .size(110.dp)
                     .constrainAs(logoReference) {
                         top.linkTo(coverReference.bottom, margin = (-40).dp)
-                        end.linkTo(parent.end, margin = 30.dp)
+                        start.linkTo(parent.start, margin = 30.dp)
                     },
             )
         }
@@ -208,7 +229,7 @@ class RedeemRewardFragment : Fragment() {
                     color = Color.Black,
                     modifier = Modifier.constrainAs(descriptionReference){
                         centerVerticallyTo(logoReference)
-                        end.linkTo(logoReference.start, margin = 15.dp)
+                        start.linkTo(logoReference.end, margin = 15.dp)
                     }
                 )
             }
@@ -257,6 +278,7 @@ class RedeemRewardFragment : Fragment() {
         buttonReference: ConstrainedLayoutReference,
         branchesReference: ConstrainedLayoutReference
     ) {
+
         RewardButton(
             parentLayout,
             buttonReference,
@@ -354,8 +376,12 @@ class RedeemRewardFragment : Fragment() {
         }
     }
 
-    private fun onRedeemButtonClicked(){
-        saveCurrentTime()
+    fun onRedeemButtonClicked(){
+        redeemReward(reward.id)
+    }
+
+    fun redeemReward(rewardId: String) {
+        viewModel.redeemReward(rewardId)
     }
 
     private fun saveCurrentTime(){
@@ -367,5 +393,23 @@ class RedeemRewardFragment : Fragment() {
         }
     }
 
+    @Composable
+    fun ShowSnackbar(){
+        Snackbar(
+          action = {SnackbarButton()},
+        ) {
+            Text(resources.getString(R.string.connection_error))
+        }
+    }
+
+    @Composable
+    fun SnackbarButton(){
+        Button(
+            onClick = {redeemReward(reward.id)}
+        ){
+            Text(resources.getString(R.string.try_again))
+        }
+    }
     private fun canUserRedeemReward() = viewModel.userPoints >= reward.points
+    private fun isEnglishLocality() = Locale.Companion.current.language == "en"
 }
