@@ -38,10 +38,14 @@ class LoginPhoneFragment : Fragment(){
         _binding = null
     }
 
+    override fun onResume() {
+        super.onResume()
+        setupPhoneEditText()
+    }
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         instantiateNavController(view)
-        setupPhoneEditText()
 
         bannerBinding!!.loginBack.setOnClickListener{
             navController.popBackStack()
@@ -63,7 +67,7 @@ class LoginPhoneFragment : Fragment(){
     private fun setupPhoneEditText(){
         binding.phoneEditText.apply{
             requestFocus()
-            AndroidUtility.showSoftKeyboard(requireActivity(), this)
+            AndroidUtility.showSoftKeyboard(context, this)
             this.addTextChangedListener { observePhoneText(it) }
             this.setOnFocusChangeListener { view, _ -> phoneEditTextFocusListener(view) }
         }

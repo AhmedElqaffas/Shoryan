@@ -67,7 +67,11 @@ class PasswordLoginFragment : Fragment(), LoadingFragmentHolder {
         initializeLoginObserver()
         binding.confirmLoginButton.setOnClickListener { checkLogin() }
         loginBannerBinding!!.loginBack.setOnClickListener { navController.popBackStack() }
+    }
 
+    override fun onResume() {
+        super.onResume()
+        setupPasswordEditText()
     }
 
     private fun instantiateNavController(view: View){
