@@ -27,54 +27,65 @@ class RedeemingRewardsViewModel(): ViewModel() {
     private val redeemingDuration: Long = 1000 * 60 * 1 // 1 minutes for the user to show the store
     // If the reward is not being redeemed, this value will be null, else it will be equal
     // to the timestamp when the reward redeeming has started
-    var currentRewardRedeemingStartTime: Long? = null
-    private val remainingTime = MutableLiveData(0L)
+    //var currentRewardRedeemingStartTime: Long? = null
+    private val remainingTime = MutableSharedFlow<Long>()
 
     private val _rewardRedeemingState =  MutableStateFlow(RedeemingState.NOT_REDEEMING)
     val rewardRedeemingState: StateFlow<RedeemingState> = _rewardRedeemingState
 
-    val isBeingRedeemed: LiveData<Boolean> = Transformations.map(remainingTime){
-        if(currentRewardRedeemingStartTime == null){
-            return@map false
-        }
-        else return@map it > 0
+    val isBeingRedeemed: Flow<Boolean> = _rewardRedeemingState.transform{
+        emit(it == RedeemingState.STARTED)
     }
 
     // Formats the remaining time into a string to be displayed in the RedeemReward fragment
-    val remainingTimeString: LiveData<String> = Transformations.map(remainingTime){
+    val remainingTimeString = remainingTime.transform{
         val minutes = "0"+(it/ 60000)
         var seconds = ((it % 60000) / 1000 ).toString()
-        if(seconds.length == 1) seconds = "0$seconds"
-            return@map "$minutes:$seconds"
+        if(seconds.length == 1)
+            seconds = "0$seconds"
+        emit("$minutes:$seconds")
     }
 
     // The ratio of the time remaining/ total time; it is used in the RedeemReward fragment progress bar
-    val remainingTimeRatio: LiveData<Float> = Transformations.map(remainingTime){
-        val ratio = it / (redeemingDuration * 1.0)
-        return@map ratio.toFloat()
+    val remainingTimeRatio: Flow<Float> = remainingTime.transform{
+        emit(it / (redeemingDuration * 1.0).toFloat())
     }
 
     constructor(bloodDonationAPI: RetrofitBloodDonationInterface): this(){
         this.bloodDonationAPI = bloodDonationAPI
     }
 
-
-    fun startTimer(){
-        if(currentRewardRedeemingStartTime != null){
-            val timeRemaining = redeemingDuration + currentRewardRedeemingStartTime!! - System.currentTimeMillis()
-            timer = object:CountDownTimer(timeRemaining, 1000){
-                override fun onTick(millisUntilFinished: Long) {
-                    remainingTime.value = millisUntilFinished
-                }
-                override fun onFinish(){
-                    remainingTime.value = 0
-                }
-            }.start()
+    fun setRedeemingStartTime(redeemingStartTime: Long) = viewModelScope.launch {
+        if(redeemingDuration + redeemingStartTime - System.currentTimeMillis() > 0){
+            _rewardRedeemingState.emit(RedeemingState.STARTED)
+            startTimer(redeemingStartTime)
+        }
+        else{
+            _rewardRedeemingState.emit(RedeemingState.NOT_REDEEMING)
         }
     }
 
-    fun redeemReward(rewardId: String) = viewModelScope.launch{
+    private fun startTimer(redeemingStartTime: Long){
+        val timeRemaining = redeemingDuration + redeemingStartTime - System.currentTimeMillis()
+        timer = object:CountDownTimer(timeRemaining, 500){
+            override fun onTick(millisUntilFinished: Long) {
+                viewModelScope.launch {
+                    remainingTime.emit(millisUntilFinished)
+                }
+            }
+            override fun onFinish(){
+                viewModelScope.launch{
+                    remainingTime.emit(0)
+                    _rewardRedeemingState.emit(RedeemingState.NOT_REDEEMING)
+                }
+            }
+        }.start()
+    }
+
+    fun redeemReward(rewardId: String, redeemingStartTime: Long): Flow<Boolean> = flow{
         _rewardRedeemingState.emit(RedeemingState.STARTED)
+        startTimer(redeemingStartTime)
+        emit(true)
     }
 }
 

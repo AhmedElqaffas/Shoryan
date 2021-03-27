@@ -36,11 +36,12 @@ import com.example.shoryan.viewmodels.RedeemingRewardsViewModel
 import com.example.shoryan.viewmodels.RedeemingRewardsViewModelFactory
 import dev.chrisbanes.accompanist.coil.CoilImage
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.intl.Locale
+import androidx.lifecycle.lifecycleScope
 import com.example.shoryan.EnglishToArabicConverter
+import kotlinx.coroutines.flow.collect
 
 class RedeemRewardFragment : Fragment() {
     private val viewModel: RedeemingRewardsViewModel by viewModels {
@@ -49,7 +50,7 @@ class RedeemRewardFragment : Fragment() {
         )
     }
 
-    val sharedPref by lazy {
+    private val sharedPref by lazy {
         activity?.getPreferences(Context.MODE_PRIVATE)
     }
     private var currentRedeeming: String? = null
@@ -63,8 +64,7 @@ class RedeemRewardFragment : Fragment() {
     ): View {
             currentRedeeming = sharedPref!!.getString(reward.id, null)
             currentRedeeming?.let{
-                viewModel.currentRewardRedeemingStartTime = it.toLong()
-                viewModel.startTimer()
+                viewModel.setRedeemingStartTime(it.toLong())
             }
         return ComposeView(requireContext()).apply {
             setContent {
@@ -87,7 +87,7 @@ class RedeemRewardFragment : Fragment() {
                     .padding(0.dp, 0.dp, 0.dp, 10.dp)
                     .fillMaxSize()
             ){
-                val isBeingRedeemed: Boolean by viewModel.isBeingRedeemed.observeAsState(false)
+                val isBeingRedeemed: Boolean by viewModel.isBeingRedeemed.collectAsState(false)
                 ConstraintLayout(Modifier.fillMaxSize()) {
                     val parentLayout = this
                     val ( appBar, points, cover, logo, description, branches, button,
@@ -95,7 +95,7 @@ class RedeemRewardFragment : Fragment() {
                     CoverImage(parentLayout, cover)
                     AppBar(parentLayout, appBar)
                     if(!isBeingRedeemed) UserPoints(parentLayout, points, cover)
-                    Logo(parentLayout, logo, cover, "https://homepages.cae.wisc.edu/~ece533/images/zelda.png")
+                    Logo(parentLayout, logo, cover, reward.imageLink)
                     OfferDescription(parentLayout, description, logo)
                     Branches(parentLayout, branches, logo)
                     RewardRedeemingStatus(parentLayout, branches, button, timer, isBeingRedeemed)
@@ -110,14 +110,8 @@ class RedeemRewardFragment : Fragment() {
         ){
             val redeemingStartSuccess: RedeemingRewardsViewModel.RedeemingState
                     by viewModel.rewardRedeemingState.collectAsState(RedeemingRewardsViewModel.RedeemingState.NOT_REDEEMING)
-            when(redeemingStartSuccess) {
-                RedeemingRewardsViewModel.RedeemingState.STARTED -> {
-                    saveCurrentTime()
-                    viewModel.startTimer()
-                }
-                RedeemingRewardsViewModel.RedeemingState.FAILED -> {
+            if(redeemingStartSuccess == RedeemingRewardsViewModel.RedeemingState.FAILED) {
                     ShowSnackbar()
-                }
             }
         }
     }
@@ -352,8 +346,8 @@ class RedeemRewardFragment : Fragment() {
                     },
                 horizontalAlignment = Alignment.CenterHorizontally
             ){
-                val remainingTimeString: String by viewModel.remainingTimeString.observeAsState("")
-                val remainingTimeRatio: Float by viewModel.remainingTimeRatio.observeAsState(1f)
+                val remainingTimeString: String by viewModel.remainingTimeString.collectAsState("")
+                val remainingTimeRatio: Float by viewModel.remainingTimeRatio.collectAsState(1f)
                 Text(
                     text = remainingTimeString,
                     style = MaterialTheme.typography.h4,
@@ -376,20 +370,24 @@ class RedeemRewardFragment : Fragment() {
         }
     }
 
-    fun onRedeemButtonClicked(){
-        redeemReward(reward.id)
+    private fun onRedeemButtonClicked(){
+        val redeemingStartTime = System.currentTimeMillis()
+        redeemReward(reward.id, redeemingStartTime)
     }
 
-    fun redeemReward(rewardId: String) {
-        viewModel.redeemReward(rewardId)
+    private fun redeemReward(rewardId: String, redeemingStartTime: Long) {
+        lifecycleScope.launchWhenResumed {
+            viewModel.redeemReward(rewardId, redeemingStartTime).collect{
+                if(it)
+                    saveRedeemingStartTime(redeemingStartTime)
+            }
+        }
     }
 
-    private fun saveCurrentTime(){
+    private fun saveRedeemingStartTime(redeemingStartTime: Long){
         with(sharedPref!!.edit()) {
-            val redeemingStartTime = System.currentTimeMillis()
             putString(reward.id, redeemingStartTime.toString())
             apply()
-            viewModel.currentRewardRedeemingStartTime = redeemingStartTime
         }
     }
 
@@ -405,7 +403,7 @@ class RedeemRewardFragment : Fragment() {
     @Composable
     fun SnackbarButton(){
         Button(
-            onClick = {redeemReward(reward.id)}
+            onClick = {redeemReward(reward.id, System.currentTimeMillis())}
         ){
             Text(resources.getString(R.string.try_again))
         }
