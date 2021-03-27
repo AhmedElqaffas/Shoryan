@@ -6,11 +6,8 @@ import com.example.shoryan.data.CurrentAppUser
 import com.example.shoryan.data.Reward
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.repos.RewardsRepo
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 
 class RedeemingRewardsViewModel(): ViewModel() {
 
@@ -31,31 +28,31 @@ class RedeemingRewardsViewModel(): ViewModel() {
     // If the reward is not being redeemed, this value will be null, else it will be equal
     // to the timestamp when the reward redeeming has started
     var currentRewardRedeemingStartTime: Long? = null
-    private val currentTime = MutableLiveData(System.currentTimeMillis())
-
-    val isBeingRedeemed: LiveData<Boolean> = Transformations.map(currentTime){
-        if(currentRewardRedeemingStartTime == null){
-            return@map false
-        }
-        else return@map it <= currentRewardRedeemingStartTime!! + redeemingDuration
-    }
-
-    // Formats the remaining time into a string to be displayed in the RedeemReward fragment
-    val remainingTimeString: LiveData<String> = Transformations.map(currentTime){
-            return@map "0"+(((currentRewardRedeemingStartTime!! + redeemingDuration) - it) / 60000).toInt().toString()+
-                    ":" +
-                    ((((currentRewardRedeemingStartTime!! + redeemingDuration) - it) % 60000)
-                        / 1000 ).toInt().toString()
-    }
-
-    // The ratio of the time remaining/ total time; it is used in the RedeemReward fragment progress bar
-    val remainingTimeRatio: LiveData<Float> = Transformations.map(currentTime){
-        val ratio = (((currentRewardRedeemingStartTime!! + redeemingDuration) - it) / (redeemingDuration * 1.0))
-        return@map ratio.toFloat()
-    }
+    private val remainingTime = MutableLiveData(0L)
 
     private val _rewardRedeemingState =  MutableStateFlow(RedeemingState.NOT_REDEEMING)
     val rewardRedeemingState: StateFlow<RedeemingState> = _rewardRedeemingState
+
+    val isBeingRedeemed: LiveData<Boolean> = Transformations.map(remainingTime){
+        if(currentRewardRedeemingStartTime == null){
+            return@map false
+        }
+        else return@map it > 0
+    }
+
+    // Formats the remaining time into a string to be displayed in the RedeemReward fragment
+    val remainingTimeString: LiveData<String> = Transformations.map(remainingTime){
+        val minutes = "0"+(it/ 60000)
+        var seconds = ((it % 60000) / 1000 ).toString()
+        if(seconds.length == 1) seconds = "0$seconds"
+            return@map "$minutes:$seconds"
+    }
+
+    // The ratio of the time remaining/ total time; it is used in the RedeemReward fragment progress bar
+    val remainingTimeRatio: LiveData<Float> = Transformations.map(remainingTime){
+        val ratio = it / (redeemingDuration * 1.0)
+        return@map ratio.toFloat()
+    }
 
     constructor(bloodDonationAPI: RetrofitBloodDonationInterface): this(){
         this.bloodDonationAPI = bloodDonationAPI
@@ -67,10 +64,10 @@ class RedeemingRewardsViewModel(): ViewModel() {
             val timeRemaining = redeemingDuration + currentRewardRedeemingStartTime!! - System.currentTimeMillis()
             timer = object:CountDownTimer(timeRemaining, 1000){
                 override fun onTick(millisUntilFinished: Long) {
-                    currentTime.value = System.currentTimeMillis()
+                    remainingTime.value = millisUntilFinished
                 }
                 override fun onFinish(){
-                    currentTime.value = System.currentTimeMillis()
+                    remainingTime.value = 0
                 }
             }.start()
         }
