@@ -1,11 +1,9 @@
 package com.example.shoryan.viewmodels
 
 import androidx.lifecycle.*
-import com.example.shoryan.EnglishToArabicConverter
 import com.example.shoryan.data.*
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.repos.RequestFulfillmentRepo
-import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
@@ -31,12 +29,9 @@ open class RequestDetailsViewModel(protected val bloodDonationAPI: RetrofitBlood
     val areDonationDetailsLoaded = _areDonationDetailsLoaded
     // Instead of the xml view observing the donationDetails liveData and performing subtraction itself,
     // this view should observe this liveData which simplifies the xml
-    val numberOfRemainingBags: LiveData<String> = Transformations.map(donationDetails){
-        EnglishToArabicConverter().convertDigits(
+    val numberOfRemainingBags: LiveData<Int> = Transformations.map(donationDetails){
             donationDetails.value?.request?.numberOfBagsRequired
                 ?.minus(donationDetails.value?.request?.numberOfBagsFulfilled!!)
-                .toString()
-        )
     }
 
     // A mechanism to push events to the fragment

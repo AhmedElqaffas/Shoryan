@@ -7,8 +7,6 @@
 
         <variable name="viewmodel"
             type="com.example.shoryan.viewmodels.ProfileViewModel" />
-        <variable name="englishArabicConverter"
-            type="com.example.shoryan.EnglishToArabicConverter"/>
 
     </data>
 
@@ -87,7 +85,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintHorizontal_bias="0.74"
                         app:layout_constraintVertical_bias="0.26"
-                        android:text="@{englishArabicConverter.convertDigits(Integer.toString(viewmodel.user.numberOfDonations))}"
+                        android:text="@{@string/number_donations(viewmodel.user.numberOfDonations)}"
                         android:textSize="22sp"
                         android:fontFamily="arial"
                         android:textStyle="bold"
@@ -100,7 +98,7 @@
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintHorizontal_bias="0.26"
-                        android:text="@{englishArabicConverter.convertDigits(Integer.toString(viewmodel.user.points))}"
+                        android:text="@{@string/number_points(viewmodel.user.points)}"
                         android:textSize="22sp"
                         android:fontFamily="arial"
                         android:textStyle="bold"

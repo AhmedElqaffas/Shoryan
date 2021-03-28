@@ -40,7 +40,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.intl.Locale
 import androidx.lifecycle.lifecycleScope
-import com.example.shoryan.EnglishToArabicConverter
 import kotlinx.coroutines.flow.collect
 
 class RedeemRewardFragment : Fragment() {
@@ -176,7 +175,7 @@ class RedeemRewardFragment : Fragment() {
                     }
             ) {
                 Text(
-                    text = resources.getString(R.string.point, EnglishToArabicConverter().convertDigits(viewModel.userPoints.toString())),
+                    text = resources.getString(R.string.point, viewModel.userPoints),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.subtitle1,
                     color = Color.Black,
@@ -295,7 +294,7 @@ class RedeemRewardFragment : Fragment() {
             buttonReference,
             branchesReference,
             false,
-            resources.getString(R.string.points_remaining, EnglishToArabicConverter().convertDigits((reward.points- viewModel.userPoints).toString())),
+            resources.getString(R.string.points_remaining, reward.points - viewModel.userPoints),
             {}
         )
     }

@@ -7,8 +7,6 @@
 
         <variable name="viewmodel"
             type="com.example.shoryan.viewmodels.MyRequestDetailsViewModel" />
-        <variable name="englishArabicConverter"
-            type="com.example.shoryan.EnglishToArabicConverter"/>
 
     </data>
 
@@ -165,7 +163,7 @@
                                 android:textColor="@color/colorPrimary"
                                 android:textSize="13sp"
                                 android:textStyle="bold"
-                                android:text="@{@string/address_full(viewmodel.donationDetails.request.bloodBank.name,englishArabicConverter.convertDigits(Integer.toString(viewmodel.donationDetails.request.bloodBank.location.buildingNumber)),viewmodel.donationDetails.request.bloodBank.location.streetName,viewmodel.donationDetails.request.bloodBank.location.region,viewmodel.donationDetails.request.bloodBank.location.governorate)}" />
+                                android:text="@{@string/address_full(viewmodel.donationDetails.request.bloodBank.name,viewmodel.donationDetails.request.bloodBank.location.buildingNumber,viewmodel.donationDetails.request.bloodBank.location.streetName,viewmodel.donationDetails.request.bloodBank.location.region,viewmodel.donationDetails.request.bloodBank.location.governorate)}" />
 
                             <TextView
                                 android:id="@+id/requestBagsRequired"
@@ -196,7 +194,7 @@
                                 app:drawableEndCompat="@drawable/ic_blood_hand"
                                 app:layout_constraintStart_toStartOf="@id/pinIcon"
                                 app:layout_constraintTop_toBottomOf="@id/requestBagsRequired"
-                                android:text="@{@string/persons_going(englishArabicConverter.convertDigits(Integer.toString(viewmodel.donationDetails.request.numberOfComingDonors)))}" />
+                                android:text="@{@string/persons_going(viewmodel.donationDetails.request.numberOfComingDonors)}" />
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
 

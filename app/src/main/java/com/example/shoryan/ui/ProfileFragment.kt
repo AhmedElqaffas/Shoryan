@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.example.shoryan.EnglishToArabicConverter
 import com.example.shoryan.databinding.FragmentProfileBinding
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.networking.RetrofitClient
@@ -28,7 +27,6 @@ class ProfileFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         binding.viewmodel = profileViewModel
-        binding.englishArabicConverter = EnglishToArabicConverter()
         binding.lifecycleOwner = this
         return binding.root
     }

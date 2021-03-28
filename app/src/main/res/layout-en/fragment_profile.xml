@@ -7,8 +7,6 @@
 
         <variable name="viewmodel"
             type="com.example.shoryan.viewmodels.ProfileViewModel" />
-        <variable name="englishArabicConverter"
-            type="com.example.shoryan.EnglishToArabicConverter"/>
 
     </data>
 

@@ -7,11 +7,9 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
-import androidx.core.view.ViewCompat
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.lifecycleScope
 import com.example.shoryan.BR
-import com.example.shoryan.EnglishToArabicConverter
 import com.example.shoryan.R
 import com.example.shoryan.databinding.FragmentMyRequestDetailsBinding
 import com.example.shoryan.databinding.FragmentRequestFulfillmentBinding
@@ -102,7 +100,6 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
             FragmentRequestFulfillmentBinding.inflate(inflater)
         }
         binding.setVariable(BR.viewmodel, viewModelsMap[getFragmentType()]!!)
-        binding.setVariable(BR.englishArabicConverter, EnglishToArabicConverter())
         binding.lifecycleOwner = this
         return binding.root
     }

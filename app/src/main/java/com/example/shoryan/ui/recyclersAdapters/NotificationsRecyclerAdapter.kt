@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.shoryan.EnglishToArabicConverter
 import com.example.shoryan.R
 import com.example.shoryan.data.DonationNotification
 import kotlinx.android.synthetic.main.item_notification.view.*
@@ -38,7 +37,7 @@ class NotificationsRecyclerAdapter:
             itemView.notificationTitle.text = notification.title
             itemView.notificationDetails.text = notification.details
             itemView.notificationTimeElapsed.text = "${itemView.notificationTimeElapsed.text} " +
-                    "${EnglishToArabicConverter().convertDigits(notification.dateTime)}"
+                    "${notification.dateTime}"
             itemView.newNotificationIcon.visibility = if(notification.isRead) View.INVISIBLE else View.VISIBLE
         }
     }

@@ -7,8 +7,6 @@
 
         <variable name="viewmodel"
             type="com.example.shoryan.viewmodels.RequestFulfillmentViewModel" />
-        <variable name="englishArabicConverter"
-            type="com.example.shoryan.EnglishToArabicConverter"/>
 
     </data>
 
@@ -157,14 +155,14 @@
                                 app:layout_constraintTop_toTopOf="@id/pinIcon"
                                 app:layout_constraintStart_toEndOf="@id/pinIcon"
                                 app:layout_constraintEnd_toEndOf="parent"
-                                android:paddingStart="15dp"
                                 android:paddingTop="0dp"
+                                android:paddingStart="10dp"
                                 android:layout_marginEnd="10dp"
                                 android:fontFamily="arial"
                                 android:textColor="@color/colorPrimary"
                                 android:textSize="13sp"
                                 android:textStyle="bold"
-                                android:text="@{@string/address_full(viewmodel.donationDetails.request.bloodBank.name,englishArabicConverter.convertDigits(Integer.toString(viewmodel.donationDetails.request.bloodBank.location.buildingNumber)),viewmodel.donationDetails.request.bloodBank.location.streetName,viewmodel.donationDetails.request.bloodBank.location.region,viewmodel.donationDetails.request.bloodBank.location.governorate)}" />
+                                android:text="@{@string/address_full(viewmodel.donationDetails.request.bloodBank.name,viewmodel.donationDetails.request.bloodBank.location.buildingNumber,viewmodel.donationDetails.request.bloodBank.location.streetName,viewmodel.donationDetails.request.bloodBank.location.region,viewmodel.donationDetails.request.bloodBank.location.governorate)}" />
 
                             <TextView
                                 android:id="@+id/requestBagsRequired"
@@ -186,7 +184,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="10dp"
-                                android:drawablePadding="15dp"
+                                android:drawablePadding="8dp"
                                 android:fontFamily="arial"
                                 android:textColor="@color/colorPrimary"
                                 android:textSize="13sp"
@@ -194,7 +192,7 @@
                                 app:drawableStartCompat="@drawable/ic_blood_hand"
                                 app:layout_constraintStart_toStartOf="@id/pinIcon"
                                 app:layout_constraintTop_toBottomOf="@id/requestBagsRequired"
-                                android:text="@{@string/persons_going(englishArabicConverter.convertDigits(Integer.toString(viewmodel.donationDetails.request.numberOfComingDonors)))}" />
+                                android:text="@{@string/persons_going(viewmodel.donationDetails.request.numberOfComingDonors)}" />
 
                             <TextView
                                 android:id="@+id/callRequesterIcon"
