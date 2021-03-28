@@ -27,7 +27,7 @@ class RegistrationViewModel: ViewModel() {
         .create(RetrofitBloodDonationInterface::class.java)
     private val _bloodType = MutableLiveData<BloodType>(BloodType.APositive)
     val bloodType: LiveData<BloodType> = _bloodType
-    private val _gender = MutableLiveData<Gender>(Gender.None)
+    private val _gender = MutableLiveData<Gender>(Gender.None_EN)
     val gender: LiveData<Gender> = _gender
     private val _birthDate = MutableLiveData<BirthDate?>(null)
     val birthDateString: LiveData<String> = Transformations.map(_birthDate){

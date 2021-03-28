@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.*
+import com.example.shoryan.R
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.repos.MyRequestDetailsRepo
 import kotlinx.coroutines.launch
@@ -29,13 +30,15 @@ class MyRequestDetailsViewModel@Inject constructor(
 
     private fun cancelRequest(view: View) = viewModelScope.launch{
         _isInLoadingState.postValue(true)
-        val processResultError = MyRequestDetailsRepo.cancelRequest(bloodDonationAPI, requestId)
-        processResultError?.apply { _eventsFlow.emit(RequestDetailsViewEvent.ShowSnackBar(this)) }
-        _isInLoadingState.postValue(false)
-        if(processResultError.isNullOrEmpty()){
+        val updatedDonationRequest = MyRequestDetailsRepo.cancelRequest(bloodDonationAPI, requestId)
+        if(updatedDonationRequest != null){
             dismissFragment()
             showSuccessToast(view)
         }
+        else{
+            _eventsFlow.emit(RequestDetailsViewEvent.ShowSnackBar(R.string.connection_error))
+        }
+        _isInLoadingState.postValue(false)
     }
 
     private suspend fun dismissFragment(){

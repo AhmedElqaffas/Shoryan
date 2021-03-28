@@ -16,11 +16,11 @@
         android:textColor="@color/shimmer"
         android:textSize="21sp"
         android:textStyle="bold"
-        app:layout_constraintHorizontal_bias="0.9"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:text="@string/b_plus" />
+        android:text="@string/b_plus"/>
 
     <TextView
         android:id="@+id/requesterNameShimmer"
@@ -30,9 +30,9 @@
         android:textColor="@color/shimmer"
         android:textSize="21sp"
         android:textStyle="bold"
-        app:layout_constraintHorizontal_bias="0.7"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/requestBloodTypeShimmer"
+        app:layout_constraintHorizontal_bias="0.3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/requestBloodTypeShimmer"
         app:layout_constraintTop_toTopOf="@id/requestBloodTypeShimmer"
         android:text="عبد الغفور البرعي"
         android:background="@color/shimmer"/>
@@ -44,10 +44,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/requesterNameShimmer"
-        app:layout_constraintRight_toRightOf="@id/requesterNameShimmer"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:paddingRight="5dp"
-        android:layout_marginLeft="10dp"
+        app:layout_constraintStart_toStartOf="@id/requesterNameShimmer"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:paddingStart="5dp"
+        android:layout_marginEnd="10dp"
         android:layout_marginTop="10dp"
         android:fontFamily="arial"
         android:textColor="@color/shimmer"
@@ -66,7 +66,7 @@
         android:textColor="@color/shimmer"
         android:textSize="13sp"
         android:textStyle="bold"
-        app:layout_constraintRight_toRightOf="@id/requesterNameShimmer"
+        app:layout_constraintStart_toStartOf="@id/requesterNameShimmer"
         app:layout_constraintTop_toBottomOf="@id/requestLocationShimmer"
         android:text="@string/blood_bags"
         android:background="@color/shimmer"/>
@@ -81,7 +81,7 @@
         android:textColor="@color/shimmer"
         android:textSize="13sp"
         android:textStyle="bold"
-        app:layout_constraintRight_toRightOf="@id/requesterNameShimmer"
+        app:layout_constraintStart_toStartOf="@id/requesterNameShimmer"
         app:layout_constraintTop_toBottomOf="@id/requestBagsRequiredShimmer"
         android:text="@string/persons_going"
         android:background="@color/shimmer" />
@@ -93,17 +93,9 @@
         android:layout_marginVertical="20dp"
         app:drawableStartCompat="@drawable/ic_phone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.28"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_bias="0.72"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/personsDonatingToRequestShimmer"/>
 
-    <TextView
-        android:id="@+id/messageRequesterIcoShimmern"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="30dp"
-        app:drawableStartCompat="@drawable/ic_chat"
-        app:layout_constraintRight_toLeftOf="@id/callRequesterIconShimmer"
-        app:layout_constraintTop_toTopOf="@id/callRequesterIconShimmer" />
 </androidx.constraintlayout.widget.ConstraintLayout>

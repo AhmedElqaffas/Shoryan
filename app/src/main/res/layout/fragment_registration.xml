@@ -94,7 +94,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:backgroundTint="@color/colorPrimaryDark"
-                        android:drawableEnd="@mipmap/username"
+                        android:drawableStart="@mipmap/username"
                         android:paddingEnd="20dp"
                         android:drawablePadding="16dp"
                         android:hint="@string/first_name"
@@ -124,7 +124,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:backgroundTint="@color/colorPrimaryDark"
-                        android:drawableEnd="@mipmap/username"
+                        android:drawableStart="@mipmap/username"
                         android:paddingEnd="20dp"
                         android:drawablePadding="16dp"
                         android:hint="@string/last_name"
@@ -154,7 +154,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:backgroundTint="@color/colorPrimaryDark"
-                        android:drawableEnd="@mipmap/smartphone"
+                        android:drawableStart="@mipmap/smartphone"
                         android:drawablePadding="16dp"
                         android:paddingEnd="20dp"
                         android:hint="@string/phone_number"
@@ -177,9 +177,9 @@
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:layout_marginTop="30dp"
-                    app:layout_constraintHorizontal_bias="0.948"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintHorizontal_bias="0.05"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/registrationPhoneTextLayout" />
 
                 <Button
@@ -193,9 +193,8 @@
                     android:text="@{viewmodel.birthDateString}"
                     android:textColor="#7E7878"
                     android:layout_marginTop="20dp"
-                    app:layout_constraintHorizontal_bias="0.4"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/birthDateTextView"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/registrationPhoneTextLayout" />
 
                 <TextView
@@ -208,9 +207,9 @@
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:layout_marginTop="35dp"
-                    app:layout_constraintHorizontal_bias="0.948"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintHorizontal_bias="0.05"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/birthDateTextView" />
 
 
@@ -227,9 +226,8 @@
                     android:textColor="#7E7878"
                     android:textSize="16sp"
                     app:drawableEndCompat="@drawable/iconfinder_nav_arrow_right_383100_big"
-                    app:layout_constraintHorizontal_bias="0.4"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/birthDatePicker"
+                    app:layout_constraintEnd_toEndOf="@id/birthDatePicker"
                     app:layout_constraintTop_toBottomOf="@id/birthDateTextView"/>
 
                 <View
@@ -237,9 +235,8 @@
                     android:layout_height="2dp"
                     android:background="@color/colorPrimaryDark"
                     android:layout_marginTop="1dp"
-                    app:layout_constraintHorizontal_bias="0.4"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/birthDatePicker"
+                    app:layout_constraintEnd_toEndOf="@id/birthDatePicker"
                     app:layout_constraintTop_toBottomOf="@id/bloodTypePicker" />
 
                 <TextView
@@ -252,9 +249,9 @@
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:layout_marginTop="35dp"
-                    app:layout_constraintHorizontal_bias="0.948"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintHorizontal_bias="0.05"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/bloodTypeTextView"/>
 
                 <TextView
@@ -270,8 +267,8 @@
                     android:textColor="#7E7878"
                     android:textSize="16sp"
                     app:drawableEndCompat="@drawable/iconfinder_nav_arrow_right_383100_big"
-                    app:layout_constraintLeft_toLeftOf="@id/bloodTypePicker"
-                    app:layout_constraintRight_toRightOf="@id/bloodTypePicker"
+                    app:layout_constraintStart_toStartOf="@id/birthDatePicker"
+                    app:layout_constraintEnd_toEndOf="@id/birthDatePicker"
                     app:layout_constraintTop_toBottomOf="@id/bloodTypePicker"/>
 
                 <View
@@ -305,7 +302,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:backgroundTint="@color/colorPrimaryDark"
-                        android:drawableEnd="@mipmap/pin"
+                        android:drawableStart="@mipmap/pin"
                         android:drawablePadding="16dp"
                         android:paddingEnd="20dp"
                         android:hint="@string/address"
@@ -318,7 +315,7 @@
 
                 <Button
                     android:id="@+id/openMapButton"
-                    android:layout_width="0dp"
+                    android:layout_width="200dp"
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toBottomOf="@id/addressTextLayout"
                     app:layout_constraintLeft_toLeftOf="@id/registrationTextView"
@@ -326,7 +323,7 @@
                     android:background="@drawable/button_curved_red"
                     android:text="@string/change_location"
                     android:textColor="#FFFFFF"
-                    android:layout_weight="5"/>
+                    />
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/passwordTextLayout"
@@ -339,7 +336,6 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/openMapButton"
                     app:passwordToggleEnabled="true"
-                    android:layoutDirection="rtl"
                     app:errorCondition="@{viewmodel.shouldShowPasswordError}"
                     app:errorMessage="@{@string/password_format_message}">
 
@@ -348,7 +344,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:backgroundTint="@color/colorPrimaryDark"
-                        android:drawableEnd="@mipmap/lock"
+                        android:drawableStart="@mipmap/lock"
                         android:drawablePadding="16dp"
                         android:paddingEnd="20dp"
                         android:hint="@string/password"
@@ -371,7 +367,6 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/passwordTextLayout"
                     app:passwordToggleEnabled="true"
-                    android:layoutDirection="rtl"
                     app:errorCondition="@{viewmodel.shouldShowConfirmPasswordError}"
                     app:errorMessage="@{@string/password_mismatch}">
 
@@ -380,7 +375,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:backgroundTint="@color/colorPrimaryDark"
-                        android:drawableEnd="@mipmap/lock"
+                        android:drawableStart="@mipmap/lock"
                         android:drawablePadding="16dp"
                         android:paddingEnd="20dp"
                         android:hint="@string/confirm_password"
@@ -394,12 +389,10 @@
 
                 <Button
                     android:id="@+id/confirmRegistrationButton"
-                    android:layout_width="wrap_content"
+                    android:layout_width="280dp"
                     android:layout_height="wrap_content"
                     android:background="@drawable/button_curved_red"
                     android:fontFamily="arial"
-                    android:paddingStart="120dp"
-                    android:paddingEnd="120dp"
                     android:text="@string/proceed"
                     android:textAllCaps="false"
                     android:layout_marginBottom="25dp"
@@ -408,7 +401,6 @@
                     android:textSize="18sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/confirmPasswordTextLayout"
                     android:onClick="@{() -> viewmodel.tryRegisterUser()}"/>

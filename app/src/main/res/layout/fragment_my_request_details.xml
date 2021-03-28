@@ -122,9 +122,9 @@
                                 android:textColor="@android:color/white"
                                 android:textSize="21sp"
                                 android:textStyle="bold"
-                                app:layout_constraintHorizontal_bias="0.9"
-                                app:layout_constraintLeft_toLeftOf="parent"
-                                app:layout_constraintRight_toRightOf="parent"
+                                app:layout_constraintHorizontal_bias="0.1"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
                                 tools:text="@{viewmodel.donationDetails.request.bloodType.bloodType}" />
 
@@ -132,9 +132,9 @@
                                 android:id="@+id/requesterName"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                app:layout_constraintRight_toLeftOf="@id/requestBloodType"
+                                app:layout_constraintStart_toEndOf="@id/requestBloodType"
                                 app:layout_constraintTop_toTopOf="@id/requestBloodType"
-                                android:layout_marginRight="27dp"
+                                android:layout_marginStart="27dp"
                                 android:fontFamily="arial"
                                 android:text="@{viewmodel.donationDetails.request.requester.name.fullName}"
                                 android:textColor="@color/colorPrimaryDark"
@@ -145,10 +145,10 @@
                                 android:id="@+id/pinIcon"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                app:layout_constraintRight_toLeftOf="@id/requestBloodType"
+                                app:layout_constraintStart_toEndOf="@id/requestBloodType"
                                 app:layout_constraintTop_toBottomOf="@id/requesterName"
                                 android:layout_marginTop="10dp"
-                                android:layout_marginRight="20dp"
+                                android:layout_marginStart="20dp"
                                 android:src="@drawable/ic_pin" />
 
                             <TextView
@@ -156,11 +156,11 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 app:layout_constraintTop_toTopOf="@id/pinIcon"
-                                app:layout_constraintRight_toLeftOf="@id/pinIcon"
-                                app:layout_constraintLeft_toLeftOf="parent"
-                                android:paddingRight="15dp"
+                                app:layout_constraintStart_toEndOf="@id/pinIcon"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                android:paddingStart="15dp"
                                 android:paddingTop="0dp"
-                                android:layout_marginLeft="10dp"
+                                android:layout_marginEnd="10dp"
                                 android:fontFamily="arial"
                                 android:textColor="@color/colorPrimary"
                                 android:textSize="13sp"
@@ -178,7 +178,7 @@
                                 android:textSize="13sp"
                                 android:textStyle="bold"
                                 app:drawableEndCompat="@drawable/ic_blood_drop"
-                                app:layout_constraintRight_toRightOf="@id/pinIcon"
+                                app:layout_constraintStart_toStartOf="@id/pinIcon"
                                 app:layout_constraintTop_toBottomOf="@id/requestLocation"
                                 android:text="@{@string/blood_bags(viewmodel.numberOfRemainingBags)}" />
 
@@ -194,7 +194,7 @@
                                 android:textSize="13sp"
                                 android:textStyle="bold"
                                 app:drawableEndCompat="@drawable/ic_blood_hand"
-                                app:layout_constraintRight_toRightOf="@id/pinIcon"
+                                app:layout_constraintStart_toStartOf="@id/pinIcon"
                                 app:layout_constraintTop_toBottomOf="@id/requestBagsRequired"
                                 android:text="@{@string/persons_going(englishArabicConverter.convertDigits(Integer.toString(viewmodel.donationDetails.request.numberOfComingDonors)))}" />
 
@@ -217,7 +217,8 @@
                         android:textColor="#000000"
                         android:text="@string/cancel_request"
                         android:paddingVertical="20dp"
-                        android:onClick="@{(view) -> viewmodel.showAlertDialog(view)}"/>
+                        android:onClick="@{(view) -> viewmodel.showAlertDialog(view)}"
+                        android:textAllCaps="false"/>
 
 
                 </androidx.constraintlayout.widget.ConstraintLayout>

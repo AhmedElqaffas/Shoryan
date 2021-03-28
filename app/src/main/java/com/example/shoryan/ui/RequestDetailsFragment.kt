@@ -151,7 +151,6 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
         snackbar = Snackbar.make(binding.root, message, duration)
         snackbar!!.setAction(R.string.ok){}
         snackbar!!.setActionTextColor(resources.getColor(R.color.colorAccent))
-        ViewCompat.setLayoutDirection(snackbar!!.view, ViewCompat.LAYOUT_DIRECTION_RTL)
         snackbar!!.show()
     }
 
@@ -214,7 +213,8 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
         viewModel.eventsFlow.onEach {
             when(it){
                 is RequestDetailsViewModel.RequestDetailsViewEvent.ShowTryAgainSnackBar -> showTryAgainSnackbar { fetchDonationDetails() }
-                is RequestDetailsViewModel.RequestDetailsViewEvent.ShowSnackBar -> showDefiniteMessage(it.text)
+                is RequestDetailsViewModel.RequestDetailsViewEvent.ShowSnackBar -> showDefiniteMessage(resources.getString(it.stringResourceId))
+                is RequestDetailsViewModel.RequestDetailsViewEvent.UserCantDonate -> showDefiniteMessage(it.reason)
                 RequestDetailsViewModel.RequestDetailsViewEvent.DismissFragment -> closeBottomSheetDialog()
                 is RequestDetailsViewModel.RequestDetailsViewEvent.CallPatient -> openDialerApp(it.phoneNumber)
             }

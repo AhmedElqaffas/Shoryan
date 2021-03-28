@@ -1,0 +1,174 @@
+<resources>
+    <string name="app_name">Shoryan</string>
+    <string name="address">address</string>
+    <string name="address_full">\u200F %1$s : %2$s %3$s - %4$s - %5$s</string>
+    <string name="back">back</string>
+    <string name="bags_number">Number of Units</string>
+    <string name="birth_date">Birth Date</string>
+    <string name="blood_bags">\u200F %1$s أكياس دم</string>
+    <string name="blood_type">Blood Type</string>
+    <string name="branches">Branches</string>
+    <string name="cancel_donation">Cancel Donation</string>
+    <string name="cancel_request">Cancel Request</string>
+    <string name="change_location">Change Location</string>
+    <string name="checking_requesting_permission">Checking Requesting Permission</string>
+    <string name="checking_donating_ability">Checking Donating Ability</string>
+    <string name="choose_location">Choose Location</string>
+    <string name="choose_your_location">Choose Your Location</string>
+    <string name="clear">Clear</string>
+    <string name="click_here_to_try_again">"Couldn't show requests \n click here to try again"</string>
+    <string name="confirmation_code">Confirmation Code</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="connection_error">"Couldn't connect to server"</string>
+    <string name="current_location">Current Location</string>
+    <string name="date_initial">DD-MM-YYYY</string>
+    <string name="donate">Donate</string>
+    <string name="donations">Donations</string>
+    <string name="donation_canceled">Donation has been canceled</string>
+    <string name="donation_constraint">You can make 3 requests per day</string>
+    <string name="donation_request">Donation Request</string>
+    <string name="enter_code">Enter the sms code sent to \n %1$s</string>
+    <string name="enter_login_password">Enter the password for the number \n %1$s</string>
+    <string name="female">Female</string>
+    <string name="fetching_data_error">"Couldn't get data"</string>
+    <string name="filter"><u>Filter</u></string>
+    <string name="filter_according">Filter</string>
+    <string name="filter_matching_types">My Compatible Types</string>
+    <string name="first_name">First Name</string>
+    <string name="gender">gender</string>
+    <string name="hello_user_greeting">Hello, %1$s</string>
+    <string name="home">Home</string>
+    <string name="internet_connection">Check your internet connection</string>
+    <string name="i_donated">I have donated</string>
+    <string name="last_name">Last Name</string>
+    <string name="loading_details">Loading data</string>
+    <string name="location_failed">"Couldn't determine your location"</string>
+    <string name="login">Login</string>
+    <string name="login_code">SMS Code</string>
+    <string name="login_with_password">Login Using Password</string>
+    <string name="login_with_sms">Login Using SMS</string>
+    <string name="male">Male</string>
+    <string name="my_requests">My Requests</string>
+    <string name="my_old_requests">Requests History</string>
+    <string name="my_request_details">My Request Details</string>
+    <string name="name_format_message">Name should only contain letters</string>
+    <string name="new_request">New Request</string>
+    <string name="notifications">Notifications</string>
+    <string name="ok">OK</string>
+    <string name="password">Password</string>
+    <string name="password_format_message">Password should include a minimum of 8 letter, including: \n - Uppercase letters \n - Lowercase letters \n - Numbers</string>
+    <string name="password_mismatch">"Passwords don't match"</string>
+    <string name="pending_request">Pending</string>
+    <string name="persons_going">\u200F %1$s أشخاص في طريقهم للتبرّع</string>
+    <string name="phone_format_message">Number should have following format: 01xxxxxxxxx</string>
+    <string name="phone_number">Mobile Number</string>
+    <string name="point">%1$s points</string>
+    <string name="points">Points</string>
+    <string name="points_remaining">%1$s extra points needed</string>
+    <string name="proceed">"Proceed"</string>
+    <string name="profile">Profile</string>
+    <string name="register">Register</string>
+    <string name="redeemable">Redeemable</string>
+    <string name="redeem">Redeem</string>
+    <string name="requests">Requests</string>
+    <string name="resend_sms"><u>Resend code</u></string>
+    <string name="rewards">Rewards</string>
+    <string name="settings">Settings</string>
+    <string name="submit">Submit</string>
+    <string name="thanks_donation">Thanks for your donation</string>
+    <string name="try_again">Try again</string>
+    <string name="waiting_confirmation">You are now listed as a donor, we are awaiting your donation</string>
+    <string name="you_have_no_requests">"You have no active requests \n click here to refresh"</string>
+    <string name="your_request">Your Request</string>
+
+
+    <string name="a_plus">A+</string>
+    <string name="b_plus">B+</string>
+    <string name="ab_plus">AB+</string>
+    <string name="o_plus">O+</string>
+
+    <string name="a_minus">A-</string>
+    <string name="b_minus">B-</string>
+    <string name="ab_minus">AB-</string>
+    <string name="o_minus">O-</string>
+
+    <string name="choose_governorate">Choose Governorate</string>
+    <string name="choose_city">Choose City</string>
+    <string name="choose_blood_bank">Choose Blood Bank</string>
+
+
+    <string-array name="blood_types">
+        <item>A+</item>
+        <item>A-</item>
+        <item>B+</item>
+        <item>B-</item>
+        <item>O+</item>
+        <item>O-</item>
+        <item>AB+</item>
+        <item>AB-</item>
+    </string-array>
+
+    <string-array name="gender">
+        <item>Prefer not to say</item>
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
+
+    <string-array name="governments">
+        <item></item>
+        <item>الإسكندرية</item>
+        <item>الإسماعيلية</item>
+        <item>أسوان</item>
+        <item>أسيوط</item>
+        <item>البحر الأحمر</item>
+        <item>البحيرة</item>
+        <item>بني سويف</item>
+        <item>بورسعيد</item>
+        <item>جنوب سيناء</item>
+        <item>الجيزة</item>
+        <item>الدقهلية</item>
+        <item>دمياط</item>
+        <item>سوهاج</item>
+        <item>السويس</item>
+        <item>الشرقية</item>
+        <item>شمال سيناء</item>
+        <item>الغربية</item>
+        <item>الفيوم</item>
+        <item>القاهرة</item>
+        <item>القليوبية</item>
+        <item>قنا</item>
+        <item>كفر الشيخ</item>
+        <item>مطروح</item>
+        <item>المنوفية</item>
+        <item>المنيا</item>
+        <item>الوادي الجديد</item>
+    </string-array>
+
+    <string-array name="cairo_cities">
+        <item></item>
+        <item>مدينة نصر</item>
+        <item>مصر الجديدة</item>
+        <item>التجمع الخامس</item>
+        <item>العباسية</item>
+    </string-array>
+
+    <string-array name="alex_cities">
+        <item></item>
+        <item>سيدي بشر</item>
+        <item>سموحة</item>
+        <item>ستانلي</item>
+        <item>شدس</item>
+    </string-array>
+
+    <string-array name="example_cities">
+        <item></item>
+        <item>مدينة أ</item>
+        <item>مدينة ب</item>
+    </string-array>
+
+    <string-array name="example_blood_banks">
+        <item></item>
+        <item>بنك الدم أ</item>
+        <item>بنك الدم ب</item>
+    </string-array>
+</resources>

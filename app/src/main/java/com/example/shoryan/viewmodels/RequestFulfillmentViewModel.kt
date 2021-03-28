@@ -2,6 +2,7 @@ package com.example.shoryan.viewmodels
 
 import android.view.View
 import androidx.lifecycle.*
+import com.example.shoryan.R
 import com.example.shoryan.data.CurrentAppUser
 import com.example.shoryan.data.DonationDetails
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
@@ -18,7 +19,7 @@ class RequestFulfillmentViewModel @Inject constructor(
 
     // Instead of changing the CurrentAppUser repo to have a liveData, I created this liveData member
     // to observe changes
-    private var currentUserPendingRequest = MutableLiveData<String>(CurrentAppUser.pendingRequestId)
+    private var currentUserPendingRequest = MutableLiveData<String?>(CurrentAppUser.pendingRequestId)
 
     // LiveData to observe whether the user is allowed to donate or not, used to control XML views states
     private val _canUserDonate = MutableLiveData(false)
@@ -58,7 +59,7 @@ class RequestFulfillmentViewModel @Inject constructor(
 
     private suspend fun showDonationDisabilityReasonIfExists(details: DonationDetails?) {
         details?.donationAbility?.reasonForDisability?.apply {
-            _eventsFlow.emit(RequestDetailsViewEvent.ShowSnackBar(this))
+            _eventsFlow.emit(RequestDetailsViewEvent.UserCantDonate(this))
         }
     }
 
@@ -89,31 +90,42 @@ class RequestFulfillmentViewModel @Inject constructor(
 
     fun startDonation(requestId: String) = viewModelScope.launch{
         _isInLoadingState.postValue(true)
-        val processResultError = RequestFulfillmentRepo.addUserToDonorsList(bloodDonationAPI, requestId)
-        if(processResultError.isNullOrEmpty()){
+        val updatedDonationRequest = RequestFulfillmentRepo.addUserToDonorsList(bloodDonationAPI, requestId)
+        if(updatedDonationRequest != null){
             setUserPendingRequest(requestId)
+            super.updateDonationDetails(updatedDonationRequest)
         }
-        processResultError?.apply { _eventsFlow.emit(RequestDetailsViewEvent.ShowSnackBar(this)) }
+        else{
+            _eventsFlow.emit(RequestDetailsViewEvent.ShowSnackBar(R.string.connection_error))
+        }
         _isInLoadingState.postValue(false)
     }
 
     fun confirmDonation(requestId: String) = viewModelScope.launch{
         _isInLoadingState.postValue(true)
-        val processResultError = RequestFulfillmentRepo.confirmDonation(bloodDonationAPI, requestId)
-        if(processResultError.isNullOrEmpty()){
+        val updatedDonationRequest = RequestFulfillmentRepo.confirmDonation(bloodDonationAPI, requestId)
+        if(updatedDonationRequest != null){
             removeUserPendingRequest(true)
+            _eventsFlow.emit(RequestDetailsViewEvent.ShowSnackBar(R.string.thanks_donation))
+            super.updateDonationDetails(updatedDonationRequest)
         }
-        _eventsFlow.emit(RequestDetailsViewEvent.ShowSnackBar(processResultError?: "شكراً لتبرّعك"))
+        else{
+            _eventsFlow.emit(RequestDetailsViewEvent.ShowSnackBar(R.string.connection_error))
+        }
         _isInLoadingState.postValue(false)
     }
 
     fun cancelDonation(requestId: String) = viewModelScope.launch{
         _isInLoadingState.postValue(true)
-        val processResultError = RequestFulfillmentRepo.cancelDonation(bloodDonationAPI, requestId)
-        if(processResultError.isNullOrEmpty()){
+        val updatedDonationRequest = RequestFulfillmentRepo.cancelDonation(bloodDonationAPI, requestId)
+        if(updatedDonationRequest != null){
             removeUserPendingRequest(false)
+            _eventsFlow.emit(RequestDetailsViewEvent.ShowSnackBar(R.string.donation_canceled))
+            super.updateDonationDetails(updatedDonationRequest)
         }
-        _eventsFlow.emit(RequestDetailsViewEvent.ShowSnackBar(processResultError?: "تم الغاء التبرّع"))
+        else{
+            _eventsFlow.emit(RequestDetailsViewEvent.ShowSnackBar(R.string.connection_error))
+        }
         _isInLoadingState.postValue(false)
     }
 

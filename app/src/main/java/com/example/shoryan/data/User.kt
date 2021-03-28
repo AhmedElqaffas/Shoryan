@@ -30,7 +30,14 @@ enum class Gender(val gender: String): Serializable{
     @SerializedName("Female")
     Female("انثى"),
     @SerializedName("None")
-    None("اُفضّل عدم القول");
+    None("اُفضّل عدم القول"),
+
+    @SerializedName("Male")
+    Male_EN("Male"),
+    @SerializedName("Female")
+    Female_EN("Female"),
+    @SerializedName("None")
+    None_EN("Prefer not to say");
 
     companion object {
         fun fromString(gender: String) = Gender.values().first { it.gender == gender }

@@ -2,9 +2,7 @@ package com.example.shoryan.viewmodels
 
 import androidx.lifecycle.*
 import com.example.shoryan.EnglishToArabicConverter
-import com.example.shoryan.data.DonationDetails
-import com.example.shoryan.data.Location
-import com.example.shoryan.data.ViewEvent
+import com.example.shoryan.data.*
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.repos.RequestFulfillmentRepo
 import com.google.android.gms.maps.model.LatLng
@@ -16,7 +14,8 @@ open class RequestDetailsViewModel(protected val bloodDonationAPI: RetrofitBlood
                                    protected val requestId: String): ViewModel() {
 
     sealed class RequestDetailsViewEvent{
-        data class ShowSnackBar(val text: String): RequestDetailsViewEvent()
+        data class ShowSnackBar(val stringResourceId: Int): RequestDetailsViewEvent()
+        data class UserCantDonate(val reason: String): RequestDetailsViewEvent()
         data class ShowTryAgainSnackBar(val text: String = "فشل في الاتصال بالشبكة"): RequestDetailsViewEvent()
         object DismissFragment: RequestDetailsViewEvent()
         data class CallPatient(val phoneNumber: String): RequestDetailsViewEvent()
@@ -64,9 +63,23 @@ open class RequestDetailsViewModel(protected val bloodDonationAPI: RetrofitBlood
         _eventsFlow.emit(RequestDetailsViewEvent.ShowTryAgainSnackBar())
     }
 
-      fun refresh(){
+    fun refresh(){
         viewModelScope.launch {
             getDonationDetails(requestId)
         }
+    }
+
+    fun updateDonationDetails(update: DonationRequestUpdate){
+        _donationDetails.postValue(createDonationDetailsFromUpdate(update))
+    }
+
+    private fun createDonationDetailsFromUpdate(update: DonationRequestUpdate): DonationDetails{
+        val currentRequestDetails = _donationDetails.value!!.request
+        val updatedRequestDetails = currentRequestDetails!!.copy(
+            numberOfBagsFulfilled = update.numberOfBagsFulfilled,
+            numberOfBagsRequired = update.numberOfBagsRequired,
+            numberOfComingDonors = update.numberOfComingDonors
+        )
+        return DonationDetails(updatedRequestDetails, DonationAbility(true))
     }
 }

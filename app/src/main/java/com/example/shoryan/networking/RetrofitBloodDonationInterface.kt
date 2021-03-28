@@ -30,15 +30,15 @@ interface RetrofitBloodDonationInterface {
 
     @POST("requests/{requestId}/user-donation/{userId}")
     suspend fun confirmDonation(@Path("requestId") requestId: String
-                                   ,@Path("userId") userId: String)
+                                   ,@Path("userId") userId: String): DonationRequestUpdate
 
     @DELETE("requests/{requestId}/user-potential-donation/{userId}")
     suspend fun removeUserFromDonorsList(@Path("requestId") requestId: String
-                                         ,@Path("userId") userId: String)
+                                         ,@Path("userId") userId: String): DonationRequestUpdate
 
     @POST("requests/{requestId}/user-potential-donation/{userId}")
     suspend fun addUserToDonorsList(@Path("requestId") requestId: String
-                                         ,@Path("userId") userId: String)
+                                         ,@Path("userId") userId: String): DonationRequestUpdate
 
     @POST("users/login")
     suspend fun logUser(@Body loginQuery: LoginQuery): LoginResponse

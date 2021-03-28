@@ -40,7 +40,7 @@
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintHorizontal_bias="0.9"
+                    app:layout_constraintHorizontal_bias="0.1"
                     android:src="@mipmap/account"/>
 
                 <TextView
@@ -48,10 +48,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toTopOf="@id/profileImage"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toLeftOf="@id/profileImage"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/profileImage"
                     app:layout_constraintBottom_toBottomOf="@id/profileImage"
-                    app:layout_constraintHorizontal_bias="0.9"
+                    app:layout_constraintHorizontal_bias="0.1"
                     android:text='@{@string/hello_user_greeting(viewmodel.user.name.firstName?? "")}'
                     android:fontFamily="arial"
                     android:textColor="@android:color/white"
@@ -85,9 +85,9 @@
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintHorizontal_bias="0.74"
+                        app:layout_constraintHorizontal_bias="0.26"
                         app:layout_constraintVertical_bias="0.26"
-                        android:text="@{englishArabicConverter.convertDigits(Integer.toString(viewmodel.user.numberOfDonations))}"
+                        android:text='@{viewmodel.user == null? "0": viewmodel.user.numberOfDonations+""}'
                         android:textSize="22sp"
                         android:fontFamily="arial"
                         android:textStyle="bold"
@@ -99,22 +99,9 @@
                         app:layout_constraintTop_toTopOf="@id/donationsNumber"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintHorizontal_bias="0.26"
-                        android:text="@{englishArabicConverter.convertDigits(Integer.toString(viewmodel.user.points))}"
+                        app:layout_constraintHorizontal_bias="0.74"
+                        android:text='@{viewmodel.user == null? "0": viewmodel.user.points+""}'
                         android:textSize="22sp"
-                        android:fontFamily="arial"
-                        android:textStyle="bold"
-                        android:textColor="@android:color/black"/>
-
-                    <TextView
-                        android:id="@+id/donationsWord"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintTop_toBottomOf="@id/donationsNumber"
-                        app:layout_constraintLeft_toLeftOf="@id/donationsNumber"
-                        app:layout_constraintRight_toRightOf="@id/donationsNumber"
-                        android:text="@string/donations"
-                        android:textSize="17sp"
                         android:fontFamily="arial"
                         android:textStyle="bold"
                         android:textColor="@android:color/black"/>
@@ -127,6 +114,19 @@
                         app:layout_constraintLeft_toLeftOf="@id/pointsNumber"
                         app:layout_constraintRight_toRightOf="@id/pointsNumber"
                         android:text="@string/points"
+                        android:textSize="17sp"
+                        android:fontFamily="arial"
+                        android:textStyle="bold"
+                        android:textColor="@android:color/black"/>
+
+                    <TextView
+                        android:id="@+id/donationsWord"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toBottomOf="@id/donationsNumber"
+                        app:layout_constraintLeft_toLeftOf="@id/donationsNumber"
+                        app:layout_constraintRight_toRightOf="@id/donationsNumber"
+                        android:text="@string/donations"
                         android:textSize="17sp"
                         android:textStyle="bold"
                         android:textColor="@android:color/black"/>
@@ -142,11 +142,10 @@
                 app:layout_constraintTop_toBottomOf="@id/statisticsCardView"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                android:layout_marginTop="100dp"
+                android:layout_marginTop="90dp"
                 android:layout_marginEnd="30dp"
                 android:drawableEnd="@mipmap/iconfinder_nav_arrow_right_4"
                 android:paddingStart="16dp"
-                android:paddingEnd="0dp"
                 android:paddingVertical="20dp"
                 android:text="@string/settings"
                 android:textAlignment="viewStart"
@@ -173,11 +172,9 @@
                 app:layout_constraintTop_toBottomOf="@id/settingsButton"
                 app:layout_constraintLeft_toLeftOf="@id/settingsButton"
                 app:layout_constraintRight_toRightOf="@id/settingsButton"
-                android:layout_marginTop="10dp"
                 android:paddingVertical="20dp"
                 android:drawableEnd="@mipmap/iconfinder_nav_arrow_right_4"
                 android:paddingStart="16dp"
-                android:paddingEnd="0dp"
                 android:text="@string/my_old_requests"
                 android:textAlignment="viewStart"
                 android:textAllCaps="false"

@@ -59,5 +59,16 @@
     <fragment
         android:id="@+id/rewardsFragment"
         android:name="com.example.shoryan.ui.RewardsFragment"
-        android:label="RewardsFragment" />
+        android:label="RewardsFragment" >
+        <action
+            android:id="@+id/action_rewardsFragment_to_redeemRewardFragment"
+            app:destination="@id/redeemRewardFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/redeemRewardFragment"
+        android:name="com.example.shoryan.ui.RedeemRewardFragment"
+        android:label="RedeemRewardFragment" />
+    <argument
+        app:argType="com.example.shoryan.data.Reward"
+        android:name="reward"/>
 </navigation>
