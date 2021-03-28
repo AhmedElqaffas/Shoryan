@@ -29,7 +29,6 @@ class AndroidUtility {
                     // By default, the snackbar will be dismissed
                 }
                 .setActionTextColor(layout.context.resources.getColor(R.color.colorAccent))
-            ViewCompat.setLayoutDirection(snackbar.view, ViewCompat.LAYOUT_DIRECTION_RTL)
             snackbar.show()
         }
 
@@ -40,7 +39,6 @@ class AndroidUtility {
             snackbar.setAction(R.string.try_again) {
                 whatToTry()
             }
-            ViewCompat.setLayoutDirection(snackbar.view, ViewCompat.LAYOUT_DIRECTION_RTL)
             return snackbar
         }
     }

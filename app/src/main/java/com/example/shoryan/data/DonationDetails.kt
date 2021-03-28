@@ -7,4 +7,4 @@ data class DonationDetails(val request: DonationRequest?,
 }
 
 data class DonationAbility(@SerializedName("state") val canUserDonate: Boolean
-                           ,@SerializedName("message") val reasonForDisability: String?)
+                           ,@SerializedName("message") val reasonForDisability: String? = null)

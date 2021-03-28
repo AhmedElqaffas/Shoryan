@@ -24,6 +24,7 @@
     <string name="date_initial">DD-MM-YYYY</string>
     <string name="donate">Donate</string>
     <string name="donations">Donations</string>
+    <string name="donation_canceled">Donation has been canceled</string>
     <string name="donation_constraint">You can make 3 requests per day</string>
     <string name="donation_request">Donation Request</string>
     <string name="enter_code">Enter the sms code sent to \n %1$s</string>
@@ -74,6 +75,7 @@
     <string name="rewards">Rewards</string>
     <string name="settings">Settings</string>
     <string name="submit">Submit</string>
+    <string name="thanks_donation">Thanks for your donation</string>
     <string name="try_again">Try again</string>
     <string name="waiting_confirmation">You are now listed as a donor, we are awaiting your donation</string>
     <string name="you_have_no_requests">"You have no active requests \n click here to refresh"</string>
