@@ -3,6 +3,8 @@ package com.example.shoryan.data
 object CurrentAppUser: User(null,null,null,null, null) {
 
     var pendingRequestId: String? = null
+    var accessToken: String? = null
+    var refreshToken: String? = null
 
     fun initializeUser(user: User){
         id = user.id

@@ -7,10 +7,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import com.example.shoryan.DataStoreUtil
+import com.example.shoryan.DataStoreUtil.read
 import com.example.shoryan.R
+import com.example.shoryan.data.CurrentAppUser
 import com.example.shoryan.databinding.FragmentSplashScreenBinding
+import kotlinx.coroutines.delay
 
 class SplashScreenFragment : Fragment() {
 
@@ -36,12 +41,23 @@ class SplashScreenFragment : Fragment() {
         firstTimeOpened = true
     }
 
+    override fun onResume() {
+        super.onResume()
+        lifecycleScope.launchWhenResumed {
+            // Get the access token from the dataStore
+            CurrentAppUser.accessToken = requireContext().read(DataStoreUtil.ACCESS_TOKEN_KEY, "")
+            // To allow the user to see the logo
+            delay(800)
+        }.invokeOnCompletion {
+            openApplicationOrShowSigningOptions()
+        }
+        binding.loginButton.setOnClickListener { goToLoginScreen() }
+        binding.registerButton.setOnClickListener { goToRegistrationScreen() }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         instantiateNavController(view)
-        openApplicationOrShowSigningOptions()
-        binding.loginButton.setOnClickListener { goToLoginScreen() }
-        binding.registerButton.setOnClickListener { goToRegistrationScreen() }
     }
 
     private fun instantiateNavController(view: View){
@@ -58,7 +74,7 @@ class SplashScreenFragment : Fragment() {
     }
 
     private fun isUserLoggedIn(): Boolean{
-        return false
+        return !CurrentAppUser.accessToken.isNullOrEmpty()
     }
 
     private fun openApplication(){
