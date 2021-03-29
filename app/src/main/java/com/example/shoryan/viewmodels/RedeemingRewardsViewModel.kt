@@ -1,5 +1,6 @@
 package com.example.shoryan.viewmodels
 
+import android.content.SharedPreferences
 import android.os.CountDownTimer
 import androidx.lifecycle.*
 import com.example.shoryan.data.CurrentAppUser
@@ -25,9 +26,6 @@ class RedeemingRewardsViewModel(): ViewModel() {
 
     private var timer: CountDownTimer? = null
     private val redeemingDuration: Long = 1000 * 60 * 1 // 1 minutes for the user to show the store
-    // If the reward is not being redeemed, this value will be null, else it will be equal
-    // to the timestamp when the reward redeeming has started
-    //var currentRewardRedeemingStartTime: Long? = null
     private val remainingTime = MutableSharedFlow<Long>()
 
     private val _rewardRedeemingState =  MutableStateFlow(RedeemingState.NOT_REDEEMING)
@@ -55,17 +53,20 @@ class RedeemingRewardsViewModel(): ViewModel() {
         this.bloodDonationAPI = bloodDonationAPI
     }
 
-    fun setRedeemingStartTime(redeemingStartTime: Long) = viewModelScope.launch {
+    fun setRedeemingStartTime(redeemingStartTime: Long, rewardKey: String, sharedPref: SharedPreferences) = viewModelScope.launch {
+        // Check if the redeeming duration hasn't expired yet
         if(redeemingDuration + redeemingStartTime - System.currentTimeMillis() > 0){
             _rewardRedeemingState.emit(RedeemingState.STARTED)
-            startTimer(redeemingStartTime)
+            startTimer(redeemingStartTime, rewardKey, sharedPref)
         }
         else{
+            // else, the cached reward entry should be cleared
             _rewardRedeemingState.emit(RedeemingState.NOT_REDEEMING)
+            removeCachedReward(rewardKey, sharedPref)
         }
     }
 
-    private fun startTimer(redeemingStartTime: Long){
+    private fun startTimer(redeemingStartTime: Long, rewardKey: String, sharedPref: SharedPreferences){
         val timeRemaining = redeemingDuration + redeemingStartTime - System.currentTimeMillis()
         timer = object:CountDownTimer(timeRemaining, 500){
             override fun onTick(millisUntilFinished: Long) {
@@ -77,15 +78,21 @@ class RedeemingRewardsViewModel(): ViewModel() {
                 viewModelScope.launch{
                     remainingTime.emit(0)
                     _rewardRedeemingState.emit(RedeemingState.NOT_REDEEMING)
+                    removeCachedReward(rewardKey, sharedPref)
+
                 }
             }
         }.start()
     }
 
-    fun redeemReward(rewardId: String, redeemingStartTime: Long): Flow<Boolean> = flow{
+    fun redeemReward(rewardId: String, redeemingStartTime: Long, sharedPref: SharedPreferences): Flow<Boolean> = flow{
         _rewardRedeemingState.emit(RedeemingState.STARTED)
-        startTimer(redeemingStartTime)
+        startTimer(redeemingStartTime, rewardId, sharedPref)
         emit(true)
+    }
+
+    private fun removeCachedReward(rewardKey: String, sharedPref: SharedPreferences) {
+        sharedPref.edit().remove(rewardKey).apply()
     }
 }
 

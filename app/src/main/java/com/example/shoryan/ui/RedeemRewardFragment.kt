@@ -63,7 +63,7 @@ class RedeemRewardFragment : Fragment() {
     ): View {
             currentRedeeming = sharedPref!!.getString(reward.id, null)
             currentRedeeming?.let{
-                viewModel.setRedeemingStartTime(it.toLong())
+                viewModel.setRedeemingStartTime(it.toLong(), it, sharedPref!!)
             }
         return ComposeView(requireContext()).apply {
             setContent {
@@ -376,7 +376,7 @@ class RedeemRewardFragment : Fragment() {
 
     private fun redeemReward(rewardId: String, redeemingStartTime: Long) {
         lifecycleScope.launchWhenResumed {
-            viewModel.redeemReward(rewardId, redeemingStartTime).collect{
+            viewModel.redeemReward(rewardId, redeemingStartTime, sharedPref!!).collect{
                 if(it)
                     saveRedeemingStartTime(redeemingStartTime)
             }
