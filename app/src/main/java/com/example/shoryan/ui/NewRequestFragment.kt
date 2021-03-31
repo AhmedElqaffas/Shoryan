@@ -79,7 +79,7 @@ class NewRequestFragment : Fragment() {
         disableBloodBankSpinner()
         disableIncDecButtons()
         disableSubmitButton()
-        showMessage("نأسف لا يمكنك طلب تبرع بالدم اكثر من ثلاثة مرات في اليوم")
+        showMessage(resources.getString(R.string.cant_request_today))
     }
 
     private fun disableSubmitButton() {
@@ -315,7 +315,7 @@ class NewRequestFragment : Fragment() {
                 binding.progressBar.visibility = View.VISIBLE
                 createNewRequest()
             } else {
-                showMessage("ارجوك اكمل ادخال البيانات")
+                showMessage(resources.getString(R.string.fill_all_data))
             }
         }
     }
@@ -332,9 +332,9 @@ class NewRequestFragment : Fragment() {
         binding.progressBar.visibility = View.GONE
         createdRequest = response
         if(createdRequest?.id != null)
-            showMessage("لقد تم الطلب بنجاح", true)
+            showMessage(resources.getString(R.string.request_created), true)
         else{
-            showMessage("نأسف لا يمكنك طلب تبرع بالدم اكثر من ثلاثة مرات في اليوم")
+            showMessage(resources.getString(R.string.cant_request_today))
             newRequestViewModel.updateCachedDailyLimitFlag(false)
             disableInput()
         }
@@ -361,7 +361,7 @@ class NewRequestFragment : Fragment() {
     private fun showMessage(message: String, successFlag: Boolean = false) {
         if (successFlag)
             Snackbar.make(binding.scrollView, message, Snackbar.LENGTH_LONG)
-                .setAction("اظهر طلباتي الحالية") {
+                .setAction(resources.getString(R.string.show_my_requests)) {
                     // Starting the MyRequestDetailsActivity
                     openMyRequestsFragment()
                 }

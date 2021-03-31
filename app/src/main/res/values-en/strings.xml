@@ -2,6 +2,7 @@
     <string name="app_name">Shoryan</string>
     <string name="address">address</string>
     <string name="address_full">\u200F %1$s : %2$d %3$s - %4$s - %5$s</string>
+    <string name="are_you_sure_cancel_request">Are you sure you want to cancel your request?</string>
     <string name="back">back</string>
     <string name="bags_number">Number of Units</string>
     <string name="birth_date">Birth Date</string>
@@ -10,6 +11,7 @@
     <string name="branches">Branches</string>
     <string name="cancel_donation">Cancel Donation</string>
     <string name="cancel_request">Cancel Request</string>
+    <string name="cant_request_today">Sorry, you can only request 3 donations per day</string>
     <string name="change_location">Change Location</string>
     <string name="checking_requesting_permission">Checking Requesting Permission</string>
     <string name="checking_donating_ability">Checking Donating Ability</string>
@@ -29,8 +31,10 @@
     <string name="donation_request">Donation Request</string>
     <string name="enter_code">Enter the sms code sent to \n %1$s</string>
     <string name="enter_login_password">Enter the password for the number \n %1$s</string>
+    <string name="enter_password">Please enter your password</string>
     <string name="female">Female</string>
     <string name="fetching_data_error">"Couldn't get data"</string>
+    <string name="fill_all_data">Please fill the whole form</string>
     <string name="filter"><u>Filter</u></string>
     <string name="filter_according">Filter</string>
     <string name="filter_matching_types">My Compatible Types</string>
@@ -56,6 +60,8 @@
     <string name="number_donations">%1$d</string>
     <string name="number_points">%1$d</string>
     <string name="notifications">Notifications</string>
+    <string name="no_pending_requests">You have no pending requests</string>
+    <string name="no">No</string>
     <string name="ok">OK</string>
     <string name="password">Password</string>
     <string name="password_format_message">Password should include a minimum of 8 letter, including: \n - Uppercase letters \n - Lowercase letters \n - Numbers</string>
@@ -73,12 +79,16 @@
     <string name="redeemable">Redeemable</string>
     <string name="redeem">Redeem</string>
     <string name="requests">Requests</string>
+    <string name="request_created">The request is successfully created</string>
+    <string name="request_canceled">Your request has been canceled</string>
     <string name="resend_sms"><u>Resend code</u></string>
     <string name="rewards">Rewards</string>
     <string name="settings">Settings</string>
+    <string name="show_my_requests">Show my active requests</string>
     <string name="submit">Submit</string>
     <string name="thanks_donation">Thanks for your donation</string>
     <string name="try_again">Try again</string>
+    <string name="yes">Yes</string>
     <string name="waiting_confirmation">You are now listed as a donor, we are awaiting your donation</string>
     <string name="you_have_no_requests">"You have no active requests \n click here to refresh"</string>
     <string name="your_request">Your Request</string>

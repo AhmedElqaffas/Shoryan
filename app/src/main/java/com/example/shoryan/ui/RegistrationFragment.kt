@@ -258,7 +258,8 @@ class RegistrationFragment : Fragment(), LoadingFragmentHolder {
     private fun observeViewModelEvents(){
         registrationViewModel.eventsFlow.onEach {
             when(it){
-                is RegistrationViewModel.RegistrationViewEvent.ShowSnackBar -> showSnackbar(it.text)
+                is RegistrationViewModel.RegistrationViewEvent.ShowSnackBarFromString -> showSnackbar(it.text)
+                is RegistrationViewModel.RegistrationViewEvent.ShowSnackBarFromResource -> showSnackbar(resources.getString(it.textResourceId))
                 is RegistrationViewModel.RegistrationViewEvent.GoToSMSFragment -> goToSMSFragment()
                 is RegistrationViewModel.RegistrationViewEvent.ToggleLoadingIndicator -> toggleLoadingIndicator()
             }

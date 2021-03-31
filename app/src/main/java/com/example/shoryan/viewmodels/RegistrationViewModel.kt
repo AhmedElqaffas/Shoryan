@@ -5,6 +5,7 @@ import android.widget.EditText
 import androidx.lifecycle.*
 import com.example.shoryan.AndroidUtility
 import com.example.shoryan.InputValidator
+import com.example.shoryan.R
 import com.example.shoryan.data.*
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.networking.RetrofitClient
@@ -17,7 +18,8 @@ import kotlinx.coroutines.launch
 class RegistrationViewModel: ViewModel() {
 
     sealed class RegistrationViewEvent{
-        data class ShowSnackBar(val text: String): RegistrationViewEvent()
+        data class ShowSnackBarFromResource(val textResourceId: Int): RegistrationViewEvent()
+        data class ShowSnackBarFromString(val text: String): RegistrationViewEvent()
         object GoToSMSFragment: RegistrationViewEvent()
         object ToggleLoadingIndicator: RegistrationViewEvent()
     }
@@ -113,7 +115,7 @@ class RegistrationViewModel: ViewModel() {
         }
         else{
             viewModelScope.launch {
-                _eventsFlow.emit(RegistrationViewEvent.ShowSnackBar("تأكّد من ادخال جميع البيانات"))
+                _eventsFlow.emit(RegistrationViewEvent.ShowSnackBarFromResource(R.string.fill_all_data))
             }
         }
     }
@@ -149,14 +151,14 @@ class RegistrationViewModel: ViewModel() {
         }
         catch (e: Exception){
             Log.e(TAG, "Could not register user: $e")
-            _eventsFlow.emit(RegistrationViewEvent.ShowSnackBar("فشل في الاتصال بالشبكة"))
+            _eventsFlow.emit(RegistrationViewEvent.ShowSnackBarFromResource(R.string.connection_error))
         }
         _eventsFlow.emit(RegistrationViewEvent.ToggleLoadingIndicator)
     }
 
     private suspend fun processRegistrationAPIResponse(registrationResponse: RegistrationResponse){
         registrationResponse.error?.apply {
-            _eventsFlow.emit(RegistrationViewEvent.ShowSnackBar(this))
+            _eventsFlow.emit(RegistrationViewEvent.ShowSnackBarFromString(this))
         }
         registrationResponse.id?.apply {
             _eventsFlow.emit(RegistrationViewEvent.GoToSMSFragment)

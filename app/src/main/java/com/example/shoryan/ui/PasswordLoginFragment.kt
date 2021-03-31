@@ -140,7 +140,7 @@ class PasswordLoginFragment : Fragment(), LoadingFragmentHolder {
         val password = binding.passwordEditText.text.toString().trim()
         if(password.isEmpty()){
             AndroidUtility.displaySnackbarMessage(binding.passwordScreenLayout,
-                "من فضلك تأكّد من إدخال كلمة السر",
+                resources.getString(R.string.enter_password),
                 Snackbar.LENGTH_LONG)
         }
         else {

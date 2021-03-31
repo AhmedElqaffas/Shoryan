@@ -1,6 +1,7 @@
 package com.example.shoryan.viewmodels
 
 import androidx.lifecycle.*
+import com.example.shoryan.R
 import com.example.shoryan.data.*
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.repos.RequestFulfillmentRepo
@@ -14,7 +15,7 @@ open class RequestDetailsViewModel(protected val bloodDonationAPI: RetrofitBlood
     sealed class RequestDetailsViewEvent{
         data class ShowSnackBar(val stringResourceId: Int): RequestDetailsViewEvent()
         data class UserCantDonate(val reason: String): RequestDetailsViewEvent()
-        data class ShowTryAgainSnackBar(val text: String = "فشل في الاتصال بالشبكة"): RequestDetailsViewEvent()
+        data class ShowTryAgainSnackBar(val stringResourceId: Int): RequestDetailsViewEvent()
         object DismissFragment: RequestDetailsViewEvent()
         data class CallPatient(val phoneNumber: String): RequestDetailsViewEvent()
     }
@@ -55,7 +56,7 @@ open class RequestDetailsViewModel(protected val bloodDonationAPI: RetrofitBlood
     }
 
     private suspend fun announceCommunicationFailure(){
-        _eventsFlow.emit(RequestDetailsViewEvent.ShowTryAgainSnackBar())
+        _eventsFlow.emit(RequestDetailsViewEvent.ShowTryAgainSnackBar(R.string.connection_error))
     }
 
     fun refresh(){

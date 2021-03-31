@@ -20,10 +20,10 @@ class MyRequestDetailsViewModel@Inject constructor(
     fun showAlertDialog(view: View){
         val builder = AlertDialog.Builder(view.context)
         with(builder) {
-            setTitle("الغاء الطلب")
-            setMessage("هل انت متأكد من انك تريد الغاء الطلب؟")
-            setPositiveButton("نعم") { dialog, which -> cancelRequest(view) }
-            setNegativeButton("لا",null)
+            setTitle(view.context.resources.getString(R.string.cancel_request))
+            setMessage(view.context.resources.getString(R.string.are_you_sure_cancel_request))
+            setPositiveButton(view.context.resources.getString(R.string.yes)) { dialog, which -> cancelRequest(view) }
+            setNegativeButton(view.context.resources.getString(R.string.no),null)
             show()
         }
     }
@@ -46,6 +46,8 @@ class MyRequestDetailsViewModel@Inject constructor(
     }
 
     private fun showSuccessToast(view: View){
-        Toast.makeText(view.context, "تم الغاء الطلب", Toast.LENGTH_LONG).show()
+        Toast.makeText(view.context,
+            view.context.resources.getString(R.string.request_canceled),
+            Toast.LENGTH_LONG).show()
     }
 }

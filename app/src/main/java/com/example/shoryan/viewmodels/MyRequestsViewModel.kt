@@ -14,7 +14,7 @@ class MyRequestsViewModel @Inject constructor(private val bloodDonationAPI: Retr
     val LOADED_EMPTY = 2
     val ERROR = 3
     private val myRequests = MutableLiveData<List<DonationRequest>?>(null)
-    val state = MediatorLiveData<Int>()
+    val state = MediatorLiveData<Int?>()
     private val areRequestsLoaded = MutableLiveData(false)
 
     init {
