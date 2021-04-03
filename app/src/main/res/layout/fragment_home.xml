@@ -24,7 +24,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:id="@+id/homeParentLayout">
+        android:id="@+id/rootLayout">
         <androidx.coordinatorlayout.widget.CoordinatorLayout android:layout_height="match_parent"
             android:layout_width="match_parent"
             android:background="@android:color/white"

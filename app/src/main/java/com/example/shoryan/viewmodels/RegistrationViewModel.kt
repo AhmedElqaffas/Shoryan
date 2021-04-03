@@ -10,6 +10,7 @@ import com.example.shoryan.data.*
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.networking.RetrofitClient
 import com.example.shoryan.removeAdditionalSpaces
+import com.example.shoryan.repos.TokensRefresher
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -20,7 +21,7 @@ class RegistrationViewModel: ViewModel() {
     sealed class RegistrationViewEvent{
         data class ShowSnackBarFromResource(val textResourceId: Int): RegistrationViewEvent()
         data class ShowSnackBarFromString(val text: String): RegistrationViewEvent()
-        object GoToSMSFragment: RegistrationViewEvent()
+        data class HandleSuccessfulRegistration(val accessToken: String, val refreshToken: String): RegistrationViewEvent()
         object ToggleLoadingIndicator: RegistrationViewEvent()
     }
     private val TAG = javaClass.simpleName
@@ -79,6 +80,7 @@ class RegistrationViewModel: ViewModel() {
     }
 
     fun setGender(gender: String){
+        println(gender+"////////////////////////////////////////////")
         _gender.value = Gender.fromString(gender)
     }
 
@@ -111,7 +113,7 @@ class RegistrationViewModel: ViewModel() {
 
     fun tryRegisterUser(){
         if(areInputsValidAndComplete()){
-            registrationProcess = registerUser(createUser())
+            registrationProcess = registerUser(createUserRegistrationQuery())
         }
         else{
             viewModelScope.launch {
@@ -133,20 +135,20 @@ class RegistrationViewModel: ViewModel() {
     private fun isAddressValid() = addressLiveData.value != null
     private fun isBirthDateValid() = _birthDate.value != null
 
-    private fun createUser() = User(
+    private fun createUserRegistrationQuery() = RegistrationQuery(
             name = Name(_firstName.value!!.removeAdditionalSpaces(), _lastName.value!!.removeAdditionalSpaces()),
-            phoneNumber = _phoneNumber.value!!.removeAdditionalSpaces().substring(1),
+            phoneNumber = _phoneNumber.value!!.removeAdditionalSpaces(),
             password = _password.value!!,
-            location = addressLiveData.value,
-            bloodType = bloodType.value,
-            gender = gender.value,
-            birthDate = _birthDate.value
+            location = addressLiveData.value!!,
+            bloodType = bloodType.value!!,
+            gender = gender.value!!,
+            birthDate = _birthDate.value!!
     )
 
-    private fun registerUser(user: User)  = viewModelScope.launch{
+    private fun registerUser(registrationQuery: RegistrationQuery)  = viewModelScope.launch{
         _eventsFlow.emit(RegistrationViewEvent.ToggleLoadingIndicator)
         try{
-            val registrationResponse = bloodDonationAPI.registerUser(user)
+            val registrationResponse = bloodDonationAPI.registerUser(registrationQuery)
             processRegistrationAPIResponse(registrationResponse)
         }
         catch (e: Exception){
@@ -158,10 +160,13 @@ class RegistrationViewModel: ViewModel() {
 
     private suspend fun processRegistrationAPIResponse(registrationResponse: RegistrationResponse){
         registrationResponse.error?.apply {
-            _eventsFlow.emit(RegistrationViewEvent.ShowSnackBarFromString(this))
+            _eventsFlow.emit(RegistrationViewEvent.ShowSnackBarFromResource(this.message.errorStringResource))
         }
-        registrationResponse.id?.apply {
-            _eventsFlow.emit(RegistrationViewEvent.GoToSMSFragment)
+        registrationResponse.accessToken?.apply {
+            _eventsFlow.emit(RegistrationViewEvent.HandleSuccessfulRegistration(
+                registrationResponse.accessToken,
+                registrationResponse.refreshToken!!
+            ))
         }
     }
 

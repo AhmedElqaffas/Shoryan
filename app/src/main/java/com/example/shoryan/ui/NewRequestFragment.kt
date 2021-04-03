@@ -387,7 +387,7 @@ class NewRequestFragment : Fragment() {
     private fun observeEvents(){
         newRequestViewModel.eventsFlow.onEach {
             when(it){
-                is ViewEvent.ShowSnackBar -> {showMessage(it.text)}
+                is ViewEvent.ShowSnackBar -> {showMessage(resources.getString(it.stringResource))}
                 is ViewEvent.ShowTryAgainSnackBar -> {showTryAgainMessage(it.text)}
             }
 

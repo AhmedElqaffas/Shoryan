@@ -8,8 +8,10 @@ import com.example.shoryan.data.RequestsFiltersContainer
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.networking.RetrofitClient
 import com.example.shoryan.repos.OngoingRequestsRepo
+import com.example.shoryan.repos.ProfileRepo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class RequestsViewModel : ViewModel() {
@@ -66,4 +68,9 @@ class RequestsViewModel : ViewModel() {
 
     fun getUserPendingRequestId() = CurrentAppUser.pendingRequestId
 
+    fun getProfileData() {
+        viewModelScope.launch {
+             ProfileRepo.getUserProfileData(bloodDonationAPI)
+        }
+    }
 }

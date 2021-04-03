@@ -11,15 +11,15 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.shoryan.R
 import com.example.shoryan.data.DonationRequest
+import com.example.shoryan.data.ServerError
 import com.example.shoryan.databinding.AppbarBinding
 import com.example.shoryan.databinding.FragmentMyRequestsBinding
 import com.example.shoryan.di.MyApplication
 import com.example.shoryan.ui.recyclersAdapters.RequestsRecyclerAdapter
 import com.example.shoryan.interfaces.RequestsRecyclerInteraction
 import com.example.shoryan.viewmodels.MyRequestsViewModel
-import kotlinx.coroutines.Dispatchers
+import com.example.shoryan.viewmodels.TokensViewModel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class MyRequestsFragment : Fragment(), RequestsRecyclerInteraction {
@@ -30,6 +30,8 @@ class MyRequestsFragment : Fragment(), RequestsRecyclerInteraction {
     private var _binding: FragmentMyRequestsBinding? = null
     private val binding get() = _binding!!
     private var toolbarBinding: AppbarBinding? = null
+    @Inject
+    lateinit var tokensViewModel: TokensViewModel
     @Inject
     lateinit var viewModel: MyRequestsViewModel
 
@@ -42,7 +44,7 @@ class MyRequestsFragment : Fragment(), RequestsRecyclerInteraction {
         _binding = FragmentMyRequestsBinding.inflate(inflater, container, false)
         toolbarBinding = binding.homeAppbar
         binding.viewModel = viewModel
-        binding.lifecycleOwner = this
+        binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }
 
@@ -88,9 +90,23 @@ class MyRequestsFragment : Fragment(), RequestsRecyclerInteraction {
     private fun getMyRequests(){
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.getUserRequests().observe(viewLifecycleOwner){
-                it?.let {
+                it.activeRequests?.let {
                     showRequestsDetails(it)
                 }
+                it.error?.let{
+                    handleServerError(it.message)
+                }
+            }
+        }
+    }
+
+    private fun handleServerError(error: ServerError){
+        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+            if(error == ServerError.JWT_EXPIRED){
+                tokensViewModel.getNewAccessToken(requireContext())
+            }
+            else{
+                error.doErrorAction(requireActivity())
             }
         }
     }

@@ -10,7 +10,9 @@ import javax.inject.Singleton
 @Component(modules = [RetrofitModule::class, AppSubComponents::class])
 interface AppComponent {
 
+    fun splashScreenComponent(): SplashScreenComponent.Factory
     fun loginComponent(): LoginComponent.Factory
+    fun profileComponent(): ProfileComponent.Factory
     fun registrationComponent(): RegistrationComponent.Factory
     fun requestDetailsComponent(): RequestDetailsComponent.Factory
     fun myRequestsComponent(): MyRequestsComponent.Factory

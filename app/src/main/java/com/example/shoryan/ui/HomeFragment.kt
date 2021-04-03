@@ -44,7 +44,7 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
         binding.viewmodel = requestsViewModel
         binding.adapter = requestsRecyclerAdapter
         binding.fragment = this
-        binding.lifecycleOwner = this
+        binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }
 
@@ -57,9 +57,10 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         instantiateNavController(view)
-        // Getting ongoingRequests and pending request, in parallel
+        // Getting ongoingRequests, pending request, and user data, in parallel
         updateUserPendingRequest()
         getOngoingRequests()
+        getUserProfileData()
     }
 
     private fun instantiateNavController(view: View){
@@ -82,6 +83,12 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
                 requestsRecyclerAdapter.submitList(it)
             })
         }
+    }
+
+    private fun getUserProfileData(){
+       lifecycleScope.launch{
+           requestsViewModel.getProfileData()
+       }
     }
 
     override fun onResume(){
@@ -148,7 +155,7 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
     }
 
     private fun showMessage(message: String) =
-        AndroidUtility.displaySnackbarMessage(binding.homeParentLayout, message, Snackbar.LENGTH_LONG)
+        AndroidUtility.displaySnackbarMessage(binding.rootLayout, message, Snackbar.LENGTH_LONG)
 
     private fun openDonationFragment(requestId: String){
         val fragment = RequestDetailsFragment.newInstance(

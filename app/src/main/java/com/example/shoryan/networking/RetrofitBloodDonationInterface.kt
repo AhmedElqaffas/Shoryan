@@ -10,13 +10,13 @@ interface RetrofitBloodDonationInterface {
     suspend fun getAllOngoingRequests(): List<DonationRequest>
 
     /* Since the following method returns a single string, we don't want to create a whole object for
-    it, instead, a JsonObject is returned and the string is extracted from it
+       it, instead, a JsonObject is returned and the string is extracted from it
      */
-    @GET("users/{userId}/user-pending-donation")
-    suspend fun getPendingRequest(@Path("userId") userId: String): JsonObject?
+    @GET("users/user-pending-donation")
+    suspend fun getPendingRequest(@Header("Authorization") accessToken: String): PendingRequestResponse
 
-    @GET("users/{userId}/user-active-requests")
-    suspend fun getUserActiveRequests(@Path("userId") userId: String): MyRequestsServerResponse
+    @GET("users/active-requests")
+    suspend fun getUserActiveRequests(@Header("Authorization") accessToken: String): MyRequestsServerResponse
 
     @GET("requests/{requestId}/user-donation/{userId}")
     suspend fun getDonationDetails(@Path("requestId") requestId: String
@@ -43,9 +43,15 @@ interface RetrofitBloodDonationInterface {
     @POST("users/login")
     suspend fun logUser(@Body loginQuery: LoginQuery): LoginResponse
 
-    @POST("users/signup")
-    suspend fun registerUser(@Body user: User): RegistrationResponse
+    /* Since the following method returns a single string, we don't want to create a whole object for
+        it, instead, a JsonObject is returned and the string is extracted from it
+    */
+    @POST("users/refresh-token")
+    suspend fun getNewAccessToken(@Header("Authorization") refreshToken: String): TokenRefreshResponse
 
-    @GET("users/{userId}")
-    suspend fun getUserProfileData(@Path("userId") userId: String): CurrentAppUser
+    @POST("users/signup")
+    suspend fun registerUser(@Body user: RegistrationQuery): RegistrationResponse
+
+    @GET("users")
+    suspend fun getUserProfileData(@Header("Authorization") accessToken: String): ProfileResponse
 }

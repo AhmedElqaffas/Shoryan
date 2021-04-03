@@ -45,8 +45,8 @@ object OngoingRequestsRepo {
 
     suspend fun updateUserPendingRequest(bloodDonationAPI: RetrofitBloodDonationInterface){
         try{
-            CurrentAppUser.pendingRequestId = bloodDonationAPI.getPendingRequest(CurrentAppUser.id!!)
-                ?.get("pendingRequest")?.asString
+            CurrentAppUser.pendingRequestId = bloodDonationAPI.getPendingRequest("Bearer "+TokensRefresher.accessToken!!)
+                .pendingRequest
         }catch (e: Exception){
             Log.e("pendingRequestAPICall", "Couldn't get request - " + e.message)
         }

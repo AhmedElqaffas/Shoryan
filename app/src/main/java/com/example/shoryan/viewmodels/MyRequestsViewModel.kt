@@ -2,6 +2,8 @@ package com.example.shoryan.viewmodels
 
 import androidx.lifecycle.*
 import com.example.shoryan.data.DonationRequest
+import com.example.shoryan.data.ErrorResponse
+import com.example.shoryan.data.MyRequestsServerResponse
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.repos.MyRequestsRepo
 import kotlinx.coroutines.*
@@ -13,41 +15,43 @@ class MyRequestsViewModel @Inject constructor(private val bloodDonationAPI: Retr
     val LOADED = 1
     val LOADED_EMPTY = 2
     val ERROR = 3
-    private val myRequests = MutableLiveData<List<DonationRequest>?>(null)
+    private val myRequestsResponse = MutableLiveData<MyRequestsServerResponse>()
     val state = MediatorLiveData<Int?>()
     private val areRequestsLoaded = MutableLiveData(false)
 
     init {
-        state.addSource(myRequests){
+        state.addSource(myRequestsResponse){
             state.value = when {
-                it != null && it.isEmpty() -> LOADING
-                it != null && it.isNotEmpty() -> LOADED
-                it == null && areRequestsLoaded.value == true -> LOADED_EMPTY
-                else -> ERROR
+                it.activeRequests != null && it.activeRequests.isEmpty() -> LOADING
+                it.activeRequests != null && it.activeRequests.isNotEmpty() -> LOADED
+                it.activeRequests == null && areRequestsLoaded.value == true -> ERROR
+                else -> LOADED_EMPTY
             }
         }
         state.addSource(areRequestsLoaded){
             state.value = when {
                 !it -> LOADING
-                it && myRequests.value != null && myRequests.value!!.isEmpty() -> LOADED_EMPTY
-                it && myRequests.value != null && myRequests.value!!.isNotEmpty() -> LOADED
+                it && myRequestsResponse.value?.activeRequests != null
+                        && myRequestsResponse.value!!.activeRequests!!.isEmpty() -> LOADED_EMPTY
+                it && myRequestsResponse.value?.activeRequests != null
+                        && myRequestsResponse.value!!.activeRequests!!.isNotEmpty() -> LOADED
                 else -> ERROR
             }
         }
     }
 
-    suspend fun getUserRequests(): LiveData<List<DonationRequest>?>{
+    suspend fun getUserRequests(): LiveData<MyRequestsServerResponse>{
         areRequestsLoaded.postValue(false)
         viewModelScope.async {
-            myRequests.postValue(MyRequestsRepo.getRequests(bloodDonationAPI))
+            myRequestsResponse.postValue(MyRequestsRepo.getRequests(bloodDonationAPI))
             areRequestsLoaded.postValue(true)
         }.await()
-        return myRequests
+        return myRequestsResponse
     }
 
     fun refresh(){
         // To set the state to loading
-        myRequests.value = null
+        myRequestsResponse.value = MyRequestsServerResponse(listOf(), null)
         viewModelScope.launch {
             getUserRequests()
         }
