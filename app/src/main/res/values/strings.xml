@@ -2,6 +2,7 @@
     <string name="app_name">شريان</string>
     <string name="address">العنوان</string>
     <string name="address_full">\u200F %1$s : %2$d %3$s - %4$s - %5$s</string>
+    <string name="age_check_failed">لا يمكنك التبرع قبل بلوغ ١٧ عام</string>
     <string name="are_you_sure_cancel_request">هل انت متأكد من انك تريد الغاء الطلب؟</string>
     <string name="back">رجوع</string>
     <string name="bags_number">عدد الوحدات</string>
@@ -11,7 +12,7 @@
     <string name="branches">الفروع</string>
     <string name="cancel_donation">إلغاء التبرّع</string>
     <string name="cancel_request">إلغاء الطلب</string>
-    <string name="cant_request_today">نأسف لا يمكنك طلب تبرع بالدم اكثر من ثلاثة مرات في اليوم</string>
+    <string name="cant_request_today">نأسف لا يمكنك طلب تبرع بالدم اكثر من ٣ مرات في اليوم</string>
     <string name="change_location">تغيير الموقع</string>
     <string name="checking_requesting_permission">جاري التأكد من عدد طلباتك اليوم</string>
     <string name="checking_donating_ability">جاري التأكد من قدرتك على تلبية الطلب</string>
@@ -39,9 +40,11 @@
     <string name="filter_according">تصنيف حسب</string>
     <string name="filter_matching_types">الفصائل التي يمكننى التبرع لها</string>
     <string name="first_name">الاسم الأول</string>
+    <string name="frequent_donation">لا يمكنك التبرع قبل مرور ٣ شهور على اخر تبرع لك</string>
     <string name="gender">النوع</string>
     <string name="hello_user_greeting">\u200F مرحباً، %1$s</string>
     <string name="home">الرئيسية</string>
+    <string name="incompatible_blood_type">فصيلة دمك غير متطابقة مع الطلب</string>
     <string name="invalid_credentials">الرقم او كلمة السر غير صحيحين</string>
     <string name="internet_connection">تأكّد من اتصالك بالإنترنت</string>
     <string name="i_donated">لقد تبرّعت</string>
@@ -80,6 +83,7 @@
     <string name="redeemable">يمكنك الإسترداد</string>
     <string name="redeem">استرد العرض</string>
     <string name="requests">الطلبات</string>
+    <string name="request_already_pending">انت مسجل كمتبرع لطلب اخر</string>
     <string name="request_created">تم الطلب بنجاح</string>
     <string name="request_canceled">تم الغاء الطلب</string>
     <string name="resend_sms"><u>إعادة إرسال الرمز</u></string>

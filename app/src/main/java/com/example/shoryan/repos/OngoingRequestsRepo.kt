@@ -1,15 +1,13 @@
 package com.example.shoryan.repos
 
 import android.util.Log
-import com.example.shoryan.data.CurrentAppUser
-import com.example.shoryan.data.DonationRequest
-import com.example.shoryan.data.RequestsFiltersContainer
+import com.example.shoryan.data.*
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 
 
 object OngoingRequestsRepo {
 
-    private var  requestsList = listOf<DonationRequest>()
+    //private var  requestsList = listOf<DonationRequest>()
 
     // An object that encapsulates and stores the filters chosen by the user
     var requestsFiltersContainer: RequestsFiltersContainer? = null
@@ -28,19 +26,14 @@ object OngoingRequestsRepo {
     suspend fun getRequests(
         bloodDonationAPI: RetrofitBloodDonationInterface,
         refresh: Boolean
-    ): List<DonationRequest>{
+    ): AllActiveRequestsResponse {
 
-        if(requestsList.isNullOrEmpty() || refresh){
-            return try{
-                requestsList = bloodDonationAPI.getAllOngoingRequests()
-                requestsList
-            } catch (e: Exception){
-                Log.e("OngoingRequestsAPICall", "Couldn't get requests - " + e.message)
-                requestsList
-            }
+        return try {
+            bloodDonationAPI.getAllOngoingRequests("Bearer "+TokensRefresher.accessToken)
+        } catch (e: Exception) {
+            Log.e("OngoingRequestsAPICall", "Couldn't get requests - " + e.message)
+            AllActiveRequestsResponse(null, ErrorResponse(ServerError.CONNECTION_ERROR))
         }
-
-        return requestsList
     }
 
     suspend fun updateUserPendingRequest(bloodDonationAPI: RetrofitBloodDonationInterface){

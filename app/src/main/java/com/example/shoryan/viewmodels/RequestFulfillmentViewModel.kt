@@ -4,7 +4,8 @@ import android.view.View
 import androidx.lifecycle.*
 import com.example.shoryan.R
 import com.example.shoryan.data.CurrentAppUser
-import com.example.shoryan.data.DonationDetails
+import com.example.shoryan.data.DonationDetailsResponse
+import com.example.shoryan.data.ServerError
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.repos.RequestFulfillmentRepo
 import kotlinx.coroutines.launch
@@ -44,22 +45,22 @@ class RequestFulfillmentViewModel @Inject constructor(
 
         acceptedRequestMediatorLiveData.addSource(donationDetails){
             // When th details are loaded, set the request id as this liveData value
-                value: DonationDetails? -> acceptedRequestMediatorLiveData.setValue(value?.request?.id)
+                value: DonationDetailsResponse -> acceptedRequestMediatorLiveData.setValue(value.request?.id)
         }
     }
 
-    override suspend fun getDonationDetails(requestId: String): LiveData<DonationDetails?> {
+    override suspend fun getDonationDetails(requestId: String): LiveData<DonationDetailsResponse> {
         val details = super.getDonationDetails(requestId)
-        if(areDetailsFetchedSuccessfully(details.value)){
-            _canUserDonate.postValue(details.value?.donationAbility?.canUserDonate)
-            showDonationDisabilityReasonIfExists(details.value)
+        if(areDetailsFetchedSuccessfully(details.value!!)){
+            _canUserDonate.postValue(details.value?.error == null)
+            pushErrorToFragment(details.value?.error?.message)
         }
         return details
     }
 
-    private suspend fun showDonationDisabilityReasonIfExists(details: DonationDetails?) {
-        details?.donationAbility?.reasonForDisability?.apply {
-            _eventsFlow.emit(RequestDetailsViewEvent.UserCantDonate(this))
+    private suspend fun pushErrorToFragment(error: ServerError?) {
+        error?.let {
+            _eventsFlow.emit(RequestDetailsViewEvent.DonationError(it))
         }
     }
 
@@ -96,7 +97,7 @@ class RequestFulfillmentViewModel @Inject constructor(
             super.updateDonationDetails(updatedDonationRequest)
         }
         else{
-            _eventsFlow.emit(RequestDetailsViewEvent.ShowSnackBar(R.string.connection_error))
+            //_eventsFlow.emit(RequestDetailsViewEvent.ShowSnackBar(R.string.connection_error))
         }
         _isInLoadingState.postValue(false)
     }
@@ -106,11 +107,11 @@ class RequestFulfillmentViewModel @Inject constructor(
         val updatedDonationRequest = RequestFulfillmentRepo.confirmDonation(bloodDonationAPI, requestId)
         if(updatedDonationRequest != null){
             removeUserPendingRequest(true)
-            _eventsFlow.emit(RequestDetailsViewEvent.ShowSnackBar(R.string.thanks_donation))
+            //_eventsFlow.emit(RequestDetailsViewEvent.ShowSnackBar(R.string.thanks_donation))
             super.updateDonationDetails(updatedDonationRequest)
         }
         else{
-            _eventsFlow.emit(RequestDetailsViewEvent.ShowSnackBar(R.string.connection_error))
+            //_eventsFlow.emit(RequestDetailsViewEvent.ShowSnackBar(R.string.connection_error))
         }
         _isInLoadingState.postValue(false)
     }
@@ -120,11 +121,11 @@ class RequestFulfillmentViewModel @Inject constructor(
         val updatedDonationRequest = RequestFulfillmentRepo.cancelDonation(bloodDonationAPI, requestId)
         if(updatedDonationRequest != null){
             removeUserPendingRequest(false)
-            _eventsFlow.emit(RequestDetailsViewEvent.ShowSnackBar(R.string.donation_canceled))
+            //_eventsFlow.emit(RequestDetailsViewEvent.ShowSnackBar(R.string.donation_canceled))
             super.updateDonationDetails(updatedDonationRequest)
         }
         else{
-            _eventsFlow.emit(RequestDetailsViewEvent.ShowSnackBar(R.string.connection_error))
+            //_eventsFlow.emit(RequestDetailsViewEvent.ShowSnackBar(R.string.connection_error))
         }
         _isInLoadingState.postValue(false)
     }

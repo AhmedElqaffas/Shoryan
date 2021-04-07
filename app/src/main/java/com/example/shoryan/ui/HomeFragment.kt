@@ -15,18 +15,23 @@ import com.example.shoryan.AndroidUtility
 import com.example.shoryan.R
 import com.example.shoryan.data.DonationRequest
 import com.example.shoryan.data.RequestsFiltersContainer
+import com.example.shoryan.data.ServerError
 import com.example.shoryan.databinding.FragmentHomeBinding
 import com.example.shoryan.ui.recyclersAdapters.RequestsRecyclerAdapter
 import com.example.shoryan.interfaces.RequestsRecyclerInteraction
 import com.example.shoryan.interfaces.FilterHolder
 import com.example.shoryan.viewmodels.RequestsViewModel
+import com.example.shoryan.viewmodels.TokensViewModel
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.*
+import javax.inject.Inject
 
 class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
 
     private lateinit var navController: NavController
     private val requestsRecyclerAdapter = RequestsRecyclerAdapter(this)
+    @Inject
+    lateinit var tokensViewModel: TokensViewModel
 
     // viewModels() connects the viewModel to the fragment, so, when the user navigates to another
     // tab using bottom navigation, the fragment is destroyed and therefore the attached viewModel
@@ -80,8 +85,24 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
         requestsGettingJob = viewLifecycleOwner.lifecycleScope.launch {
             requestsViewModel.getOngoingRequests(refresh).observe(viewLifecycleOwner, {
                 binding.homeSwipeRefresh.isRefreshing = false
-                requestsRecyclerAdapter.submitList(it)
+                it.requests?.let{
+                    requestsRecyclerAdapter.submitList(it)
+                }
+                it.error?.let{
+                    viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+                        handleError(it.message)
+                    }
+                }
             })
+        }
+    }
+
+    private suspend fun handleError(error: ServerError) {
+        if(error == ServerError.JWT_EXPIRED){
+            tokensViewModel.getNewAccessToken(requireContext())
+        }
+        else{
+            error.doErrorAction(requireActivity())
         }
     }
 

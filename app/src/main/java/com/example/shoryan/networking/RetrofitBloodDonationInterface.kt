@@ -7,7 +7,7 @@ import retrofit2.http.*
 interface RetrofitBloodDonationInterface {
 
     @GET("requests")
-    suspend fun getAllOngoingRequests(): List<DonationRequest>
+    suspend fun getAllOngoingRequests(@Header("Authorization") accessToken: String): AllActiveRequestsResponse
 
     /* Since the following method returns a single string, we don't want to create a whole object for
        it, instead, a JsonObject is returned and the string is extracted from it
@@ -18,9 +18,9 @@ interface RetrofitBloodDonationInterface {
     @GET("users/active-requests")
     suspend fun getUserActiveRequests(@Header("Authorization") accessToken: String): MyRequestsServerResponse
 
-    @GET("requests/{requestId}/user-donation/{userId}")
+    @GET("requests/{requestId}/user-donation")
     suspend fun getDonationDetails(@Path("requestId") requestId: String
-                                   ,@Path("userId") userId: String): DonationDetails
+                                   ,@Header("Authorization") accessToken: String): DonationDetailsResponse
 
     @GET("requests/request-creation-details/{userId}")
     suspend fun getRequestCreationStatus(@Path("userId") userId: String?): RequestCreationStatusResponse

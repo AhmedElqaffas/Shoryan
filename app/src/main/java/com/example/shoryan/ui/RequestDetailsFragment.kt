@@ -11,6 +11,7 @@ import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.lifecycleScope
 import com.example.shoryan.BR
 import com.example.shoryan.R
+import com.example.shoryan.data.ServerError
 import com.example.shoryan.databinding.FragmentMyRequestDetailsBinding
 import com.example.shoryan.databinding.FragmentRequestFulfillmentBinding
 import com.example.shoryan.di.AppComponent
@@ -66,6 +67,8 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
         (activity?.application as MyApplication).appComponent
     }
 
+    @Inject
+    lateinit var tokensViewModel: TokensViewModel
     @Inject
     lateinit var bloodDonationAPI: RetrofitBloodDonationInterface
     @Inject
@@ -210,14 +213,23 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
         viewModel.eventsFlow.onEach {
             when(it){
                 is RequestDetailsViewModel.RequestDetailsViewEvent.ShowTryAgainSnackBar -> showTryAgainSnackbar { fetchDonationDetails() }
-                is RequestDetailsViewModel.RequestDetailsViewEvent.ShowSnackBar -> showDefiniteMessage(resources.getString(it.stringResourceId))
-                is RequestDetailsViewModel.RequestDetailsViewEvent.UserCantDonate -> showDefiniteMessage(it.reason)
                 RequestDetailsViewModel.RequestDetailsViewEvent.DismissFragment -> closeBottomSheetDialog()
                 is RequestDetailsViewModel.RequestDetailsViewEvent.CallPatient -> openDialerApp(it.phoneNumber)
+                is RequestDetailsViewModel.RequestDetailsViewEvent.DonationError -> handleError(it.error)
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
+    private fun handleError(error: ServerError){
+        if(error == ServerError.JWT_EXPIRED){
+            viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+                tokensViewModel.getNewAccessToken(requireContext())
+            }
+        }
+        else{
+            error.doErrorAction(requireActivity())
+        }
+    }
 
     private fun closeBottomSheetDialog() {
         requireParentFragment().childFragmentManager.findFragmentByTag("requestDetails")?.let {

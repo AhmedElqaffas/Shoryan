@@ -1,23 +1,20 @@
 package com.example.shoryan.repos
 
 import android.util.Log
-import com.example.shoryan.data.CurrentAppUser
-import com.example.shoryan.data.DonationDetails
-import com.example.shoryan.data.DonationRequest
-import com.example.shoryan.data.DonationRequestUpdate
+import com.example.shoryan.data.*
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import java.lang.Exception
 
 object RequestFulfillmentRepo {
 
     suspend fun getDonationDetails(bloodDonationAPI: RetrofitBloodDonationInterface
-                          ,requestId: String): DonationDetails?{
+                          ,requestId: String): DonationDetailsResponse{
 
         return try{
-            bloodDonationAPI.getDonationDetails(requestId, CurrentAppUser.id!!)
+            bloodDonationAPI.getDonationDetails(requestId, "Bearer "+TokensRefresher.accessToken)
         }catch(e: Exception){
             Log.e("RequestFulfillmentRepo","Couldn't get donation details" + e.message)
-            null
+            DonationDetailsResponse(null, ErrorResponse(ServerError.CONNECTION_ERROR))
         }
     }
 

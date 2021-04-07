@@ -13,15 +13,14 @@ open class RequestDetailsViewModel(protected val bloodDonationAPI: RetrofitBlood
                                    protected val requestId: String): ViewModel() {
 
     sealed class RequestDetailsViewEvent{
-        data class ShowSnackBar(val stringResourceId: Int): RequestDetailsViewEvent()
-        data class UserCantDonate(val reason: String): RequestDetailsViewEvent()
         data class ShowTryAgainSnackBar(val stringResourceId: Int): RequestDetailsViewEvent()
         object DismissFragment: RequestDetailsViewEvent()
         data class CallPatient(val phoneNumber: String): RequestDetailsViewEvent()
+        data class DonationError(val error: ServerError): RequestDetailsViewEvent()
     }
 
-    private val _donationDetails =  MutableLiveData<DonationDetails?>()
-    val donationDetails: LiveData<DonationDetails?> = _donationDetails
+    private val _donationDetails =  MutableLiveData<DonationDetailsResponse>()
+    val donationDetails: LiveData<DonationDetailsResponse> = _donationDetails
     // The application is processing a query (contacting backend)
     protected val _isInLoadingState = MutableLiveData(true)
     val isInLoadingState: LiveData<Boolean> = _isInLoadingState
@@ -39,7 +38,7 @@ open class RequestDetailsViewModel(protected val bloodDonationAPI: RetrofitBlood
     protected val _eventsFlow = MutableSharedFlow<RequestDetailsViewEvent>()
     val eventsFlow = _eventsFlow.asSharedFlow()
 
-    open suspend fun getDonationDetails(requestId: String): LiveData<DonationDetails?> {
+    open suspend fun getDonationDetails(requestId: String): LiveData<DonationDetailsResponse> {
         val details = RequestFulfillmentRepo.getDonationDetails(bloodDonationAPI, requestId)
         if(areDetailsFetchedSuccessfully(details)){
             _donationDetails.value = details
@@ -48,11 +47,11 @@ open class RequestDetailsViewModel(protected val bloodDonationAPI: RetrofitBlood
         }else{
             announceCommunicationFailure()
         }
-        return MutableLiveData<DonationDetails?>(details)
+        return MutableLiveData<DonationDetailsResponse>(details)
     }
 
-    protected fun areDetailsFetchedSuccessfully(details: DonationDetails?): Boolean {
-        return details?.request != null
+    protected fun areDetailsFetchedSuccessfully(details: DonationDetailsResponse): Boolean {
+        return details.request != null
     }
 
     private suspend fun announceCommunicationFailure(){
@@ -69,13 +68,13 @@ open class RequestDetailsViewModel(protected val bloodDonationAPI: RetrofitBlood
         _donationDetails.postValue(createDonationDetailsFromUpdate(update))
     }
 
-    private fun createDonationDetailsFromUpdate(update: DonationRequestUpdate): DonationDetails{
+    private fun createDonationDetailsFromUpdate(update: DonationRequestUpdate): DonationDetailsResponse{
         val currentRequestDetails = _donationDetails.value!!.request
         val updatedRequestDetails = currentRequestDetails!!.copy(
             numberOfBagsFulfilled = update.numberOfBagsFulfilled,
             numberOfBagsRequired = update.numberOfBagsRequired,
             numberOfComingDonors = update.numberOfComingDonors
         )
-        return DonationDetails(updatedRequestDetails, DonationAbility(true))
+        return DonationDetailsResponse(updatedRequestDetails, null)
     }
 }

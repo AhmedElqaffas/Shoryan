@@ -36,7 +36,7 @@ class MyRequestDetailsViewModel@Inject constructor(
             showSuccessToast(view)
         }
         else{
-            _eventsFlow.emit(RequestDetailsViewEvent.ShowSnackBar(R.string.connection_error))
+           // _eventsFlow.emit(RequestDetailsViewEvent.ShowSnackBar(R.string.connection_error))
         }
         _isInLoadingState.postValue(false)
     }
