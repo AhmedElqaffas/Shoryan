@@ -17,6 +17,12 @@ data class DonationRequest(@SerializedName("_id") val id: String,
     Received when the user starts/cancels/confirms donation, it is used to update the request details
     shown to the user
  **/
+data class DonationRequestUpdateResponse(
+    val request: DonationRequest?,
+    val error: ErrorResponse?
+)
+
+
 data class DonationRequestUpdate(
                            val numberOfBagsFulfilled: Int? = null,
                            val numberOfBagsRequired: Int? = null

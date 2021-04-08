@@ -58,12 +58,6 @@ class RequestFulfillmentViewModel @Inject constructor(
         return details
     }
 
-    private suspend fun pushErrorToFragment(error: ServerError?) {
-        error?.let {
-            _eventsFlow.emit(RequestDetailsViewEvent.DonationError(it))
-        }
-    }
-
     /**
      * Maps changes in donationDetails and currentUserPendingRequest LiveData to an Integer LiveData
      * to be able to observe it in XML.
@@ -92,12 +86,13 @@ class RequestFulfillmentViewModel @Inject constructor(
     fun startDonation(requestId: String) = viewModelScope.launch{
         _isInLoadingState.postValue(true)
         val updatedDonationRequest = RequestFulfillmentRepo.addUserToDonorsList(bloodDonationAPI, requestId)
-        if(updatedDonationRequest != null){
+        updatedDonationRequest.request?.let{
+            println(it.toString())
             setUserPendingRequest(requestId)
-            super.updateDonationDetails(updatedDonationRequest)
+            super.updateDonationDetails(it)
         }
-        else{
-            //_eventsFlow.emit(RequestDetailsViewEvent.ShowSnackBar(R.string.connection_error))
+        updatedDonationRequest.error?.message?.let{
+            pushErrorToFragment(it)
         }
         _isInLoadingState.postValue(false)
     }
@@ -105,13 +100,13 @@ class RequestFulfillmentViewModel @Inject constructor(
     fun confirmDonation(requestId: String) = viewModelScope.launch{
         _isInLoadingState.postValue(true)
         val updatedDonationRequest = RequestFulfillmentRepo.confirmDonation(bloodDonationAPI, requestId)
-        if(updatedDonationRequest != null){
+        updatedDonationRequest.request?.let{
             removeUserPendingRequest(true)
-            //_eventsFlow.emit(RequestDetailsViewEvent.ShowSnackBar(R.string.thanks_donation))
-            super.updateDonationDetails(updatedDonationRequest)
+            _eventsFlow.emit(RequestDetailsViewEvent.ShowSnackBar(R.string.thanks_donation))
+            super.updateDonationDetails(it)
         }
-        else{
-            //_eventsFlow.emit(RequestDetailsViewEvent.ShowSnackBar(R.string.connection_error))
+        updatedDonationRequest.error?.message?.let{
+            pushErrorToFragment(it)
         }
         _isInLoadingState.postValue(false)
     }
@@ -119,13 +114,13 @@ class RequestFulfillmentViewModel @Inject constructor(
     fun cancelDonation(requestId: String) = viewModelScope.launch{
         _isInLoadingState.postValue(true)
         val updatedDonationRequest = RequestFulfillmentRepo.cancelDonation(bloodDonationAPI, requestId)
-        if(updatedDonationRequest != null){
+        updatedDonationRequest.request?.let{
             removeUserPendingRequest(false)
-            //_eventsFlow.emit(RequestDetailsViewEvent.ShowSnackBar(R.string.donation_canceled))
-            super.updateDonationDetails(updatedDonationRequest)
+            _eventsFlow.emit(RequestDetailsViewEvent.ShowSnackBar(R.string.donation_canceled))
+            super.updateDonationDetails(it)
         }
-        else{
-            //_eventsFlow.emit(RequestDetailsViewEvent.ShowSnackBar(R.string.connection_error))
+        updatedDonationRequest.error?.message?.let{
+            pushErrorToFragment(it)
         }
         _isInLoadingState.postValue(false)
     }

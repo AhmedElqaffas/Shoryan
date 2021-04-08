@@ -42,11 +42,11 @@ class RequestsViewModel : ViewModel() {
         }
     }
 
-  suspend fun getOngoingRequests(refresh: Boolean): LiveData<AllActiveRequestsResponse>{
+  suspend fun getOngoingRequests(): LiveData<AllActiveRequestsResponse>{
         viewModelScope.async {
             withContext(Dispatchers.IO) {
                 val response =
-                    OngoingRequestsRepo.getRequests(bloodDonationAPI, refresh)
+                    OngoingRequestsRepo.getRequests(bloodDonationAPI)
                 var filteredList = response.requests
                 OngoingRequestsRepo.requestsFiltersContainer?.let {
                     filteredList = response.requests?.filter {

@@ -212,10 +212,11 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
     private fun observeViewModelEvents(viewModel: RequestDetailsViewModel){
         viewModel.eventsFlow.onEach {
             when(it){
+                is RequestDetailsViewModel.RequestDetailsViewEvent.ShowSnackBar -> showDefiniteMessage(resources.getString(it.stringResourceId))
                 is RequestDetailsViewModel.RequestDetailsViewEvent.ShowTryAgainSnackBar -> showTryAgainSnackbar { fetchDonationDetails() }
                 RequestDetailsViewModel.RequestDetailsViewEvent.DismissFragment -> closeBottomSheetDialog()
                 is RequestDetailsViewModel.RequestDetailsViewEvent.CallPatient -> openDialerApp(it.phoneNumber)
-                is RequestDetailsViewModel.RequestDetailsViewEvent.DonationError -> handleError(it.error)
+                is RequestDetailsViewModel.RequestDetailsViewEvent.RequestDetailsError -> handleError(it.error)
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }

@@ -17,7 +17,7 @@ object ProfileRepo {
                                    shouldRefresh: Boolean = false): ProfileResponse {
         if(user == null || shouldRefresh){
             try {
-                val response = bloodDonationAPI.getUserProfileData("Bearer "+TokensRefresher.accessToken!!)
+                val response = bloodDonationAPI.getUserProfileData(TokensRefresher.accessToken!!)
                 println("Token at repo: "+ "Bearer "+TokensRefresher.accessToken!!)
                 response.user?.let{
                     user = it

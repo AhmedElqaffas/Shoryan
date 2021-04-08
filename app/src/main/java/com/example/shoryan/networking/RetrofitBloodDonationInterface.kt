@@ -12,7 +12,7 @@ interface RetrofitBloodDonationInterface {
     /* Since the following method returns a single string, we don't want to create a whole object for
        it, instead, a JsonObject is returned and the string is extracted from it
      */
-    @GET("users/user-pending-donation")
+    @GET("users/pending-donations")
     suspend fun getPendingRequest(@Header("Authorization") accessToken: String): PendingRequestResponse
 
     @GET("users/active-requests")
@@ -28,17 +28,21 @@ interface RetrofitBloodDonationInterface {
     @POST("requests/request-creation")
     suspend fun createNewRequest(@Body createNewRequestQuery: CreateNewRequestQuery) : CreateNewRequestResponse
 
-    @POST("requests/{requestId}/user-donation/{userId}")
+    @DELETE("requests/{requestId}")
+    suspend fun cancelRequest(@Path("requestId") requestId: String
+                              ,@Header("Authorization") accessToken: String) : CancelRequestResponse
+
+    @POST("requests/{requestId}/user-donation")
     suspend fun confirmDonation(@Path("requestId") requestId: String
-                                   ,@Path("userId") userId: String): DonationRequestUpdate
+                                   ,@Header("Authorization") accessToken: String): DonationRequestUpdateResponse
 
-    @DELETE("requests/{requestId}/user-potential-donation/{userId}")
+    @DELETE("requests/{requestId}/user-potential-donation")
     suspend fun removeUserFromDonorsList(@Path("requestId") requestId: String
-                                         ,@Path("userId") userId: String): DonationRequestUpdate
+                                         ,@Header("Authorization") accessToken: String): DonationRequestUpdateResponse
 
-    @POST("requests/{requestId}/user-potential-donation/{userId}")
+    @POST("requests/{requestId}/user-potential-donation")
     suspend fun addUserToDonorsList(@Path("requestId") requestId: String
-                                         ,@Path("userId") userId: String): DonationRequestUpdate
+                                         ,@Header("Authorization") accessToken: String): DonationRequestUpdateResponse
 
     @POST("users/login")
     suspend fun logUser(@Body loginQuery: LoginQuery): LoginResponse

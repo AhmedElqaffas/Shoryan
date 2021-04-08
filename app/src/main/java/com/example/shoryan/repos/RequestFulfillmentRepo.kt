@@ -11,7 +11,7 @@ object RequestFulfillmentRepo {
                           ,requestId: String): DonationDetailsResponse{
 
         return try{
-            bloodDonationAPI.getDonationDetails(requestId, "Bearer "+TokensRefresher.accessToken)
+            bloodDonationAPI.getDonationDetails(requestId, TokensRefresher.accessToken!!)
         }catch(e: Exception){
             Log.e("RequestFulfillmentRepo","Couldn't get donation details" + e.message)
             DonationDetailsResponse(null, ErrorResponse(ServerError.CONNECTION_ERROR))
@@ -19,35 +19,35 @@ object RequestFulfillmentRepo {
     }
 
     suspend fun addUserToDonorsList(bloodDonationAPI: RetrofitBloodDonationInterface
-                                    ,requestId: String): DonationRequestUpdate?{
+                                    ,requestId: String): DonationRequestUpdateResponse{
 
         return try{
-            bloodDonationAPI.addUserToDonorsList(requestId, CurrentAppUser.id!!)
+            bloodDonationAPI.addUserToDonorsList(requestId, TokensRefresher.accessToken!!)
         }catch(e: Exception){
             Log.e("RequestFulfillmentRepo","Couldn't start donation" + e.message)
-            null
+            DonationRequestUpdateResponse(null, ErrorResponse(ServerError.CONNECTION_ERROR))
         }
     }
 
     suspend fun confirmDonation(bloodDonationAPI: RetrofitBloodDonationInterface
-                                    ,requestId: String): DonationRequestUpdate?{
+                                    ,requestId: String): DonationRequestUpdateResponse{
 
         return try{
-            bloodDonationAPI.confirmDonation(requestId, CurrentAppUser.id!!)
+            bloodDonationAPI.confirmDonation(requestId, TokensRefresher.accessToken!!)
         }catch(e: Exception){
             Log.e("RequestFulfillmentRepo","Couldn't confirm donation" + e.message)
-            null
+            DonationRequestUpdateResponse(null, ErrorResponse(ServerError.CONNECTION_ERROR))
         }
     }
 
     suspend fun cancelDonation(bloodDonationAPI: RetrofitBloodDonationInterface
-                                   ,requestId: String): DonationRequestUpdate?{
+                                   ,requestId: String): DonationRequestUpdateResponse{
 
         return try{
-            bloodDonationAPI.removeUserFromDonorsList(requestId, CurrentAppUser.id!!)
+            bloodDonationAPI.removeUserFromDonorsList(requestId, TokensRefresher.accessToken!!)
         }catch(e: Exception){
             Log.e("RequestFulfillmentRepo","Couldn't cancel donation" + e.message)
-            null
+            DonationRequestUpdateResponse(null, ErrorResponse(ServerError.CONNECTION_ERROR))
         }
     }
 }

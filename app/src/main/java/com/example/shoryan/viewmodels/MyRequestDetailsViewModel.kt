@@ -30,13 +30,13 @@ class MyRequestDetailsViewModel@Inject constructor(
 
     private fun cancelRequest(view: View) = viewModelScope.launch{
         _isInLoadingState.postValue(true)
-        val updatedDonationRequest = MyRequestDetailsRepo.cancelRequest(bloodDonationAPI, requestId)
-        if(updatedDonationRequest != null){
+        val reponse = MyRequestDetailsRepo.cancelRequest(bloodDonationAPI, requestId)
+        if(reponse.successfulResponse != null){
             dismissFragment()
             showSuccessToast(view)
         }
         else{
-           // _eventsFlow.emit(RequestDetailsViewEvent.ShowSnackBar(R.string.connection_error))
+            pushErrorToFragment(reponse.error!!.message)
         }
         _isInLoadingState.postValue(false)
     }

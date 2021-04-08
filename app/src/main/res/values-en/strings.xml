@@ -34,7 +34,7 @@
     <string name="enter_login_password">Enter the password for the number \n %1$s</string>
     <string name="enter_password">Please enter your password</string>
     <string name="female">Female</string>
-    <string name="fetching_data_error">"Couldn't get data"</string>
+    <string name="fetching_data_error">"Couldn't retrieve the data"</string>
     <string name="fill_all_data">Please fill the whole form</string>
     <string name="filter"><u>Filter</u></string>
     <string name="filter_according">Filter</string>

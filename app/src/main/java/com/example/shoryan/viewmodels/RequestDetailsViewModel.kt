@@ -13,10 +13,11 @@ open class RequestDetailsViewModel(protected val bloodDonationAPI: RetrofitBlood
                                    protected val requestId: String): ViewModel() {
 
     sealed class RequestDetailsViewEvent{
+        data class ShowSnackBar(val stringResourceId: Int): RequestDetailsViewEvent()
         data class ShowTryAgainSnackBar(val stringResourceId: Int): RequestDetailsViewEvent()
         object DismissFragment: RequestDetailsViewEvent()
         data class CallPatient(val phoneNumber: String): RequestDetailsViewEvent()
-        data class DonationError(val error: ServerError): RequestDetailsViewEvent()
+        data class RequestDetailsError(val error: ServerError): RequestDetailsViewEvent()
     }
 
     private val _donationDetails =  MutableLiveData<DonationDetailsResponse>()
@@ -64,11 +65,11 @@ open class RequestDetailsViewModel(protected val bloodDonationAPI: RetrofitBlood
         }
     }
 
-    fun updateDonationDetails(update: DonationRequestUpdate){
+    fun updateDonationDetails(update: DonationRequest){
         _donationDetails.postValue(createDonationDetailsFromUpdate(update))
     }
 
-    private fun createDonationDetailsFromUpdate(update: DonationRequestUpdate): DonationDetailsResponse{
+    private fun createDonationDetailsFromUpdate(update: DonationRequest): DonationDetailsResponse{
         val currentRequestDetails = _donationDetails.value!!.request
         val updatedRequestDetails = currentRequestDetails!!.copy(
             numberOfBagsFulfilled = update.numberOfBagsFulfilled,
@@ -76,5 +77,11 @@ open class RequestDetailsViewModel(protected val bloodDonationAPI: RetrofitBlood
             numberOfComingDonors = update.numberOfComingDonors
         )
         return DonationDetailsResponse(updatedRequestDetails, null)
+    }
+
+    protected suspend fun pushErrorToFragment(error: ServerError?) {
+        error?.let {
+            _eventsFlow.emit(RequestDetailsViewEvent.RequestDetailsError(it))
+        }
     }
 }

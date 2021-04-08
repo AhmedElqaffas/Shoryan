@@ -7,7 +7,7 @@ object MyRequestsRepo {
 
     suspend fun getRequests(bloodDonationAPI: RetrofitBloodDonationInterface): MyRequestsServerResponse{
         return try{
-            bloodDonationAPI.getUserActiveRequests("Bearer "+TokensRefresher.accessToken!!)
+            bloodDonationAPI.getUserActiveRequests(TokensRefresher.accessToken!!)
         }catch (e: Exception){
             MyRequestsServerResponse(null, ErrorResponse(ServerError.CONNECTION_ERROR))
         }

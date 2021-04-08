@@ -30,10 +30,7 @@ object TokensRefresher {
 
     private suspend fun processResponse(response: TokenRefreshResponse, context: Context){
         if(response.accessToken != null){
-            this.accessToken = response.accessToken
-            this.refreshToken = response.refreshToken
-            saveTokenInDevice(DataStoreUtil.ACCESS_TOKEN_KEY, accessToken!!, context)
-            saveTokenInDevice(DataStoreUtil.REFRESH_TOKEN_KEY, refreshToken!!, context)
+            saveTokens(response.accessToken, response.refreshToken!!, context)
         }else{
             // Refreshing token failed, user should be logged out and tokens should be cleared
             this.accessToken = null
@@ -52,9 +49,9 @@ object TokensRefresher {
     }
 
     suspend fun saveTokens(accessToken: String, refreshToken: String, context: Context){
-        this.accessToken = accessToken
+        this.accessToken = "Bearer $accessToken"
         this.refreshToken = refreshToken
-        saveTokenInDevice(DataStoreUtil.ACCESS_TOKEN_KEY, accessToken, context)
+        saveTokenInDevice(DataStoreUtil.ACCESS_TOKEN_KEY, this.accessToken!!, context)
         saveTokenInDevice(DataStoreUtil.REFRESH_TOKEN_KEY, refreshToken, context)
     }
 

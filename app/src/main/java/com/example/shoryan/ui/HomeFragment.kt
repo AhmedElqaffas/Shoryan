@@ -80,11 +80,12 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
         }
     }
 
-    private fun getOngoingRequests(refresh: Boolean = false){
+    private fun getOngoingRequests(){
         requestsGettingJob.cancel()
         requestsGettingJob = viewLifecycleOwner.lifecycleScope.launch {
-            requestsViewModel.getOngoingRequests(refresh).observe(viewLifecycleOwner, {
+            requestsViewModel.getOngoingRequests().observe(viewLifecycleOwner, {
                 binding.homeSwipeRefresh.isRefreshing = false
+                println(it.toString())
                 it.requests?.let{
                     requestsRecyclerAdapter.submitList(it)
                 }
@@ -142,7 +143,7 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
 
     fun refreshRequests(){
         resetScrollingToTop()
-        getOngoingRequests(true)
+        getOngoingRequests()
     }
 
     private fun setFilterListener(){
