@@ -77,7 +77,7 @@ class ProfileFragment : Fragment() {
             tokensViewModel.getNewAccessToken(requireContext())
         }
         else{
-            error.doErrorAction(requireActivity())
+            error.doErrorAction(binding.rootLayout)
         }
     }
 

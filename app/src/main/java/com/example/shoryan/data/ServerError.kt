@@ -22,19 +22,20 @@ enum class ServerError(val errorStringResource: Int) {
     INVALID_FORMAT(R.string.connection_error),
     JWT_EXPIRED(R.string.connection_error)
     {
-        override fun doErrorAction(activity: Activity){
+        override fun doErrorAction(rootView: View){
         }
     },
     // UnAuthorized error -> The user should log in again
     UNAUTHORIZED(R.string.re_login)
     {
-        override fun doErrorAction(activity: Activity){
+        override fun doErrorAction(rootView: View){
+            val context = rootView.context
             GlobalScope.launch{
-                TokensRefresher.clearCachedTokens(activity)
-                Toast.makeText(activity, activity.resources.getString(errorStringResource), Toast.LENGTH_LONG).show()
-                val intent = Intent(activity, LandingActivity::class.java)
+                TokensRefresher.clearCachedTokens(context)
+                Toast.makeText(context, context.resources.getString(errorStringResource), Toast.LENGTH_LONG).show()
+                val intent = Intent(context, LandingActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                activity.startActivity(intent)
+                rootView.context.startActivity(intent)
             }
         }
     },
@@ -47,9 +48,9 @@ enum class ServerError(val errorStringResource: Int) {
     INTERNAL_SERVER_ERROR(R.string.connection_error),
     CONNECTION_ERROR(R.string.connection_error);
 
-    open fun doErrorAction(activity: Activity){
-        AndroidUtility.displaySnackbarMessage(activity.findViewById(R.id.rootLayout),
-            activity.resources.getString(this.errorStringResource), Snackbar.LENGTH_LONG)
+    open fun doErrorAction(rootView: View){
+        AndroidUtility.displaySnackbarMessage(rootView,
+            rootView.context.resources.getString(this.errorStringResource), Snackbar.LENGTH_LONG)
     }
 
     companion object {

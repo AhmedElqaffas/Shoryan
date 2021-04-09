@@ -228,7 +228,7 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
             }
         }
         else{
-            error.doErrorAction(requireActivity())
+            error.doErrorAction(binding.root)
         }
     }
 

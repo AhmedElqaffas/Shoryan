@@ -106,7 +106,7 @@ class MyRequestsFragment : Fragment(), RequestsRecyclerInteraction {
                 tokensViewModel.getNewAccessToken(requireContext())
             }
             else{
-                error.doErrorAction(requireActivity())
+                error.doErrorAction(binding.rootLayout)
             }
         }
     }

@@ -103,7 +103,7 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
             tokensViewModel.getNewAccessToken(requireContext())
         }
         else{
-            error.doErrorAction(requireActivity())
+            error.doErrorAction(binding.rootLayout)
         }
     }
 
