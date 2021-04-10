@@ -7,7 +7,7 @@ import com.example.shoryan.DataStoreUtil.read
 import com.example.shoryan.DataStoreUtil.write
 import com.example.shoryan.data.ErrorResponse
 import com.example.shoryan.data.ServerError
-import com.example.shoryan.data.TokenRefreshResponse
+import com.example.shoryan.data.TokenResponse
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 
 object TokensRefresher {
@@ -16,7 +16,7 @@ object TokensRefresher {
     var refreshToken: String? = null
 
     suspend fun getNewAccessToken(bloodDonationAPI: RetrofitBloodDonationInterface,
-                                  context: Context): TokenRefreshResponse{
+                                  context: Context): TokenResponse{
         return try {
             val response = bloodDonationAPI.getNewAccessToken(refreshToken!!)
             processResponse(response, context)
@@ -24,11 +24,11 @@ object TokensRefresher {
         }
         catch (e: Exception){
             clearCachedTokens(context)
-            TokenRefreshResponse(null,null, ErrorResponse(ServerError.CONNECTION_ERROR))
+            TokenResponse(null,null, ErrorResponse(ServerError.CONNECTION_ERROR))
         }
     }
 
-    private suspend fun processResponse(response: TokenRefreshResponse, context: Context){
+    private suspend fun processResponse(response: TokenResponse, context: Context){
         if(response.accessToken != null){
             saveTokens(response.accessToken, response.refreshToken!!, context)
         }else{

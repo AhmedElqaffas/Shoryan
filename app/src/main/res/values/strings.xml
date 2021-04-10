@@ -20,6 +20,7 @@
     <string name="choose_your_location">اختر عنوان تواجدك</string>
     <string name="clear">مسح</string>
     <string name="click_here_to_try_again">"فشل في الحصول على البيانات \n   اضغط هنا لإعادة المحاولة"</string>
+    <string name="confirm">تأكيد</string>
     <string name="confirmation_code">رمز التأكيد</string>
     <string name="confirm_password">تأكيد كلمة السر</string>
     <string name="connection_error">فشل في الاتصال بالشبكة</string>
@@ -45,7 +46,8 @@
     <string name="hello_user_greeting">\u200F مرحباً، %1$s</string>
     <string name="home">الرئيسية</string>
     <string name="incompatible_blood_type">فصيلة دمك غير متطابقة مع الطلب</string>
-    <string name="invalid_credentials">الرقم او كلمة السر غير صحيحين</string>
+    <string name="invalid_input">تأكد من اخال البيانات بشكل صحيح</string>
+    <string name="invalid_credentials">بيانات الدخول غير صحيحة</string>
     <string name="internet_connection">تأكّد من اتصالك بالإنترنت</string>
     <string name="i_donated">لقد تبرّعت</string>
     <string name="last_name">الاسم الأخير</string>
@@ -89,6 +91,7 @@
     <string name="resend_sms"><u>إعادة إرسال الرمز</u></string>
     <string name="rewards">المكافآت</string>
     <string name="re_login">من فضلك اعد تسجيل الدخول</string>
+    <string name="send_sms">ارسل الرمز</string>
     <string name="settings">الإعدادات</string>
     <string name="show_my_requests">اظهر طلباتي الحالية</string>
     <string name="submit">تنفيذ</string>

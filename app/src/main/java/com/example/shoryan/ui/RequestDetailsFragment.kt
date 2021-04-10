@@ -29,6 +29,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -210,15 +211,17 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
     }
 
     private fun observeViewModelEvents(viewModel: RequestDetailsViewModel){
-        viewModel.eventsFlow.onEach {
-            when(it){
-                is RequestDetailsViewModel.RequestDetailsViewEvent.ShowSnackBar -> showDefiniteMessage(resources.getString(it.stringResourceId))
-                is RequestDetailsViewModel.RequestDetailsViewEvent.ShowTryAgainSnackBar -> showTryAgainSnackbar { fetchDonationDetails() }
-                RequestDetailsViewModel.RequestDetailsViewEvent.DismissFragment -> closeBottomSheetDialog()
-                is RequestDetailsViewModel.RequestDetailsViewEvent.CallPatient -> openDialerApp(it.phoneNumber)
-                is RequestDetailsViewModel.RequestDetailsViewEvent.RequestDetailsError -> handleError(it.error)
+        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+            viewModel.eventsFlow.collect {
+                when(it){
+                    is RequestDetailsViewModel.RequestDetailsViewEvent.ShowSnackBar -> showDefiniteMessage(resources.getString(it.stringResourceId))
+                    is RequestDetailsViewModel.RequestDetailsViewEvent.ShowTryAgainSnackBar -> showTryAgainSnackbar { fetchDonationDetails() }
+                    RequestDetailsViewModel.RequestDetailsViewEvent.DismissFragment -> closeBottomSheetDialog()
+                    is RequestDetailsViewModel.RequestDetailsViewEvent.CallPatient -> openDialerApp(it.phoneNumber)
+                    is RequestDetailsViewModel.RequestDetailsViewEvent.RequestDetailsError -> handleError(it.error)
+                }
             }
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }
     }
 
     private fun handleError(error: ServerError){

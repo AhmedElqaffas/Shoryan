@@ -1,7 +1,6 @@
 package com.example.shoryan.networking
 
 import com.example.shoryan.data.*
-import com.google.gson.JsonObject
 import retrofit2.http.*
 
 interface RetrofitBloodDonationInterface {
@@ -51,11 +50,17 @@ interface RetrofitBloodDonationInterface {
         it, instead, a JsonObject is returned and the string is extracted from it
     */
     @POST("users/refresh-token")
-    suspend fun getNewAccessToken(@Header("Authorization") refreshToken: String): TokenRefreshResponse
+    suspend fun getNewAccessToken(@Header("Authorization") refreshToken: String): TokenResponse
 
     @POST("users/signup")
     suspend fun registerUser(@Body user: RegistrationQuery): RegistrationResponse
 
     @GET("users")
     suspend fun getUserProfileData(@Header("Authorization") accessToken: String): ProfileResponse
+
+    @POST("users/login-send-code")
+    suspend fun sendSMSLogin(@Body phoneQuery: SMSCodeQuery): SMSResponse
+
+    @POST("users/login-sms")
+    suspend fun verifyLoginCode(@Body loginCodeQuery: LoginCodeQuery): TokenResponse
 }

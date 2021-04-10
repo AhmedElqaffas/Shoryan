@@ -19,7 +19,8 @@ enum class ServerError(val errorStringResource: Int) {
     INVALID_CREDENTIALS(R.string.invalid_credentials),
     MISSING_PARAMETER(R.string.fill_all_data),
     USER_NOT_FOUND(R.string.user_not_found),
-    INVALID_FORMAT(R.string.connection_error),
+    INVALID_FORMAT(R.string.invalid_input),
+    PHONE_NUMBER_REQUIRED(R.string.connection_error),
     JWT_EXPIRED(R.string.connection_error)
     {
         override fun doErrorAction(rootView: View){
