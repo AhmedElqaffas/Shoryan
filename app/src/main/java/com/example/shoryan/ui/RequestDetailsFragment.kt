@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
+import android.widget.Toast
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.lifecycleScope
 import com.example.shoryan.BR
@@ -27,8 +28,6 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -227,12 +226,23 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
     private fun handleError(error: ServerError){
         if(error == ServerError.JWT_EXPIRED){
             viewLifecycleOwner.lifecycleScope.launchWhenResumed {
-                tokensViewModel.getNewAccessToken(requireContext())
+                val response = tokensViewModel.getNewAccessToken(requireContext())
+                // If an error happened when refreshing tokens, log user out
+                response.error?.let{
+                    forceLogOut()
+                }
             }
         }
         else{
             error.doErrorAction(binding.root)
         }
+    }
+
+    private fun forceLogOut(){
+        Toast.makeText(requireContext(), resources.getString(R.string.re_login), Toast.LENGTH_LONG).show()
+        val intent = Intent(context, LandingActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
     }
 
     private fun closeBottomSheetDialog() {

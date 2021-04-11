@@ -26,7 +26,7 @@ enum class ServerError(val errorStringResource: Int) {
         override fun doErrorAction(rootView: View){
         }
     },
-    // UnAuthorized error -> The user should log in again
+    // UnAuthorized error -> The user should be forcefully logged out
     UNAUTHORIZED(R.string.re_login)
     {
         override fun doErrorAction(rootView: View){
@@ -52,13 +52,5 @@ enum class ServerError(val errorStringResource: Int) {
     open fun doErrorAction(rootView: View){
         AndroidUtility.displaySnackbarMessage(rootView,
             rootView.context.resources.getString(this.errorStringResource), Snackbar.LENGTH_LONG)
-    }
-
-    companion object {
-        fun fromResource(errorStringResource: Int) =  try{
-            values().first { it.errorStringResource == errorStringResource }
-        }catch (e: NoSuchElementException){
-            null
-        }
     }
 }

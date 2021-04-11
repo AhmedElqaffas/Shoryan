@@ -15,6 +15,13 @@ object TokensRefresher {
     var accessToken: String? = null
     var refreshToken: String? = null
 
+    /**
+     * Used to generate new tokens when the access token has expired. The old refresh token is
+     * sent to the server, and a new pair of access and refresh tokens is retrieved.
+     * @param bloodDonationAPI The retrofit interface containing the server endpoints
+     * @param context The current context, used to store the new tokens in a local dataStore
+     * @return TokenResponse
+     */
     suspend fun getNewAccessToken(bloodDonationAPI: RetrofitBloodDonationInterface,
                                   context: Context): TokenResponse{
         return try {
@@ -29,10 +36,12 @@ object TokensRefresher {
     }
 
     private suspend fun processResponse(response: TokenResponse, context: Context){
+        // If access token isn't null, then refresh token is also not null
         if(response.accessToken != null){
             saveTokens(response.accessToken, response.refreshToken!!, context)
         }else{
-            // Refreshing token failed, user should be logged out and tokens should be cleared
+            // Refreshing tokens failed, user should be logged out and tokens should be cleared
+            // Here we will only handle clreading the tokens
             this.accessToken = null
             this.refreshToken = null
             clearCachedTokens(context)

@@ -90,7 +90,7 @@
     <string name="request_canceled">Your request has been canceled</string>
     <string name="resend_sms"><u>Resend code</u></string>
     <string name="rewards">Rewards</string>
-    <string name="re_login">Please login again</string>
+    <string name="re_login">You session has expired, please login again</string>
     <string name="send_sms">Send Code</string>
     <string name="settings">Settings</string>
     <string name="show_my_requests">Show my active requests</string>

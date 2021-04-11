@@ -36,7 +36,6 @@ import com.example.shoryan.viewmodels.SMSViewModel
 import com.example.shoryan.viewmodels.SMSViewModel.OperationType.LOGIN
 import com.example.shoryan.viewmodels.TokensViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.collect
 
 class SMSFragment : Fragment(), LoadingFragmentHolder {
@@ -60,8 +59,8 @@ class SMSFragment : Fragment(), LoadingFragmentHolder {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initializeNavController(view)
-        viewModel.trySendCode(phoneNumber, LOGIN)
-        observeLoginStatus()
+        viewModel.trySendSMS(phoneNumber, LOGIN)
+        observeLoggingStatus()
         observeCodeVerificationStatus()
     }
 
@@ -255,7 +254,7 @@ class SMSFragment : Fragment(), LoadingFragmentHolder {
     }
 
     private fun sendSMS(){
-        viewModel.trySendCode(phoneNumber, LOGIN)
+        viewModel.trySendSMS(phoneNumber, LOGIN)
     }
 
     private fun updateCodeInstance(code: String){
@@ -270,32 +269,32 @@ class SMSFragment : Fragment(), LoadingFragmentHolder {
         viewLifecycleOwner.lifecycleScope.launchWhenResumed {
             viewModel.isVerifyingCode.collect{
                 if(it){
-                    showLoggingInIndicator()
+                    showProcessingIndicator()
                 }
                 else{
-                    hideLoggingInIndicator()
+                    hideProcessingIndicator()
                 }
             }
         }
     }
 
-    private fun showLoggingInIndicator(){
+    private fun showProcessingIndicator(){
         val loadingFragment: DialogFragment? = childFragmentManager.findFragmentByTag("loading") as DialogFragment?
         if(loadingFragment == null)
             LoadingFragment(this).show(childFragmentManager, "loading")
     }
 
-    private fun hideLoggingInIndicator(){
+    private fun hideProcessingIndicator(){
         val loadingFragment: DialogFragment? = childFragmentManager.findFragmentByTag("loading") as DialogFragment?
         loadingFragment?.dismiss()
     }
 
-    private fun observeLoginStatus(){
+    private fun observeLoggingStatus(){
         viewLifecycleOwner.lifecycleScope.launchWhenResumed {
-            viewModel.hasSuccessfullyLoggedIn.collect{
+            viewModel.loggingCredentials.collect{
                 if(it != null){
                     saveTokens(it)
-                    hideLoggingInIndicator()
+                    hideProcessingIndicator()
                     openHomeScreen()
                 }
             }
@@ -316,6 +315,6 @@ class SMSFragment : Fragment(), LoadingFragmentHolder {
     private fun getScreenHeight(): Dp = resources.displayMetrics.run { return@run (1.dp *(heightPixels / density) ) }
 
     override fun onLoadingFragmentDismissed() {
-        viewModel.stopLogin()
+        viewModel.stopVerifying()
     }
 }

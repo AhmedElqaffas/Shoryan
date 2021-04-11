@@ -13,6 +13,15 @@ object ProfileRepo {
     private val TAG = javaClass.simpleName
     private var user: CurrentAppUser? = null
 
+    /**
+     * Returns the logged in user data either from the server or from the cached variable 'User'
+     * in this repository.
+     * @param bloodDonationAPI The retrofit interface containing the server endpoints
+     * @param shouldRefresh Controls whether the data should be retrieved from the server or not.
+     * If true, the cached user will be neglected, and a new copy is retrieved from the server. Otherwise,
+     * the cached version will be returned
+     * @return ProfileRespone
+     */
     suspend fun getUserProfileData(bloodDonationAPI: RetrofitBloodDonationInterface,
                                    shouldRefresh: Boolean = false): ProfileResponse {
         if(user == null || shouldRefresh){
