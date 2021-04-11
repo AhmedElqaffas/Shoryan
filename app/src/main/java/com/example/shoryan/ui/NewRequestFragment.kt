@@ -66,10 +66,21 @@ class NewRequestFragment : Fragment() {
         lifecycleScope.launch {
             newRequestViewModel.canUserRequest().observe(viewLifecycleOwner, { canUserRequest ->
                 canUserRequest?.let {
-                  if(it) enableSubmitButton() else disableInput()
+                  if(it) enableCreationOfRequest() else disableInput()
                 }
             })
         }
+    }
+
+    private fun enableCreationOfRequest() {
+        enableSubmitButton()
+        enableGovSpinner()
+    }
+
+    private fun enableGovSpinner() {
+        binding.governmentsSpinnerLayout.setBackgroundResource(R.drawable.spinner_red_curve)
+        binding.governmentsSpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_big)
+        setGovSpinnerAdapter(binding.spinnerGov, newRequestViewModel.getGovernoratesList())
     }
 
     private fun disableInput() {
@@ -118,7 +129,6 @@ class NewRequestFragment : Fragment() {
 
     private fun enableInput() {
         setRadioGroupsMutuallyExclusive()
-        setGovSpinnerAdapter(binding.spinnerGov, newRequestViewModel.getGovernoratesList())
         setIncDecButtonsClickListeners()
         setConfirmButtonClickListener()
     }

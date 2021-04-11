@@ -21,8 +21,8 @@ interface RetrofitBloodDonationInterface {
     suspend fun getDonationDetails(@Path("requestId") requestId: String
                                    ,@Header("Authorization") accessToken: String): DonationDetailsResponse
 
-    @GET("requests/request-creation-details/{userId}")
-    suspend fun getRequestCreationStatus(@Path("userId") userId: String?): RequestCreationStatusResponse
+    @GET("requests/request-creation-details")
+    suspend fun getRequestCreationStatus(@Header("Authorization") accessToken: String): RequestCreationStatusResponse
 
     @POST("requests/request-creation")
     suspend fun createNewRequest(@Body createNewRequestQuery: CreateNewRequestQuery) : CreateNewRequestResponse

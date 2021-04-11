@@ -56,13 +56,8 @@ class NewRequestViewModel(application: Application) : AndroidViewModel(applicati
     }
 
     fun getRegionsList(governorate : String) : List<String>{
-        var regionsList : List<String> = listOf()
-        when (governorate) {
-            "القاهرة" -> regionsList = NewRequestRepo.getCairoRegionsList()
-            "الجيزة" -> regionsList = NewRequestRepo.getGizaRegionsList()
-        }
 
-        return regionsList
+        return NewRequestRepo.getRegionsList(governorate)
     }
 
     fun getBloodBanksList(city : String): List<String>{

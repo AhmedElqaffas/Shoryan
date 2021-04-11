@@ -252,7 +252,7 @@
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintWidth_percent="0.75"
                     android:layout_marginTop="35dp"
-                    android:background="@drawable/spinner_bg_selector" >
+                    android:background="@drawable/spinner_grey_curve" >
 
                     <ImageView
                         android:id="@+id/governmentsSpinnerImageView"
@@ -261,7 +261,7 @@
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
                         android:layout_gravity="center"
-                        android:src="@drawable/iconfinder_nav_arrow_right_383100_big" />
+                        android:src="@drawable/iconfinder_nav_arrow_right_383100_grey" />
 
                     <Spinner
                         android:id="@+id/spinnerGov"
@@ -271,7 +271,7 @@
                         android:layout_gravity="center"
                         android:background="@android:color/transparent"
                         android:gravity="center"
-                        android:layout_marginRight="5dp"
+                        android:layout_marginRight="15dp"
                         android:spinnerMode="dropdown"/>
 
                     <TextView
@@ -314,7 +314,7 @@
                         android:layout_gravity="center"
                         android:background="@android:color/transparent"
                         android:gravity="center"
-                        android:layout_marginRight="5dp"
+                        android:layout_marginRight="15dp"
                         android:spinnerMode="dropdown"/>
 
                     <TextView
@@ -357,7 +357,7 @@
                         android:layout_gravity="center"
                         android:background="@android:color/transparent"
                         android:gravity="center"
-                        android:layout_marginRight="5dp"
+                        android:layout_marginRight="15dp"
                         android:spinnerMode="dropdown"/>
 
                     <TextView
