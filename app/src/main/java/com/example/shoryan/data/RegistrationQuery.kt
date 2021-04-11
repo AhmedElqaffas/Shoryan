@@ -1,5 +1,7 @@
 package com.example.shoryan.data
 
+import java.io.Serializable
+
 data class RegistrationQuery(
     var name: Name,
     var phoneNumber : String,
@@ -8,4 +10,4 @@ data class RegistrationQuery(
     var gender: Gender,
     var birthDate: BirthDate,
     var location: Location
-)
+): Serializable

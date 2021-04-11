@@ -52,9 +52,6 @@ interface RetrofitBloodDonationInterface {
     @POST("users/refresh-token")
     suspend fun getNewAccessToken(@Header("Authorization") refreshToken: String): TokenResponse
 
-    @POST("users/signup")
-    suspend fun registerUser(@Body user: RegistrationQuery): RegistrationResponse
-
     @GET("users")
     suspend fun getUserProfileData(@Header("Authorization") accessToken: String): ProfileResponse
 
@@ -62,5 +59,11 @@ interface RetrofitBloodDonationInterface {
     suspend fun sendSMSLogin(@Body phoneQuery: SMSCodeQuery): SMSResponse
 
     @POST("users/login-sms")
-    suspend fun verifyLoginCode(@Body loginCodeQuery: LoginCodeQuery): TokenResponse
+    suspend fun verifyLoginCode(@Body verificationCodeQuery: VerificationCodeQuery): TokenResponse
+
+    @POST("users/signup")
+    suspend fun sendSMSRegistration(@Body user: RegistrationQuery): RegistrationResponse
+
+    @POST("users/signup-verification")
+    suspend fun verifyRegistrationCode(@Body verificationCodeQuery: VerificationCodeQuery): TokenResponse
 }

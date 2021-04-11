@@ -260,8 +260,8 @@ class RegistrationFragment : Fragment(), LoadingFragmentHolder {
             when(it){
                 is RegistrationViewModel.RegistrationViewEvent.ShowSnackBarFromString -> showSnackbar(it.text)
                 is RegistrationViewModel.RegistrationViewEvent.ShowSnackBarFromResource -> showSnackbar(resources.getString(it.textResourceId))
-                is RegistrationViewModel.RegistrationViewEvent.HandleSuccessfulRegistration -> onSuccessfulRegistration(it.accessToken, it.refreshToken)
-                is RegistrationViewModel.RegistrationViewEvent.ToggleLoadingIndicator -> toggleLoadingIndicator()
+                RegistrationViewModel.RegistrationViewEvent.OpenSMSFragment -> goToSMSFragment()
+                RegistrationViewModel.RegistrationViewEvent.ToggleLoadingIndicator -> toggleLoadingIndicator()
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
@@ -279,8 +279,9 @@ class RegistrationFragment : Fragment(), LoadingFragmentHolder {
 
     private fun goToSMSFragment(){
         val phoneNumber = binding.registrationPhoneEditText.getStringWithoutAdditionalSpaces()
-        val phoneNumberBundle = bundleOf("phoneNumber" to phoneNumber)
-        navController.navigate(R.id.action_registrationFragment_to_SMSFragment, phoneNumberBundle)
+        val registrationBundle = bundleOf("phoneNumber" to phoneNumber,
+                                            "registrationQuery" to registrationViewModel.createUserRegistrationQuery())
+        navController.navigate(R.id.action_registrationFragment_to_SMSFragment, registrationBundle)
     }
 
     private fun toggleLoadingIndicator(){
