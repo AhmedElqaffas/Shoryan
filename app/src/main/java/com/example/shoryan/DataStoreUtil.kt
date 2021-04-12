@@ -4,16 +4,15 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
-import com.google.android.material.datepicker.MaterialDatePicker
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import java.security.AccessController.getContext
 
-val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "dataStore")
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "dataStore")
 
 object DataStoreUtil {
 
-    val ACCESS_TOKEN_KEY = "accessToken"
+    const val ACCESS_TOKEN_KEY = "accessToken"
+    const val REFRESH_TOKEN_KEY = "refreshToken"
 
     suspend fun Context.write(key: String, value: String) {
         dataStore.edit { settings ->
@@ -27,7 +26,7 @@ object DataStoreUtil {
         }.first().toString()
     }
 
-    suspend fun Context.clear(context: Context){
+    suspend fun Context.clear(){
         dataStore.edit { it.clear() }
     }
 }

@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/registration_bg"
-        android:id="@+id/registrationRootLayout"
+        android:id="@+id/rootLayout"
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:clickable="true">

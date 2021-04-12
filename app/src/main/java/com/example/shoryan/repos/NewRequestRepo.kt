@@ -8,105 +8,96 @@ import com.example.shoryan.networking.RetrofitBloodDonationInterface
 object NewRequestRepo {
 
     private val TAG = javaClass.simpleName
-    private var cachedCanUserRequest : Boolean? = null
-    private var cachedNasrCityBanks : List<BloodBankResponse>? = null
-    private var cachedMasrGededaBanks : List<BloodBankResponse>? = null
-    private var cachedMoneebBanks : List<BloodBankResponse>? = null
-    private var cachedGizaRegions : GizaBanks? = null
-    private var cachedCairoRegions : CairoBanks? = null
+    private var cachedCanUserRequest: Boolean? = null
+    private var cachedBloodBanks: List<BloodBank>? = null
+    private var cachedGovernoratesList: List<String>? = null
 
-    private var cachedBloodBanksMap : Map<String, String>? = null
-
-    suspend fun canUserRequest(userID : String?, bloodDonationInterface: RetrofitBloodDonationInterface) : Boolean?{
+    suspend fun canUserRequest(
+        bloodDonationInterface: RetrofitBloodDonationInterface
+        ): RequestCreationStatusResponse? {
         // This function will contain an API call to determine whether the current user can request a blood donation
-        if(cachedCanUserRequest != null)
-            return cachedCanUserRequest!!
-        else {
+            var requestCreationStatusResponse : RequestCreationStatusResponse? = null
             // The API call
-                try {
-                    val response = bloodDonationInterface.getRequestCreationStatus(userID)
-                    cachedCanUserRequest = response.userCanRequest.state
+            try {
+                    requestCreationStatusResponse = bloodDonationInterface.getRequestCreationStatus(TokensRefresher.accessToken!!)
 
-                    if (cachedCanUserRequest as Boolean) {
-                        // Caching the obtained regions
-                        cachedCairoRegions = response.dataBanks.cairoBanks
-                        cachedGizaRegions = response.dataBanks.gizaBanks
+                if (requestCreationStatusResponse.bloodBanksList != null) {
+                    cachedCanUserRequest = true
 
-                        // Caching the obtained blood banks
-                        cachedNasrCityBanks = cachedCairoRegions?.nasrCityBanks
-                        cachedMasrGededaBanks = cachedCairoRegions?.masrGededaBanks
-                        cachedMoneebBanks = cachedGizaRegions?.moneebBanks
-                    }
+                    // Caching the obtained blood banks
+                    cachedBloodBanks = requestCreationStatusResponse.bloodBanksList
+
                 }
-                catch (e: Exception){
-                    Log.e(TAG, "Couldn't get response: ${e.message}")
-                }
-        }
+            } catch (e: Exception) {
+                Log.e(TAG, "Couldn't get response: ${e.message}")
+            }
 
+
+        return requestCreationStatusResponse
+    }
+
+    fun getCachedCanUserRequestFlag() : Boolean?{
         return cachedCanUserRequest
     }
 
-
-    fun converListToMap(bloodBankList : List<BloodBankResponse>?) : Map<String, String>? {
-        /***
-         *  This function converts a list of blood banks into a map where each blood bank name
-         *  maps into a certain ID
-         */
-        cachedBloodBanksMap = bloodBankList?.map { it.name to it.id}?.toMap()
-        return cachedBloodBanksMap
+    fun getBloodBankID(bloodBankName: String?): String? {
+        for (bloodBank in cachedBloodBanks!!) {
+            if (bloodBank.name == bloodBankName)
+                return bloodBank.id
+        }
+        return null
     }
 
-    fun getBloodBankNamesList(bloodBankMap : Map<String, String>? ) : List<String>{
-        val bloodBankNamesList : MutableList<String> = mutableListOf()
-        bloodBankNamesList.add("")
-        for (key in bloodBankMap?.keys!!) {
-            bloodBankNamesList.add(key)
+        fun getGovernoratesList(): List<String> {
+            return if (cachedGovernoratesList != null)
+                cachedGovernoratesList as List<String>
+            else {
+                val governoratesList: MutableList<String> = mutableListOf("")
+                for (bloodBank in cachedBloodBanks!!) {
+                    if (bloodBank.location.governorate !in governoratesList)
+                        governoratesList.add(bloodBank.location.governorate)
+                }
+                cachedGovernoratesList = governoratesList
+                governoratesList
+            }
         }
 
-        return bloodBankNamesList
-    }
-
-    fun getBloodBankID(name : String?) : String? {
-        return cachedBloodBanksMap?.get(name)
-    }
-
-    fun getGovernoratesList(): List<String>{
-        return listOf("", "القاهرة", "الجيزة")
-    }
-
-    fun getCairoRegionsList(): List<String>{
-        return listOf("", "مدينة نصر", "مصر الجديدة")
-    }
-
-    fun getGizaRegionsList(): List<String>{
-        return listOf("", "المنيب")
-    }
-
-    fun getBloodBanks(region: String) : List<String> {
-        var bloodBankList : List<String> = listOf()
-        when(region){
-            "مدينة نصر" -> bloodBankList = getBloodBankNamesList(converListToMap(cachedNasrCityBanks))
-            "مصر الجديدة" -> bloodBankList = getBloodBankNamesList(converListToMap(cachedMasrGededaBanks))
-            "المنيب" -> bloodBankList = getBloodBankNamesList(converListToMap(cachedMoneebBanks))
+        fun getRegionsList(governorate: String): List<String> {
+            val regionsList: MutableList<String> = mutableListOf("")
+            for (bloodBank in cachedBloodBanks!!) {
+                if (bloodBank.location.governorate == governorate && bloodBank.location.region !in regionsList)
+                    regionsList.add(bloodBank.location.region)
+            }
+            return regionsList
         }
-        return bloodBankList
-    }
 
-    suspend fun postNewRequest(createNewRequestQuery: CreateNewRequestQuery,
-                               bloodDonationInterface: RetrofitBloodDonationInterface)
-    : CreateNewRequestResponse?{
+        fun getBloodBanks(region: String): List<String> {
+            val bloodBankList: MutableList<String> = mutableListOf("")
+            for (bloodBank in cachedBloodBanks!!) {
+                if (bloodBank.location.region == region && bloodBank.name !in bloodBankList)
+                    bloodBankList.add(bloodBank.name)
+            }
+            return bloodBankList
+        }
 
-        // The API call
-        return try {
-            bloodDonationInterface.createNewRequest(createNewRequestQuery)
-        } catch(e: Exception){
-            null
+        suspend fun postNewRequest(
+            createNewRequestQuery: CreateNewRequestQuery,
+            bloodDonationInterface: RetrofitBloodDonationInterface
+        )
+                : CreateNewRequestResponse? {
+
+            // The API call
+            return try {
+                bloodDonationInterface.createNewRequest(createNewRequestQuery,
+                                                        TokensRefresher.accessToken!!)
+            } catch (e: Exception) {
+                null
+            }
+
+        }
+
+        fun updateCachedDailyLimitFlag(newFlag: Boolean) {
+            cachedCanUserRequest = newFlag
         }
 
     }
-
-    fun updateCachedDailyLimitFlag(newFlag: Boolean) {
-        cachedCanUserRequest = newFlag
-    }
-
-}

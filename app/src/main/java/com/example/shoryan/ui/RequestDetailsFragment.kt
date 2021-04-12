@@ -1,20 +1,24 @@
 package com.example.shoryan.ui
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Point
 import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
+import android.widget.Toast
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.lifecycleScope
 import com.example.shoryan.BR
 import com.example.shoryan.R
+import com.example.shoryan.data.ServerError
 import com.example.shoryan.databinding.FragmentMyRequestDetailsBinding
 import com.example.shoryan.databinding.FragmentRequestFulfillmentBinding
 import com.example.shoryan.di.AppComponent
 import com.example.shoryan.di.MyApplication
+import com.example.shoryan.interfaces.RequestsRecyclerInteraction
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.viewmodels.*
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -26,8 +30,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -66,6 +69,8 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
         (activity?.application as MyApplication).appComponent
     }
 
+    @Inject
+    lateinit var tokensViewModel: TokensViewModel
     @Inject
     lateinit var bloodDonationAPI: RetrofitBloodDonationInterface
     @Inject
@@ -107,6 +112,11 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
     override fun onDestroyView() {
         super.onDestroyView()
         apiCallJob?.cancel()
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        (parentFragment as RequestsRecyclerInteraction).onRequestCardDismissed()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -207,17 +217,40 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
     }
 
     private fun observeViewModelEvents(viewModel: RequestDetailsViewModel){
-        viewModel.eventsFlow.onEach {
-            when(it){
-                is RequestDetailsViewModel.RequestDetailsViewEvent.ShowTryAgainSnackBar -> showTryAgainSnackbar { fetchDonationDetails() }
-                is RequestDetailsViewModel.RequestDetailsViewEvent.ShowSnackBar -> showDefiniteMessage(resources.getString(it.stringResourceId))
-                is RequestDetailsViewModel.RequestDetailsViewEvent.UserCantDonate -> showDefiniteMessage(it.reason)
-                RequestDetailsViewModel.RequestDetailsViewEvent.DismissFragment -> closeBottomSheetDialog()
-                is RequestDetailsViewModel.RequestDetailsViewEvent.CallPatient -> openDialerApp(it.phoneNumber)
+        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+            viewModel.eventsFlow.collect {
+                when(it){
+                    is RequestDetailsViewModel.RequestDetailsViewEvent.ShowSnackBar -> showDefiniteMessage(resources.getString(it.stringResourceId))
+                    is RequestDetailsViewModel.RequestDetailsViewEvent.ShowTryAgainSnackBar -> showTryAgainSnackbar { fetchDonationDetails() }
+                    RequestDetailsViewModel.RequestDetailsViewEvent.DismissFragment -> closeBottomSheetDialog()
+                    is RequestDetailsViewModel.RequestDetailsViewEvent.CallPatient -> openDialerApp(it.phoneNumber)
+                    is RequestDetailsViewModel.RequestDetailsViewEvent.RequestDetailsError -> handleError(it.error)
+                }
             }
-        }.launchIn(viewLifecycleOwner.lifecycleScope)
+        }
     }
 
+    private fun handleError(error: ServerError){
+        if(error == ServerError.JWT_EXPIRED){
+            viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+                val response = tokensViewModel.getNewAccessToken(requireContext())
+                // If an error happened when refreshing tokens, log user out
+                response.error?.let{
+                    forceLogOut()
+                }
+            }
+        }
+        else{
+            error.doErrorAction(binding.root)
+        }
+    }
+
+    private fun forceLogOut(){
+        Toast.makeText(requireContext(), resources.getString(R.string.re_login), Toast.LENGTH_LONG).show()
+        val intent = Intent(context, LandingActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
+    }
 
     private fun closeBottomSheetDialog() {
         requireParentFragment().childFragmentManager.findFragmentByTag("requestDetails")?.let {

@@ -135,11 +135,12 @@ class FilterFragment
     }
 
     private fun chooseCompatibleTypesWithUser(){
-        val compatibleTypes = CurrentAppUser.bloodType!!.getCompatibleTypes()
-        binding.bloodTypeFilterLayout.children.forEach { linearLayout ->
-            (linearLayout as LinearLayout).children.forEach {
-                if(it is ToggleButton){
-                    it.isChecked = compatibleTypes.contains(BloodType.fromString(it.text.toString()))
+        CurrentAppUser.bloodType?.getCompatibleTypes()?.apply {
+            binding.bloodTypeFilterLayout.children.forEach { linearLayout ->
+                (linearLayout as LinearLayout).children.forEach {
+                    if(it is ToggleButton){
+                        it.isChecked = this.contains(BloodType.fromString(it.text.toString()))
+                    }
                 }
             }
         }

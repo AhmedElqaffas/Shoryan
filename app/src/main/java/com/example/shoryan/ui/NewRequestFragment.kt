@@ -1,5 +1,7 @@
 package com.example.shoryan.ui
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,24 +17,37 @@ import androidx.navigation.navGraphViewModels
 import com.example.shoryan.AndroidUtility
 import com.example.shoryan.R
 import com.example.shoryan.data.CreateNewRequestResponse
+import com.example.shoryan.data.ServerError
 import com.example.shoryan.data.ViewEvent
 import com.example.shoryan.databinding.AppbarBinding
 import com.example.shoryan.databinding.FragmentNewRequestBinding
+import com.example.shoryan.di.MyApplication
 import com.example.shoryan.viewmodels.NewRequestViewModel
+import com.example.shoryan.viewmodels.TokensViewModel
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import javax.inject.Inject
 
 
 class NewRequestFragment : Fragment() {
     private val newRequestViewModel: NewRequestViewModel by navGraphViewModels(R.id.main_nav_graph)
+
+    @Inject
+    lateinit var tokensViewModel: TokensViewModel
+
     private lateinit var navController: NavController
     private var _binding: FragmentNewRequestBinding? = null
     private val binding get() = _binding!!
     private var toolbarBinding: AppbarBinding? = null
     private var createdRequest : CreateNewRequestResponse? = null
     private var snackbar: Snackbar? = null
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        (requireActivity().application as MyApplication).appComponent.newRequestComponent().create().inject(this)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentNewRequestBinding.inflate(inflater, container, false)
@@ -63,13 +78,37 @@ class NewRequestFragment : Fragment() {
     }
 
     private fun checkIfUserCanRequest() {
-        lifecycleScope.launch {
-            newRequestViewModel.canUserRequest().observe(viewLifecycleOwner, { canUserRequest ->
-                canUserRequest?.let {
-                  if(it) enableSubmitButton() else disableInput()
-                }
-            })
+        val canUserRequest = newRequestViewModel.getCachedCanUserRequestFlag()
+        if( canUserRequest != null){
+            if(canUserRequest)
+                enableCreationOfRequest()
+            else{
+                disableInput()
+                showMessage(resources.getString(R.string.cant_request_today))
+            }
         }
+          else {
+            lifecycleScope.launch {
+                newRequestViewModel.canUserRequest().observe(viewLifecycleOwner, { canUserRequest ->
+                    canUserRequest.let {
+                        if ((it != null) and (it == true)) enableCreationOfRequest()
+                        else disableInput()
+                    }
+                })
+            }
+        }
+    }
+
+    private fun enableCreationOfRequest() {
+        newRequestViewModel.updateCachedDailyLimitFlag(true)
+        enableSubmitButton()
+        enableGovSpinner()
+    }
+
+    private fun enableGovSpinner() {
+        binding.governmentsSpinnerLayout.setBackgroundResource(R.drawable.spinner_red_curve)
+        binding.governmentsSpinnerImageView.setImageResource(R.drawable.iconfinder_nav_arrow_right_383100_big)
+        setGovSpinnerAdapter(binding.spinnerGov, newRequestViewModel.getGovernoratesList())
     }
 
     private fun disableInput() {
@@ -79,7 +118,6 @@ class NewRequestFragment : Fragment() {
         disableBloodBankSpinner()
         disableIncDecButtons()
         disableSubmitButton()
-        showMessage(resources.getString(R.string.cant_request_today))
     }
 
     private fun disableSubmitButton() {
@@ -118,7 +156,6 @@ class NewRequestFragment : Fragment() {
 
     private fun enableInput() {
         setRadioGroupsMutuallyExclusive()
-        setGovSpinnerAdapter(binding.spinnerGov, newRequestViewModel.getGovernoratesList())
         setIncDecButtonsClickListeners()
         setConfirmButtonClickListener()
     }
@@ -324,20 +361,20 @@ class NewRequestFragment : Fragment() {
         lifecycleScope.launch{
             newRequestViewModel.createNewRequest(getSelectedBloodType().text.toString(), getCurrentBagsCount(),
                 getSelectedItemFromSpinner(binding.spinnerBloodBank)).observe(viewLifecycleOwner,
-                { response -> showSuccessMessage(response)})
+                { response -> showCreationOfRequestResult(response)})
         }
     }
 
-    private fun showSuccessMessage(response: CreateNewRequestResponse?) {
+    private fun showCreationOfRequestResult(response: CreateNewRequestResponse?) {
         binding.progressBar.visibility = View.GONE
-        createdRequest = response
-        if(createdRequest?.id != null)
+        if(response?.successfulResponse != null)
             showMessage(resources.getString(R.string.request_created), true)
-        else{
-            showMessage(resources.getString(R.string.cant_request_today))
-            newRequestViewModel.updateCachedDailyLimitFlag(false)
-            disableInput()
-        }
+        else if(response?.error != null)
+            handleError(response.error.message)
+        else
+            handleError(ServerError.CONNECTION_ERROR)
+
+
     }
 
     private fun isBloodTypeSelected(): Boolean {
@@ -360,7 +397,7 @@ class NewRequestFragment : Fragment() {
 
     private fun showMessage(message: String, successFlag: Boolean = false) {
         if (successFlag)
-            Snackbar.make(binding.scrollView, message, Snackbar.LENGTH_LONG)
+            Snackbar.make(binding.scrollView, message, Snackbar.LENGTH_INDEFINITE)
                 .setAction(resources.getString(R.string.show_my_requests)) {
                     // Starting the MyRequestDetailsActivity
                     openMyRequestsFragment()
@@ -387,8 +424,12 @@ class NewRequestFragment : Fragment() {
     private fun observeEvents(){
         newRequestViewModel.eventsFlow.onEach {
             when(it){
-                is ViewEvent.ShowSnackBar -> {showMessage(it.text)}
+                is ViewEvent.ShowSnackBar -> {showMessage(resources.getString(it.stringResource))}
                 is ViewEvent.ShowTryAgainSnackBar -> {showTryAgainMessage(it.text)}
+                is ViewEvent.ErrorHandler -> {
+                    handleError(it.error)
+                    disableInput()
+                }
             }
 
         }.launchIn(viewLifecycleOwner.lifecycleScope)
@@ -397,6 +438,32 @@ class NewRequestFragment : Fragment() {
     private fun showTryAgainMessage(message: String){
         snackbar = AndroidUtility.makeTryAgainSnackbar(binding.scrollView, message, ::checkIfUserCanRequest)
         snackbar!!.show()
+    }
+
+    private fun handleError(error: ServerError){
+        if(error == ServerError.JWT_EXPIRED){
+            viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+                val response = tokensViewModel.getNewAccessToken(requireContext())
+                // If an error happened when refreshing tokens, log user out
+                response.error?.let{
+                    forceLogOut()
+                }
+            }
+        }
+        else{
+            error.doErrorAction(binding.root)
+            if(error == ServerError.REQUESTS_DAILY_LIMIT){
+                newRequestViewModel.updateCachedDailyLimitFlag(false)
+                disableInput()
+            }
+        }
+    }
+
+    private fun forceLogOut(){
+        Toast.makeText(requireContext(), resources.getString(R.string.re_login), Toast.LENGTH_LONG).show()
+        val intent = Intent(context, LandingActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
     }
 
 }

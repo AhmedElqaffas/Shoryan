@@ -4,11 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.shoryan.R
-import com.example.shoryan.data.CreateNewRequestQuery
-import com.example.shoryan.data.CreateNewRequestResponse
-import com.example.shoryan.data.CurrentAppUser
-import com.example.shoryan.data.ViewEvent
+import com.example.shoryan.data.*
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.networking.RetrofitClient
 import com.example.shoryan.repos.NewRequestRepo
@@ -34,21 +30,30 @@ class NewRequestViewModel(application: Application) : AndroidViewModel(applicati
     val eventsFlow = _eventsFlow.asSharedFlow()
 
     suspend fun canUserRequest(): LiveData<Boolean?> {
-        CoroutineScope(Dispatchers.IO).async{
-            _isCheckingRequestAbility.postValue(true)
-            val serverResult = NewRequestRepo.canUserRequest(userId, bloodDonationAPI)
-            _isCheckingRequestAbility.postValue(false)
-            canUserRequest.postValue(serverResult)
-            if(serverResult == null){
-                announceCommunicationFailure()
-            }
-        }.await()
+
+            CoroutineScope(Dispatchers.IO).async {
+                _isCheckingRequestAbility.postValue(true)
+                val serverResult = NewRequestRepo.canUserRequest(bloodDonationAPI)
+                _isCheckingRequestAbility.postValue(false)
+                if (serverResult?.bloodBanksList != null)
+                    canUserRequest.postValue(true)
+                else if(serverResult?.error != null) {
+                    announceErrorHasHappened(serverResult.error.message)
+                }
+                else{
+                    announceErrorHasHappened(ServerError.CONNECTION_ERROR)
+                }
+            }.await()
 
         return canUserRequest
     }
 
-    private suspend fun announceCommunicationFailure(){
-        _eventsFlow.emit(ViewEvent.ShowTryAgainSnackBar(getApplication<Application>().resources.getString(R.string.connection_error)))
+    fun getCachedCanUserRequestFlag() : Boolean?{
+        return NewRequestRepo.getCachedCanUserRequestFlag()
+    }
+
+    private suspend fun announceErrorHasHappened(error: ServerError) {
+        _eventsFlow.emit(ViewEvent.ErrorHandler(error))
     }
 
     fun getGovernoratesList() : List<String> {
@@ -56,13 +61,8 @@ class NewRequestViewModel(application: Application) : AndroidViewModel(applicati
     }
 
     fun getRegionsList(governorate : String) : List<String>{
-        var regionsList : List<String> = listOf()
-        when (governorate) {
-            "القاهرة" -> regionsList = NewRequestRepo.getCairoRegionsList()
-            "الجيزة" -> regionsList = NewRequestRepo.getGizaRegionsList()
-        }
 
-        return regionsList
+        return NewRequestRepo.getRegionsList(governorate)
     }
 
     fun getBloodBanksList(city : String): List<String>{
@@ -74,8 +74,7 @@ class NewRequestViewModel(application: Application) : AndroidViewModel(applicati
                          numberOfBagsRequired : Int, donationLocation : String?) : LiveData<CreateNewRequestResponse?> {
 
         val bloodBankID = NewRequestRepo.getBloodBankID(donationLocation)
-        val newRequestQuery = CreateNewRequestQuery(bloodType, numberOfBagsRequired, false,
-        userId!!, bloodBankID!!)
+        val newRequestQuery = CreateNewRequestQuery(bloodType, numberOfBagsRequired, false, bloodBankID!!)
         CoroutineScope(Dispatchers.IO).async{
             createNewRequestResponse.postValue(NewRequestRepo.postNewRequest(newRequestQuery, bloodDonationAPI))
         }.await()

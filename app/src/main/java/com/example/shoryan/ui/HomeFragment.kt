@@ -1,10 +1,15 @@
 package com.example.shoryan.ui
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -15,19 +20,27 @@ import com.example.shoryan.AndroidUtility
 import com.example.shoryan.R
 import com.example.shoryan.data.DonationRequest
 import com.example.shoryan.data.RequestsFiltersContainer
+import com.example.shoryan.data.ServerError
 import com.example.shoryan.databinding.FragmentHomeBinding
+import com.example.shoryan.di.MyApplication
 import com.example.shoryan.ui.recyclersAdapters.RequestsRecyclerAdapter
 import com.example.shoryan.interfaces.RequestsRecyclerInteraction
 import com.example.shoryan.interfaces.FilterHolder
+import com.example.shoryan.viewmodels.ProfileViewModel
 import com.example.shoryan.viewmodels.RequestsViewModel
+import com.example.shoryan.viewmodels.TokensViewModel
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.*
+import javax.inject.Inject
 
 class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
 
     private lateinit var navController: NavController
     private val requestsRecyclerAdapter = RequestsRecyclerAdapter(this)
-
+    @Inject
+    lateinit var tokensViewModel: TokensViewModel
+    @Inject
+    lateinit var profileViewModel: ProfileViewModel
     // viewModels() connects the viewModel to the fragment, so, when the user navigates to another
     // tab using bottom navigation, the fragment is destroyed and therefore the attached viewModel
     // is destroyed as well. Therefore we used navGraphViewModels() to limit the scope of the
@@ -39,12 +52,17 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        (requireActivity().application as MyApplication).appComponent.homeComponent().create().inject(this)
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         binding.viewmodel = requestsViewModel
         binding.adapter = requestsRecyclerAdapter
         binding.fragment = this
-        binding.lifecycleOwner = this
+        binding.lifecycleOwner = viewLifecycleOwner
         return binding.root
     }
 
@@ -57,9 +75,10 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         instantiateNavController(view)
-        // Getting ongoingRequests and pending request, in parallel
+        // Getting ongoingRequests, pending request, and user data, in parallel
         updateUserPendingRequest()
         getOngoingRequests()
+        getUserProfileData()
     }
 
     private fun instantiateNavController(view: View){
@@ -74,14 +93,53 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
         }
     }
 
-    private fun getOngoingRequests(refresh: Boolean = false){
+    private fun getOngoingRequests(){
         requestsGettingJob.cancel()
         requestsGettingJob = viewLifecycleOwner.lifecycleScope.launch {
-            requestsViewModel.getOngoingRequests(refresh).observe(viewLifecycleOwner, {
+            requestsViewModel.getOngoingRequests().observe(viewLifecycleOwner, {
                 binding.homeSwipeRefresh.isRefreshing = false
-                requestsRecyclerAdapter.submitList(it)
+                it.requests?.let{
+                    requestsRecyclerAdapter.submitList(it)
+                }
+                it.error?.let{
+                    viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+                        handleError(it.message)
+                    }
+                }
             })
         }
+    }
+
+    private fun handleError(error: ServerError){
+        if(error == ServerError.JWT_EXPIRED){
+            viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+                val response = tokensViewModel.getNewAccessToken(requireContext())
+                // If an error happened when refreshing tokens, log user out
+                response.error?.let{
+                    forceLogOut()
+                }
+            }
+        }
+        else{
+            error.doErrorAction(binding.root)
+        }
+    }
+
+    private fun forceLogOut(){
+        Toast.makeText(requireContext(), resources.getString(R.string.re_login), Toast.LENGTH_LONG).show()
+        val intent = Intent(context, LandingActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
+    }
+
+    private fun getUserProfileData(){
+       viewLifecycleOwner.lifecycleScope.launchWhenResumed{
+           val response = profileViewModel.getProfileData()
+           // Handle the error if exists
+           response.error?.let{
+               handleError(it.message)
+           }
+       }
     }
 
     override fun onResume(){
@@ -114,7 +172,7 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
 
     fun refreshRequests(){
         resetScrollingToTop()
-        getOngoingRequests(true)
+        getOngoingRequests()
     }
 
     private fun setFilterListener(){
@@ -148,7 +206,7 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
     }
 
     private fun showMessage(message: String) =
-        AndroidUtility.displaySnackbarMessage(binding.homeParentLayout, message, Snackbar.LENGTH_LONG)
+        AndroidUtility.displaySnackbarMessage(binding.rootLayout, message, Snackbar.LENGTH_LONG)
 
     private fun openDonationFragment(requestId: String){
         val fragment = RequestDetailsFragment.newInstance(
@@ -189,6 +247,9 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
             openMyRequestDetailsFragment(donationRequest.id)
         }
 
+    }
+
+    override fun onRequestCardDismissed() {
     }
 
     override fun submitFilters(requestsFiltersContainer: RequestsFiltersContainer?) {

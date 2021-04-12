@@ -14,7 +14,7 @@
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:background="@android:color/transparent"
-        android:id="@+id/bottomSheetParent">
+        android:id="@+id/rootLayout">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -205,7 +205,7 @@
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@id/personsDonatingToRequest"
-                                android:onClick="@{() -> viewmodel.callPatient('0'+viewmodel.donationDetails.request.requester.phoneNumber)}"/>
+                                android:onClick="@{() -> viewmodel.callPatient(viewmodel.donationDetails.request.requester.phoneNumber)}"/>
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
                     </androidx.cardview.widget.CardView>

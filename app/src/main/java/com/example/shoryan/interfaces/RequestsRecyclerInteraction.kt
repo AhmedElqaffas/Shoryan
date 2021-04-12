@@ -4,4 +4,5 @@ import com.example.shoryan.data.DonationRequest
 
 interface RequestsRecyclerInteraction {
     fun onRequestCardClicked(donationRequest: DonationRequest, isMyRequest: Boolean)
+    fun onRequestCardDismissed()
 }

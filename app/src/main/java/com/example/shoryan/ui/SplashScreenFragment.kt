@@ -1,30 +1,48 @@
 package com.example.shoryan.ui
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import com.example.shoryan.DataStoreUtil
-import com.example.shoryan.DataStoreUtil.read
 import com.example.shoryan.R
-import com.example.shoryan.data.CurrentAppUser
+import com.example.shoryan.data.ServerError
 import com.example.shoryan.databinding.FragmentSplashScreenBinding
+import com.example.shoryan.di.MyApplication
+import com.example.shoryan.repos.TokensRefresher
+import com.example.shoryan.viewmodels.ProfileViewModel
+import com.example.shoryan.viewmodels.SplashScreenViewModel
+import com.example.shoryan.viewmodels.TokensViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 class SplashScreenFragment : Fragment() {
 
+    @Inject
+    lateinit var tokensViewModel: TokensViewModel
+    @Inject
+    lateinit var profileViewModel: ProfileViewModel
+    private val splashScreenViewModel: SplashScreenViewModel by viewModels()
     private lateinit var navController: NavController
     // Used to display the animation only when the fragment is first created, otherwise skip animation
     private var firstTimeOpened = false
 
     private var _binding: FragmentSplashScreenBinding? = null
     private val binding get() = _binding!!
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        (requireActivity().application as MyApplication).appComponent.splashScreenComponent().create().inject(this)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSplashScreenBinding.inflate(inflater, container, false)
@@ -44,8 +62,8 @@ class SplashScreenFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         lifecycleScope.launchWhenResumed {
-            // Get the access token from the dataStore
-            CurrentAppUser.accessToken = requireContext().read(DataStoreUtil.ACCESS_TOKEN_KEY, "")
+            // Get the tokens from the dataStore
+            splashScreenViewModel.retrieveTokensFromDataStore(requireContext())
             // To allow the user to see the logo
             delay(800)
         }.invokeOnCompletion {
@@ -64,9 +82,12 @@ class SplashScreenFragment : Fragment() {
         navController = Navigation.findNavController(view)
     }
 
-    private fun openApplicationOrShowSigningOptions() {
-        if(isUserLoggedIn()){
+    private fun openApplicationOrShowSigningOptions() = viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+        if(isUserLoggedIn() && isAccessTokenAlive()){
             openApplication()
+        }
+        else if(existsRefreshToken()){
+            getNewAccessToken()
         }
         else{
             showSigningOptions()
@@ -74,7 +95,33 @@ class SplashScreenFragment : Fragment() {
     }
 
     private fun isUserLoggedIn(): Boolean{
-        return !CurrentAppUser.accessToken.isNullOrEmpty()
+        Log.e("RESPONSE_DEBUG", "vvvvvvvvvvvvvvvvvvvvvvvvvv")
+        Log.e("RESPONSE_DEBUG",TokensRefresher.accessToken+"///////////")
+        return !TokensRefresher.accessToken.isNullOrEmpty()
+    }
+
+    /**
+     * To check if the access token isn't expired, the access token is used to fetch the profile
+     * of the user, if JWT_EXPIRED error is returned, the access token is therefore not alive
+     * and the user should login again
+     */
+    private suspend fun isAccessTokenAlive(): Boolean{
+        val response = profileViewModel.getProfileData()
+        Log.e("RESPONSE_DEBUG", "////// ${response.toString()}")
+        return response.error?.message != ServerError.JWT_EXPIRED
+    }
+
+    private fun existsRefreshToken() = !TokensRefresher.refreshToken.isNullOrEmpty()
+
+    private fun getNewAccessToken() = lifecycleScope.launch{
+        val response = tokensViewModel.getNewAccessToken(requireContext())
+        // If new access token was generated
+        if(response.accessToken != null){
+            openApplication()
+        }else{
+            // else, generating new access token failed, show user signing options
+            showSigningOptions()
+        }
     }
 
     private fun openApplication(){

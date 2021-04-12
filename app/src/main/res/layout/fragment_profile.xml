@@ -11,11 +11,12 @@
     </data>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:onRefreshListener="@{() -> viewmodel.onRefresh()}"
         app:refreshing="@{viewmodel.isRefreshing}">
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/rootLayout"
             android:layout_height="match_parent"
             android:layout_width="match_parent"
             android:background="@android:color/white">

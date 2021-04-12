@@ -11,15 +11,18 @@ import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.shoryan.AndroidUtility
 import com.example.shoryan.R
 import com.example.shoryan.data.LoginResponse
+import com.example.shoryan.data.ServerError
 import com.example.shoryan.databinding.FragmentLoginPasswordBinding
 import com.example.shoryan.databinding.LoginBannerBinding
 import com.example.shoryan.di.MyApplication
 import com.example.shoryan.interfaces.LoadingFragmentHolder
+import com.example.shoryan.repos.TokensRefresher
 import com.example.shoryan.viewmodels.LoginViewModel
 import com.google.android.material.snackbar.Snackbar
 import javax.inject.Inject
@@ -108,11 +111,27 @@ class PasswordLoginFragment : Fragment(), LoadingFragmentHolder {
     private fun initializeLoginObserver(){
         loginObserver = Observer<LoginResponse> {
             toggleLoggingInIndicator()
-            it.user?.let { openMainActivity() }
-            it.error?.let { message ->
-                AndroidUtility.displaySnackbarMessage(binding.passwordScreenLayout, message, Snackbar.LENGTH_LONG)
+            it.accessToken?.let { accessToken ->
+                handleSuccessfulLogin(accessToken, it.refreshToken!!)
+            }
+            it.error?.let {
+                handleFailedLogin(it.message)
             }
         }
+    }
+
+    private fun handleSuccessfulLogin(accessToken: String, refreshToken: String ){
+        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+            TokensRefresher.saveTokens(accessToken, refreshToken, requireContext())
+            openMainActivity()
+        }
+    }
+
+    private fun handleFailedLogin(message: ServerError){
+        AndroidUtility.displaySnackbarMessage(
+            binding.rootLayout,
+            resources.getString(message.errorStringResource),
+            Snackbar.LENGTH_LONG)
     }
 
     private fun toggleLoggingInIndicator(){
@@ -139,7 +158,7 @@ class PasswordLoginFragment : Fragment(), LoadingFragmentHolder {
     private fun checkLogin() {
         val password = binding.passwordEditText.text.toString().trim()
         if(password.isEmpty()){
-            AndroidUtility.displaySnackbarMessage(binding.passwordScreenLayout,
+            AndroidUtility.displaySnackbarMessage(binding.rootLayout,
                 resources.getString(R.string.enter_password),
                 Snackbar.LENGTH_LONG)
         }

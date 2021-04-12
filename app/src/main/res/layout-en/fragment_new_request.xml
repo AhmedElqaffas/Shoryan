@@ -252,7 +252,7 @@
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintWidth_percent="0.75"
                     android:layout_marginTop="35dp"
-                    android:background="@drawable/spinner_bg_selector" >
+                    android:background="@drawable/spinner_grey_curve">
 
                     <ImageView
                         android:id="@+id/governmentsSpinnerImageView"
@@ -261,7 +261,7 @@
                         android:layout_alignParentRight="true"
                         android:layout_centerVertical="true"
                         android:layout_gravity="center"
-                        android:src="@drawable/iconfinder_nav_arrow_right_383100_big" />
+                        android:src="@drawable/iconfinder_nav_arrow_right_383100_grey"/>
 
                     <Spinner
                         android:id="@+id/spinnerGov"
@@ -271,16 +271,16 @@
                         android:layout_gravity="center"
                         android:background="@android:color/transparent"
                         android:gravity="center"
-                        android:layout_marginRight="5dp"
+                        android:layout_marginRight="15dp"
                         android:spinnerMode="dropdown"/>
 
                     <TextView
                         android:id="@+id/governmentsSpinnerTextView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/choose_governorate"
                         android:layout_marginRight="5dp"
-                        android:textSize="16sp"/>
+                        android:text="@string/choose_governorate"
+                        android:textSize="16sp" />
 
                 </RelativeLayout>
 
@@ -314,16 +314,16 @@
                         android:layout_gravity="center"
                         android:background="@android:color/transparent"
                         android:gravity="center"
-                        android:layout_marginRight="5dp"
+                        android:layout_marginRight="15dp"
                         android:spinnerMode="dropdown"/>
 
                     <TextView
                         android:id="@+id/citySpinnerTextView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/choose_city"
                         android:layout_marginRight="5dp"
-                        android:textSize="16sp"/>
+                        android:text="@string/choose_city"
+                        android:textSize="16sp" />
 
                 </RelativeLayout>
 
@@ -357,7 +357,7 @@
                         android:layout_gravity="center"
                         android:background="@android:color/transparent"
                         android:gravity="center"
-                        android:layout_marginRight="5dp"
+                        android:layout_marginRight="15dp"
                         android:spinnerMode="dropdown"/>
 
                     <TextView
@@ -391,7 +391,7 @@
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/bagsNumberWord"
                     android:layout_marginTop="35dp"
-                    app:layout_constraintHorizontal_bias="0.14"
+                    app:layout_constraintHorizontal_bias="0.86"
                     android:background="@drawable/button_blood_type_selector"
                     android:gravity="center"
                     android:text="+"
@@ -406,7 +406,7 @@
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="@id/incrementBloodBags"
-                    app:layout_constraintHorizontal_bias="0.86"
+                    app:layout_constraintHorizontal_bias="0.14"
                     android:background="@drawable/button_blood_type_selector"
                     android:gravity="center"
                     android:text="-"
@@ -416,14 +416,15 @@
 
                 <EditText
                     android:id="@+id/bagsNumberEditText"
-                    android:layout_width="wrap_content"
+                    android:layout_width="50dp"
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toTopOf="@id/incrementBloodBags"
                     app:layout_constraintBottom_toBottomOf="@id/incrementBloodBags"
-                    app:layout_constraintLeft_toRightOf="@id/incrementBloodBags"
-                    app:layout_constraintRight_toLeftOf="@id/decrementBloodBags"
+                    app:layout_constraintLeft_toRightOf="@id/decrementBloodBags"
+                    app:layout_constraintRight_toLeftOf="@id/incrementBloodBags"
                     android:inputType="number"
                     android:hint="0"
+                    android:textAlignment="center"
                     android:maxLength="2"
                     android:textSize="22sp"
                     android:textColor="#000000"

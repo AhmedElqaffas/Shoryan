@@ -1,18 +1,15 @@
 package com.example.shoryan.repos
 
-import android.util.Log
-import com.example.shoryan.data.CurrentAppUser
-import com.example.shoryan.data.DonationRequest
+import com.example.shoryan.data.*
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 
 object MyRequestsRepo {
 
-    suspend fun getRequests(bloodDonationAPI: RetrofitBloodDonationInterface): List<DonationRequest>?{
+    suspend fun getRequests(bloodDonationAPI: RetrofitBloodDonationInterface): MyRequestsServerResponse{
         return try{
-            bloodDonationAPI.getUserActiveRequests(CurrentAppUser.id!!)
-                .activeRequests
+            bloodDonationAPI.getUserActiveRequests(TokensRefresher.accessToken!!)
         }catch (e: Exception){
-            null
+            MyRequestsServerResponse(null, ErrorResponse(ServerError.CONNECTION_ERROR))
         }
     }
 }

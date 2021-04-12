@@ -2,43 +2,31 @@ package com.example.shoryan.viewmodels
 
 import androidx.lifecycle.*
 import com.example.shoryan.data.CurrentAppUser
+import com.example.shoryan.data.ProfileResponse
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.repos.ProfileRepo
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.async
+import javax.inject.Inject
 
 
-class ProfileViewModel(): ViewModel() {
+class ProfileViewModel @Inject constructor(private val bloodDonationAPI: RetrofitBloodDonationInterface): ViewModel() {
 
-    private lateinit var bloodDonationAPI: RetrofitBloodDonationInterface
     // Indicates whether the SwipeRefreshLayout should have the spinning animation or not
     private val _isRefreshing = MutableLiveData(false)
     val isRefreshing: LiveData<Boolean> = _isRefreshing
 
-    constructor(bloodDonationAPI: RetrofitBloodDonationInterface) : this() {
-        this.bloodDonationAPI = bloodDonationAPI
-    }
-
     private val _user = MutableLiveData<CurrentAppUser?>()
     val user: LiveData<CurrentAppUser?> = _user
 
-    fun getProfileData(shouldRefresh: Boolean = false) {
-        viewModelScope.launch {
-            _user.postValue(ProfileRepo.getUserProfileData(bloodDonationAPI, shouldRefresh))
+    suspend fun getProfileData(shouldRefresh: Boolean = false): ProfileResponse {
+        _isRefreshing.postValue(shouldRefresh)
+        return viewModelScope.async{
+            val response = ProfileRepo.getUserProfileData(bloodDonationAPI, shouldRefresh)
+            if(response.user != null){
+                _user.postValue(response.user)
+            }
             _isRefreshing.postValue(false)
-        }
-    }
-
-    /**
-     * Called whenever the swipeRefreshLayout is pulled
-     */
-    fun onRefresh(){
-        _isRefreshing.postValue(true)
-        getProfileData(true)
-    }
-}
-
-class ProfileViewModelFactory(val bloodDonationAPI: RetrofitBloodDonationInterface): ViewModelProvider.Factory{
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return ProfileViewModel(bloodDonationAPI) as T
+            return@async response
+        }.await()
     }
 }

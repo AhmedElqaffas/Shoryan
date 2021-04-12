@@ -49,8 +49,7 @@
         android:backgroundTint="#FFFFFF"
         app:borderWidth="0dp"
         android:src="@drawable/ic_my_location"
-        app:maxImageSize="36dp"
-        android:contentDescription="@string/new_request" />
+        app:maxImageSize="36dp"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/confirmLocationFAB"
@@ -62,7 +61,6 @@
         android:layout_marginTop="15dp"
         android:backgroundTint="@color/colorPrimaryDark"
         android:src="@drawable/ic_check"
-        app:maxImageSize="36dp"
-        android:contentDescription="@string/new_request" />
+        app:maxImageSize="36dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

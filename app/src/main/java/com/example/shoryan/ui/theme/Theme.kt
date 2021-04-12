@@ -13,7 +13,7 @@ private val LightColors = lightColors(
     primaryVariant = Red,
     onPrimary = Color.White,
     secondary = RedLight,
-    secondaryVariant = RedLight,
+    secondaryVariant = Color.Black,
     onSecondary = Color.White,
     error = Red
 )
