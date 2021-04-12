@@ -12,6 +12,7 @@ import com.example.shoryan.data.ViewEvent
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.networking.RetrofitClient
 import com.example.shoryan.repos.NewRequestRepo
+import com.example.shoryan.repos.TokensRefresher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -69,8 +70,7 @@ class NewRequestViewModel(application: Application) : AndroidViewModel(applicati
                          numberOfBagsRequired : Int, donationLocation : String?) : LiveData<CreateNewRequestResponse?> {
 
         val bloodBankID = NewRequestRepo.getBloodBankID(donationLocation)
-        val newRequestQuery = CreateNewRequestQuery(bloodType, numberOfBagsRequired, false,
-        userId!!, bloodBankID!!)
+        val newRequestQuery = CreateNewRequestQuery(bloodType, numberOfBagsRequired, false, bloodBankID!!)
         CoroutineScope(Dispatchers.IO).async{
             createNewRequestResponse.postValue(NewRequestRepo.postNewRequest(newRequestQuery, bloodDonationAPI))
         }.await()

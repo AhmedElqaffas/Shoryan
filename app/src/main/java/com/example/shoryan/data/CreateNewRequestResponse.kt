@@ -4,6 +4,6 @@ import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 data class CreateNewRequestResponse(
-    @SerializedName("response") val successfulResponse: String?,
+    @SerializedName("response") val successfulResponse: SuccessfulResponse?,
     val error: ErrorResponse?
 )
