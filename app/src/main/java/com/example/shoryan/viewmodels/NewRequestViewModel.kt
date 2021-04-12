@@ -36,7 +36,7 @@ class NewRequestViewModel(application: Application) : AndroidViewModel(applicati
     suspend fun canUserRequest(): LiveData<Boolean?> {
         CoroutineScope(Dispatchers.IO).async{
             _isCheckingRequestAbility.postValue(true)
-            val serverResult = NewRequestRepo.canUserRequest(userId, bloodDonationAPI)
+            val serverResult = NewRequestRepo.canUserRequest(bloodDonationAPI)
             _isCheckingRequestAbility.postValue(false)
             canUserRequest.postValue(serverResult)
             if(serverResult == null){

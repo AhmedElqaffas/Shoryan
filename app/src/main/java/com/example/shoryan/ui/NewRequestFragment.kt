@@ -340,8 +340,7 @@ class NewRequestFragment : Fragment() {
 
     private fun showSuccessMessage(response: CreateNewRequestResponse?) {
         binding.progressBar.visibility = View.GONE
-        createdRequest = response
-        if(createdRequest?.id != null)
+        if(response?.successfulResponse != null)
             showMessage(resources.getString(R.string.request_created), true)
         else{
             showMessage(resources.getString(R.string.cant_request_today))

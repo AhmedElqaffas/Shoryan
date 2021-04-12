@@ -13,7 +13,6 @@ object NewRequestRepo {
     private var cachedGovernoratesList: List<String>? = null
 
     suspend fun canUserRequest(
-        userID: String?,
         bloodDonationInterface: RetrofitBloodDonationInterface
     ): Boolean? {
         // This function will contain an API call to determine whether the current user can request a blood donation
@@ -90,7 +89,8 @@ object NewRequestRepo {
 
             // The API call
             return try {
-                bloodDonationInterface.createNewRequest(createNewRequestQuery)
+                bloodDonationInterface.createNewRequest(createNewRequestQuery,
+                                                        TokensRefresher.accessToken!!)
             } catch (e: Exception) {
                 null
             }
