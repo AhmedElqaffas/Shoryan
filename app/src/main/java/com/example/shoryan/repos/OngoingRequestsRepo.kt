@@ -17,7 +17,7 @@ object OngoingRequestsRepo {
         return try {
             bloodDonationAPI.getAllOngoingRequests(TokensRefresher.accessToken!!)
         } catch (e: Exception) {
-            Log.e("OngoingRequestsAPICall", "Couldn't get requests - " + e.message)
+            Log.e("OngoingRequestsAPICall", "Couldn't get requests - " + e.stackTrace)
             AllActiveRequestsResponse(null, ErrorResponse(ServerError.CONNECTION_ERROR))
         }
     }

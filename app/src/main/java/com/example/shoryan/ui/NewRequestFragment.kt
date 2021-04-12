@@ -21,7 +21,6 @@ import com.example.shoryan.data.ServerError
 import com.example.shoryan.data.ViewEvent
 import com.example.shoryan.databinding.AppbarBinding
 import com.example.shoryan.databinding.FragmentNewRequestBinding
-import com.example.shoryan.di.AppComponent
 import com.example.shoryan.di.MyApplication
 import com.example.shoryan.viewmodels.NewRequestViewModel
 import com.example.shoryan.viewmodels.TokensViewModel
@@ -45,8 +44,9 @@ class NewRequestFragment : Fragment() {
     private var createdRequest : CreateNewRequestResponse? = null
     private var snackbar: Snackbar? = null
 
-    private val appComponent: AppComponent by lazy {
-        (activity?.application as MyApplication).appComponent
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        (requireActivity().application as MyApplication).appComponent.newRequestComponent().create().inject(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -62,11 +62,6 @@ class NewRequestFragment : Fragment() {
         toolbarBinding = null
         _binding = null
         snackbar?.dismiss()
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?){
@@ -402,7 +397,7 @@ class NewRequestFragment : Fragment() {
 
     private fun showMessage(message: String, successFlag: Boolean = false) {
         if (successFlag)
-            Snackbar.make(binding.scrollView, message, Snackbar.LENGTH_LONG)
+            Snackbar.make(binding.scrollView, message, Snackbar.LENGTH_INDEFINITE)
                 .setAction(resources.getString(R.string.show_my_requests)) {
                     // Starting the MyRequestDetailsActivity
                     openMyRequestsFragment()

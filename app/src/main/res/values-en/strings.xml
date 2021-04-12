@@ -95,7 +95,7 @@
     <string name="re_login">You session has expired, please login again</string>
     <string name="send_sms">Send Code</string>
     <string name="settings">Settings</string>
-    <string name="show_my_requests">Show my active requests</string>
+    <string name="show_my_requests">Show my requests</string>
     <string name="submit">Submit</string>
     <string name="thanks_donation">Thanks for your donation</string>
     <string name="try_again">Try again</string>

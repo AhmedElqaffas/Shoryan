@@ -1,6 +1,7 @@
 package com.example.shoryan.repos
 
 import android.content.Context
+import android.util.Log
 import com.example.shoryan.DataStoreUtil
 import com.example.shoryan.DataStoreUtil.clear
 import com.example.shoryan.DataStoreUtil.read
@@ -30,6 +31,7 @@ object TokensRefresher {
             response
         }
         catch (e: Exception){
+            Log.e("GetNewAccessTokenRepo","${e.stackTrace}")
             clearCachedTokens(context)
             TokenResponse(null,null, ErrorResponse(ServerError.CONNECTION_ERROR))
         }

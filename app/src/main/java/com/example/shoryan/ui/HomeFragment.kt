@@ -1,5 +1,6 @@
 package com.example.shoryan.ui
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -19,6 +20,7 @@ import com.example.shoryan.data.DonationRequest
 import com.example.shoryan.data.RequestsFiltersContainer
 import com.example.shoryan.data.ServerError
 import com.example.shoryan.databinding.FragmentHomeBinding
+import com.example.shoryan.di.MyApplication
 import com.example.shoryan.ui.recyclersAdapters.RequestsRecyclerAdapter
 import com.example.shoryan.interfaces.RequestsRecyclerInteraction
 import com.example.shoryan.interfaces.FilterHolder
@@ -45,6 +47,11 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        (requireActivity().application as MyApplication).appComponent.homeComponent().create().inject(this)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)

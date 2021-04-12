@@ -47,9 +47,6 @@ interface RetrofitBloodDonationInterface {
     @POST("users/login")
     suspend fun logUser(@Body loginQuery: LoginQuery): LoginResponse
 
-    /* Since the following method returns a single string, we don't want to create a whole object for
-        it, instead, a JsonObject is returned and the string is extracted from it
-    */
     @POST("users/refresh-token")
     suspend fun getNewAccessToken(@Header("Authorization") refreshToken: String): TokenResponse
 
