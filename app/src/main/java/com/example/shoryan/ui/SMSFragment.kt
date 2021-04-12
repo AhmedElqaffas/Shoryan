@@ -27,6 +27,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.shoryan.R
+import com.example.shoryan.data.RegistrationQuery
 import com.example.shoryan.data.Tokens
 import com.example.shoryan.di.MyApplication
 import com.example.shoryan.interfaces.LoadingFragmentHolder
@@ -34,6 +35,7 @@ import com.example.shoryan.ui.theme.ShoryanTheme
 import com.example.shoryan.ui.composables.CodeEntryComposable
 import com.example.shoryan.viewmodels.SMSViewModel
 import com.example.shoryan.viewmodels.SMSViewModel.OperationType.LOGIN
+import com.example.shoryan.viewmodels.SMSViewModel.OperationType.REGISTRATION
 import com.example.shoryan.viewmodels.TokensViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.collect
@@ -48,6 +50,10 @@ class SMSFragment : Fragment(), LoadingFragmentHolder {
     private val phoneNumber: String by lazy{
         requireArguments().get("phoneNumber") as String
     }
+    // In case of registration, this will contain the user's details, otherwise, it is null
+    private val registrationQuery: RegistrationQuery? by lazy{
+        requireArguments().get("registrationQuery") as RegistrationQuery?
+    }
     // Represents the code entered in the PinEntryComposable
     private var enteredCode: String = ""
 
@@ -59,7 +65,7 @@ class SMSFragment : Fragment(), LoadingFragmentHolder {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initializeNavController(view)
-        viewModel.trySendSMS(phoneNumber, LOGIN)
+        viewModel.trySendSMS(phoneNumber, registrationQuery)
         observeLoggingStatus()
         observeCodeVerificationStatus()
     }
@@ -254,7 +260,9 @@ class SMSFragment : Fragment(), LoadingFragmentHolder {
     }
 
     private fun sendSMS(){
-        viewModel.trySendSMS(phoneNumber, LOGIN)
+        // If "registrationQuery" isn't null, then this fragment is for registration, otherwise it is
+        // for login
+        viewModel.trySendSMS(phoneNumber, registrationQuery)
     }
 
     private fun updateCodeInstance(code: String){
@@ -262,7 +270,10 @@ class SMSFragment : Fragment(), LoadingFragmentHolder {
     }
 
     private fun verifyCode(code: String){
-        viewModel.verifyCode(phoneNumber, code, LOGIN)
+        // If "registrationQuery" isn't null, then this fragment is for registration, otherwise it is
+        // for login
+        val operation = if(registrationQuery != null) REGISTRATION else LOGIN
+        viewModel.verifyCode(phoneNumber, code, operation)
     }
 
     private fun observeCodeVerificationStatus(){

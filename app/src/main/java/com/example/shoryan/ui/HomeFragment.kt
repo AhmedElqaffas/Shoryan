@@ -1,9 +1,11 @@
 package com.example.shoryan.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -98,13 +100,26 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
         }
     }
 
-    private suspend fun handleError(error: ServerError) {
+    private fun handleError(error: ServerError){
         if(error == ServerError.JWT_EXPIRED){
-            tokensViewModel.getNewAccessToken(requireContext())
+            viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+                val response = tokensViewModel.getNewAccessToken(requireContext())
+                // If an error happened when refreshing tokens, log user out
+                response.error?.let{
+                    forceLogOut()
+                }
+            }
         }
         else{
-            error.doErrorAction(binding.rootLayout)
+            error.doErrorAction(binding.root)
         }
+    }
+
+    private fun forceLogOut(){
+        Toast.makeText(requireContext(), resources.getString(R.string.re_login), Toast.LENGTH_LONG).show()
+        val intent = Intent(context, LandingActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
     }
 
     private fun getUserProfileData(){

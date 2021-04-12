@@ -50,42 +50,54 @@ class SMSViewModel @Inject constructor (private val bloodDonationAPI: RetrofitBl
      * Checks whether resending an sms to the user is allowed now or not.
      * If allowed, a new verification code is sent to the user.
      * @param phoneNumber The number to send the sms to
-     * @param operationType An Integer that should be set to either OperationType.LOGIN
-     * or OperationType.REGISTRATION to control whether to use the login or registration
-     * API endpoints
+     * @param registrationQuery The user details used to create an account for the user during registration.
+     * If null, then the user is trying to login, not register
      */
-    fun trySendSMS(phoneNumber: String, operationType: Int){
+    fun trySendSMS(phoneNumber: String, registrationQuery: RegistrationQuery?){
         if(_canResendSMS.value == true){
             viewModelScope.launch{
-                sendSMS(phoneNumber, operationType)
+                sendSMS(phoneNumber, registrationQuery)
             }
         }
     }
 
-    private suspend fun sendSMS(phoneNumber: String, operationType: Int){
+    private suspend fun sendSMS(phoneNumber: String, registrationQuery: RegistrationQuery?){
         _canResendSMS.emit(false)
         try{
-            when(operationType){
-                LOGIN -> sendSMSFromServer(phoneNumber, bloodDonationAPI::sendSMSLogin)
-            }
+            if(registrationQuery == null)
+                sendLoginSMS(phoneNumber, bloodDonationAPI::sendSMSLogin)
+            else
+                sendRegistrationSMS(registrationQuery, bloodDonationAPI::sendSMSRegistration)
         }catch(e: Exception){
             _canResendSMS.emit(true)
             _eventsFlow.emit(ServerError.CONNECTION_ERROR)
         }
     }
 
-    private suspend fun sendSMSFromServer(
+    private suspend fun sendLoginSMS(
         phoneNumber: String,
         endpoint: suspend (SMSCodeQuery) -> SMSResponse
     ){
         val response = endpoint(SMSCodeQuery(phoneNumber))
-        if(response.error == null){
+        processSendingSMSResponse(response.error)
+    }
+
+    private suspend fun sendRegistrationSMS(
+        registrationQuery: RegistrationQuery,
+        endpoint: suspend (RegistrationQuery) -> RegistrationResponse
+    ){
+        val response = endpoint(registrationQuery)
+        processSendingSMSResponse(response.error)
+    }
+
+    private suspend fun processSendingSMSResponse(responseError: ErrorResponse?){
+        if(responseError == null){
             // Code is sent successfully, start a cooldown timer to prevent rapid sms resending
             startTimer()
         }
         else{
             _canResendSMS.emit(true)
-            _eventsFlow.emit(response.error.message)
+            _eventsFlow.emit(responseError.message)
         }
     }
 
@@ -122,6 +134,7 @@ class SMSViewModel @Inject constructor (private val bloodDonationAPI: RetrofitBl
             try{
                 when(operationType){
                     LOGIN -> sendCodeToServer(phoneNumber, code, bloodDonationAPI::verifyLoginCode)
+                    REGISTRATION -> sendCodeToServer(phoneNumber, code, bloodDonationAPI::verifyRegistrationCode)
                 }
                 _isVerifyingCode.emit(false)
             }catch(e: Exception){
@@ -131,8 +144,8 @@ class SMSViewModel @Inject constructor (private val bloodDonationAPI: RetrofitBl
         }
     }
 
-    private suspend fun sendCodeToServer(phoneNumber: String, code: String, endpoint: suspend (LoginCodeQuery) -> TokenResponse){
-        val serverQuery = LoginCodeQuery(phoneNumber, code)
+    private suspend fun sendCodeToServer(phoneNumber: String, code: String, endpoint: suspend (VerificationCodeQuery) -> TokenResponse){
+        val serverQuery = VerificationCodeQuery(phoneNumber, code)
         val response = endpoint(serverQuery)
         _eventsFlow.emit(response.error?.message)
         if(response.accessToken != null){

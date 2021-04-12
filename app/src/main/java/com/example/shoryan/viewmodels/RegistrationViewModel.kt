@@ -21,7 +21,7 @@ class RegistrationViewModel: ViewModel() {
     sealed class RegistrationViewEvent{
         data class ShowSnackBarFromResource(val textResourceId: Int): RegistrationViewEvent()
         data class ShowSnackBarFromString(val text: String): RegistrationViewEvent()
-        data class HandleSuccessfulRegistration(val accessToken: String, val refreshToken: String): RegistrationViewEvent()
+        object OpenSMSFragment: RegistrationViewEvent()
         object ToggleLoadingIndicator: RegistrationViewEvent()
     }
     private val TAG = javaClass.simpleName
@@ -80,7 +80,6 @@ class RegistrationViewModel: ViewModel() {
     }
 
     fun setGender(gender: String){
-        println(gender+"////////////////////////////////////////////")
         _gender.value = Gender.fromString(gender)
     }
 
@@ -135,7 +134,7 @@ class RegistrationViewModel: ViewModel() {
     private fun isAddressValid() = addressLiveData.value != null
     private fun isBirthDateValid() = _birthDate.value != null
 
-    private fun createUserRegistrationQuery() = RegistrationQuery(
+    fun createUserRegistrationQuery() = RegistrationQuery(
             name = Name(_firstName.value!!.removeAdditionalSpaces(), _lastName.value!!.removeAdditionalSpaces()),
             phoneNumber = _phoneNumber.value!!.removeAdditionalSpaces(),
             password = _password.value!!,
@@ -148,25 +147,21 @@ class RegistrationViewModel: ViewModel() {
     private fun registerUser(registrationQuery: RegistrationQuery)  = viewModelScope.launch{
         _eventsFlow.emit(RegistrationViewEvent.ToggleLoadingIndicator)
         try{
-            val registrationResponse = bloodDonationAPI.registerUser(registrationQuery)
+            val registrationResponse = bloodDonationAPI.sendSMSRegistration(registrationQuery)
             processRegistrationAPIResponse(registrationResponse)
         }
         catch (e: Exception){
-            Log.e(TAG, "Could not register user: $e")
             _eventsFlow.emit(RegistrationViewEvent.ShowSnackBarFromResource(R.string.connection_error))
         }
         _eventsFlow.emit(RegistrationViewEvent.ToggleLoadingIndicator)
     }
 
     private suspend fun processRegistrationAPIResponse(registrationResponse: RegistrationResponse){
-        registrationResponse.error?.apply {
-            _eventsFlow.emit(RegistrationViewEvent.ShowSnackBarFromResource(this.message.errorStringResource))
+        if(registrationResponse.error != null){
+            _eventsFlow.emit(RegistrationViewEvent.ShowSnackBarFromResource(registrationResponse.error.message.errorStringResource))
         }
-        registrationResponse.accessToken?.apply {
-            _eventsFlow.emit(RegistrationViewEvent.HandleSuccessfulRegistration(
-                registrationResponse.accessToken,
-                registrationResponse.refreshToken!!
-            ))
+        else {
+            _eventsFlow.emit(RegistrationViewEvent.OpenSMSFragment)
         }
     }
 

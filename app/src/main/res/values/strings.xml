@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">شريان</string>
+    <string name="account_unverified">هذا الرقم غير مفعل، اعد انشاء الحساب</string>
     <string name="address">العنوان</string>
     <string name="address_full">\u200F %1$s : %2$d %3$s - %4$s - %5$s</string>
     <string name="age_check_failed">لا يمكنك التبرع قبل بلوغ ١٧ عام</string>
@@ -47,6 +48,7 @@
     <string name="home">الرئيسية</string>
     <string name="incompatible_blood_type">فصيلة دمك غير متطابقة مع الطلب</string>
     <string name="invalid_input">تأكد من اخال البيانات بشكل صحيح</string>
+    <string name="invalid_code">هذا الرمز غير صحيح</string>
     <string name="invalid_credentials">بيانات الدخول غير صحيحة</string>
     <string name="internet_connection">تأكّد من اتصالك بالإنترنت</string>
     <string name="i_donated">لقد تبرّعت</string>

@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Shoryan</string>
     <string name="address">address</string>
+    <string name="account_unverified">This account is unverified, please repeat the registration</string>
     <string name="address_full">\u200F %1$s : %2$d %3$s - %4$s - %5$s</string>
     <string name="age_check_failed">You should be at least 17 years old to donate</string>
     <string name="are_you_sure_cancel_request">Are you sure you want to cancel your request?</string>
@@ -47,6 +48,7 @@
     <string name="home">Home</string>
     <string name="incompatible_blood_type">"Your blood type isn't compatible with the request"</string>
     <string name="invalid_input">Please make sure to enter the data correctly</string>
+    <string name="invalid_code">Entered code is incorrect</string>
     <string name="invalid_credentials">Invalid login data</string>
     <string name="internet_connection">Check your internet connection</string>
     <string name="i_donated">I have donated</string>

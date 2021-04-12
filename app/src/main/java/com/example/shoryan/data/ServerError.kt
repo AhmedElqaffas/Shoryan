@@ -17,6 +17,8 @@ import kotlinx.coroutines.launch
 
 enum class ServerError(val errorStringResource: Int) {
     INVALID_CREDENTIALS(R.string.invalid_credentials),
+    ACCOUNT_NOT_VERIFIED(R.string.account_unverified),
+    INVALID_CODE(R.string.invalid_code),
     MISSING_PARAMETER(R.string.fill_all_data),
     USER_NOT_FOUND(R.string.user_not_found),
     INVALID_FORMAT(R.string.invalid_input),
