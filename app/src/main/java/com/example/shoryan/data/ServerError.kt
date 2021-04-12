@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.example.shoryan.AndroidUtility
 import com.example.shoryan.R
+import com.example.shoryan.repos.NewRequestRepo
 import com.example.shoryan.repos.TokensRefresher
 import com.example.shoryan.ui.LandingActivity
 import com.google.android.material.snackbar.Snackbar
@@ -23,19 +24,22 @@ enum class ServerError(val errorStringResource: Int) {
     USER_NOT_FOUND(R.string.user_not_found),
     INVALID_FORMAT(R.string.invalid_input),
     PHONE_NUMBER_REQUIRED(R.string.connection_error),
-    JWT_EXPIRED(R.string.connection_error)
-    {
-        override fun doErrorAction(rootView: View){
+    JWT_EXPIRED(R.string.connection_error) {
+        override fun doErrorAction(rootView: View) {
         }
     },
+
     // UnAuthorized error -> The user should be forcefully logged out
-    UNAUTHORIZED(R.string.re_login)
-    {
-        override fun doErrorAction(rootView: View){
+    UNAUTHORIZED(R.string.re_login) {
+        override fun doErrorAction(rootView: View) {
             val context = rootView.context
-            GlobalScope.launch{
+            GlobalScope.launch {
                 TokensRefresher.clearCachedTokens(context)
-                Toast.makeText(context, context.resources.getString(errorStringResource), Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    context,
+                    context.resources.getString(errorStringResource),
+                    Toast.LENGTH_LONG
+                ).show()
                 val intent = Intent(context, LandingActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
                 rootView.context.startActivity(intent)
@@ -49,7 +53,10 @@ enum class ServerError(val errorStringResource: Int) {
     USER_GOING_TO_ANOTHER_REQUEST(R.string.request_already_pending),
     JWT_NOT_ACTIVE(R.string.connection_error),
     INTERNAL_SERVER_ERROR(R.string.connection_error),
-    CONNECTION_ERROR(R.string.connection_error);
+    CONNECTION_ERROR(R.string.connection_error),
+
+    // Create New Request errors
+    REQUESTS_DAILY_LIMIT(R.string.cant_request_today);
 
     open fun doErrorAction(rootView: View){
         AndroidUtility.displaySnackbarMessage(rootView,

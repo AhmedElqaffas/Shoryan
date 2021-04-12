@@ -14,30 +14,29 @@ object NewRequestRepo {
 
     suspend fun canUserRequest(
         bloodDonationInterface: RetrofitBloodDonationInterface
-    ): Boolean? {
+        ): RequestCreationStatusResponse? {
         // This function will contain an API call to determine whether the current user can request a blood donation
-        if (cachedCanUserRequest != null)
-            return cachedCanUserRequest!!
-        else {
+            var requestCreationStatusResponse : RequestCreationStatusResponse? = null
             // The API call
             try {
-                val response =
-                    bloodDonationInterface.getRequestCreationStatus(TokensRefresher.accessToken!!)
+                    requestCreationStatusResponse = bloodDonationInterface.getRequestCreationStatus(TokensRefresher.accessToken!!)
 
-                if (response.bloodBanksList != null) {
+                if (requestCreationStatusResponse.bloodBanksList != null) {
                     cachedCanUserRequest = true
 
                     // Caching the obtained blood banks
-                    cachedBloodBanks = response.bloodBanksList
+                    cachedBloodBanks = requestCreationStatusResponse.bloodBanksList
 
-                } else {
-                    cachedCanUserRequest = false
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "Couldn't get response: ${e.message}")
             }
-        }
 
+
+        return requestCreationStatusResponse
+    }
+
+    fun getCachedCanUserRequestFlag() : Boolean?{
         return cachedCanUserRequest
     }
 
