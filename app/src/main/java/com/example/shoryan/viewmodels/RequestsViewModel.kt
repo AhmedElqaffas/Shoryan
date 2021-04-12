@@ -70,10 +70,4 @@ class RequestsViewModel : ViewModel() {
     }
 
     fun getUserPendingRequestId() = CurrentAppUser.pendingRequestId
-
-    fun getProfileData() {
-        viewModelScope.launch {
-             ProfileRepo.getUserProfileData(bloodDonationAPI)
-        }
-    }
 }

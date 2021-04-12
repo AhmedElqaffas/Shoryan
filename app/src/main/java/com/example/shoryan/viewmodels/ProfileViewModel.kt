@@ -3,26 +3,17 @@ package com.example.shoryan.viewmodels
 import androidx.lifecycle.*
 import com.example.shoryan.data.CurrentAppUser
 import com.example.shoryan.data.ProfileResponse
-import com.example.shoryan.data.ServerError
-import com.example.shoryan.data.ViewEvent
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.repos.ProfileRepo
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
-class ProfileViewModel(): ViewModel() {
+class ProfileViewModel @Inject constructor(private val bloodDonationAPI: RetrofitBloodDonationInterface): ViewModel() {
 
-    private lateinit var bloodDonationAPI: RetrofitBloodDonationInterface
     // Indicates whether the SwipeRefreshLayout should have the spinning animation or not
     private val _isRefreshing = MutableLiveData(false)
     val isRefreshing: LiveData<Boolean> = _isRefreshing
-
-    constructor(bloodDonationAPI: RetrofitBloodDonationInterface) : this() {
-        this.bloodDonationAPI = bloodDonationAPI
-    }
 
     private val _user = MutableLiveData<CurrentAppUser?>()
     val user: LiveData<CurrentAppUser?> = _user
@@ -37,11 +28,5 @@ class ProfileViewModel(): ViewModel() {
             _isRefreshing.postValue(false)
             return@async response
         }.await()
-    }
-}
-
-class ProfileViewModelFactory(val bloodDonationAPI: RetrofitBloodDonationInterface): ViewModelProvider.Factory{
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return ProfileViewModel(bloodDonationAPI) as T
     }
 }

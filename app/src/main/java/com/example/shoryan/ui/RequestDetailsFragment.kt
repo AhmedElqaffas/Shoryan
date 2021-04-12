@@ -1,6 +1,7 @@
 package com.example.shoryan.ui
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Point
 import android.net.Uri
@@ -17,6 +18,7 @@ import com.example.shoryan.databinding.FragmentMyRequestDetailsBinding
 import com.example.shoryan.databinding.FragmentRequestFulfillmentBinding
 import com.example.shoryan.di.AppComponent
 import com.example.shoryan.di.MyApplication
+import com.example.shoryan.interfaces.RequestsRecyclerInteraction
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.viewmodels.*
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -110,6 +112,11 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
     override fun onDestroyView() {
         super.onDestroyView()
         apiCallJob?.cancel()
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        (parentFragment as RequestsRecyclerInteraction).onRequestCardDismissed()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

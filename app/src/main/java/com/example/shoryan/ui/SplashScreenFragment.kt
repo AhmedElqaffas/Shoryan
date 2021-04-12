@@ -3,6 +3,7 @@ package com.example.shoryan.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,9 +14,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.shoryan.R
+import com.example.shoryan.data.ServerError
 import com.example.shoryan.databinding.FragmentSplashScreenBinding
 import com.example.shoryan.di.MyApplication
 import com.example.shoryan.repos.TokensRefresher
+import com.example.shoryan.viewmodels.ProfileViewModel
 import com.example.shoryan.viewmodels.SplashScreenViewModel
 import com.example.shoryan.viewmodels.TokensViewModel
 import kotlinx.coroutines.delay
@@ -26,6 +29,8 @@ class SplashScreenFragment : Fragment() {
 
     @Inject
     lateinit var tokensViewModel: TokensViewModel
+    @Inject
+    lateinit var profileViewModel: ProfileViewModel
     private val splashScreenViewModel: SplashScreenViewModel by viewModels()
     private lateinit var navController: NavController
     // Used to display the animation only when the fragment is first created, otherwise skip animation
@@ -77,8 +82,8 @@ class SplashScreenFragment : Fragment() {
         navController = Navigation.findNavController(view)
     }
 
-    private fun openApplicationOrShowSigningOptions() {
-        if(isUserLoggedIn()){
+    private fun openApplicationOrShowSigningOptions() = viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+        if(isUserLoggedIn() && isAccessTokenAlive()){
             openApplication()
         }
         else if(existsRefreshToken()){
@@ -90,7 +95,20 @@ class SplashScreenFragment : Fragment() {
     }
 
     private fun isUserLoggedIn(): Boolean{
+        Log.e("RESPONSE_DEBUG", "vvvvvvvvvvvvvvvvvvvvvvvvvv")
+        Log.e("RESPONSE_DEBUG",TokensRefresher.accessToken+"///////////")
         return !TokensRefresher.accessToken.isNullOrEmpty()
+    }
+
+    /**
+     * To check if the access token isn't expired, the access token is used to fetch the profile
+     * of the user, if JWT_EXPIRED error is returned, the access token is therefore not alive
+     * and the user should login again
+     */
+    private suspend fun isAccessTokenAlive(): Boolean{
+        val response = profileViewModel.getProfileData()
+        Log.e("RESPONSE_DEBUG", "////// ${response.toString()}")
+        return response.error?.message != ServerError.JWT_EXPIRED
     }
 
     private fun existsRefreshToken() = !TokensRefresher.refreshToken.isNullOrEmpty()

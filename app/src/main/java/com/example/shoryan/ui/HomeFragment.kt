@@ -3,11 +3,13 @@ package com.example.shoryan.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -24,6 +26,7 @@ import com.example.shoryan.di.MyApplication
 import com.example.shoryan.ui.recyclersAdapters.RequestsRecyclerAdapter
 import com.example.shoryan.interfaces.RequestsRecyclerInteraction
 import com.example.shoryan.interfaces.FilterHolder
+import com.example.shoryan.viewmodels.ProfileViewModel
 import com.example.shoryan.viewmodels.RequestsViewModel
 import com.example.shoryan.viewmodels.TokensViewModel
 import com.google.android.material.snackbar.Snackbar
@@ -36,7 +39,8 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
     private val requestsRecyclerAdapter = RequestsRecyclerAdapter(this)
     @Inject
     lateinit var tokensViewModel: TokensViewModel
-
+    @Inject
+    lateinit var profileViewModel: ProfileViewModel
     // viewModels() connects the viewModel to the fragment, so, when the user navigates to another
     // tab using bottom navigation, the fragment is destroyed and therefore the attached viewModel
     // is destroyed as well. Therefore we used navGraphViewModels() to limit the scope of the
@@ -94,7 +98,6 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
         requestsGettingJob = viewLifecycleOwner.lifecycleScope.launch {
             requestsViewModel.getOngoingRequests().observe(viewLifecycleOwner, {
                 binding.homeSwipeRefresh.isRefreshing = false
-                println(it.toString())
                 it.requests?.let{
                     requestsRecyclerAdapter.submitList(it)
                 }
@@ -130,8 +133,12 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
     }
 
     private fun getUserProfileData(){
-       lifecycleScope.launch{
-           requestsViewModel.getProfileData()
+       viewLifecycleOwner.lifecycleScope.launchWhenResumed{
+           val response = profileViewModel.getProfileData()
+           // Handle the error if exists
+           response.error?.let{
+               handleError(it.message)
+           }
        }
     }
 
@@ -240,6 +247,9 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
             openMyRequestDetailsFragment(donationRequest.id)
         }
 
+    }
+
+    override fun onRequestCardDismissed() {
     }
 
     override fun submitFilters(requestsFiltersContainer: RequestsFiltersContainer?) {

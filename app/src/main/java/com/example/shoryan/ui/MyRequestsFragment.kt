@@ -60,8 +60,12 @@ class MyRequestsFragment : Fragment(), RequestsRecyclerInteraction {
         hideRequestsLoadingIndicator()
         instantiateNavController(view)
         setToolbarText(resources.getString(R.string.my_requests))
-        getMyRequests()
         binding.newRequestFAB.setOnClickListener { navController.navigate(R.id.action_myRequestsFragment_to_newRequest) }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        getMyRequests()
     }
 
     private fun initializeRecyclerViewAdapter(){
@@ -120,5 +124,9 @@ class MyRequestsFragment : Fragment(), RequestsRecyclerInteraction {
             RequestDetailsFragment.MY_REQUEST_BINDING
         )
         fragment.show(childFragmentManager, "requestDetails")
+    }
+
+    override fun onRequestCardDismissed() {
+        getMyRequests()
     }
 }

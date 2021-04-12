@@ -8,28 +8,21 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.shoryan.R
 import com.example.shoryan.data.ServerError
 import com.example.shoryan.databinding.FragmentProfileBinding
 import com.example.shoryan.di.MyApplication
-import com.example.shoryan.networking.RetrofitBloodDonationInterface
-import com.example.shoryan.networking.RetrofitClient
 import com.example.shoryan.viewmodels.ProfileViewModel
-import com.example.shoryan.viewmodels.ProfileViewModelFactory
 import com.example.shoryan.viewmodels.TokensViewModel
 import javax.inject.Inject
 
 class ProfileFragment : Fragment() {
 
-    private val bloodDonationAPI: RetrofitBloodDonationInterface = RetrofitClient
-            .getRetrofitClient()
-            .create(RetrofitBloodDonationInterface::class.java)
-
     @Inject
     lateinit var tokensViewModel: TokensViewModel
-    private val profileViewModel: ProfileViewModel by viewModels{ProfileViewModelFactory(bloodDonationAPI)}
+    @Inject
+    lateinit var profileViewModel: ProfileViewModel
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
