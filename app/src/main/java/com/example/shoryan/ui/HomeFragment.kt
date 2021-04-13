@@ -17,11 +17,14 @@ import androidx.navigation.navGraphViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoryan.AndroidUtility
+import com.example.shoryan.ConnectionLiveData
 import com.example.shoryan.R
 import com.example.shoryan.data.DonationRequest
 import com.example.shoryan.data.RequestsFiltersContainer
 import com.example.shoryan.data.ServerError
+import com.example.shoryan.databinding.AppbarBinding
 import com.example.shoryan.databinding.FragmentHomeBinding
+import com.example.shoryan.databinding.InternetConnectionBannerBinding
 import com.example.shoryan.di.MyApplication
 import com.example.shoryan.ui.recyclersAdapters.RequestsRecyclerAdapter
 import com.example.shoryan.interfaces.RequestsRecyclerInteraction
@@ -63,6 +66,7 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
         binding.adapter = requestsRecyclerAdapter
         binding.fragment = this
         binding.lifecycleOwner = viewLifecycleOwner
+        binding.connectivityMonitor = ConnectionLiveData(requireContext())
         return binding.root
     }
 

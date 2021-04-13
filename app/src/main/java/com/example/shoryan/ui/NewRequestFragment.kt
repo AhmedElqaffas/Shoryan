@@ -15,6 +15,7 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.navGraphViewModels
 import com.example.shoryan.AndroidUtility
+import com.example.shoryan.ConnectionLiveData
 import com.example.shoryan.R
 import com.example.shoryan.data.CreateNewRequestResponse
 import com.example.shoryan.data.ServerError
@@ -53,6 +54,7 @@ class NewRequestFragment : Fragment() {
         _binding = FragmentNewRequestBinding.inflate(inflater, container, false)
         binding.viewmodel = newRequestViewModel
         binding.lifecycleOwner = this
+        binding.connectivityMonitor = ConnectionLiveData(requireContext())
         toolbarBinding = binding.newRequestAppbar
         return binding.root
     }
