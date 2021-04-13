@@ -95,8 +95,6 @@ class SplashScreenFragment : Fragment() {
     }
 
     private fun isUserLoggedIn(): Boolean{
-        Log.e("RESPONSE_DEBUG", "vvvvvvvvvvvvvvvvvvvvvvvvvv")
-        Log.e("RESPONSE_DEBUG",TokensRefresher.accessToken+"///////////")
         return !TokensRefresher.accessToken.isNullOrEmpty()
     }
 

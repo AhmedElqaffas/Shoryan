@@ -68,6 +68,7 @@
     <string name="number_donations">%1$d</string>
     <string name="number_points">%1$d</string>
     <string name="notifications">الإشعارات</string>
+    <string name="no_internet_connection">انت غير متصل بالشبكة</string>
     <string name="no_pending_requests">ليس لديك طلبات مُعلّقة</string>
     <string name="no">لا</string>
     <string name="ok">حسناً</string>

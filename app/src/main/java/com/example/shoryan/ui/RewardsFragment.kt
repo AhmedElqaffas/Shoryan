@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,11 +30,13 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import com.example.shoryan.ConnectionLiveData
 import com.example.shoryan.R
 import com.example.shoryan.data.Reward
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.networking.RetrofitClient
 import com.example.shoryan.ui.composables.AppBar
+import com.example.shoryan.ui.composables.InternetConnectionBanner
 import com.example.shoryan.ui.theme.*
 import com.example.shoryan.viewmodels.RedeemingRewardsViewModel
 import com.example.shoryan.viewmodels.RedeemingRewardsViewModelFactory
@@ -48,6 +51,7 @@ class RewardsFragment : Fragment() {
     }
 
     private lateinit var navController: NavController
+    private lateinit var connectionLiveData: ConnectionLiveData
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -59,10 +63,19 @@ class RewardsFragment : Fragment() {
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View{
+        connectionLiveData = ConnectionLiveData(requireContext())
         return ComposeView(requireContext()).apply {
             setContent{
                 ShoryanTheme{
-                    RewardsScreen()
+                    val connectionStatus = connectionLiveData.observeAsState(true).value
+                    Box(contentAlignment = Alignment.BottomCenter){
+                        RewardsScreen()
+                        InternetConnectionBanner(
+                            requireContext(),
+                            Color.White,
+                            connectionStatus
+                        )
+                    }
                 }
             }
         }
@@ -74,7 +87,6 @@ class RewardsFragment : Fragment() {
         Column(
             Modifier
                 .fillMaxWidth()
-                .fillMaxHeight()
         ){
             AppBar(resources.getString(R.string.rewards), Modifier.fillMaxWidth())
             RewardsList(rewardsViewModel)

@@ -36,10 +36,13 @@ import com.example.shoryan.viewmodels.RedeemingRewardsViewModel
 import com.example.shoryan.viewmodels.RedeemingRewardsViewModelFactory
 import dev.chrisbanes.accompanist.coil.CoilImage
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.text.intl.Locale
 import androidx.lifecycle.lifecycleScope
+import com.example.shoryan.ConnectionLiveData
+import com.example.shoryan.ui.composables.InternetConnectionBanner
 import kotlinx.coroutines.flow.collect
 
 class RedeemRewardFragment : Fragment() {
@@ -48,7 +51,7 @@ class RedeemRewardFragment : Fragment() {
             RetrofitClient.getRetrofitClient().create(RetrofitBloodDonationInterface::class.java)
         )
     }
-
+    private lateinit var connectionLiveData: ConnectionLiveData
     private val sharedPref by lazy {
         activity?.getPreferences(Context.MODE_PRIVATE)
     }
@@ -61,6 +64,7 @@ class RedeemRewardFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+            connectionLiveData = ConnectionLiveData(requireContext())
             currentRedeeming = sharedPref!!.getString(reward.id, null)
             currentRedeeming?.let{
                 viewModel.setRedeemingStartTime(it.toLong(), it, sharedPref!!)
@@ -68,7 +72,15 @@ class RedeemRewardFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 ShoryanTheme {
-                    RewardScreen()
+                    val connectionStatus = connectionLiveData.observeAsState(true).value
+                    Box(contentAlignment = Alignment.BottomCenter) {
+                        RewardScreen()
+                        InternetConnectionBanner(
+                            requireContext(),
+                            Color.White,
+                            connectionStatus
+                        )
+                    }
                 }
             }
         }
