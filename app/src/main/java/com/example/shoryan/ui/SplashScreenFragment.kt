@@ -110,7 +110,6 @@ class SplashScreenFragment : Fragment(), LocaleChangerHolder {
      */
     private suspend fun isAccessTokenAlive(): Boolean{
         val response = profileViewModel.getProfileData()
-        Log.e("RESPONSE_DEBUG", "////// ${response.toString()}")
         return response.error?.message != ServerError.JWT_EXPIRED
     }
 
@@ -161,6 +160,7 @@ class SplashScreenFragment : Fragment(), LocaleChangerHolder {
         binding.localeButton.animate().alpha(1f).setDuration(duration).setStartDelay(startDelay).start()
         binding.loginButton.animate().alpha(1f).setDuration(duration).setStartDelay(startDelay).start()
         binding.registerButton.animate().alpha(1f).setDuration(duration).setStartDelay(startDelay).start()
+        binding.banner.animate().alpha(1f).setDuration(duration).setStartDelay(startDelay).start()
     }
 
     private fun goToLoginScreen(){

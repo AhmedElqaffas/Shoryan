@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -164,7 +165,7 @@ class SMSFragment : Fragment(), LoadingFragmentHolder {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(0.dp, getScreenHeight() * 0.09f, 0.dp, 0.dp),
+                .padding(0.dp, getScreenHeight() * 0.07f, 0.dp, 0.dp),
             horizontalArrangement = Arrangement.Center
         ){
             CodeEntryComposable(

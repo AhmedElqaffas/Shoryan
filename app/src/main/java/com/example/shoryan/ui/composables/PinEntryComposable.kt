@@ -2,15 +2,20 @@ package com.example.shoryan.ui.composables
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement.Top
+import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment.Companion.Top
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.*
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -19,8 +24,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.*
 
 /**
  * Contains the cells where the code is inserted
@@ -135,11 +139,11 @@ fun Cell(
        was at the start or the end of the TextField.
     */
     val textBeforeChange = remember{mutableStateOf("")}
-    val color = remember { mutableStateOf(inActiveBorderColor) }
+    val borderColor = remember { mutableStateOf(inActiveBorderColor) }
     val borderWidth = remember { mutableStateOf(1.dp) }
     parentLayoutScope.apply{
         BoxWithConstraints(modifier = Modifier.weight(1f)) {
-            val fontSize = maxWidth * 0.4f * 0.78f
+            val fontSize = min(maxHeight*0.4f*0.78f, maxWidth * 0.4f * 0.78f)
             TextField(
                 value = cellsText[id].value,
                 onValueChange =
@@ -166,7 +170,7 @@ fun Cell(
                 },
                 modifier = Modifier
                     .onFocusChanged {
-                        color.value = if (it.isFocused) activeBorderColor else inActiveBorderColor
+                        borderColor.value = if (it.isFocused) activeBorderColor else inActiveBorderColor
                         borderWidth.value = if (it.isFocused) activeBorderWidth else inActiveBorderWidth
                     }
                     .focusOrder(focusRequester) {
@@ -184,8 +188,7 @@ fun Cell(
                             onChange(extractCodeString(cellsText))
                         }
                     }
-                    .border(borderWidth.value, color.value)
-                    .aspectRatio(1f), // To keep the cell shape as square
+                    .border(borderWidth.value, borderColor.value, LineBorder),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Next
@@ -195,7 +198,7 @@ fun Cell(
                 colors = TextFieldDefaults.textFieldColors(
                     backgroundColor = cellColor,
                     cursorColor = Color.Transparent, // To hide the cursor
-                    focusedIndicatorColor = Color.Transparent) // To hide the underline below the textField
+                    focusedIndicatorColor = activeBorderColor) // To hide the underline below the textField by blending it with border color
             )
         }
 
@@ -208,4 +211,9 @@ fun extractCodeString(cellsText: List<MutableState<String>>): String {
         codeString += it.value
     }
     return codeString
+}
+
+private val LineBorder = GenericShape { size, _ ->
+    moveTo(0f, size.height)
+    lineTo(size.width, size.height)
 }

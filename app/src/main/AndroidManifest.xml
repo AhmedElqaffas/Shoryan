@@ -34,7 +34,8 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="${mapsApiKey}" />
 
-        <activity android:name="com.example.shoryan.ui.LandingActivity">
+        <activity android:name="com.example.shoryan.ui.LandingActivity"
+            android:windowSoftInputMode="adjustResize" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

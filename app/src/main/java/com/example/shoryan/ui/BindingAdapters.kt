@@ -67,7 +67,7 @@ class BindingAdapters {
                 }
                 Locale.forLanguageTag("ar") -> {
                     this.text = "AR"
-                    val drawable = ResourcesCompat.getDrawable(resources, R.drawable.ic_pin, null)
+                    val drawable = ResourcesCompat.getDrawable(resources, R.mipmap.ic_egypt_flag, null)
                     this.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null)
                 }
             }
