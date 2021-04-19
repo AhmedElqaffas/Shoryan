@@ -1,12 +1,16 @@
 package com.example.shoryan.ui
 
 import android.view.View
+import android.widget.Button
 import android.widget.EditText
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.shoryan.R
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.textfield.TextInputLayout
+import java.util.*
 
 class BindingAdapters {
 
@@ -49,6 +53,23 @@ class BindingAdapters {
         fun EditText.onTextChangedListener(operation: (Any) -> Unit) {
             this.addTextChangedListener{
                 operation(this)
+            }
+        }
+
+        @JvmStatic
+        @BindingAdapter("localeTextIcon")
+        fun Button.setLocaleButtonTextAndIcon(locale: Locale){
+            when(locale){
+                Locale.ENGLISH -> {
+                    this.text = "EN"
+                    val drawable = ResourcesCompat.getDrawable(resources, R.mipmap.ic_uk_flag,null)
+                    this.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null)
+                }
+                Locale.forLanguageTag("ar") -> {
+                    this.text = "AR"
+                    val drawable = ResourcesCompat.getDrawable(resources, R.drawable.ic_pin, null)
+                    this.setCompoundDrawablesWithIntrinsicBounds(null, null, drawable, null)
+                }
             }
         }
     }

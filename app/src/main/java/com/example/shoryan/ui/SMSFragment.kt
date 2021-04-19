@@ -127,14 +127,8 @@ class SMSFragment : Fragment(), LoadingFragmentHolder {
                 .clickable(onClick = { navController.popBackStack() })
         ) {
             Image(
-                painterResource(R.drawable.back_arrow_icon),
+                painterResource(R.mipmap.ic_back_oval),
                 contentDescription = "Back Button"
-            )
-            Text(
-                text = resources.getString(R.string.back),
-                color = MaterialTheme.colors.onPrimary,
-                style = MaterialTheme.typography.body1,
-                modifier = Modifier.padding(horizontal = 5.dp, vertical = 0.dp)
             )
         }
     }

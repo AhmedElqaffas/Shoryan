@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">شريان</string>
+    <string name="app_language">اللغة</string>
     <string name="account_unverified">هذا الرقم غير مفعل، اعد انشاء الحساب</string>
     <string name="address">العنوان</string>
     <string name="address_full">\u200F %1$s : %2$d %3$s - %4$s - %5$s</string>
@@ -14,12 +15,12 @@
     <string name="cancel_donation">إلغاء التبرّع</string>
     <string name="cancel_request">إلغاء الطلب</string>
     <string name="cant_request_today">نأسف لا يمكنك طلب تبرع بالدم اكثر من ٣ مرات في اليوم</string>
+    <string name="change_language">تغيير اللغة</string>
     <string name="change_location">تغيير الموقع</string>
     <string name="checking_requesting_permission">جاري التأكد من عدد طلباتك اليوم</string>
     <string name="checking_donating_ability">جاري التأكد من قدرتك على تلبية الطلب</string>
     <string name="choose_location">اختر المكان</string>
     <string name="choose_your_location">اختر عنوان تواجدك</string>
-    <string name="clear">مسح</string>
     <string name="click_here_to_try_again">"فشل في الحصول على البيانات \n   اضغط هنا لإعادة المحاولة"</string>
     <string name="confirm">تأكيد</string>
     <string name="confirmation_code">رمز التأكيد</string>
@@ -31,6 +32,7 @@
     <string name="donations">التبرّعات</string>
     <string name="donation_canceled">تم الغاء التبرّع</string>
     <string name="donation_constraint">يمكنك طلب دم ٣ مرات فقط خلال اليوم</string>
+    <string name="donation_location">مكان التبرع</string>
     <string name="donation_request">طلب تبرّع بالدم</string>
     <string name="enter_code">\u200F قم بإدخال الرمز المرسل الى \n %1$s</string>
     <string name="enter_login_password">\u200F قم بإدخال كلمة السر الخاصة بالرقم \n %1$s</string>
@@ -91,7 +93,9 @@
     <string name="request_already_pending">انت مسجل كمتبرع لطلب اخر</string>
     <string name="request_created">تم الطلب بنجاح</string>
     <string name="request_canceled">تم الغاء الطلب</string>
+    <string name="request_donation">طلب تبرع</string>
     <string name="resend_sms"><u>إعادة إرسال الرمز</u></string>
+    <string name="reset">مسح</string>
     <string name="rewards">المكافآت</string>
     <string name="re_login">من فضلك اعد تسجيل الدخول</string>
     <string name="send_sms">ارسل الرمز</string>

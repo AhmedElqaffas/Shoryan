@@ -13,19 +13,22 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import com.example.shoryan.LocaleHelper
 import com.example.shoryan.R
 import com.example.shoryan.data.ServerError
 import com.example.shoryan.databinding.FragmentSplashScreenBinding
 import com.example.shoryan.di.MyApplication
+import com.example.shoryan.interfaces.LocaleChangerHolder
 import com.example.shoryan.repos.TokensRefresher
 import com.example.shoryan.viewmodels.ProfileViewModel
 import com.example.shoryan.viewmodels.SplashScreenViewModel
 import com.example.shoryan.viewmodels.TokensViewModel
+import kotlinx.android.synthetic.main.fragment_splash_screen.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class SplashScreenFragment : Fragment() {
+class SplashScreenFragment : Fragment(), LocaleChangerHolder {
 
     @Inject
     lateinit var tokensViewModel: TokensViewModel
@@ -33,8 +36,6 @@ class SplashScreenFragment : Fragment() {
     lateinit var profileViewModel: ProfileViewModel
     private val splashScreenViewModel: SplashScreenViewModel by viewModels()
     private lateinit var navController: NavController
-    // Used to display the animation only when the fragment is first created, otherwise skip animation
-    private var firstTimeOpened = false
 
     private var _binding: FragmentSplashScreenBinding? = null
     private val binding get() = _binding!!
@@ -46,6 +47,7 @@ class SplashScreenFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSplashScreenBinding.inflate(inflater, container, false)
+        binding.viewModel = splashScreenViewModel
         return binding.root
     }
 
@@ -56,7 +58,7 @@ class SplashScreenFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        firstTimeOpened = true
+        splashScreenViewModel.updateLocale(LocaleHelper.getLanguage(requireContext()))
     }
 
     override fun onResume() {
@@ -64,8 +66,10 @@ class SplashScreenFragment : Fragment() {
         lifecycleScope.launchWhenResumed {
             // Get the tokens from the dataStore
             splashScreenViewModel.retrieveTokensFromDataStore(requireContext())
-            // To allow the user to see the logo
-            delay(800)
+            if(splashScreenViewModel.firstTimeOpened){
+                // To allow the user to see the logo
+                delay(800)
+            }
         }.invokeOnCompletion {
             openApplicationOrShowSigningOptions()
         }
@@ -76,6 +80,7 @@ class SplashScreenFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         instantiateNavController(view)
+        localeButton.setOnClickListener { openLanguageFragment() }
     }
 
     private fun instantiateNavController(view: View){
@@ -128,10 +133,10 @@ class SplashScreenFragment : Fragment() {
     }
 
     private fun showSigningOptions() {
-        if(firstTimeOpened){
+        if(splashScreenViewModel.firstTimeOpened){
             translateLogoUpwards(800)
             showButtons(1000,500)
-            firstTimeOpened = false
+            splashScreenViewModel.firstTimeOpened = false
         }
         else{
             translateLogoUpwards(0)
@@ -153,6 +158,7 @@ class SplashScreenFragment : Fragment() {
      * The buttons are gradually shown to shown to the user by setting the alpha = 1
      */
     private fun showButtons(duration: Long, startDelay: Long){
+        binding.localeButton.animate().alpha(1f).setDuration(duration).setStartDelay(startDelay).start()
         binding.loginButton.animate().alpha(1f).setDuration(duration).setStartDelay(startDelay).start()
         binding.registerButton.animate().alpha(1f).setDuration(duration).setStartDelay(startDelay).start()
     }
@@ -165,4 +171,16 @@ class SplashScreenFragment : Fragment() {
         navController.navigate(R.id.action_splashScreenFragment_to_registrationFragment)
     }
 
+    private fun openLanguageFragment(){
+        LanguageFragment().show(childFragmentManager, "language")
+    }
+
+    override fun onLocaleChanged(newLanguageTag: String){
+        updateLocale(newLanguageTag)
+        requireActivity().recreate()
+    }
+
+    private fun updateLocale(newLanguageTag: String) {
+        LocaleHelper.persist(requireContext(), newLanguageTag)
+    }
 }

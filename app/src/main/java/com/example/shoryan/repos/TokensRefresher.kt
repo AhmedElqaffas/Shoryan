@@ -3,7 +3,7 @@ package com.example.shoryan.repos
 import android.content.Context
 import android.util.Log
 import com.example.shoryan.DataStoreUtil
-import com.example.shoryan.DataStoreUtil.clear
+import com.example.shoryan.DataStoreUtil.clearTokens
 import com.example.shoryan.DataStoreUtil.read
 import com.example.shoryan.DataStoreUtil.write
 import com.example.shoryan.data.ErrorResponse
@@ -67,6 +67,6 @@ object TokensRefresher {
     }
 
     suspend fun clearCachedTokens(context: Context){
-        context.clear()
+        context.clearTokens()
     }
 }

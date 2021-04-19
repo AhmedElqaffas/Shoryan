@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Shoryan</string>
+    <string name="app_language">App Language</string>
     <string name="address">address</string>
     <string name="account_unverified">This account is unverified, please repeat the registration</string>
     <string name="address_full">\u200F %1$s : %2$d %3$s - %4$s - %5$s</string>
@@ -7,19 +8,19 @@
     <string name="are_you_sure_cancel_request">Are you sure you want to cancel your request?</string>
     <string name="back">back</string>
     <string name="bags_number">Number of Units</string>
-    <string name="birth_date">Birth Date</string>
+    <string name="birth_date">Date of Birth</string>
     <string name="blood_bags">%1$d Blood Bags</string>
     <string name="blood_type">Blood Type</string>
     <string name="branches">Branches</string>
     <string name="cancel_donation">Cancel Donation</string>
     <string name="cancel_request">Cancel Request</string>
     <string name="cant_request_today">Sorry, you can only request 3 donations per day</string>
+    <string name="change_language">Change Language</string>
     <string name="change_location">Change Location</string>
     <string name="checking_requesting_permission">Checking Requesting Permission</string>
     <string name="checking_donating_ability">Checking Donating Ability</string>
     <string name="choose_location">Choose Location</string>
     <string name="choose_your_location">Choose Your Location</string>
-    <string name="clear">Clear</string>
     <string name="click_here_to_try_again">"Couldn't show requests \n click here to try again"</string>
     <string name="confirm">Confirm</string>
     <string name="confirmation_code">Confirmation Code</string>
@@ -31,6 +32,7 @@
     <string name="donations">Donations</string>
     <string name="donation_canceled">Donation has been canceled</string>
     <string name="donation_constraint">You can make 3 requests per day</string>
+    <string name="donation_location">Donation Location</string>
     <string name="donation_request">Donation Request</string>
     <string name="enter_code">Enter the sms code sent to \n %1$s</string>
     <string name="enter_login_password">Enter the password for the number \n %1$s</string>
@@ -40,10 +42,10 @@
     <string name="fill_all_data">Please fill the whole form</string>
     <string name="filter"><u>Filter</u></string>
     <string name="filter_according">Filter</string>
-    <string name="filter_matching_types">My Compatible Types</string>
+    <string name="filter_matching_types">Blood types I can donate to</string>
     <string name="first_name">First Name</string>
     <string name="frequent_donation">You should wait for at least 3 months between donations</string>
-    <string name="gender">gender</string>
+    <string name="gender">Gender</string>
     <string name="hello_user_greeting">Hello, %1$s</string>
     <string name="home">Home</string>
     <string name="incompatible_blood_type">"Your blood type isn't compatible with the request"</string>
@@ -76,13 +78,13 @@
     <string name="password_format_message">Password should include a minimum of 8 letter, including: \n - Uppercase letters \n - Lowercase letters \n - Numbers</string>
     <string name="password_mismatch">"Passwords don't match"</string>
     <string name="pending_request">Pending</string>
-    <string name="persons_going">%1$d Incoming Donors</string>
+    <string name="persons_going">%1$d People are on their way to donate</string>
     <string name="phone_format_message">Number should have following format: 01xxxxxxxxx</string>
     <string name="phone_number">Mobile Number</string>
     <string name="point">%1$d points</string>
     <string name="points">Points</string>
     <string name="points_remaining">%1$d extra points needed</string>
-    <string name="proceed">"Proceed"</string>
+    <string name="proceed">Next</string>
     <string name="profile">Profile</string>
     <string name="register">Register</string>
     <string name="redeemable">Redeemable</string>
@@ -91,7 +93,9 @@
     <string name="request_already_pending">You are already registered as a donor for another request</string>
     <string name="request_created">The request is successfully created</string>
     <string name="request_canceled">Your request has been canceled</string>
+    <string name="request_donation">Request Donation</string>
     <string name="resend_sms"><u>Resend code</u></string>
+    <string name="reset">Reset</string>
     <string name="rewards">Rewards</string>
     <string name="re_login">You session has expired, please login again</string>
     <string name="send_sms">Send Code</string>
@@ -103,7 +107,7 @@
     <string name="yes">Yes</string>
     <string name="user_already_exists">This number is already registered</string>
     <string name="user_not_found">This phone number is not registered</string>
-    <string name="waiting_confirmation">You are now listed as a donor, we are awaiting your donation</string>
+    <string name="waiting_confirmation">You are now registered as a donor for this request, we are awaiting your donation</string>
     <string name="you_have_no_requests">"You have no active requests \n click here to refresh"</string>
     <string name="your_request">Your Request</string>
 

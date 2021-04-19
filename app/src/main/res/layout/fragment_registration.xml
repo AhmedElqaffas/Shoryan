@@ -16,17 +16,18 @@
         android:focusableInTouchMode="true"
         android:clickable="true">
 
-        <ImageView
+        <ImageButton
             android:id="@+id/registrationBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/back_arrow_icon"
+            android:background="@mipmap/ic_back_oval"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_bias="0.038"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.038" />
+            app:layout_constraintVertical_bias="0.038"
+            app:layout_constraintHorizontal_bias="0.038"
+            android:padding="20dp"/>
 
         <ImageView
             android:id="@+id/registrationAppLogo"
@@ -323,7 +324,7 @@
                     android:background="@drawable/button_curved_red"
                     android:text="@string/change_location"
                     android:textColor="#FFFFFF"
-                    />
+                    android:textAllCaps="false" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/passwordTextLayout"

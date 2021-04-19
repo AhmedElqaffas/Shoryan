@@ -1,54 +1,81 @@
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.LandingActivity"
-    android:background="@android:color/white"
-    android:id="@+id/rootLayout">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <ImageView
-        android:id="@+id/splashScreenLogo"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:scaleType="fitXY"
-        android:src="@mipmap/logo_untinted"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintVertical_bias="0.498"
-        app:layout_constraintWidth_percent="0.66"
-        android:adjustViewBounds="true"/>
+    <data>
 
-    <Button
-        android:id="@+id/loginButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintWidth_percent="0.8"
-        app:layout_constraintVertical_bias="0.755"
-        android:background="@drawable/button_curved_red"
-        android:text="@string/login"
-        android:textColor="@android:color/white"
-        android:textAllCaps="false"
-        android:alpha="0"/>
+        <variable name="viewModel"
+            type="com.example.shoryan.viewmodels.SplashScreenViewModel" />
 
-    <Button
-        android:id="@+id/registerButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/loginButton"
-        app:layout_constraintLeft_toLeftOf="@id/loginButton"
-        app:layout_constraintRight_toRightOf="@id/loginButton"
-        android:layout_marginTop="21dp"
-        android:background="@drawable/button_curved_red"
-        android:text="@string/register"
-        android:textColor="@android:color/white"
-        android:textAllCaps="false"
-        android:alpha="0"/>
+    </data>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.LandingActivity"
+        android:background="@android:color/white"
+        android:id="@+id/rootLayout">
+
+        <Button
+            android:id="@+id/localeButton"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.93"
+            app:layout_constraintVertical_bias="0.04"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:localeTextIcon="@{viewModel.currentLocale}"
+            android:paddingRight="10dp"
+            android:textSize="19sp"
+            android:textStyle="bold"
+            android:background="@drawable/white_curve_seventeen_dp"
+            android:alpha="0"/>
+
+        <ImageView
+            android:id="@+id/splashScreenLogo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:scaleType="fitXY"
+            android:src="@mipmap/logo_untinted"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="0.498"
+            app:layout_constraintWidth_percent="0.66"
+            android:adjustViewBounds="true"/>
+
+        <Button
+            android:id="@+id/loginButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintWidth_percent="0.8"
+            app:layout_constraintVertical_bias="0.755"
+            android:background="@drawable/button_curved_red"
+            android:text="@string/login"
+            android:textColor="@android:color/white"
+            android:textAllCaps="false"
+            android:alpha="0"/>
+
+        <Button
+            android:id="@+id/registerButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/loginButton"
+            app:layout_constraintLeft_toLeftOf="@id/loginButton"
+            app:layout_constraintRight_toRightOf="@id/loginButton"
+            android:layout_marginTop="21dp"
+            android:background="@drawable/button_curved_red"
+            android:text="@string/register"
+            android:textColor="@android:color/white"
+            android:textAllCaps="false"
+            android:alpha="0"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
