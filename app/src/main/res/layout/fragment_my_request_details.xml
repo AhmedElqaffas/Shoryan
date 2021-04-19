@@ -31,10 +31,9 @@
                 app:layout_constraintRight_toRightOf="parent"
                 android:layout_marginTop="25dp"
                 android:text="@string/your_request"
-                android:fontFamily="arial"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="25sp"
-                android:textStyle="bold" />
+                android:fontFamily="@font/opensans_bold" />
 
             <com.example.shoryan.ui.CustomScrollView
                 android:id="@+id/requestDetailsScrollView"
@@ -115,11 +114,10 @@
                                 android:layout_height="50dp"
                                 android:layout_marginTop="25dp"
                                 android:background="@drawable/red_circle"
-                                android:fontFamily="arial"
                                 android:gravity="center"
                                 android:textColor="@android:color/white"
                                 android:textSize="21sp"
-                                android:textStyle="bold"
+                                android:fontFamily="@font/opensans_bold"
                                 app:layout_constraintHorizontal_bias="0.1"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
@@ -133,11 +131,10 @@
                                 app:layout_constraintStart_toEndOf="@id/requestBloodType"
                                 app:layout_constraintTop_toTopOf="@id/requestBloodType"
                                 android:layout_marginStart="27dp"
-                                android:fontFamily="arial"
                                 android:text="@{viewmodel.donationDetails.request.requester.name.fullName}"
                                 android:textColor="@color/colorPrimaryDark"
                                 android:textSize="21sp"
-                                android:textStyle="bold" />
+                                android:fontFamily="@font/opensans_bold" />
 
                             <ImageView
                                 android:id="@+id/pinIcon"
@@ -159,10 +156,9 @@
                                 android:paddingStart="15dp"
                                 android:paddingTop="0dp"
                                 android:layout_marginEnd="10dp"
-                                android:fontFamily="arial"
                                 android:textColor="@color/colorPrimary"
                                 android:textSize="13sp"
-                                android:textStyle="bold"
+                                android:fontFamily="@font/opensans_bold"
                                 android:text="@{@string/address_full(viewmodel.donationDetails.request.bloodBank.name,viewmodel.donationDetails.request.bloodBank.location.buildingNumber,viewmodel.donationDetails.request.bloodBank.location.streetName,viewmodel.donationDetails.request.bloodBank.location.region,viewmodel.donationDetails.request.bloodBank.location.governorate)}" />
 
                             <TextView
@@ -171,10 +167,9 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="10dp"
                                 android:drawablePadding="15dp"
-                                android:fontFamily="arial"
+                                android:fontFamily="@font/opensans_bold"
                                 android:textColor="@color/colorPrimary"
                                 android:textSize="13sp"
-                                android:textStyle="bold"
                                 app:drawableEndCompat="@drawable/ic_blood_drop"
                                 app:layout_constraintStart_toStartOf="@id/pinIcon"
                                 app:layout_constraintTop_toBottomOf="@id/requestLocation"
@@ -187,10 +182,9 @@
                                 android:layout_marginTop="10dp"
                                 android:layout_marginBottom="5dp"
                                 android:drawablePadding="15dp"
-                                android:fontFamily="arial"
+                                android:fontFamily="@font/opensans_bold"
                                 android:textColor="@color/colorPrimary"
                                 android:textSize="13sp"
-                                android:textStyle="bold"
                                 app:drawableEndCompat="@drawable/ic_blood_hand"
                                 app:layout_constraintStart_toStartOf="@id/pinIcon"
                                 app:layout_constraintTop_toBottomOf="@id/requestBagsRequired"
@@ -209,9 +203,8 @@
                         app:layout_constraintRight_toRightOf="@id/requestDetailsCard"
                         app:layout_constraintTop_toBottomOf="@id/requestDetailsCard"
                         android:background="@drawable/button_white_background"
-                        android:fontFamily="arial"
                         android:textSize="17sp"
-                        android:textStyle="bold"
+                        android:fontFamily="@font/opensans_bold"
                         android:textColor="#000000"
                         android:text="@string/cancel_request"
                         android:paddingVertical="20dp"

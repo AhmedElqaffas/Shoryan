@@ -15,5 +15,6 @@
         android:text="@string/no_internet_connection"
         android:textColor="#FFFFFF"
         android:paddingVertical="15dp"
-        android:textAlignment="center"/>
+        android:textAlignment="center"
+        android:fontFamily="@font/opensans_regular"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

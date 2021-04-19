@@ -42,8 +42,7 @@
                 android:textColor="@android:color/white"
                 android:gravity="center"
                 android:textSize="16sp"
-                android:fontFamily="arial"
-                android:textStyle="bold"/>
+                android:fontFamily="@font/opensans_bold"/>
 
             <TextView
                 android:id="@+id/request_item_name"
@@ -55,8 +54,7 @@
                 app:layout_constraintHorizontal_bias="0.15"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="21sp"
-                android:fontFamily="arial"
-                android:textStyle="bold"
+                android:fontFamily="@font/opensans_bold"
                 android:text="@{item.requester.name.firstName}"/>
 
             <ImageView
@@ -76,8 +74,7 @@
                 android:textColor="@color/colorPrimaryDark"
                 android:text='@{item.bloodBank.name +" - "+ item.bloodBank.location.region}'
                 android:textSize="13sp"
-                android:fontFamily="arial"
-                android:textStyle="bold"
+                android:fontFamily="@font/opensans_bold"
                 android:layout_marginHorizontal="5dp"/>
 
             <ImageView

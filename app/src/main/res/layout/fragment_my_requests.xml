@@ -88,7 +88,8 @@
             android:textColor="@color/quantum_black_100"
             android:textSize="18sp"
             isVisible="@{viewModel.state == viewModel.LOADED_EMPTY}"
-            android:onClick="@{() -> viewModel.refresh()}"/>
+            android:onClick="@{() -> viewModel.refresh()}"
+            android:fontFamily="@font/opensans_bold"/>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/newRequestFAB"

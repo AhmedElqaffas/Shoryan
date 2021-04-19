@@ -29,7 +29,7 @@
             app:localeTextIcon="@{viewModel.currentLocale}"
             android:paddingRight="10dp"
             android:textSize="19sp"
-            android:textStyle="bold"
+            android:fontFamily="@font/opensans_bold"
             android:background="@drawable/white_curve_seventeen_dp"
             android:alpha="0"/>
 
@@ -69,7 +69,7 @@
             app:layout_constraintVertical_bias="0.255"
             android:background="@drawable/button_curved_red_pink_border"
             android:text="@string/login"
-            android:textStyle="bold"
+            android:fontFamily="@font/opensans_bold"
             android:textColor="@android:color/white"
             android:textAllCaps="false"
             android:alpha="0"/>
@@ -86,7 +86,7 @@
             android:backgroundTint="#FFFFFF"
             android:text="@string/register"
             android:textColor="@color/gray"
-            android:textStyle="bold"
+            android:fontFamily="@font/opensans_bold"
             android:textAllCaps="false"
             android:alpha="0"/>
 

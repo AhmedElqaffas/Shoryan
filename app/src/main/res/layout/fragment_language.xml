@@ -19,7 +19,7 @@
         android:text="@string/app_language"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="20sp"
-        android:textStyle="bold"/>
+        android:fontFamily="@font/opensans_bold"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/arabicRow"
@@ -44,7 +44,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="AR"
-            android:textStyle="bold"
+            android:fontFamily="@font/opensans_bold"
             android:textSize="19sp"
             android:drawableRight="@mipmap/ic_egypt_flag"
             android:drawablePadding="15dp"/>
@@ -82,7 +82,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="EN"
-            android:textStyle="bold"
+            android:fontFamily="@font/opensans_bold"
             android:textSize="19sp"
             android:drawableRight="@mipmap/ic_uk_flag"
             android:drawablePadding="15dp"/>
@@ -112,6 +112,7 @@
         android:text="@string/change_language"
         android:textColor="#FFFFFF"
         android:paddingVertical="17dp"
-        android:textAllCaps="false"/>
+        android:textAllCaps="false"
+        android:fontFamily="@font/opensans_regular"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

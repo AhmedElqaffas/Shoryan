@@ -23,10 +23,9 @@
             app:layout_constraintRight_toRightOf="parent"
             android:layout_marginTop="25dp"
             android:text="@string/filter_according"
-            android:fontFamily="arial"
+            android:fontFamily="@font/opensans_bold"
             android:textColor="#000000"
-            android:textSize="25sp"
-            android:textStyle="bold"/>
+            android:textSize="25sp"/>
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/nestedScrollView"
@@ -49,8 +48,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.16"
-                android:fontFamily="arial"
-                android:textStyle="bold"
+                android:fontFamily="@font/opensans_bold"
                 android:textSize="16sp"
                 android:text="@string/blood_type"
                 android:textColor="#000000"/>
@@ -64,8 +62,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 android:padding="5dp"
                 app:layout_constraintHorizontal_bias="0.89"
-                android:fontFamily="arial"
-                android:textStyle="bold"
+                android:fontFamily="@font/opensans_bold"
                 android:textSize="16sp"
                 android:text="@string/reset"
                 android:textColor="@color/colorPrimary"/>
@@ -234,8 +231,7 @@
                 android:text="@string/filter_matching_types"
                 android:textColor="#FFFFFF"
                 android:textSize="14sp"
-                android:fontFamily="arial"
-                android:textStyle="bold"
+                android:fontFamily="@font/opensans_bold"
                 android:background="@drawable/fifteen_dp_curve"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>

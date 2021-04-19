@@ -42,12 +42,11 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintWidth_percent="0.6"
                     android:text="@string/donation_constraint"
-                    android:fontFamily="arial"
-                    android:textStyle="bold"
+                    android:fontFamily="@font/opensans_bold"
                     android:textSize="25sp"
                     android:textAlignment="center"
                     android:textColor="@color/colorPrimaryDark" />
@@ -57,14 +56,13 @@
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     app:layout_constraintTop_toBottomOf="@+id/requestConstraintWord"
-                    app:layout_constraintRight_toRightOf="parent"
-                    android:layout_marginEnd="25dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginStart="25dp"
                     android:layout_marginTop="30dp"
                     android:text="@string/blood_type"
-                    android:fontFamily="arial"
+                    android:fontFamily="@font/opensans_bold"
                     android:textColor="@color/colorPrimaryDark"
-                    android:textSize="22sp"
-                    android:textStyle="bold"/>
+                    android:textSize="22sp"/>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/bloodTypeRadioGroupsContainer"
@@ -236,13 +234,12 @@
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     app:layout_constraintTop_toBottomOf="@+id/incrementBloodBags"
-                    app:layout_constraintRight_toRightOf="@id/bloodTypeWord"
+                    app:layout_constraintStart_toStartOf="@id/bloodTypeWord"
                     android:layout_marginTop="40dp"
                     android:text="@string/donation_location"
-                    android:fontFamily="arial"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="22sp"
-                    android:textStyle="bold"/>
+                    android:fontFamily="@font/opensans_bold"/>
 
                 <RelativeLayout
                     android:id="@+id/governmentsSpinnerLayout"
@@ -378,23 +375,22 @@
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     app:layout_constraintTop_toBottomOf="@+id/bloodTypeRadioGroupsContainer"
-                    app:layout_constraintRight_toRightOf="@id/bloodTypeWord"
+                    app:layout_constraintStart_toStartOf="@id/bloodTypeWord"
                     android:layout_marginTop="40dp"
                     android:text="@string/bags_number"
-                    android:fontFamily="arial"
+                    android:fontFamily="@font/opensans_bold"
                     android:textColor="@color/colorPrimaryDark"
-                    android:textSize="22sp"
-                    android:textStyle="bold"/>
+                    android:textSize="22sp"/>
 
                 <Button
                     android:id="@+id/incrementBloodBags"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/bagsNumberWord"
                     android:layout_marginTop="35dp"
-                    app:layout_constraintHorizontal_bias="0.86"
+                    app:layout_constraintHorizontal_bias="0.14"
                     android:background="@drawable/button_blood_type_selector"
                     android:gravity="center"
                     android:text="+"
@@ -406,10 +402,10 @@
                     android:id="@+id/decrementBloodBags"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@id/incrementBloodBags"
-                    app:layout_constraintHorizontal_bias="0.14"
+                    app:layout_constraintHorizontal_bias="0.86"
                     android:background="@drawable/button_blood_type_selector"
                     android:gravity="center"
                     android:text="-"
@@ -423,16 +419,15 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toTopOf="@id/incrementBloodBags"
                     app:layout_constraintBottom_toBottomOf="@id/incrementBloodBags"
-                    app:layout_constraintRight_toLeftOf="@id/incrementBloodBags"
-                    app:layout_constraintLeft_toRightOf="@id/decrementBloodBags"
+                    app:layout_constraintStart_toEndOf="@id/incrementBloodBags"
+                    app:layout_constraintEnd_toStartOf="@id/decrementBloodBags"
                     android:inputType="number"
                     android:hint="0"
                     android:textAlignment="center"
                     android:maxLength="2"
                     android:textSize="22sp"
                     android:textColor="#000000"
-                    android:textStyle="bold"
-                    android:fontFamily="arial"/>
+                    android:fontFamily="@font/opensans_bold"/>
 
                 <Button
                     android:id="@+id/confirmRequestButton"
@@ -447,8 +442,7 @@
                     android:text="@string/request_donation"
                     android:textColor="#FFFFFF"
                     android:textSize="17sp"
-                    android:textStyle="bold"
-                    android:fontFamily="arial"
+                    android:fontFamily="@font/opensans_bold"
                     android:enabled="false"/>
 
                 <ProgressBar
@@ -469,7 +463,7 @@
                     app:layout_constraintTop_toBottomOf="@id/confirmRequestButton"
                     app:layout_constraintLeft_toLeftOf="@id/confirmRequestButton"
                     app:layout_constraintRight_toRightOf="@id/confirmRequestButton"
-                    android:fontFamily="arial"
+                    android:fontFamily="@font/opensans_regular"
                     android:textSize="17sp"
                     android:textColor="@color/colorPrimaryDark"
                     android:text="@string/checking_requesting_permission"

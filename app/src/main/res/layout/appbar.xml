@@ -14,6 +14,5 @@
         android:paddingBottom="20dp"
         android:textColor="@android:color/white"
         android:textAlignment="center"
-        android:fontFamily="arial"
-        android:textStyle="bold"/>
+        android:fontFamily="@font/opensans_bold"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
