@@ -165,5 +165,8 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
     // DataStore
     implementation "androidx.datastore:datastore-preferences:1.0.0-alpha08"
+    //WorkManager
+    implementation "androidx.work:work-runtime-ktx:2.6.0-alpha02"
+
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.6'
 }

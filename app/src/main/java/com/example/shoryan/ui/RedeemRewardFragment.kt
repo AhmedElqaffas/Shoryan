@@ -48,12 +48,13 @@ import kotlinx.coroutines.flow.collect
 class RedeemRewardFragment : Fragment() {
     private val viewModel: RedeemingRewardsViewModel by viewModels {
         RedeemingRewardsViewModelFactory(
+            requireActivity().application,
             RetrofitClient.getRetrofitClient().create(RetrofitBloodDonationInterface::class.java)
         )
     }
     private lateinit var connectionLiveData: ConnectionLiveData
     private val sharedPref by lazy {
-        activity?.getPreferences(Context.MODE_PRIVATE)
+        activity?.applicationContext?.getSharedPreferences("preferences", Context.MODE_PRIVATE)
     }
     private var currentRedeeming: String? = null
     private val reward: Reward by lazy{

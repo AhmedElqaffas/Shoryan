@@ -1,8 +1,13 @@
 package com.example.shoryan.viewmodels
 
+import android.app.Application
 import android.content.SharedPreferences
 import android.os.CountDownTimer
 import androidx.lifecycle.*
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import com.example.shoryan.RedeemingWorker
 import com.example.shoryan.data.CurrentAppUser
 import com.example.shoryan.data.Reward
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
@@ -10,7 +15,7 @@ import com.example.shoryan.repos.RewardsRepo
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 
-class RedeemingRewardsViewModel(): ViewModel() {
+class RedeemingRewardsViewModel(application: Application) : AndroidViewModel(application) {
 
     enum class RedeemingState{
         NOT_REDEEMING, STARTED, FAILED
@@ -49,7 +54,12 @@ class RedeemingRewardsViewModel(): ViewModel() {
         emit(it / (redeemingDuration * 1.0).toFloat())
     }
 
-    constructor(bloodDonationAPI: RetrofitBloodDonationInterface): this(){
+    // WorkManager to remove the cached redeemingStartTime from the device after the redeeming expires
+    private val workManager = WorkManager.getInstance(application)
+
+    constructor(application: Application,
+                bloodDonationAPI: RetrofitBloodDonationInterface): this(application)
+    {
         this.bloodDonationAPI = bloodDonationAPI
     }
 
@@ -88,7 +98,22 @@ class RedeemingRewardsViewModel(): ViewModel() {
     fun redeemReward(rewardId: String, redeemingStartTime: Long, sharedPref: SharedPreferences): Flow<Boolean> = flow{
         _rewardRedeemingState.emit(RedeemingState.STARTED)
         startTimer(redeemingStartTime, rewardId, sharedPref)
+        startWorkManager(rewardId)
         emit(true)
+    }
+
+    private fun startWorkManager(rewardId: String) {
+        val workRequest = OneTimeWorkRequestBuilder<RedeemingWorker>()
+            .setInputData(getWorkerParameters(rewardId))
+            .build()
+        workManager.enqueue(workRequest)
+    }
+
+    private fun getWorkerParameters(rewardId: String): Data {
+        val builder = Data.Builder()
+        builder.putString("REWARD_ID", rewardId)
+        builder.putLong("REDEEMING_DURATION", redeemingDuration)
+        return builder.build()
     }
 
     private fun removeCachedReward(rewardKey: String, sharedPref: SharedPreferences) {
@@ -96,9 +121,11 @@ class RedeemingRewardsViewModel(): ViewModel() {
     }
 }
 
-class RedeemingRewardsViewModelFactory(private val bloodDonationAPI: RetrofitBloodDonationInterface)
+class RedeemingRewardsViewModelFactory(
+    private val application: Application,
+    private val bloodDonationAPI: RetrofitBloodDonationInterface)
     : ViewModelProvider.Factory{
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return RedeemingRewardsViewModel(bloodDonationAPI) as T
+        return RedeemingRewardsViewModel(application, bloodDonationAPI) as T
     }
 }

@@ -46,6 +46,7 @@ class RewardsFragment : Fragment() {
 
     private val rewardsViewModel: RedeemingRewardsViewModel by viewModels {
         RedeemingRewardsViewModelFactory(
+            requireActivity().application,
             RetrofitClient.getRetrofitClient().create(RetrofitBloodDonationInterface::class.java)
         )
     }
