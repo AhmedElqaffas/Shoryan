@@ -96,6 +96,10 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
         initializeViewModel()
     }
 
+    private fun initializeViewModel(){
+        appComponent.requestDetailsComponent().create(getClickedRequest()).inject(this)
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         fragmentType = getFragmentType()
         binding = if(fragmentType == MY_REQUEST_BINDING){
@@ -130,10 +134,6 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
     private fun getFragmentType() = requireArguments().getInt(ARGUMENT_BINDING_KEY)
 
     private fun getClickedRequest() = requireArguments().getString(ARGUMENT_REQUEST_KEY)!!
-
-    private fun initializeViewModel(){
-        appComponent.requestDetailsComponent().create(getClickedRequest()).inject(this)
-    }
 
     private fun setWindowSize(){
         dialog?.also {
@@ -173,21 +173,13 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
     }
 
     private fun setMapPaddingWhenLayoutIsReady(){
-        when(binding){
-            is FragmentRequestFulfillmentBinding -> (binding as FragmentRequestFulfillmentBinding).mapFragmentContainer.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
-                override fun onGlobalLayout() {
-                    (binding as FragmentRequestFulfillmentBinding).mapFragmentContainer.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                    mapInstance.setPadding(0, 0, 0, (binding as FragmentRequestFulfillmentBinding).mapFragmentContainer.height/4)
-                }
-            })
-
-            is FragmentMyRequestDetailsBinding -> (binding as FragmentMyRequestDetailsBinding).mapFragmentContainer.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
-                override fun onGlobalLayout() {
-                    (binding as FragmentMyRequestDetailsBinding).mapFragmentContainer.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                    mapInstance.setPadding(0, 0, 0, (binding as FragmentMyRequestDetailsBinding).mapFragmentContainer.height/4)
-                }
-            })
-        }
+        val mapContainer: View = binding.javaClass.getField("mapFragmentContainer")[binding] as View
+        mapContainer.viewTreeObserver.addOnGlobalLayoutListener(object : OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                mapContainer.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                mapInstance.setPadding(0, 0, 0, mapContainer.height / 4)
+            }
+        })
     }
 
     private fun fetchDonationDetails(){
