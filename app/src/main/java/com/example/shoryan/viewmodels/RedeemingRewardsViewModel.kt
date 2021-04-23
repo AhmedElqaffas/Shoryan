@@ -23,6 +23,7 @@ class RedeemingRewardsViewModel(application: Application) : AndroidViewModel(app
     }
 
     private lateinit var bloodDonationAPI: RetrofitBloodDonationInterface
+
     val rewardsList: Flow<List<Reward>> = flow{
         emit(RewardsRepo.getRewardsList())
     }

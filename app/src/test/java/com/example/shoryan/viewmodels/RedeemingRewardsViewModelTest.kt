@@ -87,6 +87,37 @@ class RedeemingRewardsViewModelTest{
     }
 
     @Test
+    fun `setRedeemingStartTime() WITH redeemingStartTime less than 'redeemingDuration' minutes ago THEN set RedeemingState as STARTED`() = runBlockingTest{
+        viewmodel.setRedeemingStartTime(
+            System.currentTimeMillis(),
+            "test",
+            context.getSharedPreferences(AndroidUtility.SHARED_PREFERENCES, MODE_PRIVATE)
+        )
+        assertEquals(RedeemingRewardsViewModel.RedeemingState.STARTED , viewmodel.rewardRedeemingState.value)
+    }
+
+    @Test
+    fun `setRedeemingStartTime() WITH redeemingStartTime more than 'redeemingDuration' minutes ago THEN set RedeemingState as NOT_REDEEMING`() = runBlockingTest{
+        viewmodel.setRedeemingStartTime(
+            System.currentTimeMillis() - 100_000_000,
+            "test",
+            context.getSharedPreferences(AndroidUtility.SHARED_PREFERENCES, MODE_PRIVATE)
+        )
+        assertEquals(RedeemingRewardsViewModel.RedeemingState.NOT_REDEEMING , viewmodel.rewardRedeemingState.value)
+    }
+
+    @Test
+    fun `redeemReward() test RedeemingState is set to STARTED`() = runBlockingTest{
+        viewmodel.redeemReward(
+            "test",
+            System.currentTimeMillis(),
+            context.getSharedPreferences(AndroidUtility.SHARED_PREFERENCES, MODE_PRIVATE)
+        ).collect{}
+
+        assertEquals(RedeemingRewardsViewModel.RedeemingState.STARTED , viewmodel.rewardRedeemingState.value)
+    }
+
+    @Test
     fun `WorkManager WHEN worker is executed THEN the cached reward id is removed from sharedPreferences`() =
         runBlockingTest{
             val prefs = context.getSharedPreferences(AndroidUtility.SHARED_PREFERENCES, MODE_PRIVATE)
