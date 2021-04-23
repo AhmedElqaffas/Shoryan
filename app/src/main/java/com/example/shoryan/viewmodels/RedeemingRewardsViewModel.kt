@@ -14,6 +14,7 @@ import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.repos.RewardsRepo
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import java.util.concurrent.TimeUnit
 
 class RedeemingRewardsViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -55,7 +56,9 @@ class RedeemingRewardsViewModel(application: Application) : AndroidViewModel(app
     }
 
     // WorkManager to remove the cached redeemingStartTime from the device after the redeeming expires
-    private val workManager = WorkManager.getInstance(application)
+    private val workManager by lazy{
+        WorkManager.getInstance(application)
+    }
 
     constructor(application: Application,
                 bloodDonationAPI: RetrofitBloodDonationInterface): this(application)
@@ -102,9 +105,14 @@ class RedeemingRewardsViewModel(application: Application) : AndroidViewModel(app
         emit(true)
     }
 
+    /**
+     * After redeemingDuration time passes, a worker is executed to remove the cached
+     * reward id from the sharedPreferences
+     */
     private fun startWorkManager(rewardId: String) {
         val workRequest = OneTimeWorkRequestBuilder<RedeemingWorker>()
             .setInputData(getWorkerParameters(rewardId))
+            .setInitialDelay(redeemingDuration, TimeUnit.MILLISECONDS)
             .build()
         workManager.enqueue(workRequest)
     }
@@ -112,7 +120,6 @@ class RedeemingRewardsViewModel(application: Application) : AndroidViewModel(app
     private fun getWorkerParameters(rewardId: String): Data {
         val builder = Data.Builder()
         builder.putString("REWARD_ID", rewardId)
-        builder.putLong("REDEEMING_DURATION", redeemingDuration)
         return builder.build()
     }
 

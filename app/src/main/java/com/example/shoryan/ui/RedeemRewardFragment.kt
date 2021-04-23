@@ -39,7 +39,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.text.intl.Locale
 import androidx.lifecycle.lifecycleScope
 import com.example.shoryan.ConnectionLiveData
 import com.example.shoryan.ui.composables.InternetConnectionBanner
@@ -421,5 +420,4 @@ class RedeemRewardFragment : Fragment() {
         }
     }
     private fun canUserRedeemReward() = viewModel.userPoints >= reward.points
-    private fun isEnglishLocality() = Locale.Companion.current.language == "en"
 }

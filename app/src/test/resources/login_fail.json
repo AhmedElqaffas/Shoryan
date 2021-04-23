@@ -1,4 +1,6 @@
 {
-  "state": false,
-  "message": "عفواً، رقم الهاتف و الرمز السرى غير متطابقان"
+  "error": {
+    "status": 401,
+    "message": "INVALID_CREDENTIALS"
+  }
 }

@@ -12,6 +12,9 @@ import com.google.android.material.snackbar.Snackbar
 
 class AndroidUtility {
     companion object{
+
+        const val SHARED_PREFERENCES = "preferences"
+
         fun showSoftKeyboard(context: Context?, view: View){
             val imm: InputMethodManager? =
                 context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?

@@ -9,7 +9,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import kotlinx.coroutines.delay
 
 import androidx.work.Data
 
@@ -18,7 +17,6 @@ class RedeemingWorker(context: Context, params: WorkerParameters): CoroutineWork
     override suspend fun doWork(): Result {
         val appContext = applicationContext
         return try {
-            delay(inputData.getLong("REDEEMING_DURATION",0))
             removeCachedRedeemingTime(appContext, inputData)
             makeStatusNotification("Redeeming is finished", appContext)
             Result.success()
@@ -29,7 +27,7 @@ class RedeemingWorker(context: Context, params: WorkerParameters): CoroutineWork
 }
 
 private fun removeCachedRedeemingTime(appContext: Context, inputData: Data) {
-    val preferences = appContext.getSharedPreferences("preferences", MODE_PRIVATE)
+    val preferences = appContext.getSharedPreferences(AndroidUtility.SHARED_PREFERENCES, MODE_PRIVATE)
     preferences.edit().remove(inputData.getString("REWARD_ID")).apply()
 }
 
