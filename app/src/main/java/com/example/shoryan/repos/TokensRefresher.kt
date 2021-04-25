@@ -7,6 +7,7 @@ import com.example.shoryan.DataStoreUtil.clearTokens
 import com.example.shoryan.DataStoreUtil.read
 import com.example.shoryan.DataStoreUtil.write
 import com.example.shoryan.data.ErrorResponse
+import com.example.shoryan.data.RefreshTokenQuery
 import com.example.shoryan.data.ServerError
 import com.example.shoryan.data.TokenResponse
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
@@ -26,7 +27,7 @@ object TokensRefresher {
     suspend fun getNewAccessToken(bloodDonationAPI: RetrofitBloodDonationInterface,
                                   context: Context): TokenResponse{
         return try {
-            val response = bloodDonationAPI.getNewAccessToken(refreshToken!!)
+            val response = bloodDonationAPI.getNewAccessToken(RefreshTokenQuery( refreshToken!!))
             processResponse(response, context)
             response
         }
@@ -43,7 +44,7 @@ object TokensRefresher {
             saveTokens(response.accessToken, response.refreshToken!!, context)
         }else{
             // Refreshing tokens failed, user should be logged out and tokens should be cleared
-            // Here we will only handle clreading the tokens
+            // Here we will only handle clearing the tokens
             this.accessToken = null
             this.refreshToken = null
             clearCachedTokens(context)

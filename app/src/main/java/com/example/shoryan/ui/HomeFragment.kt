@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -22,9 +21,7 @@ import com.example.shoryan.R
 import com.example.shoryan.data.DonationRequest
 import com.example.shoryan.data.RequestsFiltersContainer
 import com.example.shoryan.data.ServerError
-import com.example.shoryan.databinding.AppbarBinding
 import com.example.shoryan.databinding.FragmentHomeBinding
-import com.example.shoryan.databinding.InternetConnectionBannerBinding
 import com.example.shoryan.di.MyApplication
 import com.example.shoryan.ui.recyclersAdapters.RequestsRecyclerAdapter
 import com.example.shoryan.interfaces.RequestsRecyclerInteraction
@@ -50,8 +47,6 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
     // viewModel to the navComponent instead of individual fragment
     private val requestsViewModel: RequestsViewModel by navGraphViewModels(R.id.main_nav_graph)
 
-    private var requestsGettingJob: Job = Job()
-
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
@@ -72,7 +67,6 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        requestsGettingJob.cancel()
         _binding = null
     }
 
@@ -81,7 +75,8 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
         instantiateNavController(view)
         // Getting ongoingRequests, pending request, and user data, in parallel
         updateUserPendingRequest()
-        getOngoingRequests()
+        fetchOngoingRequests()
+        observeOngoingRequestsResponse()
         getUserProfileData()
     }
 
@@ -97,20 +92,23 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
         }
     }
 
-    private fun getOngoingRequests(){
-        requestsGettingJob.cancel()
-        requestsGettingJob = viewLifecycleOwner.lifecycleScope.launch {
-            requestsViewModel.getOngoingRequests().observe(viewLifecycleOwner, {
-                binding.homeSwipeRefresh.isRefreshing = false
-                it.requests?.let{
-                    requestsRecyclerAdapter.submitList(it)
+    private fun fetchOngoingRequests(){
+        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+            requestsViewModel.fetchOngoingRequests()
+        }
+    }
+
+    private fun observeOngoingRequestsResponse() {
+        requestsViewModel.requestsListResponseLiveData.observe(viewLifecycleOwner){
+            binding.homeSwipeRefresh.isRefreshing = false
+            it.requests?.let{
+                requestsRecyclerAdapter.submitList(it)
+            }
+            it.error?.let{
+                viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+                    handleError(it.message)
                 }
-                it.error?.let{
-                    viewLifecycleOwner.lifecycleScope.launchWhenResumed {
-                        handleError(it.message)
-                    }
-                }
-            })
+            }
         }
     }
 
@@ -176,7 +174,7 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
 
     fun refreshRequests(){
         resetScrollingToTop()
-        getOngoingRequests()
+        fetchOngoingRequests()
     }
 
     private fun setFilterListener(){

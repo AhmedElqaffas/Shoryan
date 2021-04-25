@@ -1,6 +1,7 @@
 package com.example.shoryan.networking
 
 import com.example.shoryan.data.*
+import com.google.gson.annotations.SerializedName
 import retrofit2.http.*
 
 interface RetrofitBloodDonationInterface {
@@ -48,7 +49,7 @@ interface RetrofitBloodDonationInterface {
     suspend fun logUser(@Body loginQuery: LoginQuery): LoginResponse
 
     @POST("users/refresh-token")
-    suspend fun getNewAccessToken(@Header("Authorization") refreshToken: String): TokenResponse
+    suspend fun getNewAccessToken(@Body refreshToken: RefreshTokenQuery): TokenResponse
 
     @GET("users")
     suspend fun getUserProfileData(@Header("Authorization") accessToken: String): ProfileResponse

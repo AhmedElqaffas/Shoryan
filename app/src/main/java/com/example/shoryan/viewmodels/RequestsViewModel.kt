@@ -4,29 +4,25 @@ import android.view.View
 import androidx.lifecycle.*
 import com.example.shoryan.data.AllActiveRequestsResponse
 import com.example.shoryan.data.CurrentAppUser
-import com.example.shoryan.data.DonationRequest
 import com.example.shoryan.data.RequestsFiltersContainer
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.networking.RetrofitClient
 import com.example.shoryan.repos.OngoingRequestsRepo
-import com.example.shoryan.repos.ProfileRepo
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class RequestsViewModel : ViewModel() {
 
-    private var requestsListLiveData = MutableLiveData<AllActiveRequestsResponse>()
+    private val _requestsListResponseLiveData = MutableLiveData<AllActiveRequestsResponse>()
+    val requestsListResponseLiveData: LiveData<AllActiveRequestsResponse> = _requestsListResponseLiveData
     private var bloodDonationAPI: RetrofitBloodDonationInterface = RetrofitClient
         .getRetrofitClient()
         .create(RetrofitBloodDonationInterface::class.java)
 
-    val areRequestsLoaded = Transformations.map(requestsListLiveData){
+    val areRequestsLoaded = Transformations.map(_requestsListResponseLiveData){
         it.requests?.isNotEmpty()
     }
 
-    val shimmerVisibility = Transformations.map(requestsListLiveData){
+    val shimmerVisibility = Transformations.map(_requestsListResponseLiveData){
         when(it.requests?.isEmpty()){
             true -> View.VISIBLE
             false -> View.GONE
@@ -34,7 +30,7 @@ class RequestsViewModel : ViewModel() {
         }
     }
 
-    val recyclerVisibility = Transformations.map(requestsListLiveData){
+    val recyclerVisibility = Transformations.map(_requestsListResponseLiveData){
         when(it.requests?.isNotEmpty()){
             true -> View.VISIBLE
             false -> View.GONE
@@ -42,21 +38,22 @@ class RequestsViewModel : ViewModel() {
         }
     }
 
-  suspend fun getOngoingRequests(): LiveData<AllActiveRequestsResponse>{
-        viewModelScope.async {
-            withContext(Dispatchers.IO) {
-                val response =
-                    OngoingRequestsRepo.getRequests(bloodDonationAPI)
-                var filteredList = response.requests
-                OngoingRequestsRepo.requestsFiltersContainer?.let {
-                    filteredList = response.requests?.filter {
-                        OngoingRequestsRepo.requestsFiltersContainer!!.bloodType.contains(it.bloodType)
+  suspend fun fetchOngoingRequests(){
+        viewModelScope.launch {
+                val response = OngoingRequestsRepo.getRequests(bloodDonationAPI)
+                response.requests?.let{
+                    var filteredList = response.requests
+                    OngoingRequestsRepo.requestsFiltersContainer?.let {
+                        filteredList = response.requests.filter {
+                            OngoingRequestsRepo.requestsFiltersContainer!!.bloodType.contains(it.bloodType)
+                        }
                     }
+                    _requestsListResponseLiveData.postValue(AllActiveRequestsResponse(filteredList, null))
                 }
-                requestsListLiveData.postValue(AllActiveRequestsResponse(filteredList, null))
-            }
-        }.await()
-        return requestsListLiveData
+                response.error?.let{
+                    _requestsListResponseLiveData.postValue(AllActiveRequestsResponse(null, it))
+                }
+        }
     }
 
     fun storeFilter(requestsFiltersContainer: RequestsFiltersContainer?){
