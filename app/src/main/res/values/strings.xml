@@ -89,6 +89,8 @@
     <string name="register">إنشاء حساب جديد</string>
     <string name="redeemable">يمكنك الإسترداد</string>
     <string name="redeem">استرد العرض</string>
+    <string name="redeeming_confirmation_title">هل انت متواجد بأحد الفروع؟</string>
+    <string name="redeeming_confirmation_body">سيكون امامك ٥ دقائق لإظهار الشاشة للعامل بالمتجر و استرداد الهدية</string>
     <string name="requests">الطلبات</string>
     <string name="request_already_pending">انت مسجل كمتبرع لطلب اخر</string>
     <string name="request_created">تم الطلب بنجاح</string>

@@ -306,9 +306,8 @@ class RedeemRewardFragment : Fragment() {
             buttonReference,
             branchesReference,
             false,
-            resources.getString(R.string.points_remaining, reward.points - viewModel.userPoints),
-            {}
-        )
+            resources.getString(R.string.points_remaining, reward.points - viewModel.userPoints)
+        ) {}
     }
 
     @Composable
@@ -383,7 +382,7 @@ class RedeemRewardFragment : Fragment() {
 
     private fun onRedeemButtonClicked(){
         val redeemingStartTime = System.currentTimeMillis()
-        redeemReward(reward.id, redeemingStartTime)
+        showAlertDialog(reward.id, redeemingStartTime)
     }
 
     private fun redeemReward(rewardId: String, redeemingStartTime: Long) {
@@ -419,5 +418,17 @@ class RedeemRewardFragment : Fragment() {
             Text(resources.getString(R.string.try_again))
         }
     }
+
     private fun canUserRedeemReward() = viewModel.userPoints >= reward.points
+
+    private fun showAlertDialog(id: String, redeemingStartTime: Long) {
+        val builder = android.app.AlertDialog.Builder(requireContext())
+        with(builder) {
+            setTitle(resources.getString(R.string.redeeming_confirmation_title))
+            setMessage(resources.getString(R.string.redeeming_confirmation_body))
+            setPositiveButton(resources.getString(R.string.confirm)) { _, _ -> redeemReward(id, redeemingStartTime) }
+            setNegativeButton(resources.getString(R.string.no),null)
+            show()
+        }
+    }
 }
