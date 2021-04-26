@@ -14,14 +14,12 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
-//const val USER_ID = "5fcfae9e52cbea7f6cb65a16"
-
 class NewRequestViewModel(application: Application) : AndroidViewModel(application) {
     private var bloodDonationAPI: RetrofitBloodDonationInterface = RetrofitClient
         .getRetrofitClient()
         .create(RetrofitBloodDonationInterface::class.java)
-    private val userId = CurrentAppUser.id
-    private var canUserRequest : MutableLiveData<Boolean?> = MutableLiveData<Boolean?>()
+    private var _canUserRequest = MutableLiveData<Boolean?>()
+    val canUserRequest: LiveData<Boolean?> = _canUserRequest
     private var createNewRequestResponse  = MutableLiveData<CreateNewRequestResponse?>()
     private val _isCheckingRequestAbility = MutableLiveData(true)
     val isCheckingRequestAbility: LiveData<Boolean> = _isCheckingRequestAbility
@@ -36,16 +34,18 @@ class NewRequestViewModel(application: Application) : AndroidViewModel(applicati
                 val serverResult = NewRequestRepo.canUserRequest(bloodDonationAPI)
                 _isCheckingRequestAbility.postValue(false)
                 if (serverResult?.bloodBanksList != null)
-                    canUserRequest.postValue(true)
+                    _canUserRequest.postValue(true)
                 else if(serverResult?.error != null) {
+                    _canUserRequest.postValue(false)
                     announceErrorHasHappened(serverResult.error.message)
                 }
                 else{
+                    _canUserRequest.postValue(false)
                     announceErrorHasHappened(ServerError.CONNECTION_ERROR)
                 }
             }.await()
 
-        return canUserRequest
+        return _canUserRequest
     }
 
     fun getCachedCanUserRequestFlag() : Boolean?{

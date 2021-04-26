@@ -73,6 +73,7 @@ class NewRequestFragment : Fragment() {
         enableInput()
         checkIfUserCanRequest()
         observeEvents()
+        setSwipeRefreshListener()
     }
 
     private fun initializeNavController(view: View){
@@ -82,6 +83,7 @@ class NewRequestFragment : Fragment() {
     private fun checkIfUserCanRequest() {
         val canUserRequest = newRequestViewModel.getCachedCanUserRequestFlag()
         if( canUserRequest != null){
+            binding.swipeRefresh.isRefreshing = false
             if(canUserRequest)
                 enableCreationOfRequest()
             else{
@@ -92,6 +94,7 @@ class NewRequestFragment : Fragment() {
           else {
             lifecycleScope.launch {
                 newRequestViewModel.canUserRequest().observe(viewLifecycleOwner, { canUserRequest ->
+                    binding.swipeRefresh.isRefreshing = false
                     canUserRequest.let {
                         if ((it != null) and (it == true)) enableCreationOfRequest()
                         else disableInput()
@@ -114,46 +117,18 @@ class NewRequestFragment : Fragment() {
     }
 
     private fun disableInput() {
-        disableRadioButtons()
         disableGovSpinner()
         disableCitySpinner()
         disableBloodBankSpinner()
-        disableIncDecButtons()
         disableSubmitButton()
     }
 
     private fun disableSubmitButton() {
-        binding.confirmRequestButton.isEnabled = false
-        binding.confirmRequestButton.setBackgroundResource(R.drawable.button_disabled_selector)
         binding.confirmRequestButton.setOnClickListener{}
     }
 
     private fun enableSubmitButton() {
-        binding.confirmRequestButton.isEnabled = true
         setConfirmButtonClickListener()
-        binding.confirmRequestButton.setBackgroundResource(R.drawable.button_curved_red)
-    }
-
-    private fun disableIncDecButtons() {
-        binding.incrementBloodBags.isEnabled = false
-        binding.decrementBloodBags.isEnabled = false
-        binding.bagsNumberEditText.setText("")
-        binding.bagsNumberEditText.isEnabled = false
-        binding.incrementBloodBags.setBackgroundResource(R.drawable.button_blood_type_disabled)
-        binding.decrementBloodBags.setBackgroundResource(R.drawable.button_blood_type_disabled)
-    }
-
-    private fun disableRadioButtons() {
-        binding.plusTypesRadioGroup.children.forEach {
-            it.isEnabled = false
-            it.setBackgroundResource(R.drawable.button_blood_type_disabled)
-            binding.plusTypesRadioGroup.clearCheck()
-        }
-        binding.minusTypesRadioGroup.children.forEach {
-            it.isEnabled = false
-            it.setBackgroundResource(R.drawable.button_blood_type_disabled)
-            binding.minusTypesRadioGroup.clearCheck()
-        }
     }
 
     private fun enableInput() {
@@ -322,7 +297,6 @@ class NewRequestFragment : Fragment() {
         setBloodBankSpinnerAdapter(binding.spinnerBloodBank, newRequestViewModel.getBloodBanksList(city))
     }
 
-
     private fun setIncDecButtonsClickListeners() {
         binding.incrementBloodBags.setOnClickListener { incNumOfBloodBags() }
         binding.decrementBloodBags.setOnClickListener { decNumOfBloodBags() }
@@ -466,6 +440,12 @@ class NewRequestFragment : Fragment() {
         val intent = Intent(context, LandingActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
+    }
+
+    private fun setSwipeRefreshListener(){
+        binding.swipeRefresh.setOnRefreshListener {
+            checkIfUserCanRequest()
+        }
     }
 
 }
