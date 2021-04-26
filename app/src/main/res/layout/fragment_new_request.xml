@@ -468,19 +468,17 @@
                     android:textColor="@color/colorPrimaryDark"
                     android:text="@string/checking_requesting_permission"
                     app:isVisible="@{viewmodel.isCheckingRequestAbility}"/>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    android:background="#000000"
-                    android:text="@string/no_internet_connection"
-                    android:textColor="#FFFFFF"
-                    android:paddingVertical="10dp"
-                    android:textAlignment="center"
-                    isVisible="@{!connectivityMonitor}"/>
-
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="#000000"
+            android:text="@string/no_internet_connection"
+            android:textColor="#FFFFFF"
+            android:paddingVertical="10dp"
+            android:textAlignment="center"
+            isVisible="@{!connectivityMonitor}"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
