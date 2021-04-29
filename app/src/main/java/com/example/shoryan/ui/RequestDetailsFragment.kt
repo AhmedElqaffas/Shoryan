@@ -8,9 +8,9 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
-import android.widget.Toast
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.lifecycleScope
+import com.example.shoryan.AndroidUtility
 import com.example.shoryan.BR
 import com.example.shoryan.R
 import com.example.shoryan.data.ServerError
@@ -228,20 +228,13 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
                 val response = tokensViewModel.getNewAccessToken(requireContext())
                 // If an error happened when refreshing tokens, log user out
                 response.error?.let{
-                    forceLogOut()
+                    AndroidUtility.forceLogOut(requireContext())
                 }
             }
         }
         else{
             error.doErrorAction(binding.root)
         }
-    }
-
-    private fun forceLogOut(){
-        Toast.makeText(requireContext(), resources.getString(R.string.re_login), Toast.LENGTH_LONG).show()
-        val intent = Intent(context, LandingActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-        startActivity(intent)
     }
 
     private fun closeBottomSheetDialog() {

@@ -2,11 +2,14 @@ package com.example.shoryan
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.Toast
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.view.ViewCompat
+import com.example.shoryan.ui.LandingActivity
 import com.google.android.material.snackbar.Snackbar
 
 
@@ -43,6 +46,13 @@ class AndroidUtility {
                 whatToTry()
             }
             return snackbar
+        }
+
+        fun forceLogOut(context: Context){
+            Toast.makeText(context, context.resources.getString(R.string.re_login), Toast.LENGTH_LONG).show()
+            val intent = Intent(context, LandingActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(intent)
         }
     }
 }

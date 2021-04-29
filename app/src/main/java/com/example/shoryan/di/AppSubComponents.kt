@@ -11,6 +11,7 @@ import dagger.Module
     RequestDetailsComponent::class,
     MyRequestsComponent::class,
     NewRequestComponent::class,
-    ProfileComponent::class
+    ProfileComponent::class,
+    RewardsComponent::class
 ])
 class AppSubComponents

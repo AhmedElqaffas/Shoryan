@@ -18,5 +18,6 @@ interface AppComponent {
     fun requestDetailsComponent(): RequestDetailsComponent.Factory
     fun myRequestsComponent(): MyRequestsComponent.Factory
     fun newRequestComponent(): NewRequestComponent.Factory
+    fun rewardsComponent(): RewardsComponent.Factory
     fun getApiInterface(): RetrofitBloodDonationInterface
 }

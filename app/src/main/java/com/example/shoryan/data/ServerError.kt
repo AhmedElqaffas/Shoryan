@@ -24,15 +24,24 @@ enum class ServerError(val errorStringResource: Int) {
     USER_NOT_FOUND(R.string.user_not_found),
     INVALID_FORMAT(R.string.invalid_input),
     PHONE_NUMBER_REQUIRED(R.string.connection_error),
-    JWT_EXPIRED(R.string.connection_error) {
-        override fun doErrorAction(rootView: View) {
+    JWT_EXPIRED(R.string.connection_error){
+        override fun doErrorAction(context: Context) {
+            AndroidUtility.forceLogOut(context)
         }
-    },
+      },
 
     // UnAuthorized error -> The user should be forcefully logged out
     UNAUTHORIZED(R.string.re_login) {
         override fun doErrorAction(rootView: View) {
             val context = rootView.context
+            clearTokensAndLogUserOut(context)
+        }
+
+        override fun doErrorAction(context: Context) {
+            clearTokensAndLogUserOut(context)
+        }
+
+        private fun clearTokensAndLogUserOut(context: Context){
             GlobalScope.launch {
                 TokensRefresher.clearCachedTokens(context)
                 Toast.makeText(
@@ -42,7 +51,7 @@ enum class ServerError(val errorStringResource: Int) {
                 ).show()
                 val intent = Intent(context, LandingActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                rootView.context.startActivity(intent)
+                context.startActivity(intent)
             }
         }
     },
@@ -62,4 +71,6 @@ enum class ServerError(val errorStringResource: Int) {
         AndroidUtility.displaySnackbarMessage(rootView,
             rootView.context.resources.getString(this.errorStringResource), Snackbar.LENGTH_LONG)
     }
+
+    open fun doErrorAction(context: Context){}
 }

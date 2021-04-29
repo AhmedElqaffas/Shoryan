@@ -6,5 +6,6 @@ data class Reward(
     val id: String,
     val rewardName: String,
     val points: Int,
-    val imageLink: String = "https://picsum.photos/300/300", ): Serializable {
+    val imageLink: String,
+    val branches: List<String>): Serializable {
 }

@@ -10,13 +10,14 @@ import androidx.work.WorkManager
 import com.example.shoryan.RedeemingWorker
 import com.example.shoryan.data.CurrentAppUser
 import com.example.shoryan.data.Reward
+import com.example.shoryan.data.ServerError
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.repos.RewardsRepo
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import java.util.concurrent.TimeUnit
 
-class RedeemingRewardsViewModel(application: Application) : AndroidViewModel(application) {
+class RedeemingRewardsViewModel(private val applicationContext: Application) : AndroidViewModel(applicationContext) {
 
     enum class RedeemingState{
         NOT_REDEEMING, STARTED, FAILED
@@ -24,9 +25,13 @@ class RedeemingRewardsViewModel(application: Application) : AndroidViewModel(app
 
     private lateinit var bloodDonationAPI: RetrofitBloodDonationInterface
 
-    val rewardsList: Flow<List<Reward>> = flow{
-        emit(RewardsRepo.getRewardsList())
-    }
+    private val _rewardsList =  MutableSharedFlow<List<Reward>?>()
+    val rewardsList = _rewardsList.asSharedFlow()
+
+    private val _messagesToUser = MutableSharedFlow<ServerError?>()
+    val messagesToUser = _messagesToUser.asSharedFlow()
+
+    private var rewardsListJob: Job? = null
 
     val userPoints: Int
     get() { return CurrentAppUser.points }
@@ -58,13 +63,28 @@ class RedeemingRewardsViewModel(application: Application) : AndroidViewModel(app
 
     // WorkManager to remove the cached redeemingStartTime from the device after the redeeming expires
     private val workManager by lazy{
-        WorkManager.getInstance(application)
+        WorkManager.getInstance(applicationContext)
     }
 
     constructor(application: Application,
                 bloodDonationAPI: RetrofitBloodDonationInterface): this(application)
     {
         this.bloodDonationAPI = bloodDonationAPI
+        fetchRewardsList()
+    }
+
+    fun fetchRewardsList(){
+      rewardsListJob?.cancel()
+      rewardsListJob = viewModelScope.launch {
+          val response = RewardsRepo.getRewardsList()
+          _rewardsList.emit(response.rewards)
+          response.error?.message.let {
+              if(it == ServerError.UNAUTHORIZED || it == ServerError.JWT_EXPIRED)
+                  it.doErrorAction(applicationContext)
+              else
+                  _messagesToUser.emit(it)
+          }
+      }
     }
 
     fun setRedeemingStartTime(redeemingStartTime: Long, rewardKey: String, sharedPref: SharedPreferences) = viewModelScope.launch {
@@ -126,6 +146,16 @@ class RedeemingRewardsViewModel(application: Application) : AndroidViewModel(app
 
     private fun removeCachedReward(rewardKey: String, sharedPref: SharedPreferences) {
         sharedPref.edit().remove(rewardKey).apply()
+    }
+
+    /**
+     * Used when the fragment receives and shows a message in "messagesToUser", this method
+     * clears the message from the flow.
+     */
+    fun clearReceivedEvent(){
+        viewModelScope.launch{
+            _messagesToUser.emit(null)
+        }
     }
 }
 

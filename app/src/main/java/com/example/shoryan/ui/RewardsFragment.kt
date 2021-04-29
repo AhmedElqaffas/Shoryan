@@ -1,48 +1,67 @@
 package com.example.shoryan.ui
 
+import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.animation.core.*
-import androidx.compose.foundation.*
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.Brush.Companion.linearGradient
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.shoryan.ConnectionLiveData
 import com.example.shoryan.R
 import com.example.shoryan.data.Reward
+import com.example.shoryan.di.AppComponent
+import com.example.shoryan.di.MyApplication
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.networking.RetrofitClient
 import com.example.shoryan.ui.composables.AppBar
 import com.example.shoryan.ui.composables.InternetConnectionBanner
-import com.example.shoryan.ui.theme.*
+import com.example.shoryan.ui.theme.Gray
+import com.example.shoryan.ui.theme.Shimmer
+import com.example.shoryan.ui.theme.ShoryanTheme
 import com.example.shoryan.viewmodels.RedeemingRewardsViewModel
 import com.example.shoryan.viewmodels.RedeemingRewardsViewModelFactory
+import com.example.shoryan.viewmodels.TokensViewModel
 import dev.chrisbanes.accompanist.coil.CoilImage
+import kotlinx.coroutines.flow.retry
+import javax.inject.Inject
 
 class RewardsFragment : Fragment() {
+
+    private val appComponent: AppComponent by lazy {
+        (activity?.application as MyApplication).appComponent
+    }
+
+    @Inject
+    lateinit var tokensViewModel: TokensViewModel
 
     private val rewardsViewModel: RedeemingRewardsViewModel by viewModels {
         RedeemingRewardsViewModelFactory(
@@ -53,6 +72,15 @@ class RewardsFragment : Fragment() {
 
     private lateinit var navController: NavController
     private lateinit var connectionLiveData: ConnectionLiveData
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        initializeViewModel()
+    }
+
+    private fun initializeViewModel(){
+        appComponent.rewardsComponent().create().inject(this)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -71,11 +99,8 @@ class RewardsFragment : Fragment() {
                     val connectionStatus = connectionLiveData.observeAsState(true).value
                     Box(contentAlignment = Alignment.BottomCenter){
                         RewardsScreen()
-                        InternetConnectionBanner(
-                            requireContext(),
-                            Color.White,
-                            connectionStatus
-                        )
+                        InternetConnectionBanner(requireContext(), Color.White, connectionStatus)
+                        ErrorSnackbar()
                     }
                 }
             }
@@ -97,7 +122,7 @@ class RewardsFragment : Fragment() {
     @ExperimentalFoundationApi
     @Composable
     fun RewardsList(rewardsViewModel: RedeemingRewardsViewModel){
-        val rewardsList: List<Reward> by rewardsViewModel.rewardsList.collectAsState(listOf())
+        val rewardsList: List<Reward>? by rewardsViewModel.rewardsList.collectAsState(listOf())
         Box(modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center){
             LazyVerticalGrid(
@@ -105,14 +130,14 @@ class RewardsFragment : Fragment() {
                 contentPadding = PaddingValues(horizontal = 0.dp, vertical = 30.dp),
                 modifier = Modifier.fillMaxWidth(0.9f)
             ){
-                if(rewardsList.isEmpty()){
+                if(rewardsList.isNullOrEmpty()){
                     items(6){
                         RewardsShimmer()
                     }
                 }
                 else{
-                    items(rewardsList.size) { index ->
-                        Reward(rewardsList[index])
+                    items(rewardsList!!.size) { index ->
+                        Reward(rewardsList!![index])
                     }
                 }
             }
@@ -238,5 +263,36 @@ class RewardsFragment : Fragment() {
                 repeatMode = RepeatMode.Reverse
             )
         )
+    }
+    @Composable
+    fun ErrorSnackbar(){
+        val error = rewardsViewModel.messagesToUser.collectAsState(null)
+        error.value?.let {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(0.dp, 0.dp, 0.dp, 20.dp)
+                    .requiredHeight(70.dp),
+                horizontalArrangement = Arrangement.Center
+            ){
+                Snackbar(
+                    modifier = Modifier.padding(10.dp, 0.dp, 10.dp, 0.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    action = {
+                        Button(
+                            shape = RoundedCornerShape(10.dp),
+                            onClick = {
+                                rewardsViewModel.clearReceivedEvent()
+                                rewardsViewModel.fetchRewardsList()
+                            },
+                        ){
+                            Text(resources.getString(R.string.try_again))
+                        }
+                    }
+                ) {
+                    Text(resources.getString(error.value!!.errorStringResource))
+                }
+            }
+        }
     }
 }
