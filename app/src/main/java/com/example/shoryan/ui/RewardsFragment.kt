@@ -85,6 +85,7 @@ class RewardsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
+        rewardsViewModel.fetchRewardsList()
     }
 
     @ExperimentalFoundationApi
@@ -122,7 +123,17 @@ class RewardsFragment : Fragment() {
     @ExperimentalFoundationApi
     @Composable
     fun RewardsList(rewardsViewModel: RedeemingRewardsViewModel){
-        val rewardsList: List<Reward>? by rewardsViewModel.rewardsList.collectAsState(listOf())
+        // If the rewards list is cached, its value is retrieved before this composable is drawn
+        // and thus the "collectAsState" is never triggered and the list stays empty
+        // therefore, we try to get the value of the cached rewardList first, before
+        // setting initializing the list as an empty list
+        val initialRewardsList: List<Reward>? = try{
+            rewardsViewModel.rewardsList.replayCache[0]
+        }catch (e: Exception){
+            listOf()
+        }
+
+        val rewardsList: List<Reward>? by rewardsViewModel.rewardsList.collectAsState(initialRewardsList)
         Box(modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center){
             LazyVerticalGrid(

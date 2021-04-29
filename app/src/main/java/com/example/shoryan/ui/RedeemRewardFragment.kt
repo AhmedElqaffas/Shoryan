@@ -42,7 +42,6 @@ import androidx.compose.ui.draw.scale
 import androidx.lifecycle.lifecycleScope
 import com.example.shoryan.ConnectionLiveData
 import com.example.shoryan.ui.composables.InternetConnectionBanner
-import kotlinx.coroutines.flow.collect
 
 class RedeemRewardFragment : Fragment() {
     private val viewModel: RedeemingRewardsViewModel by viewModels {
@@ -228,7 +227,7 @@ class RedeemRewardFragment : Fragment() {
         ) {
             parentLayout.apply{
                 Text(
-                    text = "احصل على 20 جنيه خصم فوري",
+                    text = reward.description,
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.subtitle2,
                     color = Color.Black,
@@ -240,23 +239,35 @@ class RedeemRewardFragment : Fragment() {
             }
         }
 
-        @Composable
-        fun Branches(parentLayout: ConstraintLayoutScope,
-                     branchesReference: ConstrainedLayoutReference,
-                     logoReference: ConstrainedLayoutReference){
+    @Composable
+    fun Branches(parentLayout: ConstraintLayoutScope,
+                 branchesReference: ConstrainedLayoutReference,
+                 logoReference: ConstrainedLayoutReference){
 
-            parentLayout.apply{
+        parentLayout.apply{
+            Column(
+                modifier = Modifier.constrainAs(branchesReference){
+                    start.linkTo(logoReference.start)
+                    end.linkTo(parent.end)
+                    top.linkTo(logoReference.bottom, 40.dp)
+                }.fillMaxWidth()
+            ){
                 Text(
                     text = resources.getString(R.string.branches),
                     style = MaterialTheme.typography.subtitle1,
                     color = Color.Black,
-                    modifier = Modifier.constrainAs(branchesReference){
-                        end.linkTo(logoReference.end)
-                        top.linkTo(logoReference.bottom, 40.dp)
-                    }
                 )
+
+                reward.branches.forEach {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.subtitle2,
+                        modifier = Modifier.padding(0.dp, 5.dp, 0.dp, 0.dp)
+                    )
+                }
             }
         }
+    }
 
     @Composable
     fun RewardRedeemingStatus(
@@ -328,7 +339,7 @@ class RedeemRewardFragment : Fragment() {
                 modifier = Modifier
                     .width(350.dp)
                     .constrainAs(buttonReference) {
-                        top.linkTo(branchesReference.bottom)
+                        top.linkTo(branchesReference.bottom, 20.dp)
                         centerHorizontallyTo(parent)
                     }
             ){
@@ -381,23 +392,12 @@ class RedeemRewardFragment : Fragment() {
     }
 
     private fun onRedeemButtonClicked(){
-        val redeemingStartTime = System.currentTimeMillis()
-        showAlertDialog(reward.id, redeemingStartTime)
+        showAlertDialog(reward.id)
     }
 
     private fun redeemReward(rewardId: String, redeemingStartTime: Long) {
         lifecycleScope.launchWhenResumed {
-            viewModel.redeemReward(rewardId, redeemingStartTime, sharedPref!!).collect{
-                if(it)
-                    saveRedeemingStartTime(redeemingStartTime)
-            }
-        }
-    }
-
-    private fun saveRedeemingStartTime(redeemingStartTime: Long){
-        with(sharedPref!!.edit()) {
-            putString(reward.id, redeemingStartTime.toString())
-            apply()
+            viewModel.redeemReward(rewardId, redeemingStartTime, sharedPref!!)
         }
     }
 
@@ -413,7 +413,10 @@ class RedeemRewardFragment : Fragment() {
     @Composable
     fun SnackbarButton(){
         Button(
-            onClick = {redeemReward(reward.id, System.currentTimeMillis())}
+            onClick = {
+                redeemReward(reward.id, System.currentTimeMillis())
+                viewModel.clearReceivedEvent()
+            }
         ){
             Text(resources.getString(R.string.try_again))
         }
@@ -421,12 +424,12 @@ class RedeemRewardFragment : Fragment() {
 
     private fun canUserRedeemReward() = viewModel.userPoints >= reward.points
 
-    private fun showAlertDialog(id: String, redeemingStartTime: Long) {
+    private fun showAlertDialog(id: String) {
         val builder = android.app.AlertDialog.Builder(requireContext())
         with(builder) {
             setTitle(resources.getString(R.string.redeeming_confirmation_title))
             setMessage(resources.getString(R.string.redeeming_confirmation_body))
-            setPositiveButton(resources.getString(R.string.confirm)) { _, _ -> redeemReward(id, redeemingStartTime) }
+            setPositiveButton(resources.getString(R.string.confirm)) { _, _ -> redeemReward(id, System.currentTimeMillis()) }
             setNegativeButton(resources.getString(R.string.no),null)
             show()
         }

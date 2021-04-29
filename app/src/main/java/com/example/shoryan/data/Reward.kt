@@ -7,5 +7,6 @@ data class Reward(
     val rewardName: String,
     val points: Int,
     val imageLink: String,
+    val description: String,
     val branches: List<String>): Serializable {
 }

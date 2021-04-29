@@ -8,9 +8,7 @@ import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.shoryan.RedeemingWorker
-import com.example.shoryan.data.CurrentAppUser
-import com.example.shoryan.data.Reward
-import com.example.shoryan.data.ServerError
+import com.example.shoryan.data.*
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.repos.RewardsRepo
 import kotlinx.coroutines.*
@@ -25,9 +23,11 @@ class RedeemingRewardsViewModel(private val applicationContext: Application) : A
 
     private lateinit var bloodDonationAPI: RetrofitBloodDonationInterface
 
-    private val _rewardsList =  MutableSharedFlow<List<Reward>?>()
+    // replay = 1 to be able to store the cached rewards list and send it to the composable
+    private val _rewardsList =  MutableSharedFlow<List<Reward>?>(1)
     val rewardsList = _rewardsList.asSharedFlow()
 
+    // Flow of messages to be displayed to the user in the form of (toast, snackbar, etc.)
     private val _messagesToUser = MutableSharedFlow<ServerError?>()
     val messagesToUser = _messagesToUser.asSharedFlow()
 
@@ -70,7 +70,6 @@ class RedeemingRewardsViewModel(private val applicationContext: Application) : A
                 bloodDonationAPI: RetrofitBloodDonationInterface): this(application)
     {
         this.bloodDonationAPI = bloodDonationAPI
-        fetchRewardsList()
     }
 
     fun fetchRewardsList(){
@@ -119,11 +118,47 @@ class RedeemingRewardsViewModel(private val applicationContext: Application) : A
         }.start()
     }
 
-    fun redeemReward(rewardId: String, redeemingStartTime: Long, sharedPref: SharedPreferences): Flow<Boolean> = flow{
-        _rewardRedeemingState.emit(RedeemingState.STARTED)
-        startTimer(redeemingStartTime, rewardId, sharedPref)
-        startWorkManager(rewardId)
-        emit(true)
+    fun redeemReward(rewardId: String, redeemingStartTime: Long, sharedPref: SharedPreferences) = viewModelScope.launch{
+        _rewardRedeemingState.emit(RedeemingState.NOT_REDEEMING)
+        if(sendRedeemingRequestToServer()){
+            _rewardRedeemingState.emit(RedeemingState.STARTED)
+            saveRedeemingStartTime(rewardId, redeemingStartTime, sharedPref)
+            startTimer(redeemingStartTime, rewardId, sharedPref)
+            startWorkManager(rewardId)
+        }
+        else{
+            _rewardRedeemingState.emit(RedeemingState.FAILED)
+        }
+    }
+
+    private suspend fun sendRedeemingRequestToServer(): Boolean{
+        delay(500)
+        return try{
+            val response = RewardRedeemingResponse(null)
+            isRedeemingRecorded(response)
+        }catch (e: Exception){
+            false
+        }
+    }
+
+    private fun isRedeemingRecorded(response: RewardRedeemingResponse): Boolean {
+        response.error?.message?.let {
+            if (it == ServerError.UNAUTHORIZED || it == ServerError.JWT_EXPIRED)
+                it.doErrorAction(applicationContext)
+            return false
+        }
+        return true
+    }
+
+    private fun saveRedeemingStartTime(
+        rewardId: String,
+        redeemingStartTime: Long,
+        sharedPref: SharedPreferences
+    ){
+        with(sharedPref.edit()) {
+            putString(rewardId, redeemingStartTime.toString())
+            apply()
+        }
     }
 
     /**
@@ -150,7 +185,7 @@ class RedeemingRewardsViewModel(private val applicationContext: Application) : A
 
     /**
      * Used when the fragment receives and shows a message in "messagesToUser", this method
-     * clears the message from the flow.
+     * clears the message from the flow
      */
     fun clearReceivedEvent(){
         viewModelScope.launch{
