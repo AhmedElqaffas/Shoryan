@@ -15,7 +15,6 @@ import com.example.shoryan.AndroidUtility
 import com.example.shoryan.RedeemingWorker
 import com.example.shoryan.data.CurrentAppUser
 import com.example.shoryan.di.MyApplication
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertEquals
@@ -55,16 +54,15 @@ class RedeemingRewardsViewModelTest{
      */
     @Test
     fun redeemRewardStateTest() = runBlockingTest{
-        viewmodel.redeemReward(
+        viewmodel.tryRedeemReward(
             "test",
             System.currentTimeMillis(),
             context.getSharedPreferences("testPrefs", MODE_PRIVATE)
-        ).collect {
+        ).invokeOnCompletion {
             assertEquals(
                 RedeemingRewardsViewModel.RedeemingState.STARTED,
                 viewmodel.rewardRedeemingState.value
             )
-
         }
     }
 
@@ -73,16 +71,14 @@ class RedeemingRewardsViewModelTest{
      */
     @Test
     fun redeemRewardIsRedeemingTest() = runBlockingTest{
-        viewmodel.redeemReward(
+        viewmodel.tryRedeemReward(
             "test",
             System.currentTimeMillis(),
             context.getSharedPreferences("testPrefs", MODE_PRIVATE)
-        ).collect {
-            assertEquals(
-                true,
-                viewmodel.isBeingRedeemed.first()
-            )
-
+        ).invokeOnCompletion {
+            runBlockingTest {
+                assertEquals(true, viewmodel.isBeingRedeemed.first())
+            }
         }
     }
 
@@ -108,13 +104,16 @@ class RedeemingRewardsViewModelTest{
 
     @Test
     fun `redeemReward() test RedeemingState is set to STARTED`() = runBlockingTest{
-        viewmodel.redeemReward(
+        viewmodel.tryRedeemReward(
             "test",
             System.currentTimeMillis(),
             context.getSharedPreferences(AndroidUtility.SHARED_PREFERENCES, MODE_PRIVATE)
-        ).collect{}
-
-        assertEquals(RedeemingRewardsViewModel.RedeemingState.STARTED , viewmodel.rewardRedeemingState.value)
+        ).invokeOnCompletion {
+            assertEquals(
+                RedeemingRewardsViewModel.RedeemingState.STARTED ,
+                viewmodel.rewardRedeemingState.value
+            )
+        }
     }
 
     @Test
@@ -129,13 +128,12 @@ class RedeemingRewardsViewModelTest{
                 apply()
             }
             // redeem reward
-            viewmodel.redeemReward(rewardId, redeemingStart.toLong(), prefs).collect{
-                // Assert that reward id is initially in shared preference
-                assertEquals(redeemingStart, prefs.getString(rewardId, ""))
-                startRedeemingWorker(rewardId)
-                // Assert that reward id is removed from shared preference
-                assertNotEquals(redeemingStart, prefs.getString(rewardId, ""))
-            }
+            viewmodel.tryRedeemReward(rewardId, redeemingStart.toLong(), prefs)
+            // Assert that reward id is initially in shared preference
+            assertEquals(redeemingStart, prefs.getString(rewardId, ""))
+            startRedeemingWorker(rewardId)
+            // Assert that reward id is removed from shared preference
+            assertNotEquals(redeemingStart, prefs.getString(rewardId, ""))
     }
 
     @Test

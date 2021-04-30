@@ -26,6 +26,9 @@ class RedeemingWorker(context: Context, params: WorkerParameters): CoroutineWork
     }
 }
 
+/**
+ * Removes the cached <reward, redeemingTime> pair from the sharedPreferences
+ */
 private fun removeCachedRedeemingTime(appContext: Context, inputData: Data) {
     val preferences = appContext.getSharedPreferences(AndroidUtility.SHARED_PREFERENCES, MODE_PRIVATE)
     preferences.edit().remove(inputData.getString("REWARD_ID")).apply()

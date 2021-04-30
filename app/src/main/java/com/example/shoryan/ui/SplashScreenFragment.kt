@@ -87,7 +87,7 @@ class SplashScreenFragment : Fragment(), LocaleChangerHolder {
         navController = Navigation.findNavController(view)
     }
 
-    private fun openApplicationOrShowSigningOptions() = viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+    private fun openApplicationOrShowSigningOptions() = lifecycleScope.launchWhenResumed {
         if(isUserLoggedIn() && isAccessTokenAlive()){
             openApplication()
         }

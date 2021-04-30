@@ -1,6 +1,5 @@
 package com.example.shoryan.ui
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -38,8 +37,6 @@ import androidx.navigation.Navigation
 import com.example.shoryan.ConnectionLiveData
 import com.example.shoryan.R
 import com.example.shoryan.data.Reward
-import com.example.shoryan.di.AppComponent
-import com.example.shoryan.di.MyApplication
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.networking.RetrofitClient
 import com.example.shoryan.ui.composables.AppBar
@@ -49,19 +46,9 @@ import com.example.shoryan.ui.theme.Shimmer
 import com.example.shoryan.ui.theme.ShoryanTheme
 import com.example.shoryan.viewmodels.RedeemingRewardsViewModel
 import com.example.shoryan.viewmodels.RedeemingRewardsViewModelFactory
-import com.example.shoryan.viewmodels.TokensViewModel
 import dev.chrisbanes.accompanist.coil.CoilImage
-import kotlinx.coroutines.flow.retry
-import javax.inject.Inject
 
 class RewardsFragment : Fragment() {
-
-    private val appComponent: AppComponent by lazy {
-        (activity?.application as MyApplication).appComponent
-    }
-
-    @Inject
-    lateinit var tokensViewModel: TokensViewModel
 
     private val rewardsViewModel: RedeemingRewardsViewModel by viewModels {
         RedeemingRewardsViewModelFactory(
@@ -72,15 +59,6 @@ class RewardsFragment : Fragment() {
 
     private lateinit var navController: NavController
     private lateinit var connectionLiveData: ConnectionLiveData
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        initializeViewModel()
-    }
-
-    private fun initializeViewModel(){
-        appComponent.rewardsComponent().create().inject(this)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -293,7 +271,7 @@ class RewardsFragment : Fragment() {
                         Button(
                             shape = RoundedCornerShape(10.dp),
                             onClick = {
-                                rewardsViewModel.clearReceivedEvent()
+                                rewardsViewModel.clearReceivedMessage()
                                 rewardsViewModel.fetchRewardsList()
                             },
                         ){

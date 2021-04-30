@@ -397,7 +397,7 @@ class RedeemRewardFragment : Fragment() {
 
     private fun redeemReward(rewardId: String, redeemingStartTime: Long) {
         lifecycleScope.launchWhenResumed {
-            viewModel.redeemReward(rewardId, redeemingStartTime, sharedPref!!)
+            viewModel.tryRedeemReward(rewardId, redeemingStartTime, sharedPref!!)
         }
     }
 
@@ -415,7 +415,7 @@ class RedeemRewardFragment : Fragment() {
         Button(
             onClick = {
                 redeemReward(reward.id, System.currentTimeMillis())
-                viewModel.clearReceivedEvent()
+                viewModel.clearReceivedMessage()
             }
         ){
             Text(resources.getString(R.string.try_again))
