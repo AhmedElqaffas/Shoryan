@@ -1,8 +1,9 @@
 package com.example.shoryan.viewmodels
 
 import androidx.lifecycle.*
-import com.example.shoryan.data.CurrentAppUser
+import com.example.shoryan.data.CurrentSession
 import com.example.shoryan.data.ProfileResponse
+import com.example.shoryan.data.User
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.repos.ProfileRepo
 import kotlinx.coroutines.async
@@ -15,8 +16,8 @@ class ProfileViewModel @Inject constructor(private val bloodDonationAPI: Retrofi
     private val _isRefreshing = MutableLiveData(false)
     val isRefreshing: LiveData<Boolean> = _isRefreshing
 
-    private val _user = MutableLiveData<CurrentAppUser?>()
-    val user: LiveData<CurrentAppUser?> = _user
+    private val _user = MutableLiveData<User?>()
+    val user: LiveData<User?> = _user
 
     suspend fun getProfileData(shouldRefresh: Boolean = false): ProfileResponse {
         _isRefreshing.postValue(shouldRefresh)

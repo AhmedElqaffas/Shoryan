@@ -13,7 +13,7 @@ import androidx.work.testing.WorkManagerTestInitHelper
 import androidx.work.workDataOf
 import com.example.shoryan.AndroidUtility
 import com.example.shoryan.RedeemingWorker
-import com.example.shoryan.data.CurrentAppUser
+import com.example.shoryan.data.CurrentSession
 import com.example.shoryan.di.MyApplication
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runBlockingTest
@@ -46,7 +46,7 @@ class RedeemingRewardsViewModelTest{
 
     @Test
     fun getUserPointsTest() {
-        assertEquals(CurrentAppUser.points, viewmodel.userPoints)
+        assertEquals(CurrentSession.user?.points ?: 0, viewmodel.userPoints)
     }
 
     /**

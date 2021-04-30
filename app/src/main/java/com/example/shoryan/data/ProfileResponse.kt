@@ -1,6 +1,4 @@
 package com.example.shoryan.data
 
-import com.google.gson.annotations.SerializedName
-
-data class ProfileResponse(val user: CurrentAppUser?,
+data class ProfileResponse(val user: User?,
                            val error: ErrorResponse?)

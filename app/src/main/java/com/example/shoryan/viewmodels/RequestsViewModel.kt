@@ -3,7 +3,7 @@ package com.example.shoryan.viewmodels
 import android.view.View
 import androidx.lifecycle.*
 import com.example.shoryan.data.AllActiveRequestsResponse
-import com.example.shoryan.data.CurrentAppUser
+import com.example.shoryan.data.CurrentSession
 import com.example.shoryan.data.RequestsFiltersContainer
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.networking.RetrofitClient
@@ -66,5 +66,5 @@ class RequestsViewModel : ViewModel() {
         OngoingRequestsRepo.updateUserPendingRequest(bloodDonationAPI)
     }
 
-    fun getUserPendingRequestId() = CurrentAppUser.pendingRequestId
+    fun getUserPendingRequestId() = CurrentSession.pendingRequestId
 }

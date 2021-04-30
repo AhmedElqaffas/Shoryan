@@ -8,7 +8,7 @@ import android.widget.LinearLayout
 import android.widget.ToggleButton
 import androidx.core.view.children
 import com.example.shoryan.data.BloodType
-import com.example.shoryan.data.CurrentAppUser
+import com.example.shoryan.data.CurrentSession
 import com.example.shoryan.data.RequestsFiltersContainer
 import com.example.shoryan.databinding.FragmentFilterBinding
 import com.example.shoryan.interfaces.FilterHolder
@@ -135,7 +135,7 @@ class FilterFragment
     }
 
     private fun chooseCompatibleTypesWithUser(){
-        CurrentAppUser.bloodType?.getCompatibleTypes()?.apply {
+        CurrentSession.user?.bloodType?.getCompatibleTypes()?.apply {
             binding.bloodTypeFilterLayout.children.forEach { linearLayout ->
                 (linearLayout as LinearLayout).children.forEach {
                     if(it is ToggleButton){

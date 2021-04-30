@@ -15,7 +15,7 @@ import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
 import com.example.shoryan.R
-import com.example.shoryan.data.CurrentAppUser
+import com.example.shoryan.data.CurrentSession
 import com.example.shoryan.ui.recyclersAdapters.RequestsRecyclerAdapter
 import org.hamcrest.CoreMatchers.allOf
 import org.hamcrest.Description
@@ -31,18 +31,18 @@ class HomeFragmentTest {
 
     // This allows fragments to use navGraphViewModels()
     private lateinit var navController: TestNavHostController
-    private val currentAppUser = CurrentAppUser
+    private val currentSession = CurrentSession
     private var home: HomeFragment? = null
 
     @Before
     fun setup() {
         // ID of an O- user -> can donate to any type
-        currentAppUser.id = "5fef607f58ddf300049f06cb"
+        currentSession.user?.id = "5fef607f58ddf300049f06cb"
         openHomeFragment()
     }
 
     private fun openHomeFragment(){
-        // This allows fragments to use by navGraphViewModels()
+        // This allows fragments to use 'by navGraphViewModels()'
         navController = TestNavHostController(ApplicationProvider.getApplicationContext())
         navController.setViewModelStore(ViewModelStore())
         navController.setGraph(R.navigation.main_nav_graph)

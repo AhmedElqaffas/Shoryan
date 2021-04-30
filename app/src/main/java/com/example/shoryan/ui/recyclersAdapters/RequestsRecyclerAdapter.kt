@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.shoryan.data.CurrentAppUser
+import com.example.shoryan.data.CurrentSession
 import com.example.shoryan.data.DonationRequest
 import com.example.shoryan.databinding.ItemRequestBinding
 import com.example.shoryan.interfaces.RequestsRecyclerInteraction
@@ -36,7 +36,7 @@ class RequestsRecyclerAdapter(private val requestsRecyclerInteraction: RequestsR
             }
         }
 
-        private fun isMyRequest(item: DonationRequest) = item.requester?.id == CurrentAppUser.id
+        private fun isMyRequest(item: DonationRequest) = item.requester?.id == CurrentSession.user?.id
 
         fun bindRequestData(request: DonationRequest){
             binding.item = request

@@ -3,9 +3,8 @@ package com.example.shoryan.viewmodels
 import android.view.View
 import androidx.lifecycle.*
 import com.example.shoryan.R
-import com.example.shoryan.data.CurrentAppUser
+import com.example.shoryan.data.CurrentSession
 import com.example.shoryan.data.DonationDetailsResponse
-import com.example.shoryan.data.ServerError
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.repos.RequestFulfillmentRepo
 import kotlinx.coroutines.launch
@@ -18,9 +17,9 @@ class RequestFulfillmentViewModel @Inject constructor(
         @Named("requestId") requestId: String
 ): RequestDetailsViewModel(bloodDonationAPI, requestId) {
 
-    // Instead of changing the CurrentAppUser repo to have a liveData, I created this liveData member
+    // Instead of changing the CurrentSession repo to have a liveData, I created this liveData member
     // to observe changes
-    private var currentUserPendingRequest = MutableLiveData<String?>(CurrentAppUser.pendingRequestId)
+    private var currentUserPendingRequest = MutableLiveData<String?>(CurrentSession.pendingRequestId)
 
     // LiveData to observe whether the user is allowed to donate or not, used to control XML views states
     private val _canUserDonate = MutableLiveData(false)
@@ -127,7 +126,7 @@ class RequestFulfillmentViewModel @Inject constructor(
 
     private fun setUserPendingRequest(requestId: String?){
         currentUserPendingRequest.postValue(requestId)
-        CurrentAppUser.pendingRequestId = requestId
+        CurrentSession.pendingRequestId = requestId
     }
 
     private fun removeUserPendingRequest(hasDonated: Boolean){

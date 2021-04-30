@@ -1,17 +1,14 @@
 package com.example.shoryan.repos
 
 import android.util.Log
-import com.example.shoryan.data.CurrentAppUser
-import com.example.shoryan.data.ErrorResponse
-import com.example.shoryan.data.ProfileResponse
-import com.example.shoryan.data.ServerError
+import com.example.shoryan.data.*
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import java.lang.Exception
 
 object ProfileRepo {
 
     private val TAG = javaClass.simpleName
-    private var user: CurrentAppUser? = null
+    private var user: User? = null
 
     /**
      * Returns the logged in user data either from the server or from the cached variable 'User'
@@ -29,7 +26,7 @@ object ProfileRepo {
                 val response = bloodDonationAPI.getUserProfileData(TokensRefresher.accessToken!!)
                 response.user?.let{
                     user = it
-                    CurrentAppUser.initializeUser(it)
+                    CurrentSession.initializeUser(it)
                 }
                 return response
             }catch(e: Exception){

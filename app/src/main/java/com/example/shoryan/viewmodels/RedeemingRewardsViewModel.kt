@@ -36,7 +36,7 @@ class RedeemingRewardsViewModel(private val applicationContext: Application) :
 
     val userPoints: Int
         get() {
-            return CurrentAppUser.points
+            return CurrentSession.user?.points ?: 0
         }
 
     private val _rewardRedeemingState = MutableStateFlow(RedeemingState.NOT_REDEEMING)
