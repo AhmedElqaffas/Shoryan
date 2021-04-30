@@ -78,7 +78,7 @@
     <string name="password_format_message">Password should include a minimum of 8 letter, including: \n - Uppercase letters \n - Lowercase letters \n - Numbers</string>
     <string name="password_mismatch">"Passwords don't match"</string>
     <string name="pending_request">Pending</string>
-    <string name="persons_going">%1$d People are on their way to donate</string>
+    <string name="persons_going">%1$d donors are on their way</string>
     <string name="phone_format_message">Number should have following format: 01xxxxxxxxx</string>
     <string name="phone_number">Mobile Number</string>
     <string name="point">%1$d points</string>

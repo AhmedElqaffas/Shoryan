@@ -78,7 +78,7 @@
     <string name="password_format_message">\u200F كلمة السر يجب ان تتكون على الاقل من 8 احرف بدون مسافات منهم: \n - حرف انجليزي كبير \n - حرف انجليزي صغير \n - رقم انجليزي</string>
     <string name="password_mismatch">كلمة السر غير متطابقة</string>
     <string name="pending_request">في انتظارك</string>
-    <string name="persons_going">\u200F %1$d أشخاص في طريقهم للتبرّع</string>
+    <string name="persons_going">\u200F %1$d متبرعين في الطريق</string>
     <string name="phone_format_message">تأكد من إدخال رقم بهذا الشكل: 01xxxxxxxxx</string>
     <string name="phone_number">رقم المحمول</string>
     <string name="point">\u200F %1$d نقطة </string>
