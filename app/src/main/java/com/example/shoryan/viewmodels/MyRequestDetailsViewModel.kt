@@ -3,7 +3,7 @@ package com.example.shoryan.viewmodels
 import android.app.AlertDialog
 import android.view.View
 import android.widget.Toast
-import androidx.lifecycle.*
+import androidx.lifecycle.viewModelScope
 import com.example.shoryan.R
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.repos.MyRequestDetailsRepo

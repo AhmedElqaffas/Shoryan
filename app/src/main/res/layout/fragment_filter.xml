@@ -232,6 +232,7 @@
                 android:textColor="#FFFFFF"
                 android:textSize="14sp"
                 android:fontFamily="@font/opensans_bold"
+                android:textAllCaps="false"
                 android:background="@drawable/fifteen_dp_curve"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.core.widget.NestedScrollView>

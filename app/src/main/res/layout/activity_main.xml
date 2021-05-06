@@ -24,6 +24,7 @@
         app:menu="@menu/main_bottom_navigation"
         app:itemBackground="@drawable/bottom_navigation_selector"
         android:layout_gravity="bottom"
-        android:background="@android:color/white"/>
+        android:background="@android:color/white"
+        app:labelVisibilityMode="labeled"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

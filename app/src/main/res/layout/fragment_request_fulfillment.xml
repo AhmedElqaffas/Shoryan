@@ -10,12 +10,6 @@
 
     </data>
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        android:background="@android:color/transparent"
-        android:id="@+id/rootLayout">
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -277,9 +271,19 @@
                         android:onClick="@{() -> viewmodel.confirmDonation(viewmodel.donationDetails.request.id)}"
                         android:textAllCaps="false"/>
 
+                    <!-- Showing a snackbar in a bottomsheet requires the view to
+                    be in a coordinator layout, the following view is just a dummy view
+                    to show the snackbar over -->
+                    <androidx.coordinatorlayout.widget.CoordinatorLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toBottomOf="parent">
+                        <View
+                            android:id="@+id/dummyView"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"/>
+                    </androidx.coordinatorlayout.widget.CoordinatorLayout>
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.example.shoryan.ui.CustomScrollView>
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

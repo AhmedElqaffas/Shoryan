@@ -3,10 +3,12 @@ package com.example.shoryan.ui
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.graphics.Point
+import android.content.res.Resources
 import android.net.Uri
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.lifecycleScope
@@ -20,13 +22,15 @@ import com.example.shoryan.di.AppComponent
 import com.example.shoryan.di.MyApplication
 import com.example.shoryan.interfaces.RequestsRecyclerInteraction
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
-import com.example.shoryan.viewmodels.*
+import com.example.shoryan.viewmodels.MyRequestDetailsViewModel
+import com.example.shoryan.viewmodels.RequestDetailsViewModel
+import com.example.shoryan.viewmodels.RequestFulfillmentViewModel
+import com.example.shoryan.viewmodels.TokensViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Job
@@ -136,18 +140,8 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
     private fun getClickedRequest() = requireArguments().getString(ARGUMENT_REQUEST_KEY)!!
 
     private fun setWindowSize(){
-        dialog?.also {
-            val window: Window? = dialog!!.window
-            val size = Point()
-            val display: Display = window!!.windowManager.defaultDisplay
-            display.getSize(size)
-            val windowHeight = size.y
-            val bottomSheetView = binding.root.findViewById(R.id.design_bottom_sheet) as View
-            bottomSheetView.layoutParams.height = (windowHeight)
-            val behavior = BottomSheetBehavior.from(bottomSheetView)
-            behavior.peekHeight = windowHeight
-            view?.requestLayout()
-        }
+        val bottomSheetView = binding.root.findViewById(R.id.design_bottom_sheet) as View
+        bottomSheetView.layoutParams.height = Resources.getSystem().displayMetrics.heightPixels
     }
 
     private fun showDefiniteMessage(message: String){
@@ -232,8 +226,15 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
                 }
             }
         }
+        else if(error == ServerError.CONNECTION_ERROR){
+            AndroidUtility.makeTryAgainSnackbar(
+                binding.root.findViewById(R.id.dummyView) as View,
+                resources.getString(error.errorStringResource),
+                ::fetchDonationDetails
+            ).show()
+        }
         else{
-            error.doErrorAction(binding.root)
+            error.doErrorAction(binding.root.findViewById(R.id.dummyView) as View)
         }
     }
 

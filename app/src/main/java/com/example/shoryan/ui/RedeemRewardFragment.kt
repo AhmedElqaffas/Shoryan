@@ -2,7 +2,6 @@ package com.example.shoryan.ui
 
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,8 +12,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
@@ -24,24 +27,21 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstrainedLayoutReference
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintLayoutScope
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import com.example.shoryan.ConnectionLiveData
 import com.example.shoryan.R
 import com.example.shoryan.data.Reward
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.networking.RetrofitClient
 import com.example.shoryan.ui.composables.AppBar
+import com.example.shoryan.ui.composables.InternetConnectionBanner
 import com.example.shoryan.ui.theme.Gray
 import com.example.shoryan.ui.theme.ShoryanTheme
 import com.example.shoryan.viewmodels.RedeemingRewardsViewModel
 import com.example.shoryan.viewmodels.RedeemingRewardsViewModelFactory
 import dev.chrisbanes.accompanist.coil.CoilImage
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.draw.scale
-import androidx.lifecycle.lifecycleScope
-import com.example.shoryan.ConnectionLiveData
-import com.example.shoryan.ui.composables.InternetConnectionBanner
 
 class RedeemRewardFragment : Fragment() {
     private val viewModel: RedeemingRewardsViewModel by viewModels {
@@ -362,7 +362,7 @@ class RedeemRewardFragment : Fragment() {
             Column(
                 modifier = Modifier
                     .constrainAs(timerReference) {
-                        top.linkTo(branchesReference.bottom, margin = 45.dp)
+                        top.linkTo(branchesReference.bottom, margin = 20.dp)
                         centerHorizontallyTo(parent)
                     },
                 horizontalAlignment = Alignment.CenterHorizontally

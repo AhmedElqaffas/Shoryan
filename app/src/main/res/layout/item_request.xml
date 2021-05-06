@@ -71,11 +71,13 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toTopOf="@id/pin_icon"
                 app:layout_constraintStart_toEndOf="@id/pin_icon"
+                app:layout_constraintEnd_toStartOf="@id/request_arrow"
                 android:textColor="@color/colorPrimaryDark"
                 android:text='@{item.bloodBank.name +" - "+ item.bloodBank.location.region}'
                 android:textSize="13sp"
                 android:fontFamily="@font/opensans_bold"
-                android:layout_marginHorizontal="5dp"/>
+                android:layout_marginHorizontal="5dp"
+                android:textAlignment="viewStart"/>
 
             <ImageView
                 android:id="@+id/request_arrow"

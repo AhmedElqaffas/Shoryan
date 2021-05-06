@@ -1,19 +1,15 @@
 package com.example.shoryan.data
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.view.View
 import android.widget.Toast
-import androidx.lifecycle.lifecycleScope
 import com.example.shoryan.AndroidUtility
 import com.example.shoryan.R
-import com.example.shoryan.repos.NewRequestRepo
 import com.example.shoryan.repos.TokensRefresher
 import com.example.shoryan.ui.LandingActivity
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 enum class ServerError(val errorStringResource: Int) {
@@ -56,10 +52,30 @@ enum class ServerError(val errorStringResource: Int) {
         }
     },
     USER_ALREADY_EXISTS(R.string.user_already_exists),
-    AGE_CHECK_FAILS(R.string.age_check_failed),
-    BREAK_TIME_CHECK_FAILS(R.string.frequent_donation),
-    INCOMPATIBLE_BLOOD_TYPE(R.string.incompatible_blood_type),
-    USER_GOING_TO_ANOTHER_REQUEST(R.string.request_already_pending),
+    AGE_CHECK_FAILS(R.string.age_check_failed){
+        override fun doErrorAction(rootView: View){
+            AndroidUtility.displaySnackbarMessage(rootView,
+                rootView.context.resources.getString(this.errorStringResource), Snackbar.LENGTH_INDEFINITE)
+        }
+    },
+    BREAK_TIME_CHECK_FAILS(R.string.frequent_donation){
+        override fun doErrorAction(rootView: View){
+            AndroidUtility.displaySnackbarMessage(rootView,
+                rootView.context.resources.getString(this.errorStringResource), Snackbar.LENGTH_INDEFINITE)
+        }
+    },
+    INCOMPATIBLE_BLOOD_TYPE(R.string.incompatible_blood_type){
+        override fun doErrorAction(rootView: View){
+            AndroidUtility.displaySnackbarMessage(rootView,
+                rootView.context.resources.getString(this.errorStringResource), Snackbar.LENGTH_INDEFINITE)
+        }
+    },
+    USER_GOING_TO_ANOTHER_REQUEST(R.string.request_already_pending){
+        override fun doErrorAction(rootView: View){
+            AndroidUtility.displaySnackbarMessage(rootView,
+                rootView.context.resources.getString(this.errorStringResource), Snackbar.LENGTH_INDEFINITE)
+        }
+    },
     JWT_NOT_ACTIVE(R.string.connection_error),
     INTERNAL_SERVER_ERROR(R.string.connection_error),
     CONNECTION_ERROR(R.string.connection_error),

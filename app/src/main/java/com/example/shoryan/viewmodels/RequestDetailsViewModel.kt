@@ -1,8 +1,9 @@
 package com.example.shoryan.viewmodels
 
 import androidx.lifecycle.*
-import com.example.shoryan.R
-import com.example.shoryan.data.*
+import com.example.shoryan.data.DonationDetailsResponse
+import com.example.shoryan.data.DonationRequest
+import com.example.shoryan.data.ServerError
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.repos.RequestFulfillmentRepo
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -46,17 +47,13 @@ open class RequestDetailsViewModel(protected val bloodDonationAPI: RetrofitBlood
             _areDonationDetailsLoaded.value = true
             _isInLoadingState.value = false
         }else{
-            announceCommunicationFailure()
+            pushErrorToFragment(details.error?.message)
         }
         return MutableLiveData<DonationDetailsResponse>(details)
     }
 
     protected fun areDetailsFetchedSuccessfully(details: DonationDetailsResponse): Boolean {
         return details.request != null
-    }
-
-    private suspend fun announceCommunicationFailure(){
-        _eventsFlow.emit(RequestDetailsViewEvent.ShowTryAgainSnackBar(R.string.connection_error))
     }
 
     fun refresh(){
