@@ -3,12 +3,11 @@ package com.example.shoryan.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -157,6 +156,9 @@ class SplashScreenFragment : Fragment(), LocaleChangerHolder {
      * The buttons are gradually shown to shown to the user by setting the alpha = 1
      */
     private fun showButtons(duration: Long, startDelay: Long){
+        binding.localeButton.visibility = View.VISIBLE
+        binding.registerButton.visibility = View.VISIBLE
+        binding.loginButton.visibility = View.VISIBLE
         binding.localeButton.animate().alpha(1f).setDuration(duration).setStartDelay(startDelay).start()
         binding.loginButton.animate().alpha(1f).setDuration(duration).setStartDelay(startDelay).start()
         binding.registerButton.animate().alpha(1f).setDuration(duration).setStartDelay(startDelay).start()

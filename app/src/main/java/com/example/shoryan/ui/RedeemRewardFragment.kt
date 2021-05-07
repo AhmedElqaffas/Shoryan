@@ -31,6 +31,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.shoryan.ConnectionLiveData
 import com.example.shoryan.R
 import com.example.shoryan.data.Reward
+import com.example.shoryan.data.ServerError
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.networking.RetrofitClient
 import com.example.shoryan.ui.composables.AppBar
@@ -41,6 +42,7 @@ import com.example.shoryan.ui.theme.ShoryanTheme
 import com.example.shoryan.viewmodels.RedeemingRewardsViewModel
 import com.example.shoryan.viewmodels.RedeemingRewardsViewModelFactory
 import dev.chrisbanes.accompanist.coil.CoilImage
+import kotlinx.coroutines.flow.MutableStateFlow
 
 class RedeemRewardFragment : Fragment() {
     private val viewModel: RedeemingRewardsViewModel by viewModels {
@@ -57,7 +59,9 @@ class RedeemRewardFragment : Fragment() {
     private val reward: Reward by lazy{
         requireArguments().get("reward") as Reward
     }
-
+    private var chosenBranch: String? = null
+    // Errors to show to user
+    private val fragmentErrors = MutableStateFlow<String?>(null)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -99,15 +103,14 @@ class RedeemRewardFragment : Fragment() {
                 val isBeingRedeemed: Boolean by viewModel.isBeingRedeemed.collectAsState(false)
                 ConstraintLayout(Modifier.fillMaxSize()) {
                     val parentLayout = this
-                    val ( appBar, points, cover, logo, description, branches, button,
-                    timer) = createRefs()
+                    val ( appBar, points, cover, logo, description, branches, button) = createRefs()
                     CoverImage(parentLayout, cover)
                     AppBar(parentLayout, appBar)
                     if(!isBeingRedeemed) UserPoints(parentLayout, points, cover)
                     Logo(parentLayout, logo, cover, reward.imageLink)
                     OfferDescription(parentLayout, description, logo)
                     Branches(parentLayout, branches, logo)
-                    RewardRedeemingStatus(parentLayout, branches, button, timer, isBeingRedeemed)
+                    RewardRedeemingStatus(parentLayout, branches, button, isBeingRedeemed)
                 }
             }
         }
@@ -117,10 +120,13 @@ class RedeemRewardFragment : Fragment() {
             modifier = Modifier
                 .height(70.dp),
         ){
-            val redeemingStartSuccess: RedeemingRewardsViewModel.RedeemingState
-                    by viewModel.rewardRedeemingState.collectAsState(RedeemingRewardsViewModel.RedeemingState.NOT_REDEEMING)
-            if(redeemingStartSuccess == RedeemingRewardsViewModel.RedeemingState.FAILED) {
-                    ShowSnackbar()
+            val messageToUser: ServerError? by viewModel.messagesToUser.collectAsState(null)
+            val fragmentErrorMessages: String? by fragmentErrors.collectAsState(null)
+            messageToUser?.let {
+                ShowSnackbar(resources.getString(it.errorStringResource)) { TryAgainSnackbarButton() }
+            }
+            fragmentErrorMessages?.let{
+                ShowSnackbar(it){OKSnackbarButton()}
             }
         }
     }
@@ -239,9 +245,11 @@ class RedeemRewardFragment : Fragment() {
         }
 
     @Composable
-    fun Branches(parentLayout: ConstraintLayoutScope,
-                 branchesReference: ConstrainedLayoutReference,
-                 logoReference: ConstrainedLayoutReference){
+    fun Branches(
+        parentLayout: ConstraintLayoutScope,
+        branchesReference: ConstrainedLayoutReference,
+        logoReference: ConstrainedLayoutReference
+    ){
 
         parentLayout.apply{
             Column(
@@ -258,19 +266,20 @@ class RedeemRewardFragment : Fragment() {
                     style = MaterialTheme.typography.subtitle1,
                     color = Color.Black,
                 )
+
                 val isOpen = remember { mutableStateOf(false) }
-                val chosenItem = remember { mutableStateOf("") }
                 val openCloseOfDropDownList: (Boolean) -> Unit = {
                     isOpen.value = it
                 }
                 val selectedString: (String) -> Unit = {
-                    chosenItem.value = it
+                    chosenBranch = it
                 }
+
                 Box{
                     Column{
                         OutlinedTextField(
-                            value = chosenItem.value,
-                            onValueChange = { chosenItem.value = it },
+                            value = chosenBranch ?: "---",
+                            onValueChange = { chosenBranch = it },
                             readOnly = true,
                             label = { Text(text = resources.getString(R.string.choose_branch)) },
                             modifier = Modifier.fillMaxWidth(0.95f)
@@ -283,7 +292,9 @@ class RedeemRewardFragment : Fragment() {
                         )
                     }
                     Spacer(
-                        modifier = Modifier.matchParentSize().background(Color.Transparent)
+                        modifier = Modifier
+                            .matchParentSize()
+                            .background(Color.Transparent)
                             .clickable(
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = null,
@@ -300,7 +311,6 @@ class RedeemRewardFragment : Fragment() {
         parentLayout: ConstraintLayoutScope,
         branches: ConstrainedLayoutReference,
         button: ConstrainedLayoutReference,
-        timer: ConstrainedLayoutReference,
         isBeingRedeemed: Boolean
     ){
         if(isBeingRedeemed){
@@ -318,7 +328,7 @@ class RedeemRewardFragment : Fragment() {
     fun RedeemButton(
         parentLayout: ConstraintLayoutScope,
         buttonReference: ConstrainedLayoutReference,
-        branchesReference: ConstrainedLayoutReference
+        branchesReference: ConstrainedLayoutReference,
     ) {
 
         RewardButton(
@@ -381,7 +391,11 @@ class RedeemRewardFragment : Fragment() {
 
 
     private fun onRedeemButtonClicked(){
-        showAlertDialog(reward.id)
+        if(chosenBranch != null)
+            showAlertDialog(reward.id)
+        else{
+            fragmentErrors.value = resources.getString(R.string.no_branch_chosen)
+        }
     }
 
     private fun redeemReward(rewardId: String, redeemingStartTime: Long) {
@@ -391,16 +405,16 @@ class RedeemRewardFragment : Fragment() {
     }
 
     @Composable
-    fun ShowSnackbar(){
+    fun ShowSnackbar(message: String, button: @Composable () -> Unit){
         Snackbar(
-          action = {SnackbarButton()},
+          action = button,
         ) {
-            Text(resources.getString(R.string.connection_error))
+            Text(message)
         }
     }
 
     @Composable
-    fun SnackbarButton(){
+    fun TryAgainSnackbarButton(){
         Button(
             onClick = {
                 redeemReward(reward.id, System.currentTimeMillis())
@@ -408,6 +422,17 @@ class RedeemRewardFragment : Fragment() {
             }
         ){
             Text(resources.getString(R.string.try_again))
+        }
+    }
+
+    @Composable
+    fun OKSnackbarButton(){
+        Button(
+            onClick = {
+                fragmentErrors.value = null
+            }
+        ){
+            Text(resources.getString(R.string.ok))
         }
     }
 

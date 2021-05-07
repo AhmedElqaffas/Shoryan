@@ -31,7 +31,8 @@
             android:textSize="19sp"
             android:fontFamily="@font/opensans_bold"
             android:background="@drawable/white_curve_seventeen_dp"
-            android:alpha="0"/>
+            android:alpha="0"
+            android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/splashScreenLogo"
@@ -72,7 +73,8 @@
             android:fontFamily="@font/opensans_bold"
             android:textColor="@android:color/white"
             android:textAllCaps="false"
-            android:alpha="0"/>
+            android:alpha="0"
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/registerButton"
@@ -88,7 +90,8 @@
             android:textColor="@color/gray"
             android:fontFamily="@font/opensans_bold"
             android:textAllCaps="false"
-            android:alpha="0"/>
+            android:alpha="0"
+            android:visibility="gone"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
