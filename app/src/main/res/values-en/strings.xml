@@ -22,7 +22,7 @@
     <string name="choose_branch">Choose Branch</string>
     <string name="choose_location">Choose Location</string>
     <string name="choose_your_location">Choose Your Location</string>
-    <string name="click_here_to_try_again">"Couldn't show requests \n click here to try again"</string>
+    <string name="click_here_to_try_again">"Couldn't connect to server \n Click here to try again"</string>
     <string name="confirm">Confirm</string>
     <string name="confirmation_code">Confirmation Code</string>
     <string name="confirm_password">Confirm Password</string>

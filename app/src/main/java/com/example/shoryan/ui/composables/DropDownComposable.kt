@@ -16,21 +16,21 @@ import androidx.compose.ui.unit.dp
 fun DropDownComposable(
     isOpen: Boolean,
     itemsList: List<String>,
-    request: (Boolean) -> Unit,
-    selectedString: (String) -> Unit
+    setMenuVisibility: (Boolean) -> Unit,
+    setSelectedString: (String) -> Unit
 ){
     DropdownMenu(
         modifier = Modifier.fillMaxWidth().height(100.dp),
         expanded = isOpen,
-        onDismissRequest = { request(false) }
+        onDismissRequest = { setMenuVisibility(false) }
     ){
 
         itemsList.forEach {
             DropdownMenuItem(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
-                    request(false)
-                    selectedString(it)
+                    setMenuVisibility(false)
+                    setSelectedString(it)
                 }
             ) {
                 Text(

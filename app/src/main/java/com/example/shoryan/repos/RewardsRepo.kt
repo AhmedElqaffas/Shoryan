@@ -1,7 +1,6 @@
 package com.example.shoryan.repos
 
-import com.example.shoryan.data.Reward
-import com.example.shoryan.data.RewardsListResponse
+import com.example.shoryan.data.*
 import kotlinx.coroutines.delay
 
 object RewardsRepo {
@@ -33,5 +32,18 @@ object RewardsRepo {
             Reward("094t0AGF","سماح 3 متر ترغب بمحادثتك", 69,"https://homepages.cae.wisc.edu/~ece533/images/zelda.png","انا شرح الهدية",branchesList),
         ), null)
         return cachedResponse!!
+    }
+
+    suspend fun getRewardDetails(rewardId: String): RewardResponse {
+        delay(2000)
+        val branchesList = listOf("شارع عباس العقاد, مدينة نصر, القاهرة"
+            ,"شارع عباس العقاد, مدينة نصر, القاهرة",
+            "شارع عباس العقاد, مدينة نصر, القاهرة",
+            "شارع عباس العقاد, مدينة نصر, القاهرة",
+            "شارع تاني غير عباس العقاد",
+            "شارع طويل و عريض مفهوش ركنة"
+        )
+        return RewardResponse(ErrorResponse(ServerError.CONNECTION_ERROR, null), null)
+       // return RewardResponse(null, Reward("asfa000asfaf","اسم الهدية", 0, "https://homepages.cae.wisc.edu/~ece533/images/zelda.png","انا شرح الهدية",branchesList,false ))
     }
 }

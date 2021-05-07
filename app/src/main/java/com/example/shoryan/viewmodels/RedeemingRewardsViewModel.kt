@@ -3,7 +3,10 @@ package com.example.shoryan.viewmodels
 import android.app.Application
 import android.content.SharedPreferences
 import android.os.CountDownTimer
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
@@ -11,15 +14,17 @@ import com.example.shoryan.RedeemingWorker
 import com.example.shoryan.data.*
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.repos.RewardsRepo
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
 class RedeemingRewardsViewModel(private val applicationContext: Application) :
     AndroidViewModel(applicationContext) {
 
     enum class RedeemingState {
-        NOT_REDEEMING, STARTED, FAILED
+        LOADING, NOT_REDEEMING, STARTED, LOADING_FAILED, REDEEMING_FAILED
     }
 
     private lateinit var bloodDonationAPI: RetrofitBloodDonationInterface
@@ -39,28 +44,17 @@ class RedeemingRewardsViewModel(private val applicationContext: Application) :
             return CurrentSession.user?.points ?: 0
         }
 
-    private val _rewardRedeemingState = MutableStateFlow(RedeemingState.NOT_REDEEMING)
+    private val _rewardRedeemingState = MutableStateFlow(RedeemingState.LOADING)
     val rewardRedeemingState: StateFlow<RedeemingState> = _rewardRedeemingState
+
+    private val _detailedReward = MutableStateFlow<Reward?>(null)
+    val detailedReward: StateFlow<Reward?> = _detailedReward
 
     private var timer: CountDownTimer? = null
     private val redeemingDuration: Long = 1000 * 60 * 1 // 1 minutes for the user to show the store
     private val remainingTime = MutableSharedFlow<Long>()
     val isBeingRedeemed: Flow<Boolean> = _rewardRedeemingState.transform {
         emit(it == RedeemingState.STARTED)
-    }
-
-    // Formats the remaining time into a string to be displayed in the RedeemReward fragment
-    val remainingTimeString = remainingTime.transform {
-        val minutes = "0" + (it / 60000)
-        var seconds = ((it % 60000) / 1000).toString()
-        if (seconds.length == 1)
-            seconds = "0$seconds"
-        emit("$minutes:$seconds")
-    }
-
-    // The ratio of the time remaining / total time; it is used in the fragment progress bar
-    val remainingTimeRatio: Flow<Float> = remainingTime.transform {
-        emit(it / (redeemingDuration * 1.0).toFloat())
     }
 
     // WorkManager to remove the cached redeemingStartTime from the device after the redeeming expires
@@ -90,6 +84,29 @@ class RedeemingRewardsViewModel(private val applicationContext: Application) :
                     _messagesToUser.emit(it)
             }
         }
+    }
+
+    suspend fun getRewardDetails(reward: Reward){
+        _rewardRedeemingState.value = RedeemingState.LOADING
+        val response = RewardsRepo.getRewardDetails(reward.id)
+        val detailedReward: Reward? = handleRewardDetailsResponse(response)
+        _detailedReward.value = detailedReward ?: reward
+    }
+
+    private fun handleRewardDetailsResponse(response: RewardResponse): Reward?{
+        if(response.error == null){
+            _rewardRedeemingState.value = getRedeemingStateFromBoolean(response.reward!!.isBeingRedeemed!!)
+        }
+        else{
+            _rewardRedeemingState.value = RedeemingState.LOADING_FAILED
+        }
+        return response.reward
+    }
+
+    private fun getRedeemingStateFromBoolean(isBeingRedeemed: Boolean): RedeemingState =
+        when(isBeingRedeemed){
+            true -> RedeemingState.STARTED
+            false -> RedeemingState.NOT_REDEEMING
     }
 
     /**
@@ -139,7 +156,7 @@ class RedeemingRewardsViewModel(private val applicationContext: Application) :
             if (sendRedeemingRequestToServer()) {
                 startRedeeming(rewardId, redeemingStartTime, sharedPref)
             } else {
-                _rewardRedeemingState.emit(RedeemingState.FAILED)
+                _rewardRedeemingState.emit(RedeemingState.REDEEMING_FAILED)
             }
         }
 

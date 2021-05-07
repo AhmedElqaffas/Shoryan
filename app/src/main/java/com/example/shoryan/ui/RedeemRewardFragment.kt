@@ -1,6 +1,5 @@
 package com.example.shoryan.ui
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -34,9 +33,7 @@ import com.example.shoryan.data.Reward
 import com.example.shoryan.data.ServerError
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.networking.RetrofitClient
-import com.example.shoryan.ui.composables.AppBar
-import com.example.shoryan.ui.composables.DropDownComposable
-import com.example.shoryan.ui.composables.InternetConnectionBanner
+import com.example.shoryan.ui.composables.*
 import com.example.shoryan.ui.theme.Gray
 import com.example.shoryan.ui.theme.ShoryanTheme
 import com.example.shoryan.viewmodels.RedeemingRewardsViewModel
@@ -52,40 +49,46 @@ class RedeemRewardFragment : Fragment() {
         )
     }
     private lateinit var connectionLiveData: ConnectionLiveData
-    private val sharedPref by lazy {
-        activity?.applicationContext?.getSharedPreferences("preferences", Context.MODE_PRIVATE)
-    }
-    private var currentRedeeming: String? = null
     private val reward: Reward by lazy{
         requireArguments().get("reward") as Reward
     }
     private var chosenBranch: String? = null
     // Errors to show to user
     private val fragmentErrors = MutableStateFlow<String?>(null)
+
+    override fun onResume() {
+        super.onResume()
+        fetchRewardDetails()
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
             connectionLiveData = ConnectionLiveData(requireContext())
-            currentRedeeming = sharedPref!!.getString(reward.id, null)
-            currentRedeeming?.let{
-                viewModel.setRedeemingStartTime(it.toLong(), it, sharedPref!!)
-            }
         return ComposeView(requireContext()).apply {
             setContent {
                 ShoryanTheme {
                     val connectionStatus = connectionLiveData.observeAsState(true).value
+                    val loadingState = viewModel.rewardRedeemingState.collectAsState(RedeemingRewardsViewModel.RedeemingState.LOADING).value
                     Box(contentAlignment = Alignment.BottomCenter) {
-                        RewardScreen()
-                        InternetConnectionBanner(
-                            requireContext(),
-                            Color.White,
-                            connectionStatus
-                        )
+                        when (loadingState) {
+                            RedeemingRewardsViewModel.RedeemingState.LOADING -> LoadingScreen()
+                            RedeemingRewardsViewModel.RedeemingState.LOADING_FAILED -> LoadingErrorScreen(
+                                R.drawable.ic_refresh,
+                                resources.getString(R.string.click_here_to_try_again),
+                                ::fetchRewardDetails
+                            )
+                            else -> RewardScreen()
+                        }
+                        InternetConnectionBanner(requireContext(), Color.White, connectionStatus)
                     }
                 }
             }
         }
+    }
+
+    private fun fetchRewardDetails() = lifecycleScope.launchWhenResumed {
+        viewModel.getRewardDetails(reward)
     }
 
     @Composable
@@ -109,12 +112,17 @@ class RedeemRewardFragment : Fragment() {
                     if(!isBeingRedeemed) UserPoints(parentLayout, points, cover)
                     Logo(parentLayout, logo, cover, reward.imageLink)
                     OfferDescription(parentLayout, description, logo)
-                    Branches(parentLayout, branches, logo)
+                    Branches(parentLayout, branches, logo, isBeingRedeemed)
                     RewardRedeemingStatus(parentLayout, branches, button, isBeingRedeemed)
                 }
             }
         }
 
+        ErrorsComposable()
+    }
+
+    @Composable
+    fun ErrorsComposable(){
         Row(
             verticalAlignment  = Alignment.Bottom,
             modifier = Modifier
@@ -248,7 +256,8 @@ class RedeemRewardFragment : Fragment() {
     fun Branches(
         parentLayout: ConstraintLayoutScope,
         branchesReference: ConstrainedLayoutReference,
-        logoReference: ConstrainedLayoutReference
+        logoReference: ConstrainedLayoutReference,
+        isBeingRedeemed: Boolean
     ){
 
         parentLayout.apply{
@@ -298,7 +307,9 @@ class RedeemRewardFragment : Fragment() {
                             .clickable(
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = null,
-                                onClick = { isOpen.value = true }
+                                onClick = {
+                                    if (isBeingRedeemed) isOpen.value = true
+                                }
                             )
                     )
                 }
@@ -400,7 +411,7 @@ class RedeemRewardFragment : Fragment() {
 
     private fun redeemReward(rewardId: String, redeemingStartTime: Long) {
         lifecycleScope.launchWhenResumed {
-            viewModel.tryRedeemReward(rewardId, redeemingStartTime, sharedPref!!)
+            //viewModel.tryRedeemReward(rewardId, redeemingStartTime, sharedPref!!)
         }
     }
 
