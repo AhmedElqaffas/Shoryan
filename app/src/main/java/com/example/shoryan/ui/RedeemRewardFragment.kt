@@ -6,18 +6,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
@@ -36,6 +34,7 @@ import com.example.shoryan.data.Reward
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.networking.RetrofitClient
 import com.example.shoryan.ui.composables.AppBar
+import com.example.shoryan.ui.composables.DropDownComposable
 import com.example.shoryan.ui.composables.InternetConnectionBanner
 import com.example.shoryan.ui.theme.Gray
 import com.example.shoryan.ui.theme.ShoryanTheme
@@ -246,23 +245,50 @@ class RedeemRewardFragment : Fragment() {
 
         parentLayout.apply{
             Column(
-                modifier = Modifier.constrainAs(branchesReference){
-                    start.linkTo(logoReference.start)
-                    end.linkTo(parent.end)
-                    top.linkTo(logoReference.bottom, 40.dp)
-                }.fillMaxWidth()
+                modifier = Modifier
+                    .constrainAs(branchesReference) {
+                        start.linkTo(logoReference.start)
+                        end.linkTo(parent.end)
+                        top.linkTo(logoReference.bottom, 40.dp)
+                    }
+                    .fillMaxWidth()
             ){
                 Text(
                     text = resources.getString(R.string.branches),
                     style = MaterialTheme.typography.subtitle1,
                     color = Color.Black,
                 )
-
-                reward.branches.forEach {
-                    Text(
-                        text = it,
-                        style = MaterialTheme.typography.subtitle2,
-                        modifier = Modifier.padding(0.dp, 5.dp, 0.dp, 0.dp)
+                val isOpen = remember { mutableStateOf(false) }
+                val chosenItem = remember { mutableStateOf("") }
+                val openCloseOfDropDownList: (Boolean) -> Unit = {
+                    isOpen.value = it
+                }
+                val selectedString: (String) -> Unit = {
+                    chosenItem.value = it
+                }
+                Box{
+                    Column{
+                        OutlinedTextField(
+                            value = chosenItem.value,
+                            onValueChange = { chosenItem.value = it },
+                            readOnly = true,
+                            label = { Text(text = resources.getString(R.string.choose_branch)) },
+                            modifier = Modifier.fillMaxWidth(0.95f)
+                        )
+                        DropDownComposable(
+                            isOpen.value,
+                            reward.branches,
+                            openCloseOfDropDownList,
+                            selectedString
+                        )
+                    }
+                    Spacer(
+                        modifier = Modifier.matchParentSize().background(Color.Transparent)
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null,
+                                onClick = { isOpen.value = true }
+                            )
                     )
                 }
             }
@@ -278,7 +304,7 @@ class RedeemRewardFragment : Fragment() {
         isBeingRedeemed: Boolean
     ){
         if(isBeingRedeemed){
-            RemainingTime(parentLayout, timer, branches)
+          //  RemainingTime(parentLayout, timer, branches)
         }
         else{
             if(canUserRedeemReward())
@@ -352,44 +378,7 @@ class RedeemRewardFragment : Fragment() {
         }
     }
 
-    @Composable
-    fun RemainingTime(
-        parentLayout: ConstraintLayoutScope,
-        timerReference: ConstrainedLayoutReference,
-        branchesReference: ConstrainedLayoutReference
-    ) {
-        parentLayout.apply{
-            Column(
-                modifier = Modifier
-                    .constrainAs(timerReference) {
-                        top.linkTo(branchesReference.bottom, margin = 20.dp)
-                        centerHorizontallyTo(parent)
-                    },
-                horizontalAlignment = Alignment.CenterHorizontally
-            ){
-                val remainingTimeString: String by viewModel.remainingTimeString.collectAsState("")
-                val remainingTimeRatio: Float by viewModel.remainingTimeRatio.collectAsState(1f)
-                Text(
-                    text = remainingTimeString,
-                    style = MaterialTheme.typography.h4,
-                    color = Color.Black,
-                    textAlign = TextAlign.Center
-                )
-                Spacer(Modifier.requiredHeight(10.dp))
-                LinearProgressIndicator(
-                    progress = remainingTimeRatio,
-                    backgroundColor = Color.White,
-                    color = MaterialTheme.colors.primary,
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(5.dp))
-                        .border(BorderStroke(1.dp, Color.LightGray), RoundedCornerShape(5.dp))
-                        .requiredWidth(350.dp)
-                        .scale(1f, 4f)
-                        .requiredHeight(14.dp)
-                )
-            }
-        }
-    }
+
 
     private fun onRedeemButtonClicked(){
         showAlertDialog(reward.id)

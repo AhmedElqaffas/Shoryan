@@ -20,6 +20,8 @@ object RewardsRepo {
         ,"شارع عباس العقاد, مدينة نصر, القاهرة",
         "شارع عباس العقاد, مدينة نصر, القاهرة",
             "شارع عباس العقاد, مدينة نصر, القاهرة",
+            "شارع تاني غير عباس العقاد",
+            "شارع طويل و عريض مفهوش ركنة"
         )
         cachedResponse = RewardsListResponse(listOf(
             Reward("fasfasf","اوكازيون اوكازيون اوكازيون", 99, "https://homepages.cae.wisc.edu/~ece533/images/zelda.png", "انا شرح الهدية",branchesList),

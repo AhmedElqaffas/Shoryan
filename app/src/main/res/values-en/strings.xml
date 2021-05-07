@@ -19,6 +19,7 @@
     <string name="change_location">Change Location</string>
     <string name="checking_requesting_permission">Checking Requesting Permission</string>
     <string name="checking_donating_ability">Checking Donating Ability</string>
+    <string name="choose_branch">Choose Branch</string>
     <string name="choose_location">Choose Location</string>
     <string name="choose_your_location">Choose Your Location</string>
     <string name="click_here_to_try_again">"Couldn't show requests \n click here to try again"</string>
