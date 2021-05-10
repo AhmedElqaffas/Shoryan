@@ -2,20 +2,21 @@ package com.example.shoryan.ui.composables
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Arrangement.Top
 import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment.Companion.Top
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.*
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.*
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusOrder
+import androidx.compose.ui.focus.isFocused
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -24,7 +25,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.*
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.min
+import java.util.*
 
 /**
  * Contains the cells where the code is inserted
@@ -43,7 +47,7 @@ import androidx.compose.ui.unit.*
  * @param onCodeEntered A function invoked when a new code character is entered
  */
 @Composable
-fun CodeEntryComposable(
+fun PinEntryComposable(
     numberOfCells: Int,
     modifier: Modifier = Modifier,
     cellsMarginPercentage: Float = 0.5f,
@@ -54,7 +58,8 @@ fun CodeEntryComposable(
     inActiveBorderWidth: Dp = 1.dp,
     isPassword: Boolean = false,
     onChange: (String) -> Unit,
-    onCodeEntered: (String) -> Unit
+    onCodeEntered: (String) -> Unit,
+    locale: Locale
 ){
     // Create a focusRequester for each cell to use it to give focus to a cell when needed
     val focusRequesters = List(numberOfCells) { FocusRequester() }
@@ -72,8 +77,16 @@ fun CodeEntryComposable(
                    "nextFocus" value = null. First cell doesn't have any cell before it, therefore its
                    "previousFocus" value = null
                 */
-                val nextFocus = if(i < numberOfCells - 1) focusRequesters[i + 1] else null
-                val previousFocus = if(i > 0) focusRequesters[i - 1] else null
+                var nextFocus: FocusRequester?
+                var previousFocus: FocusRequester?
+                if(locale == Locale.ENGLISH){
+                    nextFocus = if(i < numberOfCells - 1) focusRequesters[i + 1] else null
+                    previousFocus = if(i > 0) focusRequesters[i - 1] else null
+                } else{
+                    nextFocus = if(i > 0) focusRequesters[i - 1] else null
+                    previousFocus = if(i < numberOfCells - 1) focusRequesters[i + 1] else null
+                }
+
                 Cell(this, i, cellsTexts, focusRequesters[i], nextFocus, previousFocus,
                     cellColor = cellColor,
                     activeBorderColor = activeBorderColor,
@@ -82,7 +95,9 @@ fun CodeEntryComposable(
                     inActiveBorderWidth = inActiveBorderWidth,
                     isPassword = isPassword,
                     onChange = onChange,
-                    onCodeEntered = onCodeEntered)
+                    onCodeEntered = onCodeEntered,
+                    locale = locale
+                )
                 // Add space between cells
                 if(i != numberOfCells - 1)
                     Spacer(modifier = Modifier.weight(cellsMarginPercentage))
@@ -128,7 +143,8 @@ fun Cell(
     inActiveBorderWidth: Dp,
     isPassword: Boolean,
     onChange: (String) -> Unit,
-    onCodeEntered: (String) -> Unit
+    onCodeEntered: (String) -> Unit,
+    locale: Locale
 ) {
     /* "textBeforeChange" is used to determine the change in text. For example if textBeforeChange
        = "5" and the cellsText[id] = "85", we can conclude that the new text entered = 8.
@@ -162,10 +178,10 @@ fun Cell(
                         if(nextFocusRequester != null)
                             nextFocusRequester.requestFocus()
                         else if(cellsText.all{state -> state.value.isNotEmpty()}) {
-                            onCodeEntered(extractCodeString(cellsText))
+                            onCodeEntered(extractCodeString(cellsText, locale))
                         }
                     }
-                    onChange(extractCodeString(cellsText))
+                    onChange(extractCodeString(cellsText, locale))
                     textBeforeChange.value = cellsText[id].value
                 },
                 modifier = Modifier
@@ -182,10 +198,10 @@ fun Cell(
                             nextFocusRequester.requestFocus()
                         else if (cellsText.all { state -> state.value.isNotEmpty() }) {
                             focusRequester.freeFocus()
-                            onCodeEntered(extractCodeString(cellsText))
+                            onCodeEntered(extractCodeString(cellsText, locale))
                         }
                         else{
-                            onChange(extractCodeString(cellsText))
+                            onChange(extractCodeString(cellsText, locale))
                         }
                     }
                     .border(borderWidth.value, borderColor.value, LineBorder),
@@ -205,11 +221,13 @@ fun Cell(
     }
 }
 
-fun extractCodeString(cellsText: List<MutableState<String>>): String {
+fun extractCodeString(cellsText: List<MutableState<String>>, locale: Locale): String {
     var codeString = ""
     cellsText.forEach{
         codeString += it.value
     }
+    if(locale != Locale.ENGLISH)
+        codeString = codeString.reversed()
     return codeString
 }
 

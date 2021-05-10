@@ -1,16 +1,11 @@
 package com.example.shoryan.viewmodels
 
 import android.app.Application
-import android.content.SharedPreferences
 import android.os.CountDownTimer
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.work.Data
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import com.example.shoryan.RedeemingWorker
 import com.example.shoryan.data.*
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.repos.RewardsRepo
@@ -18,7 +13,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
 
 class RedeemingRewardsViewModel(private val applicationContext: Application) :
     AndroidViewModel(applicationContext) {
@@ -38,7 +32,7 @@ class RedeemingRewardsViewModel(private val applicationContext: Application) :
     val messagesToUser = _messagesToUser.asSharedFlow()
 
     private var rewardsListJob: Job? = null
-
+    private var codeVerificationJob: Job? = null
     val userPoints: Int
         get() {
             return CurrentSession.user?.points ?: 0
@@ -51,15 +45,26 @@ class RedeemingRewardsViewModel(private val applicationContext: Application) :
     val detailedReward: StateFlow<Reward?> = _detailedReward
 
     private var timer: CountDownTimer? = null
-    private val redeemingDuration: Long = 1000 * 60 * 1 // 1 minutes for the user to show the store
-    private val remainingTime = MutableSharedFlow<Long>()
     val isBeingRedeemed: Flow<Boolean> = _rewardRedeemingState.transform {
         emit(it == RedeemingState.STARTED)
     }
 
-    // WorkManager to remove the cached redeemingStartTime from the device after the redeeming expires
-    private val workManager by lazy {
-        WorkManager.getInstance(applicationContext)
+    // Whether the code entered by the user is currently being verified ot not
+    private val  _isVerifyingCode = MutableStateFlow(false)
+    val isVerifyingCode: StateFlow<Boolean> = _isVerifyingCode
+
+    private val smsResendingCooldown = 30_000L // 30 seconds cooldown
+
+    private val  _canResendSMS = MutableStateFlow(false)
+    val canResendSMS: StateFlow<Boolean> = _canResendSMS
+
+
+    private val _remainingTime = MutableStateFlow(smsResendingCooldown)
+    val remainingTimeString: Flow<String> = _remainingTime.transform{
+        // Reformat the seconds, append '0' at the beginning if there is only one character
+        // So that 00:9 becomes 00:09 for example
+        val seconds = if(it < 10_000) "0${it / 1000}" else it / 1000
+        emit("00:$seconds")
     }
 
     constructor(
@@ -96,6 +101,8 @@ class RedeemingRewardsViewModel(private val applicationContext: Application) :
     private fun handleRewardDetailsResponse(response: RewardResponse): Reward?{
         if(response.error == null){
             _rewardRedeemingState.value = getRedeemingStateFromBoolean(response.reward!!.isBeingRedeemed!!)
+            if(_rewardRedeemingState.value == RedeemingState.STARTED)
+                startTimer()
         }
         else{
             _rewardRedeemingState.value = RedeemingState.LOADING_FAILED
@@ -109,52 +116,12 @@ class RedeemingRewardsViewModel(private val applicationContext: Application) :
             false -> RedeemingState.NOT_REDEEMING
     }
 
-    /**
-     * Although the WorkerManager should clear the cached reward when the countdown expires, this
-     * is a precautious method to make sure that the cached reward redeeming window hasn't expired yet.
-     * If expired, this method clears the reward from the cache
-     */
-    fun setRedeemingStartTime(
-        redeemingStartTime: Long,
-        rewardKey: String,
-        sharedPref: SharedPreferences
-    ) = viewModelScope.launch {
-        // Check if the redeeming duration hasn't expired yet
-        if (redeemingDuration + redeemingStartTime - System.currentTimeMillis() > 0) {
-            _rewardRedeemingState.emit(RedeemingState.STARTED)
-            startTimer(redeemingStartTime)
-        } else {
-            // else, the cached reward entry should be cleared
-            removeCachedReward(rewardKey, sharedPref)
-        }
-    }
-
-    /**
-     * Starts the countdown timer which keeps decrementing "remainingTime" value.
-     */
-    private fun startTimer(redeemingStartTime: Long) {
-        val timeRemaining = redeemingDuration + redeemingStartTime - System.currentTimeMillis()
-        timer = object : CountDownTimer(timeRemaining, 500) {
-            override fun onTick(millisUntilFinished: Long) {
-                viewModelScope.launch {
-                    remainingTime.emit(millisUntilFinished)
-                }
-            }
-
-            override fun onFinish() {
-                viewModelScope.launch {
-                    remainingTime.emit(0)
-                    _rewardRedeemingState.emit(RedeemingState.NOT_REDEEMING)
-                }
-            }
-        }.start()
-    }
-
-    fun tryRedeemReward(rewardId: String, redeemingStartTime: Long, sharedPref: SharedPreferences) =
+    fun tryRedeemReward(rewardId: String) =
         viewModelScope.launch {
             _rewardRedeemingState.emit(RedeemingState.NOT_REDEEMING)
-            if (sendRedeemingRequestToServer()) {
-                startRedeeming(rewardId, redeemingStartTime, sharedPref)
+            if (sendRedeemingRequestToServer(rewardId)) {
+                _rewardRedeemingState.emit(RedeemingState.STARTED)
+                startTimer()
             } else {
                 _rewardRedeemingState.emit(RedeemingState.REDEEMING_FAILED)
             }
@@ -164,7 +131,7 @@ class RedeemingRewardsViewModel(private val applicationContext: Application) :
      * This method sends a redeeming request to the server.
      * @return true, if the server recorded the request successfully. Otherwise it returns false
      */
-    private suspend fun sendRedeemingRequestToServer(): Boolean {
+    private suspend fun sendRedeemingRequestToServer(rewardId: String): Boolean {
         delay(500)
         return try {
             val response = RewardRedeemingResponse(null)
@@ -190,53 +157,87 @@ class RedeemingRewardsViewModel(private val applicationContext: Application) :
         return true
     }
 
-    /**
-     * The server has successfully received the redeeming request. We can now start the redeeming
-     * process
-     */
-    private suspend fun startRedeeming(
-        rewardId: String,
-        redeemingStartTime: Long,
-        sharedPref: SharedPreferences
-    ) {
-        _rewardRedeemingState.emit(RedeemingState.STARTED)
-        saveRedeemingStartTime(rewardId, redeemingStartTime, sharedPref)
-        startTimer(redeemingStartTime)
-        startWorkManager(rewardId)
+    /** Checks whether resending an sms is allowed now or not.
+    * If allowed, a new verification code is sent to the store.
+    * @param rewardId the id of the reward being redeemed
+    */
+    fun trySendSMS(rewardId: String){
+        if(_canResendSMS.value == true){
+            viewModelScope.launch{
+                resendSMS(rewardId)
+            }
+        }
     }
 
-    private fun saveRedeemingStartTime(
-        rewardId: String,
-        redeemingStartTime: Long,
-        sharedPref: SharedPreferences
-    ) {
-        with(sharedPref.edit()) {
-            putString(rewardId, redeemingStartTime.toString())
-            apply()
+    private suspend fun resendSMS(rewardId: String){
+        _canResendSMS.emit(false)
+        try{
+            delay(2000)
+            val response = RewardRedeemingResponse(ErrorResponse(ServerError.CONNECTION_ERROR))
+            processSendingSMSResponse(response.error)
+        }catch(e: Exception){
+            _canResendSMS.emit(true)
+            _messagesToUser.emit(ServerError.CONNECTION_ERROR)
+        }
+    }
+
+    private suspend fun processSendingSMSResponse(responseError: ErrorResponse?){
+        if(responseError == null){
+            // Code is sent successfully, start a cooldown timer to prevent rapid sms resending
+            startTimer()
+        }
+        else{
+            _canResendSMS.emit(true)
+            _messagesToUser.emit(responseError.message)
         }
     }
 
     /**
-     * After redeemingDuration time passes, a worker is executed to remove the cached
-     * reward id from the sharedPreferences
+     * Starts a timer that counts how much time is remaining for the user to be able to resend sms.
      */
-    private fun startWorkManager(rewardId: String) {
-        val workRequest = OneTimeWorkRequestBuilder<RedeemingWorker>()
-            .setInputData(getWorkerParameters(rewardId))
-            .setInitialDelay(redeemingDuration, TimeUnit.MILLISECONDS)
-            .build()
-        workManager.enqueue(workRequest)
+    private fun startTimer(){
+        timer = object: CountDownTimer(smsResendingCooldown, 500){
+            override fun onTick(millisUntilFinished: Long) {
+                viewModelScope.launch {
+                    _remainingTime.emit(millisUntilFinished)
+                }
+            }
+            override fun onFinish(){
+                viewModelScope.launch{
+                    _remainingTime.emit(0L)
+                    _canResendSMS.emit(true)
+                }
+            }
+        }.start()
     }
 
-    private fun getWorkerParameters(rewardId: String): Data {
-        val builder = Data.Builder()
-        builder.putString("REWARD_ID", rewardId)
-        return builder.build()
+    fun verifyCode(code: String) {
+        codeVerificationJob = viewModelScope.launch {
+            _isVerifyingCode.emit(true)
+            try{
+                sendCodeToServer(code)
+                _isVerifyingCode.emit(false)
+            }catch(e: Exception){
+                _isVerifyingCode.emit(false)
+                _messagesToUser.emit(ServerError.CONNECTION_ERROR)
+            }
+        }
     }
 
-    private fun removeCachedReward(rewardKey: String, sharedPref: SharedPreferences) {
-        sharedPref.edit().remove(rewardKey).apply()
+    private suspend fun sendCodeToServer(code: String){
+        delay(2000)
+        val response = RedeemingCodeVerificationResponse(false, ErrorResponse(ServerError.CONNECTION_ERROR, 200))
+        _messagesToUser.emit(response.error?.message)
+        if(response.isSuccessful) _rewardRedeemingState.value = RedeemingState.NOT_REDEEMING
     }
+
+    /**
+     * Used when the user cancels the code verification process
+     */
+    fun stopVerifying(){
+        codeVerificationJob?.cancel()
+    }
+
 
     /**
      * Used when the fragment receives and shows a message in "messagesToUser", this method

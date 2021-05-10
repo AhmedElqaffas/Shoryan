@@ -153,5 +153,5 @@ dependencies {
     testImplementation "org.robolectric:robolectric:4.2.1"
     testImplementation 'app.cash.turbine:turbine:0.4.1'
 
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.6'
+   // debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.6'
 }

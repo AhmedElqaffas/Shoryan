@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,26 +19,28 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import com.example.shoryan.AndroidUtility.Companion.getScreenHeight
+import com.example.shoryan.AndroidUtility.Companion.getScreenWidth
 import com.example.shoryan.R
 import com.example.shoryan.data.RegistrationQuery
 import com.example.shoryan.data.Tokens
 import com.example.shoryan.di.MyApplication
 import com.example.shoryan.interfaces.LoadingFragmentHolder
+import com.example.shoryan.ui.composables.PinEntryComposable
 import com.example.shoryan.ui.theme.ShoryanTheme
-import com.example.shoryan.ui.composables.CodeEntryComposable
 import com.example.shoryan.viewmodels.SMSViewModel
 import com.example.shoryan.viewmodels.SMSViewModel.OperationType.LOGIN
 import com.example.shoryan.viewmodels.SMSViewModel.OperationType.REGISTRATION
 import com.example.shoryan.viewmodels.TokensViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.collect
+import java.util.*
+import javax.inject.Inject
 
 class SMSFragment : Fragment(), LoadingFragmentHolder {
 
@@ -121,11 +122,18 @@ class SMSFragment : Fragment(), LoadingFragmentHolder {
     
     @Composable
     fun BackButton(){
+        // To avoid the button being drawn on the right of the screen in case of arabic locale
+        val arrangement = if(requireContext().resources.configuration.locale == Locale.ENGLISH){
+            Arrangement.Start
+        }else{
+            Arrangement.End
+        }
         Row(
-            horizontalArrangement = Arrangement.Start,
+            horizontalArrangement = arrangement,
             modifier = Modifier
                 .padding(20.dp)
                 .clickable(onClick = { navController.popBackStack() })
+                .fillMaxWidth()
         ) {
             Image(
                 painterResource(R.mipmap.ic_back_oval),
@@ -145,7 +153,7 @@ class SMSFragment : Fragment(), LoadingFragmentHolder {
                 text = resources.getString(R.string.confirmation_code),
                 color = MaterialTheme.colors.primary,
                 style = MaterialTheme.typography.h5,
-                modifier = Modifier.padding(0.dp, getScreenHeight()*0.05f, 0.dp, 0.dp)
+                modifier = Modifier.padding(0.dp, getScreenHeight(requireContext())*0.05f, 0.dp, 0.dp)
             )
         }
     }
@@ -154,7 +162,7 @@ class SMSFragment : Fragment(), LoadingFragmentHolder {
     fun Statement(){
         Text(
             text = resources.getString(R.string.enter_code,phoneNumber),
-            modifier = Modifier.padding(20.dp, getScreenHeight()*0.07f, 0.dp, 0.dp),
+            modifier = Modifier.padding(20.dp, getScreenHeight(requireContext())*0.07f, 0.dp, 0.dp),
             color = MaterialTheme.colors.primaryVariant,
             style = MaterialTheme.typography.body1
         )
@@ -165,14 +173,15 @@ class SMSFragment : Fragment(), LoadingFragmentHolder {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(0.dp, getScreenHeight() * 0.07f, 0.dp, 0.dp),
+                .padding(0.dp, getScreenHeight(requireContext()) * 0.07f, 0.dp, 0.dp),
             horizontalArrangement = Arrangement.Center
         ){
-            CodeEntryComposable(
+            PinEntryComposable(
                 numberOfCells = 4,
                 modifier = Modifier.fillMaxWidth(0.78f),
                 onChange = ::updateCodeInstance,
-                onCodeEntered = ::verifyCode
+                onCodeEntered = ::verifyCode,
+                locale = requireContext().resources.configuration.locale
             )
         }
     }
@@ -182,7 +191,7 @@ class SMSFragment : Fragment(), LoadingFragmentHolder {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(0.dp, getScreenHeight() * 0.09f, 0.dp, 0.dp),
+                .padding(0.dp, getScreenHeight(requireContext()) * 0.09f, 0.dp, 0.dp),
             horizontalArrangement = Arrangement.Center
         ) {
             Button(
@@ -191,7 +200,7 @@ class SMSFragment : Fragment(), LoadingFragmentHolder {
                 contentPadding = PaddingValues(20.dp),
                 shape = RoundedCornerShape(29.dp),
                 modifier = Modifier
-                    .width(getScreenWidth()*0.8f)
+                    .width(getScreenWidth(requireContext())*0.8f)
             ){
                 Text(
                     text = resources.getString(R.string.confirm),
@@ -209,7 +218,7 @@ class SMSFragment : Fragment(), LoadingFragmentHolder {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(0.dp, getScreenHeight() * 0.04f, 0.dp, 0.dp),
+                .padding(0.dp, getScreenHeight(requireContext()) * 0.04f, 0.dp, 0.dp),
             horizontalArrangement = Arrangement.Center
         ){
             Text(
@@ -316,9 +325,6 @@ class SMSFragment : Fragment(), LoadingFragmentHolder {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
     }
-
-    private fun getScreenWidth(): Dp = resources.displayMetrics.run { return@run (1.dp *(widthPixels / density) ) }
-    private fun getScreenHeight(): Dp = resources.displayMetrics.run { return@run (1.dp *(heightPixels / density) ) }
 
     override fun onLoadingFragmentDismissed() {
         viewModel.stopVerifying()

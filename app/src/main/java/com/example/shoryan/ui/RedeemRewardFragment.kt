@@ -1,5 +1,6 @@
 package com.example.shoryan.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -24,13 +25,17 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstrainedLayoutReference
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintLayoutScope
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.example.shoryan.AndroidUtility
 import com.example.shoryan.ConnectionLiveData
 import com.example.shoryan.R
 import com.example.shoryan.data.Reward
 import com.example.shoryan.data.ServerError
+import com.example.shoryan.di.MyApplication
+import com.example.shoryan.interfaces.LoadingFragmentHolder
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.networking.RetrofitClient
 import com.example.shoryan.ui.composables.*
@@ -38,10 +43,15 @@ import com.example.shoryan.ui.theme.Gray
 import com.example.shoryan.ui.theme.ShoryanTheme
 import com.example.shoryan.viewmodels.RedeemingRewardsViewModel
 import com.example.shoryan.viewmodels.RedeemingRewardsViewModelFactory
+import com.example.shoryan.viewmodels.SMSViewModel
 import dev.chrisbanes.accompanist.coil.CoilImage
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
+import javax.inject.Inject
 
-class RedeemRewardFragment : Fragment() {
+class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
+    @Inject
+    lateinit var smsViewModel: SMSViewModel
     private val viewModel: RedeemingRewardsViewModel by viewModels {
         RedeemingRewardsViewModelFactory(
             requireActivity().application,
@@ -56,10 +66,11 @@ class RedeemRewardFragment : Fragment() {
     // Errors to show to user
     private val fragmentErrors = MutableStateFlow<String?>(null)
 
-    override fun onResume() {
-        super.onResume()
-        fetchRewardDetails()
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        (requireActivity().application as MyApplication).appComponent.redeemRewardComponent().create().inject(this)
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -87,6 +98,12 @@ class RedeemRewardFragment : Fragment() {
         }
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        fetchRewardDetails()
+        observeCodeVerificationStatus()
+    }
+
     private fun fetchRewardDetails() = lifecycleScope.launchWhenResumed {
         viewModel.getRewardDetails(reward)
     }
@@ -95,7 +112,7 @@ class RedeemRewardFragment : Fragment() {
     fun RewardScreen() {
         val scrollState = rememberScrollState()
         ConstraintLayout(
-            Modifier.fillMaxSize()
+            Modifier.fillMaxSize().background(Color.White)
         ) {
             Column(
                 Modifier
@@ -131,7 +148,9 @@ class RedeemRewardFragment : Fragment() {
             val messageToUser: ServerError? by viewModel.messagesToUser.collectAsState(null)
             val fragmentErrorMessages: String? by fragmentErrors.collectAsState(null)
             messageToUser?.let {
-                ShowSnackbar(resources.getString(it.errorStringResource)) { TryAgainSnackbarButton() }
+                ShowSnackbar(resources.getString(it.errorStringResource)) {
+                    OKSnackbarButton()
+                }
             }
             fragmentErrorMessages?.let{
                 ShowSnackbar(it){OKSnackbarButton()}
@@ -308,7 +327,7 @@ class RedeemRewardFragment : Fragment() {
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = null,
                                 onClick = {
-                                    if (isBeingRedeemed) isOpen.value = true
+                                    if (!isBeingRedeemed) isOpen.value = true
                                 }
                             )
                     )
@@ -325,13 +344,37 @@ class RedeemRewardFragment : Fragment() {
         isBeingRedeemed: Boolean
     ){
         if(isBeingRedeemed){
-          //  RemainingTime(parentLayout, timer, branches)
+            CodeEntryUI(parentLayout, button, branches)
         }
         else{
             if(canUserRedeemReward())
                 RedeemButton(parentLayout, button, branches)
             else
                 InsufficientPointsButton(parentLayout, button, branches)
+        }
+    }
+
+    @Composable
+    fun CodeEntryUI(parentLayout: ConstraintLayoutScope, button: ConstrainedLayoutReference, branchesReference: ConstrainedLayoutReference) {
+        val canResendSMS = viewModel.canResendSMS
+        val remainingTime =  viewModel.remainingTimeString
+        parentLayout.apply {
+            CodeEntryUI(
+                numberOfCells = 6,
+                onCodeEntered = ::verifyCode,
+                screenWidth = AndroidUtility.getScreenWidth(requireContext()),
+                screenHeight = AndroidUtility.getScreenHeight(requireContext()),
+                buttonText = resources.getString(R.string.confirm),
+                resendCodeText = resources.getString(R.string.resend_sms),
+                onResendCodeClicked = ::sendSMS,
+                canResendSMS = canResendSMS,
+                remainingTime = remainingTime,
+                locale = requireContext().resources.configuration.locale,
+                modifier = Modifier.constrainAs(button){
+                    top.linkTo(branchesReference.bottom, 20.dp)
+                    centerHorizontallyTo(parent)
+                }.fillMaxSize()
+            )
         }
     }
 
@@ -409,9 +452,9 @@ class RedeemRewardFragment : Fragment() {
         }
     }
 
-    private fun redeemReward(rewardId: String, redeemingStartTime: Long) {
+    private fun redeemReward(rewardId: String) {
         lifecycleScope.launchWhenResumed {
-            //viewModel.tryRedeemReward(rewardId, redeemingStartTime, sharedPref!!)
+            viewModel.tryRedeemReward(rewardId)
         }
     }
 
@@ -428,7 +471,7 @@ class RedeemRewardFragment : Fragment() {
     fun TryAgainSnackbarButton(){
         Button(
             onClick = {
-                redeemReward(reward.id, System.currentTimeMillis())
+                redeemReward(reward.id)
                 viewModel.clearReceivedMessage()
             }
         ){
@@ -441,6 +484,7 @@ class RedeemRewardFragment : Fragment() {
         Button(
             onClick = {
                 fragmentErrors.value = null
+                viewModel.clearReceivedMessage()
             }
         ){
             Text(resources.getString(R.string.ok))
@@ -454,9 +498,46 @@ class RedeemRewardFragment : Fragment() {
         with(builder) {
             setTitle(resources.getString(R.string.redeeming_confirmation_title))
             setMessage(resources.getString(R.string.redeeming_confirmation_body))
-            setPositiveButton(resources.getString(R.string.confirm)) { _, _ -> redeemReward(id, System.currentTimeMillis()) }
+            setPositiveButton(resources.getString(R.string.confirm)) { _, _ -> redeemReward(id) }
             setNegativeButton(resources.getString(R.string.no),null)
             show()
         }
+    }
+
+    private fun verifyCode(code: String){
+        //Toast.makeText(requireContext(), code, Toast.LENGTH_LONG).show()
+        viewModel.verifyCode(code)
+    }
+
+    private fun sendSMS(){
+        viewModel.trySendSMS(reward.id)
+    }
+
+    private fun observeCodeVerificationStatus(){
+        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+            viewModel.isVerifyingCode.collect{
+                if(it){
+                    showProcessingIndicator()
+                }
+                else{
+                    hideProcessingIndicator()
+                }
+            }
+        }
+    }
+
+    private fun showProcessingIndicator(){
+        val loadingFragment: DialogFragment? = childFragmentManager.findFragmentByTag("loading") as DialogFragment?
+        if(loadingFragment == null)
+            LoadingFragment(this).show(childFragmentManager, "loading")
+    }
+
+    private fun hideProcessingIndicator(){
+        val loadingFragment: DialogFragment? = childFragmentManager.findFragmentByTag("loading") as DialogFragment?
+        loadingFragment?.dismiss()
+    }
+
+    override fun onLoadingFragmentDismissed() {
+        viewModel.stopVerifying()
     }
 }
