@@ -49,11 +49,9 @@ import com.example.shoryan.viewmodels.SMSViewModel
 import dev.chrisbanes.accompanist.coil.CoilImage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
-import javax.inject.Inject
 
 class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
-    @Inject
-    lateinit var smsViewModel: SMSViewModel
+    val smsViewModel: SMSViewModel by viewModels()
     private lateinit var navController: NavController
     private val viewModel: RedeemingRewardsViewModel by viewModels {
         RedeemingRewardsViewModelFactory(
@@ -169,6 +167,7 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
         ) {
             val messageToUser: ServerError? by viewModel.messagesToUser.collectAsState(null)
             val fragmentErrorMessages: String? by fragmentErrors.collectAsState(null)
+            val redeemingCodeErrors: ServerError? by smsViewModel.eventsFlow.collectAsState(null)
             messageToUser?.let {
                 ShowSnackbar(resources.getString(it.errorStringResource)) {
                     OKSnackbarButton()
@@ -176,6 +175,11 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
             }
             fragmentErrorMessages?.let {
                 ShowSnackbar(it) { OKSnackbarButton() }
+            }
+            redeemingCodeErrors?.let {
+                ShowSnackbar(message = resources.getString(it.errorStringResource)) {
+                    OKSnackbarButton()
+                }
             }
         }
     }
@@ -381,8 +385,8 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
         button: ConstrainedLayoutReference,
         branchesReference: ConstrainedLayoutReference
     ) {
-        val canResendSMS = viewModel.canResendSMS
-        val remainingTime = viewModel.remainingTimeString
+        val canResendSMS = smsViewModel.canResendSMS
+        val remainingTime = smsViewModel.remainingTimeString
         parentLayout.apply {
             CodeEntryUI(
                 numberOfCells = 6,
@@ -500,6 +504,7 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
             onClick = {
                 fragmentErrors.value = null
                 viewModel.clearReceivedMessage()
+                smsViewModel.clearReceivedEvent()
             }
         ) {
             Text(resources.getString(R.string.ok))
@@ -568,20 +573,22 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
     }
 
     private fun verifyCode(code: String) {
-        //Toast.makeText(requireContext(), code, Toast.LENGTH_LONG).show()
-        viewModel.verifyCode(code)
+        smsViewModel.verifyRedeemingCode(code)
     }
 
     private fun sendSMS() {
-        viewModel.trySendSMS(reward.id)
+        smsViewModel.trySendSMS(reward.id)
     }
 
     private fun observeCodeVerificationStatus() {
         viewLifecycleOwner.lifecycleScope.launchWhenResumed {
-            viewModel.isVerifyingCode.collect {
-                if (it) {
+            smsViewModel.isVerifyingCode.collect {
+                if (it.name == "VERIFYING") {
                     showProcessingIndicator()
-                } else {
+                } else{
+                    if(it.name == "VERIFIED"){
+                        viewModel.onRedeemingCodeVerified()
+                    }
                     hideProcessingIndicator()
                 }
             }
@@ -602,6 +609,6 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
     }
 
     override fun onLoadingFragmentDismissed() {
-        viewModel.stopVerifying()
+        smsViewModel.stopVerifying()
     }
 }

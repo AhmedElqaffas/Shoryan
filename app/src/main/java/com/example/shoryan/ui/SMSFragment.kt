@@ -25,6 +25,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.navigation.navGraphViewModels
 import com.example.shoryan.AndroidUtility.Companion.getScreenHeight
 import com.example.shoryan.AndroidUtility.Companion.getScreenWidth
 import com.example.shoryan.R
@@ -44,8 +45,7 @@ import javax.inject.Inject
 
 class SMSFragment : Fragment(), LoadingFragmentHolder {
 
-    @Inject
-    lateinit var viewModel: SMSViewModel
+    val viewModel: SMSViewModel by navGraphViewModels(R.id.landing_nav_graph)
     @Inject
     lateinit var tokensViewModel: TokensViewModel
     private lateinit var navController: NavController
@@ -283,7 +283,7 @@ class SMSFragment : Fragment(), LoadingFragmentHolder {
     private fun observeCodeVerificationStatus(){
         viewLifecycleOwner.lifecycleScope.launchWhenResumed {
             viewModel.isVerifyingCode.collect{
-                if(it){
+                if(it.name == "VERIFYING"){
                     showProcessingIndicator()
                 }
                 else{

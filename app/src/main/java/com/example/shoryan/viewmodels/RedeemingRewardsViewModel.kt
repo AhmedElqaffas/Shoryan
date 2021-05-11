@@ -238,6 +238,9 @@ class RedeemingRewardsViewModel(private val applicationContext: Application) :
         codeVerificationJob?.cancel()
     }
 
+    fun onRedeemingCodeVerified(){
+        _rewardRedeemingState.value = RedeemingState.COMPLETED
+    }
 
     /**
      * Used when the fragment receives and shows a message in "messagesToUser", this method

@@ -93,8 +93,8 @@
     <string name="register">Register</string>
     <string name="redeemable">Redeemable</string>
     <string name="redeem">Redeem</string>
-    <string name="redeeming_confirmation_title">Are you in one of the branches?</string>
-    <string name="redeeming_confirmation_body">You will have to show the screen to the store employee within 5 minutes</string>
+    <string name="redeeming_confirmation_title">Confirm Redeeming</string>
+    <string name="redeeming_confirmation_body">"You won't be able to cancel the redeeming, are you sure you want to continue?"</string>
     <string name="requests">Requests</string>
     <string name="request_already_pending">You are already registered as a donor for another request</string>
     <string name="request_created">The request is successfully created</string>
