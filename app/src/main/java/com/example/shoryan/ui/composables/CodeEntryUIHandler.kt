@@ -14,7 +14,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
-import java.util.*
 
 // Represents the code entered in the PinEntryComposable
 private var enteredCode: String = ""
@@ -35,7 +34,7 @@ fun CodeEntryUI(
     inActiveBorderWidth: Dp = 1.dp,
     isPassword: Boolean = false,
     onCodeEntered: (String) -> Unit,
-    locale: Locale,
+    layoutDirection: Int,
     screenWidth: Dp,
     screenHeight: Dp,
     buttonText: String,
@@ -59,7 +58,7 @@ fun CodeEntryUI(
                 isPassword,
                 ::updateCodeInstance,
                 onCodeEntered,
-                locale
+                layoutDirection
             )
         ConfirmButton(screenWidth, screenHeight, buttonText, onCodeEntered)
         ResendCodeText(screenHeight, resendCodeText, onResendCodeClicked, canResendSMS, remainingTime)

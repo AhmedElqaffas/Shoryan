@@ -23,7 +23,7 @@ class SMSViewModel: ViewModel() {
         VERIFYING, NOT_VERIFYING, VERIFIED
     }
 
-    lateinit var bloodDonationAPI: RetrofitBloodDonationInterface
+    private var bloodDonationAPI: RetrofitBloodDonationInterface
 
     private val smsResendingCooldown = 30_000L // 30 seconds cooldown
     private var currentJob: Job? = null
@@ -67,11 +67,16 @@ class SMSViewModel: ViewModel() {
     fun trySendSMS(phoneNumber: String, registrationQuery: RegistrationQuery?){
         if(_canResendSMS.value == true){
             viewModelScope.launch{
-                sendSMS(phoneNumber, registrationQuery)
+                sendLoggingSMS(phoneNumber, registrationQuery)
             }
         }
     }
 
+    /**
+     * Checks whether resending an sms to the store is allowed now or not.
+     * If allowed, a new verification code is sent to the branch mobile number.
+     * @param rewardId The reward being redeemed
+     */
     fun trySendSMS(rewardId: String){
         if(_canResendSMS.value == true){
             viewModelScope.launch{
@@ -80,6 +85,9 @@ class SMSViewModel: ViewModel() {
         }
     }
 
+    /**
+     * Used to send an SMS to the store branch mobile number
+     */
     private suspend fun sendRewardCodeSMS(code: String){
         _canResendSMS.emit(false)
         try{
@@ -92,7 +100,7 @@ class SMSViewModel: ViewModel() {
         }
     }
 
-    private suspend fun sendSMS(phoneNumber: String, registrationQuery: RegistrationQuery?){
+    suspend fun sendLoggingSMS(phoneNumber: String, registrationQuery: RegistrationQuery?){
         _canResendSMS.emit(false)
         try{
             if(registrationQuery == null)
@@ -174,12 +182,15 @@ class SMSViewModel: ViewModel() {
         }
     }
 
-    fun verifyRedeemingCode(rewardId: String){
+    /**
+     * Sends the verification code entered by the user to the server to check if it is correct
+     * @param code The code entered by the user
+     */
+    fun verifyRedeemingCode(code: String){
         currentJob = viewModelScope.launch{
             _isVerifyingCode.value = VerificationState.VERIFYING
             try{
-                delay(1500)
-                processRedeemingCodeVerificationResponse()
+                sendCodeToServer(code)
             }catch(e: Exception){
                 _isVerifyingCode.value = VerificationState.NOT_VERIFYING
                 _eventsFlow.emit(ServerError.CONNECTION_ERROR)
@@ -187,8 +198,15 @@ class SMSViewModel: ViewModel() {
         }
     }
 
-    private fun processRedeemingCodeVerificationResponse(){
-        _isVerifyingCode.value = VerificationState.VERIFIED
+    private suspend fun sendCodeToServer(code: String){
+        delay(2000)
+        val response = RedeemingCodeVerificationResponse(true,null)
+        if(response.isSuccessful){
+            _isVerifyingCode.value = VerificationState.VERIFIED
+        }else{
+            _isVerifyingCode.value = VerificationState.NOT_VERIFYING
+            _eventsFlow.emit(response.error?.message)
+        }
     }
 
     private suspend fun sendCodeToServer(phoneNumber: String, code: String, endpoint: suspend (VerificationCodeQuery) -> TokenResponse){

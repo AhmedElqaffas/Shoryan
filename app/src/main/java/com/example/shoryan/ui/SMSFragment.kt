@@ -34,12 +34,14 @@ import com.example.shoryan.data.Tokens
 import com.example.shoryan.di.MyApplication
 import com.example.shoryan.interfaces.LoadingFragmentHolder
 import com.example.shoryan.ui.composables.PinEntryComposable
+import com.example.shoryan.ui.composables.PinEntryComposableDirection
 import com.example.shoryan.ui.theme.ShoryanTheme
 import com.example.shoryan.viewmodels.SMSViewModel
 import com.example.shoryan.viewmodels.SMSViewModel.OperationType.LOGIN
 import com.example.shoryan.viewmodels.SMSViewModel.OperationType.REGISTRATION
 import com.example.shoryan.viewmodels.TokensViewModel
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
 
@@ -67,7 +69,7 @@ class SMSFragment : Fragment(), LoadingFragmentHolder {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initializeNavController(view)
-        viewModel.trySendSMS(phoneNumber, registrationQuery)
+        lifecycleScope.launch { viewModel.sendLoggingSMS(phoneNumber, registrationQuery) }
         observeLoggingStatus()
         observeCodeVerificationStatus()
     }
@@ -95,7 +97,7 @@ class SMSFragment : Fragment(), LoadingFragmentHolder {
             Modifier.fillMaxSize()
         ) {
             // Banner and back button
-            Surface(){
+            Surface{
                 Banner()
                 BackButton()
             }
@@ -181,10 +183,16 @@ class SMSFragment : Fragment(), LoadingFragmentHolder {
                 modifier = Modifier.fillMaxWidth(0.78f),
                 onChange = ::updateCodeInstance,
                 onCodeEntered = ::verifyCode,
-                locale = requireContext().resources.configuration.locale
+                layoutDirection = getLayoutDirection()
             )
         }
     }
+
+    private fun getLayoutDirection(): Int =
+        when(requireContext().resources.configuration.locale){
+            Locale("ar") -> PinEntryComposableDirection.RTL
+            else -> PinEntryComposableDirection.LTR
+        }
 
     @Composable
     fun ConfirmButton() {

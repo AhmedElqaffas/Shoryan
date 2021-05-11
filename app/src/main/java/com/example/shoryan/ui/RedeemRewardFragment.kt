@@ -1,6 +1,5 @@
 package com.example.shoryan.ui
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -36,7 +35,6 @@ import com.example.shoryan.ConnectionLiveData
 import com.example.shoryan.R
 import com.example.shoryan.data.Reward
 import com.example.shoryan.data.ServerError
-import com.example.shoryan.di.MyApplication
 import com.example.shoryan.interfaces.LoadingFragmentHolder
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.networking.RetrofitClient
@@ -49,9 +47,10 @@ import com.example.shoryan.viewmodels.SMSViewModel
 import dev.chrisbanes.accompanist.coil.CoilImage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
+import java.util.*
 
 class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
-    val smsViewModel: SMSViewModel by viewModels()
+    private val smsViewModel: SMSViewModel by viewModels()
     private lateinit var navController: NavController
     private val viewModel: RedeemingRewardsViewModel by viewModels {
         RedeemingRewardsViewModelFactory(
@@ -67,12 +66,6 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
 
     // Errors to show to user
     private val fragmentErrors = MutableStateFlow<String?>(null)
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        (requireActivity().application as MyApplication).appComponent.redeemRewardComponent()
-            .create().inject(this)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -165,8 +158,12 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
             modifier = Modifier
                 .height(70.dp),
         ) {
+            // Collect server errors from RedeemingRewardsViewModel
             val messageToUser: ServerError? by viewModel.messagesToUser.collectAsState(null)
+            // Collect errors issued by this fragment (when the user tries redeeming without
+            // choosing a branch)
             val fragmentErrorMessages: String? by fragmentErrors.collectAsState(null)
+            // Collect server errors from SMSViewModel
             val redeemingCodeErrors: ServerError? by smsViewModel.eventsFlow.collectAsState(null)
             messageToUser?.let {
                 ShowSnackbar(resources.getString(it.errorStringResource)) {
@@ -398,7 +395,7 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
                 onResendCodeClicked = ::sendSMS,
                 canResendSMS = canResendSMS,
                 remainingTime = remainingTime,
-                locale = requireContext().resources.configuration.locale,
+                layoutDirection = getLayoutDirection(),
                 modifier = Modifier
                     .constrainAs(button) {
                         top.linkTo(branchesReference.bottom, 20.dp)
@@ -409,6 +406,12 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
             )
         }
     }
+
+    private fun getLayoutDirection(): Int =
+        when(requireContext().resources.configuration.locale){
+            Locale("ar") -> PinEntryComposableDirection.RTL
+            else -> PinEntryComposableDirection.LTR
+        }
 
     @Composable
     fun RedeemButton(

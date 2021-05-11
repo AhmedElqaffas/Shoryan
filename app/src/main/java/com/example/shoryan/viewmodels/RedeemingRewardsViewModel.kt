@@ -1,7 +1,6 @@
 package com.example.shoryan.viewmodels
 
 import android.app.Application
-import android.os.CountDownTimer
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -32,7 +31,6 @@ class RedeemingRewardsViewModel(private val applicationContext: Application) :
     val messagesToUser = _messagesToUser.asSharedFlow()
 
     private var rewardsListJob: Job? = null
-    private var codeVerificationJob: Job? = null
     val userPoints: Int
         get() {
             return CurrentSession.user?.points ?: 0
@@ -44,27 +42,8 @@ class RedeemingRewardsViewModel(private val applicationContext: Application) :
     private val _detailedReward = MutableStateFlow<Reward?>(null)
     val detailedReward: StateFlow<Reward?> = _detailedReward
 
-    private var timer: CountDownTimer? = null
     val isBeingRedeemed: Flow<Boolean> = _rewardRedeemingState.transform {
         emit(it == RedeemingState.STARTED)
-    }
-
-    // Whether the code entered by the user is currently being verified ot not
-    private val  _isVerifyingCode = MutableStateFlow(false)
-    val isVerifyingCode: StateFlow<Boolean> = _isVerifyingCode
-
-    private val smsResendingCooldown = 30_000L // 30 seconds cooldown
-
-    private val  _canResendSMS = MutableStateFlow(false)
-    val canResendSMS: StateFlow<Boolean> = _canResendSMS
-
-
-    private val _remainingTime = MutableStateFlow(smsResendingCooldown)
-    val remainingTimeString: Flow<String> = _remainingTime.transform{
-        // Reformat the seconds, append '0' at the beginning if there is only one character
-        // So that 00:9 becomes 00:09 for example
-        val seconds = if(it < 10_000) "0${it / 1000}" else it / 1000
-        emit("00:$seconds")
     }
 
     constructor(
@@ -101,8 +80,6 @@ class RedeemingRewardsViewModel(private val applicationContext: Application) :
     private fun handleRewardDetailsResponse(response: RewardResponse): Reward?{
         if(response.error == null){
             _rewardRedeemingState.value = getRedeemingStateFromBoolean(response.reward!!.isBeingRedeemed!!)
-            if(_rewardRedeemingState.value == RedeemingState.STARTED)
-                startTimer()
         }
         else{
             _rewardRedeemingState.value = RedeemingState.LOADING_FAILED
@@ -116,19 +93,23 @@ class RedeemingRewardsViewModel(private val applicationContext: Application) :
             false -> RedeemingState.NOT_REDEEMING
     }
 
-    fun tryRedeemReward(rewardId: String) =
-        viewModelScope.launch {
+    /**
+     * Tries sending a redeeming reward request to the server, which in turn sends an SMS to the store
+     * branch mobile number containing the redeeming details
+     * @param rewardId ID of the reward being redeemed
+     */
+    suspend fun tryRedeemReward(rewardId: String){
             _rewardRedeemingState.emit(RedeemingState.NOT_REDEEMING)
             if (sendRedeemingRequestToServer(rewardId)) {
                 _rewardRedeemingState.emit(RedeemingState.STARTED)
-                startTimer()
             } else {
                 _rewardRedeemingState.emit(RedeemingState.REDEEMING_FAILED)
             }
         }
 
     /**
-     * This method sends a redeeming request to the server.
+     * This method is called from [tryRedeemReward] to do the actual sending of the redeeming
+     * request to the server.
      * @return true, if the server recorded the request successfully. Otherwise it returns false
      */
     private suspend fun sendRedeemingRequestToServer(rewardId: String): Boolean {
@@ -157,87 +138,12 @@ class RedeemingRewardsViewModel(private val applicationContext: Application) :
         return true
     }
 
-    /** Checks whether resending an sms is allowed now or not.
-    * If allowed, a new verification code is sent to the store.
-    * @param rewardId the id of the reward being redeemed
-    */
-    fun trySendSMS(rewardId: String){
-        if(_canResendSMS.value == true){
-            viewModelScope.launch{
-                resendSMS(rewardId)
-            }
-        }
-    }
-
-    private suspend fun resendSMS(rewardId: String){
-        _canResendSMS.emit(false)
-        try{
-            delay(2000)
-            val response = RewardRedeemingResponse(ErrorResponse(ServerError.CONNECTION_ERROR))
-            processSendingSMSResponse(response.error)
-        }catch(e: Exception){
-            _canResendSMS.emit(true)
-            _messagesToUser.emit(ServerError.CONNECTION_ERROR)
-        }
-    }
-
-    private suspend fun processSendingSMSResponse(responseError: ErrorResponse?){
-        if(responseError == null){
-            // Code is sent successfully, start a cooldown timer to prevent rapid sms resending
-            startTimer()
-        }
-        else{
-            _canResendSMS.emit(true)
-            _messagesToUser.emit(responseError.message)
-        }
-    }
-
     /**
-     * Starts a timer that counts how much time is remaining for the user to be able to resend sms.
+     * Called from the fragment to indicate that the redeeming code was entered correctly by the user.
+     * This method acts as a link between this viewmodel and the SMSViewmodel; when the SMSViewmodel
+     * correctly verifies the code, the fragment, calls this method to notify this viewmodel that
+     * the redeeming is completed.
      */
-    private fun startTimer(){
-        timer = object: CountDownTimer(smsResendingCooldown, 500){
-            override fun onTick(millisUntilFinished: Long) {
-                viewModelScope.launch {
-                    _remainingTime.emit(millisUntilFinished)
-                }
-            }
-            override fun onFinish(){
-                viewModelScope.launch{
-                    _remainingTime.emit(0L)
-                    _canResendSMS.emit(true)
-                }
-            }
-        }.start()
-    }
-
-    fun verifyCode(code: String) {
-        codeVerificationJob = viewModelScope.launch {
-            _isVerifyingCode.emit(true)
-            try{
-                sendCodeToServer(code)
-                _isVerifyingCode.emit(false)
-            }catch(e: Exception){
-                _isVerifyingCode.emit(false)
-                _messagesToUser.emit(ServerError.CONNECTION_ERROR)
-            }
-        }
-    }
-
-    private suspend fun sendCodeToServer(code: String){
-        delay(2000)
-        val response = RedeemingCodeVerificationResponse(true,null)
-        _messagesToUser.emit(response.error?.message)
-        if(response.isSuccessful) _rewardRedeemingState.value = RedeemingState.COMPLETED
-    }
-
-    /**
-     * Used when the user cancels the code verification process
-     */
-    fun stopVerifying(){
-        codeVerificationJob?.cancel()
-    }
-
     fun onRedeemingCodeVerified(){
         _rewardRedeemingState.value = RedeemingState.COMPLETED
     }

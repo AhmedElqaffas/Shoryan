@@ -28,8 +28,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
-import java.util.*
 
+object PinEntryComposableDirection{
+    const val RTL = 0
+    const val LTR = 1
+}
 /**
  * Contains the cells where the code is inserted
  * @param numberOfCells The number of character in the code
@@ -45,6 +48,10 @@ import java.util.*
  * characters or be left as plain text
  * @param onChange A function invoked when a new code character is entered
  * @param onCodeEntered A function invoked when a new code character is entered
+ * @param layoutDirection The pin entry should always be LTR, the layout direction
+ * ([PinEntryComposableDirection.LTR] or [PinEntryComposableDirection.RTL]) should be specified to
+ * avoid having an inverted composable in case the locale of the screen forces the composables to
+ * be drawn in a RTL fashion.
  */
 @Composable
 fun PinEntryComposable(
@@ -59,7 +66,7 @@ fun PinEntryComposable(
     isPassword: Boolean = false,
     onChange: (String) -> Unit,
     onCodeEntered: (String) -> Unit,
-    locale: Locale
+    layoutDirection: Int
 ){
     // Create a focusRequester for each cell to use it to give focus to a cell when needed
     val focusRequesters = List(numberOfCells) { FocusRequester() }
@@ -79,10 +86,18 @@ fun PinEntryComposable(
                 */
                 var nextFocus: FocusRequester?
                 var previousFocus: FocusRequester?
-                if(locale == Locale.ENGLISH){
+                /* In a LTR layout direction, the cells are drawn from left to right, so the "next"
+                   of a cell is the one following it in the focusRequesters list, and the
+                   "previous" of the cell is the one preceding it in the focusRequesters list
+                 */
+                if(layoutDirection == PinEntryComposableDirection.LTR){
                     nextFocus = if(i < numberOfCells - 1) focusRequesters[i + 1] else null
                     previousFocus = if(i > 0) focusRequesters[i - 1] else null
                 } else{
+                    /* In a RTL layout direction, the cells are drawn from right to left, so the "next"
+                     of a cell is the one preceding it in the focusRequesters list, and the
+                    "previous" of the cell is the one following it in the focusRequesters list
+                    */
                     nextFocus = if(i > 0) focusRequesters[i - 1] else null
                     previousFocus = if(i < numberOfCells - 1) focusRequesters[i + 1] else null
                 }
@@ -96,7 +111,7 @@ fun PinEntryComposable(
                     isPassword = isPassword,
                     onChange = onChange,
                     onCodeEntered = onCodeEntered,
-                    locale = locale
+                    layoutDirection = layoutDirection
                 )
                 // Add space between cells
                 if(i != numberOfCells - 1)
@@ -126,6 +141,10 @@ fun PinEntryComposable(
  * characters or be left as plain text
  * @param onChange A function invoked when a new code character is entered
  * @param onCodeEntered A function invoked when all cells are filled with characters
+ * @param layoutDirection The pin entry should always be LTR, the layout direction
+ * ([PinEntryComposableDirection.LTR] or [PinEntryComposableDirection.RTL]) should be specified to
+ * avoid having an inverted composable in case the locale of the screen forces the composables to
+ * be drawn in a RTL fashion.
  */
 
 @Composable
@@ -144,7 +163,7 @@ fun Cell(
     isPassword: Boolean,
     onChange: (String) -> Unit,
     onCodeEntered: (String) -> Unit,
-    locale: Locale
+    layoutDirection: Int
 ) {
     /* "textBeforeChange" is used to determine the change in text. For example if textBeforeChange
        = "5" and the cellsText[id] = "85", we can conclude that the new text entered = 8.
@@ -178,10 +197,10 @@ fun Cell(
                         if(nextFocusRequester != null)
                             nextFocusRequester.requestFocus()
                         else if(cellsText.all{state -> state.value.isNotEmpty()}) {
-                            onCodeEntered(extractCodeString(cellsText, locale))
+                            onCodeEntered(extractCodeString(cellsText, layoutDirection))
                         }
                     }
-                    onChange(extractCodeString(cellsText, locale))
+                    onChange(extractCodeString(cellsText, layoutDirection))
                     textBeforeChange.value = cellsText[id].value
                 },
                 modifier = Modifier
@@ -198,10 +217,10 @@ fun Cell(
                             nextFocusRequester.requestFocus()
                         else if (cellsText.all { state -> state.value.isNotEmpty() }) {
                             focusRequester.freeFocus()
-                            onCodeEntered(extractCodeString(cellsText, locale))
+                            onCodeEntered(extractCodeString(cellsText, layoutDirection))
                         }
                         else{
-                            onChange(extractCodeString(cellsText, locale))
+                            onChange(extractCodeString(cellsText, layoutDirection))
                         }
                     }
                     .border(borderWidth.value, borderColor.value, LineBorder),
@@ -221,12 +240,12 @@ fun Cell(
     }
 }
 
-fun extractCodeString(cellsText: List<MutableState<String>>, locale: Locale): String {
+fun extractCodeString(cellsText: List<MutableState<String>>, layoutDirection: Int): String {
     var codeString = ""
     cellsText.forEach{
         codeString += it.value
     }
-    if(locale != Locale.ENGLISH)
+    if(layoutDirection != PinEntryComposableDirection.LTR)
         codeString = codeString.reversed()
     return codeString
 }
