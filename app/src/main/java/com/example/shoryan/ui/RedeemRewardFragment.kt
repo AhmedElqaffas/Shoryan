@@ -29,6 +29,8 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import com.example.shoryan.AndroidUtility
 import com.example.shoryan.ConnectionLiveData
 import com.example.shoryan.R
@@ -52,6 +54,7 @@ import javax.inject.Inject
 class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
     @Inject
     lateinit var smsViewModel: SMSViewModel
+    private lateinit var navController: NavController
     private val viewModel: RedeemingRewardsViewModel by viewModels {
         RedeemingRewardsViewModelFactory(
             requireActivity().application,
@@ -59,40 +62,32 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
         )
     }
     private lateinit var connectionLiveData: ConnectionLiveData
-    private val reward: Reward by lazy{
+    private val reward: Reward by lazy {
         requireArguments().get("reward") as Reward
     }
     private var chosenBranch: String? = null
+
     // Errors to show to user
     private val fragmentErrors = MutableStateFlow<String?>(null)
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        (requireActivity().application as MyApplication).appComponent.redeemRewardComponent().create().inject(this)
+        (requireActivity().application as MyApplication).appComponent.redeemRewardComponent()
+            .create().inject(this)
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-            connectionLiveData = ConnectionLiveData(requireContext())
+        connectionLiveData = ConnectionLiveData(requireContext())
         return ComposeView(requireContext()).apply {
             setContent {
                 ShoryanTheme {
                     val connectionStatus = connectionLiveData.observeAsState(true).value
-                    val loadingState = viewModel.rewardRedeemingState.collectAsState(RedeemingRewardsViewModel.RedeemingState.LOADING).value
-                    Box(contentAlignment = Alignment.BottomCenter) {
-                        when (loadingState) {
-                            RedeemingRewardsViewModel.RedeemingState.LOADING -> LoadingScreen()
-                            RedeemingRewardsViewModel.RedeemingState.LOADING_FAILED -> LoadingErrorScreen(
-                                R.drawable.ic_refresh,
-                                resources.getString(R.string.click_here_to_try_again),
-                                ::fetchRewardDetails
-                            )
-                            else -> RewardScreen()
-                        }
-                        InternetConnectionBanner(requireContext(), Color.White, connectionStatus)
-                    }
+                    val loadingState =
+                        viewModel.rewardRedeemingState.collectAsState(RedeemingRewardsViewModel.RedeemingState.LOADING).value
+                    Screen(connectionStatus, loadingState)
                 }
             }
         }
@@ -100,8 +95,13 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initializeNavController(view)
         fetchRewardDetails()
         observeCodeVerificationStatus()
+    }
+
+    private fun initializeNavController(view: View) {
+        navController = Navigation.findNavController(view)
     }
 
     private fun fetchRewardDetails() = lifecycleScope.launchWhenResumed {
@@ -109,24 +109,46 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
     }
 
     @Composable
+    fun Screen(
+        connectionStatus: Boolean,
+        loadingState: RedeemingRewardsViewModel.RedeemingState
+    ) {
+        Box(contentAlignment = Alignment.BottomCenter) {
+            when (loadingState) {
+                RedeemingRewardsViewModel.RedeemingState.LOADING -> LoadingScreen()
+                RedeemingRewardsViewModel.RedeemingState.LOADING_FAILED -> LoadingErrorScreen(
+                    R.drawable.ic_refresh,
+                    resources.getString(R.string.click_here_to_try_again),
+                    ::fetchRewardDetails
+                )
+                RedeemingRewardsViewModel.RedeemingState.COMPLETED -> RedeemingCompletedScreen()
+                else -> RewardScreen()
+            }
+            InternetConnectionBanner(requireContext(), Color.White, connectionStatus)
+        }
+    }
+
+    @Composable
     fun RewardScreen() {
         val scrollState = rememberScrollState()
         ConstraintLayout(
-            Modifier.fillMaxSize().background(Color.White)
+            Modifier
+                .fillMaxSize()
+                .background(Color.White)
         ) {
             Column(
                 Modifier
                     .verticalScroll(scrollState)
                     .padding(0.dp, 0.dp, 0.dp, 10.dp)
                     .fillMaxSize()
-            ){
+            ) {
                 val isBeingRedeemed: Boolean by viewModel.isBeingRedeemed.collectAsState(false)
                 ConstraintLayout(Modifier.fillMaxSize()) {
                     val parentLayout = this
-                    val ( appBar, points, cover, logo, description, branches, button) = createRefs()
+                    val (appBar, points, cover, logo, description, branches, button) = createRefs()
                     CoverImage(parentLayout, cover)
                     AppBar(parentLayout, appBar)
-                    if(!isBeingRedeemed) UserPoints(parentLayout, points, cover)
+                    if (!isBeingRedeemed) UserPoints(parentLayout, points, cover)
                     Logo(parentLayout, logo, cover, reward.imageLink)
                     OfferDescription(parentLayout, description, logo)
                     Branches(parentLayout, branches, logo, isBeingRedeemed)
@@ -139,12 +161,12 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
     }
 
     @Composable
-    fun ErrorsComposable(){
+    fun ErrorsComposable() {
         Row(
-            verticalAlignment  = Alignment.Bottom,
+            verticalAlignment = Alignment.Bottom,
             modifier = Modifier
                 .height(70.dp),
-        ){
+        ) {
             val messageToUser: ServerError? by viewModel.messagesToUser.collectAsState(null)
             val fragmentErrorMessages: String? by fragmentErrors.collectAsState(null)
             messageToUser?.let {
@@ -152,8 +174,8 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
                     OKSnackbarButton()
                 }
             }
-            fragmentErrorMessages?.let{
-                ShowSnackbar(it){OKSnackbarButton()}
+            fragmentErrorMessages?.let {
+                ShowSnackbar(it) { OKSnackbarButton() }
             }
         }
     }
@@ -251,25 +273,25 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
         }
     }
 
-        @Composable
-        fun OfferDescription(
-            parentLayout: ConstraintLayoutScope,
-            descriptionReference: ConstrainedLayoutReference,
-            logoReference: ConstrainedLayoutReference
-        ) {
-            parentLayout.apply{
-                Text(
-                    text = reward.description,
-                    textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.subtitle2,
-                    color = Color.Black,
-                    modifier = Modifier.constrainAs(descriptionReference){
-                        centerVerticallyTo(logoReference)
-                        start.linkTo(logoReference.end, margin = 15.dp)
-                    }
-                )
-            }
+    @Composable
+    fun OfferDescription(
+        parentLayout: ConstraintLayoutScope,
+        descriptionReference: ConstrainedLayoutReference,
+        logoReference: ConstrainedLayoutReference
+    ) {
+        parentLayout.apply {
+            Text(
+                text = reward.description,
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.subtitle2,
+                color = Color.Black,
+                modifier = Modifier.constrainAs(descriptionReference) {
+                    centerVerticallyTo(logoReference)
+                    start.linkTo(logoReference.end, margin = 15.dp)
+                }
+            )
         }
+    }
 
     @Composable
     fun Branches(
@@ -277,9 +299,9 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
         branchesReference: ConstrainedLayoutReference,
         logoReference: ConstrainedLayoutReference,
         isBeingRedeemed: Boolean
-    ){
+    ) {
 
-        parentLayout.apply{
+        parentLayout.apply {
             Column(
                 modifier = Modifier
                     .constrainAs(branchesReference) {
@@ -288,7 +310,7 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
                         top.linkTo(logoReference.bottom, 40.dp)
                     }
                     .fillMaxWidth()
-            ){
+            ) {
                 Text(
                     text = resources.getString(R.string.branches),
                     style = MaterialTheme.typography.subtitle1,
@@ -303,8 +325,8 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
                     chosenBranch = it
                 }
 
-                Box{
-                    Column{
+                Box {
+                    Column {
                         OutlinedTextField(
                             value = chosenBranch ?: "---",
                             onValueChange = { chosenBranch = it },
@@ -342,12 +364,11 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
         branches: ConstrainedLayoutReference,
         button: ConstrainedLayoutReference,
         isBeingRedeemed: Boolean
-    ){
-        if(isBeingRedeemed){
+    ) {
+        if (isBeingRedeemed) {
             CodeEntryUI(parentLayout, button, branches)
-        }
-        else{
-            if(canUserRedeemReward())
+        } else {
+            if (canUserRedeemReward())
                 RedeemButton(parentLayout, button, branches)
             else
                 InsufficientPointsButton(parentLayout, button, branches)
@@ -355,9 +376,13 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
     }
 
     @Composable
-    fun CodeEntryUI(parentLayout: ConstraintLayoutScope, button: ConstrainedLayoutReference, branchesReference: ConstrainedLayoutReference) {
+    fun CodeEntryUI(
+        parentLayout: ConstraintLayoutScope,
+        button: ConstrainedLayoutReference,
+        branchesReference: ConstrainedLayoutReference
+    ) {
         val canResendSMS = viewModel.canResendSMS
-        val remainingTime =  viewModel.remainingTimeString
+        val remainingTime = viewModel.remainingTimeString
         parentLayout.apply {
             CodeEntryUI(
                 numberOfCells = 6,
@@ -370,10 +395,13 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
                 canResendSMS = canResendSMS,
                 remainingTime = remainingTime,
                 locale = requireContext().resources.configuration.locale,
-                modifier = Modifier.constrainAs(button){
-                    top.linkTo(branchesReference.bottom, 20.dp)
-                    centerHorizontallyTo(parent)
-                }.fillMaxSize()
+                modifier = Modifier
+                    .constrainAs(button) {
+                        top.linkTo(branchesReference.bottom, 20.dp)
+                        centerHorizontallyTo(parent)
+                    }
+                    .fillMaxSize()
+                    .padding(20.dp, 0.dp)
             )
         }
     }
@@ -419,8 +447,8 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
         enabled: Boolean,
         text: String,
         onClick: () -> Unit
-    ){
-        parentLayout.apply{
+    ) {
+        parentLayout.apply {
             Button(
                 onClick = onClick,
                 enabled = enabled,
@@ -432,7 +460,7 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
                         top.linkTo(branchesReference.bottom, 20.dp)
                         centerHorizontallyTo(parent)
                     }
-            ){
+            ) {
                 Text(
                     text = text,
                     style = MaterialTheme.typography.subtitle1,
@@ -443,11 +471,10 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
     }
 
 
-
-    private fun onRedeemButtonClicked(){
-        if(chosenBranch != null)
+    private fun onRedeemButtonClicked() {
+        if (chosenBranch != null)
             showAlertDialog(reward.id)
-        else{
+        else {
             fragmentErrors.value = resources.getString(R.string.no_branch_chosen)
         }
     }
@@ -459,39 +486,75 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
     }
 
     @Composable
-    fun ShowSnackbar(message: String, button: @Composable () -> Unit){
+    fun ShowSnackbar(message: String, button: @Composable () -> Unit) {
         Snackbar(
-          action = button,
+            action = button,
         ) {
             Text(message)
         }
     }
 
     @Composable
-    fun TryAgainSnackbarButton(){
-        Button(
-            onClick = {
-                redeemReward(reward.id)
-                viewModel.clearReceivedMessage()
-            }
-        ){
-            Text(resources.getString(R.string.try_again))
-        }
-    }
-
-    @Composable
-    fun OKSnackbarButton(){
+    fun OKSnackbarButton() {
         Button(
             onClick = {
                 fragmentErrors.value = null
                 viewModel.clearReceivedMessage()
             }
-        ){
+        ) {
             Text(resources.getString(R.string.ok))
         }
     }
 
+
+    @Composable
+    fun RedeemingCompletedScreen(){
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            val screenHeight = remember {
+                AndroidUtility.getScreenHeight(requireContext())
+            }
+            AppBar(title = reward.rewardName, modifier = Modifier.fillMaxWidth())
+            Image(
+                painterResource(R.drawable.ic_reward_check),
+                contentDescription = "Check Mark",
+                modifier = Modifier
+                    .padding(0.dp, screenHeight * 0.15f, 0.dp, 0.dp)
+                    .requiredHeight(screenHeight * 0.2f),
+                contentScale = ContentScale.FillHeight
+            )
+            Text(
+                text = resources.getString(R.string.success),
+                modifier = Modifier.padding(0.dp, ShoryanTheme.dimens.grid_4, 0.dp, 0.dp),
+                style = MaterialTheme.typography.h4, color = MaterialTheme.colors.secondaryVariant
+            )
+            Text(
+                text = resources.getString(R.string.offer_redeemed),
+                modifier = Modifier.padding(0.dp, ShoryanTheme.dimens.grid_5, 0.dp, 0.dp),
+                style = MaterialTheme.typography.h5, color = MaterialTheme.colors.secondaryVariant
+            )
+
+            Button(
+                onClick = { navController.popBackStack() },
+                contentPadding = PaddingValues(20.dp),
+                shape = RoundedCornerShape(29.dp),
+                modifier = Modifier
+                    .width(210.dp)
+                    .padding(0.dp, ShoryanTheme.dimens.grid_5, 0.dp, 0.dp)
+            ) {
+                Text(
+                    text = resources.getString(R.string.close),
+                    style = MaterialTheme.typography.subtitle1,
+                    color = Color.White
+                )
+            }
+        }
+    }
+
     private fun canUserRedeemReward() = viewModel.userPoints >= reward.points
+
 
     private fun showAlertDialog(id: String) {
         val builder = android.app.AlertDialog.Builder(requireContext())
@@ -499,41 +562,42 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
             setTitle(resources.getString(R.string.redeeming_confirmation_title))
             setMessage(resources.getString(R.string.redeeming_confirmation_body))
             setPositiveButton(resources.getString(R.string.confirm)) { _, _ -> redeemReward(id) }
-            setNegativeButton(resources.getString(R.string.no),null)
+            setNegativeButton(resources.getString(R.string.no), null)
             show()
         }
     }
 
-    private fun verifyCode(code: String){
+    private fun verifyCode(code: String) {
         //Toast.makeText(requireContext(), code, Toast.LENGTH_LONG).show()
         viewModel.verifyCode(code)
     }
 
-    private fun sendSMS(){
+    private fun sendSMS() {
         viewModel.trySendSMS(reward.id)
     }
 
-    private fun observeCodeVerificationStatus(){
+    private fun observeCodeVerificationStatus() {
         viewLifecycleOwner.lifecycleScope.launchWhenResumed {
-            viewModel.isVerifyingCode.collect{
-                if(it){
+            viewModel.isVerifyingCode.collect {
+                if (it) {
                     showProcessingIndicator()
-                }
-                else{
+                } else {
                     hideProcessingIndicator()
                 }
             }
         }
     }
 
-    private fun showProcessingIndicator(){
-        val loadingFragment: DialogFragment? = childFragmentManager.findFragmentByTag("loading") as DialogFragment?
-        if(loadingFragment == null)
+    private fun showProcessingIndicator() {
+        val loadingFragment: DialogFragment? =
+            childFragmentManager.findFragmentByTag("loading") as DialogFragment?
+        if (loadingFragment == null)
             LoadingFragment(this).show(childFragmentManager, "loading")
     }
 
-    private fun hideProcessingIndicator(){
-        val loadingFragment: DialogFragment? = childFragmentManager.findFragmentByTag("loading") as DialogFragment?
+    private fun hideProcessingIndicator() {
+        val loadingFragment: DialogFragment? =
+            childFragmentManager.findFragmentByTag("loading") as DialogFragment?
         loadingFragment?.dismiss()
     }
 

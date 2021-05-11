@@ -49,7 +49,7 @@ fun CodeEntryUI(
     ) {
             PinEntryComposable(
                 numberOfCells,
-                modifier,
+                Modifier,
                 cellsMarginPercentage,
                 cellColor,
                 activeBorderColor,

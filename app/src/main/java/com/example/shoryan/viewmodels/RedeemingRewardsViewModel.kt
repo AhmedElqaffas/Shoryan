@@ -18,7 +18,7 @@ class RedeemingRewardsViewModel(private val applicationContext: Application) :
     AndroidViewModel(applicationContext) {
 
     enum class RedeemingState {
-        LOADING, NOT_REDEEMING, STARTED, LOADING_FAILED, REDEEMING_FAILED
+        LOADING, NOT_REDEEMING, STARTED, LOADING_FAILED, REDEEMING_FAILED, COMPLETED
     }
 
     private lateinit var bloodDonationAPI: RetrofitBloodDonationInterface
@@ -226,9 +226,9 @@ class RedeemingRewardsViewModel(private val applicationContext: Application) :
 
     private suspend fun sendCodeToServer(code: String){
         delay(2000)
-        val response = RedeemingCodeVerificationResponse(false, ErrorResponse(ServerError.CONNECTION_ERROR, 200))
+        val response = RedeemingCodeVerificationResponse(true,null)
         _messagesToUser.emit(response.error?.message)
-        if(response.isSuccessful) _rewardRedeemingState.value = RedeemingState.NOT_REDEEMING
+        if(response.isSuccessful) _rewardRedeemingState.value = RedeemingState.COMPLETED
     }
 
     /**
