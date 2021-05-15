@@ -7,10 +7,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import dagger.hilt.migration.DisableInstallInCheck
 import javax.inject.Singleton
 
-@DisableInstallInCheck // Keep it while dagger is still used, remove it when migration is complete
 @Module
 @InstallIn(SingletonComponent::class)
 object RedeemingRepoModule {
