@@ -1,26 +1,27 @@
 package com.example.shoryan.viewmodels
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import android.content.Context
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.shoryan.data.*
-import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.repos.RewardsRepo
+import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class RedeemingRewardsViewModel(private val applicationContext: Application) :
-    AndroidViewModel(applicationContext) {
+@HiltViewModel
+class RedeemingRewardsViewModel @Inject constructor(
+    @ApplicationContext private val applicationContext: Context,
+    private val repository: RewardsRepo
+    ) : ViewModel() {
 
     enum class RedeemingState {
         LOADING, NOT_REDEEMING, STARTED, LOADING_FAILED, REDEEMING_FAILED, COMPLETED
     }
-
-    private lateinit var bloodDonationAPI: RetrofitBloodDonationInterface
 
     // replay = 1 to be able to store the cached rewards list and send it to the composable
     private val _rewardsList = MutableSharedFlow<List<Reward>?>(1)
@@ -46,17 +47,17 @@ class RedeemingRewardsViewModel(private val applicationContext: Application) :
         emit(it == RedeemingState.STARTED)
     }
 
-    constructor(
+    /*constructor(
         application: Application,
         bloodDonationAPI: RetrofitBloodDonationInterface
     ) : this(application) {
         this.bloodDonationAPI = bloodDonationAPI
-    }
+    }*/
 
     fun fetchRewardsList() {
         rewardsListJob?.cancel()
         rewardsListJob = viewModelScope.launch {
-            val response = RewardsRepo.getRewardsList()
+            val response = repository.getRewardsList()
             _rewardsList.emit(response.rewards)
             response.error?.message.let {
                 // UNAUTHORIZED and JWT_EXPIRED errors should be handled explicitly. As for other errors:
@@ -72,7 +73,7 @@ class RedeemingRewardsViewModel(private val applicationContext: Application) :
 
     suspend fun getRewardDetails(reward: Reward){
         _rewardRedeemingState.value = RedeemingState.LOADING
-        val response = RewardsRepo.getRewardDetails(reward.id)
+        val response = repository.getRewardDetails(reward.id)
         val detailedReward: Reward? = handleRewardDetailsResponse(response)
         _detailedReward.value = detailedReward ?: reward
     }
@@ -159,11 +160,11 @@ class RedeemingRewardsViewModel(private val applicationContext: Application) :
     }
 }
 
-class RedeemingRewardsViewModelFactory(
+/*class RedeemingRewardsViewModelFactory(
     private val application: Application,
     private val bloodDonationAPI: RetrofitBloodDonationInterface
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return RedeemingRewardsViewModel(application, bloodDonationAPI) as T
     }
-}
+}*/

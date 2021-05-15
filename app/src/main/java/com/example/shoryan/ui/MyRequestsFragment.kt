@@ -1,11 +1,11 @@
 package com.example.shoryan.ui
 
-import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -14,14 +14,14 @@ import com.example.shoryan.data.DonationRequest
 import com.example.shoryan.data.ServerError
 import com.example.shoryan.databinding.AppbarBinding
 import com.example.shoryan.databinding.FragmentMyRequestsBinding
-import com.example.shoryan.di.MyApplication
-import com.example.shoryan.ui.recyclersAdapters.RequestsRecyclerAdapter
 import com.example.shoryan.interfaces.RequestsRecyclerInteraction
+import com.example.shoryan.ui.recyclersAdapters.RequestsRecyclerAdapter
 import com.example.shoryan.viewmodels.MyRequestsViewModel
 import com.example.shoryan.viewmodels.TokensViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
+@AndroidEntryPoint
 class MyRequestsFragment : Fragment(), RequestsRecyclerInteraction {
 
     private lateinit var navController: NavController
@@ -30,15 +30,14 @@ class MyRequestsFragment : Fragment(), RequestsRecyclerInteraction {
     private var _binding: FragmentMyRequestsBinding? = null
     private val binding get() = _binding!!
     private var toolbarBinding: AppbarBinding? = null
-    @Inject
-    lateinit var tokensViewModel: TokensViewModel
-    @Inject
-    lateinit var viewModel: MyRequestsViewModel
 
-    override fun onAttach(context: Context) {
+    val tokensViewModel: TokensViewModel by viewModels()
+    val viewModel: MyRequestsViewModel by viewModels()
+
+   /* override fun onAttach(context: Context) {
         super.onAttach(context)
         (requireActivity().application as MyApplication).appComponent.myRequestsComponent().create().inject(this)
-    }
+    }*/
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentMyRequestsBinding.inflate(inflater, container, false)

@@ -1,6 +1,5 @@
 package com.example.shoryan.ui
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -22,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -31,7 +31,6 @@ import com.example.shoryan.AndroidUtility.Companion.getScreenWidth
 import com.example.shoryan.R
 import com.example.shoryan.data.RegistrationQuery
 import com.example.shoryan.data.Tokens
-import com.example.shoryan.di.MyApplication
 import com.example.shoryan.interfaces.LoadingFragmentHolder
 import com.example.shoryan.ui.composables.PinEntryComposable
 import com.example.shoryan.ui.composables.PinEntryComposableDirection
@@ -40,16 +39,16 @@ import com.example.shoryan.viewmodels.SMSViewModel
 import com.example.shoryan.viewmodels.SMSViewModel.OperationType.LOGIN
 import com.example.shoryan.viewmodels.SMSViewModel.OperationType.REGISTRATION
 import com.example.shoryan.viewmodels.TokensViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.*
-import javax.inject.Inject
 
+@AndroidEntryPoint
 class SMSFragment : Fragment(), LoadingFragmentHolder {
 
     val viewModel: SMSViewModel by navGraphViewModels(R.id.landing_nav_graph)
-    @Inject
-    lateinit var tokensViewModel: TokensViewModel
+    val tokensViewModel: TokensViewModel by viewModels()
     private lateinit var navController: NavController
     private val phoneNumber: String by lazy{
         requireArguments().get("phoneNumber") as String
@@ -61,10 +60,6 @@ class SMSFragment : Fragment(), LoadingFragmentHolder {
     // Represents the code entered in the PinEntryComposable
     private var enteredCode: String = ""
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        (requireActivity().application as MyApplication).appComponent.smsComponent().create().inject(this)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

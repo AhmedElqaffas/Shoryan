@@ -1,7 +1,9 @@
 package com.example.shoryan.di
 
 import dagger.Module
+import dagger.hilt.migration.DisableInstallInCheck
 
+@DisableInstallInCheck
 @Module(subcomponents = [
     SplashScreenComponent::class,
     LoginComponent::class,

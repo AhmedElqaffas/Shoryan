@@ -7,14 +7,13 @@ import com.example.shoryan.data.CurrentSession
 import com.example.shoryan.data.DonationDetailsResponse
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.repos.RequestFulfillmentRepo
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-import javax.inject.Named
 
-
-class RequestFulfillmentViewModel @Inject constructor(
+class RequestFulfillmentViewModel @AssistedInject constructor(
         bloodDonationAPI: RetrofitBloodDonationInterface,
-        @Named("requestId") requestId: String
+        @Assisted requestId: String
 ): RequestDetailsViewModel(bloodDonationAPI, requestId) {
 
     // Instead of changing the CurrentSession repo to have a liveData, I created this liveData member
@@ -139,6 +138,22 @@ class RequestFulfillmentViewModel @Inject constructor(
     fun callPatient(phoneNumber: String){
         viewModelScope.launch {
             _eventsFlow.emit(RequestDetailsViewEvent.CallPatient(phoneNumber))
+        }
+    }
+
+    @dagger.assisted.AssistedFactory
+    interface AssistedFactory {
+        fun create(requestId: String): RequestFulfillmentViewModel
+    }
+
+    companion object {
+        fun provideFactory(
+            assistedFactory: AssistedFactory,
+            requestId: String
+        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                return assistedFactory.create(requestId) as T
+            }
         }
     }
 }

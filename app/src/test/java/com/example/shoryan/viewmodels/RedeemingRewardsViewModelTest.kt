@@ -2,19 +2,10 @@ package com.example.shoryan.viewmodels
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
-import android.util.Log
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.work.Configuration
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.testing.SynchronousExecutor
-import androidx.work.testing.WorkManagerTestInitHelper
-import androidx.work.workDataOf
 import com.example.shoryan.AndroidUtility
-import com.example.shoryan.RedeemingWorker
 import com.example.shoryan.data.CurrentSession
-import com.example.shoryan.di.MyApplication
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Assert.assertEquals
@@ -32,16 +23,7 @@ class RedeemingRewardsViewModelTest{
     @Before
     fun setUp() {
         viewmodel = RedeemingRewardsViewModel(getApplicationContext())
-        context = getApplicationContext<MyApplication>()
-
-        // Setup WorkManager
-        val config: Configuration = Configuration.Builder()
-            .setMinimumLoggingLevel(Log.DEBUG)
-            .setExecutor(SynchronousExecutor())
-            .build()
-        WorkManagerTestInitHelper.initializeTestWorkManager(
-            context, config
-        )
+       // context = getApplicationContext<MyApplication>()
     }
 
     @Test

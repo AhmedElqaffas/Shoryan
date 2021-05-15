@@ -1,6 +1,5 @@
 package com.example.shoryan.ui
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -16,33 +15,26 @@ import com.example.shoryan.LocaleHelper
 import com.example.shoryan.R
 import com.example.shoryan.data.ServerError
 import com.example.shoryan.databinding.FragmentSplashScreenBinding
-import com.example.shoryan.di.MyApplication
 import com.example.shoryan.interfaces.LocaleChangerHolder
 import com.example.shoryan.repos.TokensRefresher
 import com.example.shoryan.viewmodels.ProfileViewModel
 import com.example.shoryan.viewmodels.SplashScreenViewModel
 import com.example.shoryan.viewmodels.TokensViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_splash_screen.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
+@AndroidEntryPoint
 class SplashScreenFragment : Fragment(), LocaleChangerHolder {
 
-    @Inject
-    lateinit var tokensViewModel: TokensViewModel
-    @Inject
-    lateinit var profileViewModel: ProfileViewModel
+    val tokensViewModel: TokensViewModel by viewModels()
+    val profileViewModel: ProfileViewModel by viewModels()
     private val splashScreenViewModel: SplashScreenViewModel by viewModels()
     private lateinit var navController: NavController
 
     private var _binding: FragmentSplashScreenBinding? = null
     private val binding get() = _binding!!
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        (requireActivity().application as MyApplication).appComponent.splashScreenComponent().create().inject(this)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSplashScreenBinding.inflate(inflater, container, false)

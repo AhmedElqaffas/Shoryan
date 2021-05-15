@@ -1,12 +1,17 @@
 package com.example.shoryan.viewmodels
 
-import androidx.lifecycle.*
-import com.example.shoryan.R
-import com.example.shoryan.data.*
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.liveData
+import com.example.shoryan.data.ErrorResponse
+import com.example.shoryan.data.LoginQuery
+import com.example.shoryan.data.LoginResponse
+import com.example.shoryan.data.ServerError
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 
+@HiltViewModel
 class LoginViewModel @Inject constructor (private val bloodDonationAPI: RetrofitBloodDonationInterface) : ViewModel() {
 
      fun logUser(phoneNumber: String, password: String) = liveData(Dispatchers.IO){

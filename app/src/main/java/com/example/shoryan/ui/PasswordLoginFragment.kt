@@ -1,14 +1,14 @@
 package com.example.shoryan.ui
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -20,20 +20,19 @@ import com.example.shoryan.data.LoginResponse
 import com.example.shoryan.data.ServerError
 import com.example.shoryan.databinding.FragmentLoginPasswordBinding
 import com.example.shoryan.databinding.LoginBannerBinding
-import com.example.shoryan.di.MyApplication
 import com.example.shoryan.interfaces.LoadingFragmentHolder
 import com.example.shoryan.repos.TokensRefresher
 import com.example.shoryan.viewmodels.LoginViewModel
 import com.google.android.material.snackbar.Snackbar
-import javax.inject.Inject
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class PasswordLoginFragment : Fragment(), LoadingFragmentHolder {
 
     private lateinit var navController: NavController
     private lateinit var phoneNumber: String
 
-    @Inject
-    lateinit var loginViewModel: LoginViewModel
+    val loginViewModel: LoginViewModel by viewModels()
 
     private lateinit var loginProcess: LiveData<LoginResponse>
     private lateinit var loginObserver: Observer<LoginResponse>
@@ -41,11 +40,6 @@ class PasswordLoginFragment : Fragment(), LoadingFragmentHolder {
     private var _binding: FragmentLoginPasswordBinding? = null
     private val binding get() = _binding!!
     private var loginBannerBinding: LoginBannerBinding? = null
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        (requireActivity().application as MyApplication).appComponent.loginComponent().create().inject(this)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentLoginPasswordBinding.inflate(inflater, container, false)

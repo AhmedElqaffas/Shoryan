@@ -36,28 +36,22 @@ import com.example.shoryan.R
 import com.example.shoryan.data.Reward
 import com.example.shoryan.data.ServerError
 import com.example.shoryan.interfaces.LoadingFragmentHolder
-import com.example.shoryan.networking.RetrofitBloodDonationInterface
-import com.example.shoryan.networking.RetrofitClient
 import com.example.shoryan.ui.composables.*
 import com.example.shoryan.ui.theme.Gray
 import com.example.shoryan.ui.theme.ShoryanTheme
 import com.example.shoryan.viewmodels.RedeemingRewardsViewModel
-import com.example.shoryan.viewmodels.RedeemingRewardsViewModelFactory
 import com.example.shoryan.viewmodels.SMSViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.accompanist.coil.CoilImage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import java.util.*
 
+@AndroidEntryPoint
 class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
     private val smsViewModel: SMSViewModel by viewModels()
     private lateinit var navController: NavController
-    private val viewModel: RedeemingRewardsViewModel by viewModels {
-        RedeemingRewardsViewModelFactory(
-            requireActivity().application,
-            RetrofitClient.getRetrofitClient().create(RetrofitBloodDonationInterface::class.java)
-        )
-    }
+    private val viewModel: RedeemingRewardsViewModel by viewModels()
     private lateinit var connectionLiveData: ConnectionLiveData
     private val reward: Reward by lazy {
         requireArguments().get("reward") as Reward

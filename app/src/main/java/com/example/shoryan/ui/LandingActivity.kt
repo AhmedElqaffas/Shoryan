@@ -5,8 +5,10 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.shoryan.LocaleHelper
 import com.example.shoryan.R
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
+@AndroidEntryPoint
 class LandingActivity : AppCompatActivity(){
 
     override fun attachBaseContext(newBase: Context?) {

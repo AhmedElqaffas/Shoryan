@@ -1,15 +1,15 @@
 package com.example.shoryan.viewmodels
 
 import androidx.lifecycle.*
-import com.example.shoryan.data.CurrentSession
 import com.example.shoryan.data.ProfileResponse
 import com.example.shoryan.data.User
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.repos.ProfileRepo
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import javax.inject.Inject
 
-
+@HiltViewModel
 class ProfileViewModel @Inject constructor(private val bloodDonationAPI: RetrofitBloodDonationInterface): ViewModel() {
 
     // Indicates whether the SwipeRefreshLayout should have the spinning animation or not
