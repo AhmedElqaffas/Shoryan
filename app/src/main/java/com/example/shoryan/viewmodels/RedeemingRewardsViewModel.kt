@@ -28,7 +28,8 @@ class RedeemingRewardsViewModel @Inject constructor(
     val rewardsList = _rewardsList.asSharedFlow()
 
     // Flow of messages to be displayed to the user in the composables
-    private val _messagesToUser = MutableSharedFlow<ServerError?>()
+    //  replay = 1 for testing, to be able to check the last emitted value
+    private val _messagesToUser = MutableSharedFlow<ServerError?>(1)
     val messagesToUser = _messagesToUser.asSharedFlow()
 
     private var rewardsListJob: Job? = null
@@ -47,14 +48,7 @@ class RedeemingRewardsViewModel @Inject constructor(
         emit(it == RedeemingState.STARTED)
     }
 
-    /*constructor(
-        application: Application,
-        bloodDonationAPI: RetrofitBloodDonationInterface
-    ) : this(application) {
-        this.bloodDonationAPI = bloodDonationAPI
-    }*/
-
-    fun fetchRewardsList() {
+    fun fetchRewardsList(){
         rewardsListJob?.cancel()
         rewardsListJob = viewModelScope.launch {
             val response = repository.getRewardsList()
@@ -100,13 +94,13 @@ class RedeemingRewardsViewModel @Inject constructor(
      * @param rewardId ID of the reward being redeemed
      */
     suspend fun tryRedeemReward(rewardId: String){
-            _rewardRedeemingState.emit(RedeemingState.NOT_REDEEMING)
-            if (sendRedeemingRequestToServer(rewardId)) {
-                _rewardRedeemingState.emit(RedeemingState.STARTED)
-            } else {
-                _rewardRedeemingState.emit(RedeemingState.REDEEMING_FAILED)
-            }
+        _rewardRedeemingState.emit(RedeemingState.NOT_REDEEMING)
+        if (sendRedeemingRequestToServer(rewardId)) {
+            _rewardRedeemingState.emit(RedeemingState.STARTED)
+        } else {
+            _rewardRedeemingState.emit(RedeemingState.REDEEMING_FAILED)
         }
+    }
 
     /**
      * This method is called from [tryRedeemReward] to do the actual sending of the redeeming

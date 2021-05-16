@@ -182,7 +182,7 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
     ) {
         parentLayout.apply {
             AppBar(
-                reward.rewardName,
+                reward.rewardName!!,
                 Modifier
                     .fillMaxWidth()
                     .constrainAs(appBar) {
@@ -276,7 +276,7 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
     ) {
         parentLayout.apply {
             Text(
-                text = reward.description,
+                text = reward.description!!,
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.subtitle2,
                 color = Color.Black,
@@ -331,7 +331,7 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
                         )
                         DropDownComposable(
                             isOpen.value,
-                            reward.branches,
+                            reward.branches!!,
                             openCloseOfDropDownList,
                             selectedString
                         )
@@ -518,7 +518,7 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
             val screenHeight = remember {
                 AndroidUtility.getScreenHeight(requireContext())
             }
-            AppBar(title = reward.rewardName, modifier = Modifier.fillMaxWidth())
+            AppBar(title = reward.rewardName!!, modifier = Modifier.fillMaxWidth())
             Image(
                 painterResource(R.drawable.ic_reward_check),
                 contentDescription = "Check Mark",

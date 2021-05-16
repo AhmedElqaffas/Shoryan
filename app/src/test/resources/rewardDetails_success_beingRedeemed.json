@@ -1,0 +1,15 @@
+{
+  "reward": {
+    "id": "dummy id",
+    "rewardName": "name",
+    "points": 0,
+    "imageLink": "https://homepages.cae.wisc.edu/~ece533/images/zelda.png",
+    "description": "desc",
+    "branches": [
+      "branch 1",
+      "branch 2",
+      "branch 3"
+    ],
+    "isBeingRedeemed": true
+  }
+}

@@ -1,7 +1,6 @@
 package com.example.shoryan.networking
 
 import com.example.shoryan.data.*
-import com.google.gson.annotations.SerializedName
 import retrofit2.http.*
 
 interface RetrofitBloodDonationInterface {
@@ -65,4 +64,14 @@ interface RetrofitBloodDonationInterface {
 
     @POST("users/signup-verification")
     suspend fun verifyRegistrationCode(@Body verificationCodeQuery: VerificationCodeQuery): TokenResponse
+
+    @POST("rewards")
+    suspend fun getRewardsList(@Header("Authorization") accessToken: String): RewardsListResponse
+
+    @POST("rewards")
+    suspend fun getRewardDetails(@Header("Authorization") accessToken: String, @Body rewardId: String): RewardResponse
+
+    @POST("rewards")
+    suspend fun redeemReward(@Header("Authorization") accessToken: String, rewardId: String): RedeemingRewardResponse
+
 }

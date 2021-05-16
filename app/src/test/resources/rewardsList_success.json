@@ -1,0 +1,18 @@
+{
+  "rewards": [
+    {
+      "id": "fafadfad",
+      "points": 100,
+      "imageLink": "https://homepages.cae.wisc.edu/~ece533/images/zelda.png"
+    },
+    {
+      "id": "fetqhwthsdgdfb",
+      "points": 50,
+      "imageLink": "https://homepages.cae.wisc.edu/~ece533/images/zelda.png"},
+    {
+      "id": "bdhutk6rz",
+      "points": 750,
+      "imageLink": "https://homepages.cae.wisc.edu/~ece533/images/zelda.png"
+    }
+  ]
+}
