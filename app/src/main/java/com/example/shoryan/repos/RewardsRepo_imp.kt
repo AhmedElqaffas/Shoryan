@@ -1,8 +1,6 @@
 package com.example.shoryan.repos
 
-import com.example.shoryan.data.Reward
-import com.example.shoryan.data.RewardResponse
-import com.example.shoryan.data.RewardsListResponse
+import com.example.shoryan.data.*
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import kotlinx.coroutines.delay
 
@@ -50,5 +48,13 @@ class RewardsRepo_imp(
         )
         //return RewardResponse(ErrorResponse(ServerError.CONNECTION_ERROR, null), null)
         return RewardResponse(null, Reward("asfa000asfaf","اسم الهدية", 0, "https://homepages.cae.wisc.edu/~ece533/images/zelda.png","انا شرح الهدية",branchesList,true ))
+    }
+
+    override suspend fun startRewardRedeeming(rewardId: String): RedeemingRewardResponse {
+        return try{
+            RedeemingRewardResponse(true,null)
+        }catch (e: Exception){
+            RedeemingRewardResponse(false, ErrorResponse(ServerError.CONNECTION_ERROR, 200))
+        }
     }
 }

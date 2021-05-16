@@ -72,6 +72,6 @@ interface RetrofitBloodDonationInterface {
     suspend fun getRewardDetails(@Header("Authorization") accessToken: String, @Body rewardId: String): RewardResponse
 
     @POST("rewards")
-    suspend fun redeemReward(@Header("Authorization") accessToken: String, rewardId: String): RedeemingRewardResponse
+    suspend fun startRewardRedeeming(@Header("Authorization") accessToken: String, @Body rewardId: String): RedeemingRewardResponse
 
 }

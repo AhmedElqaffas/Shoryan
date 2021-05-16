@@ -1,4 +1,4 @@
-package com.example.shoryan.viewmodels
+package com.example.shoryan.viewmodels.rewards
 
 import android.content.Context
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
@@ -7,7 +7,7 @@ import com.example.shoryan.CoroutinesTestRule
 import com.example.shoryan.MockResponseFileReader
 import com.example.shoryan.data.CurrentSession
 import com.example.shoryan.data.Reward
-import com.example.shoryan.viewmodels.rewards.RewardsRepo_test
+import com.example.shoryan.viewmodels.RedeemingRewardsViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
@@ -38,7 +38,7 @@ class RedeemingRewardsViewModelTest{
     private lateinit var viewmodel: RedeemingRewardsViewModel
     private lateinit var context: Context
 
-    val fakeRedeemingRewardObject = Reward(
+    private val fakeRedeemingRewardObject = Reward(
         "dummy id",
         "name",
         0,
@@ -48,7 +48,7 @@ class RedeemingRewardsViewModelTest{
         true
     )
 
-    val fakeNotRedeemingRewardObject = fakeRedeemingRewardObject.copy(
+    private val fakeNotRedeemingRewardObject = fakeRedeemingRewardObject.copy(
         isBeingRedeemed = false
     )
 
@@ -108,7 +108,7 @@ class RedeemingRewardsViewModelTest{
 
         // Assert
         // Check that the rewardsList is null and messagesToUser contains a message
-        delay(200) // To make sure that fetchRewardsList() has finished
+        delay(300) // To make sure that fetchRewardsList() has finished
         assertEquals("Rewards List should be empty", null, viewmodel.rewardsList.replayCache[0]?.size)
         // The "CONNECTION_ERROR" is used since it is the one specified in the fake json file
         assertEquals("Response should have error", "CONNECTION_ERROR", viewmodel.messagesToUser.replayCache[0]?.name)
@@ -203,51 +203,59 @@ class RedeemingRewardsViewModelTest{
         )
     }
 
+   @Test
+    fun `startRedeemingReward WHEN successfully started THEN set RedeemingState = 'Started'`() = runBlocking{
+        server.apply {
+            enqueue(MockResponse().setBody(MockResponseFileReader("startRewardRedeeming_success.json").content))
+        }
 
-        /**
-     * Testing that RedeemingState becomes STARTED when redeeming begins
-    */
-   /*@Test
-    fun redeemRewardStateTest() = runBlockingTest{
+        // Act
+        // Perform fake api call
         viewmodel.tryRedeemReward("test")
-            .invokeOnCompletion {
-            assertEquals(
-                RedeemingRewardsViewModel.RedeemingState.STARTED,
-                viewmodel.rewardRedeemingState.value
-            )
-        }
-    }*/
 
-    /**
-     * Testing that isBeingRedeemed becomes  =true when redeeming begins
-     */
-    /*@Test
-    fun redeemRewardIsRedeemingTest() = runBlockingTest{
-        viewmodel.tryRedeemReward(
-            "test",
-            System.currentTimeMillis(),
-            context.getSharedPreferences("testPrefs", MODE_PRIVATE)
-        ).invokeOnCompletion {
-            runBlockingTest {
-                assertEquals(true, viewmodel.isBeingRedeemed.first())
-            }
-        }
-    }*/
-
-    /*
+        // Assert
+        // Make sure RedeemingState = STARTED, and isBeingRedeemed = true
+        assertEquals(
+            RedeemingRewardsViewModel.RedeemingState.STARTED,
+            viewmodel.rewardRedeemingState.value
+        )
+        assertEquals(true, viewmodel.isBeingRedeemed.first())
+    }
 
     @Test
-    fun `redeemReward() test RedeemingState is set to STARTED`() = runBlockingTest{
-        viewmodel.tryRedeemReward(
-            "test",
-            System.currentTimeMillis(),
-            context.getSharedPreferences(AndroidUtility.SHARED_PREFERENCES, MODE_PRIVATE)
-        ).invokeOnCompletion {
-            assertEquals(
-                RedeemingRewardsViewModel.RedeemingState.STARTED ,
-                viewmodel.rewardRedeemingState.value
-            )
+    fun `startRedeemingReward WHEN failed to start THEN set RedeemingState = 'Redeeming_failed'`() = runBlocking{
+        server.apply {
+            enqueue(MockResponse().setBody(MockResponseFileReader("startRewardRedeeming_fail.json").content))
         }
+
+        // Act
+        // Perform fake api call
+        viewmodel.tryRedeemReward("test")
+
+        // Assert
+        // Make sure RedeemingState = REDEEMING_FAILED, and isBeingRedeemed = false
+        assertEquals(
+            RedeemingRewardsViewModel.RedeemingState.REDEEMING_FAILED,
+            viewmodel.rewardRedeemingState.value
+        )
+        assertEquals(false, viewmodel.isBeingRedeemed.first())
     }
-*/
+
+    @Test
+    fun `onCodeVerified THEN set redeemingState to 'Completed'`(){
+        viewmodel.onRedeemingCodeVerified()
+        assertEquals(
+            RedeemingRewardsViewModel.RedeemingState.COMPLETED,
+            viewmodel.rewardRedeemingState.value
+        )
+    }
+
+    @Test
+    fun `onMessageReceived THEN set messagesToUser value to null`(){
+        viewmodel.clearReceivedMessage()
+        assertEquals(
+            null,
+            viewmodel.messagesToUser.replayCache[0]
+        )
+    }
 }

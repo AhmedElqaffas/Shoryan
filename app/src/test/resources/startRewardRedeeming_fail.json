@@ -1,0 +1,7 @@
+{
+  "isSuccessful": false,
+  "error":{
+    "message": "CONNECTION_ERROR",
+    "status": 0
+  }
+}

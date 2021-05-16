@@ -8,7 +8,6 @@ import com.example.shoryan.repos.RewardsRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -108,35 +107,35 @@ class RedeemingRewardsViewModel @Inject constructor(
      * @return true, if the server recorded the request successfully. Otherwise it returns false
      */
     private suspend fun sendRedeemingRequestToServer(rewardId: String): Boolean {
-        delay(500)
-        return try {
-            val response = RewardRedeemingResponse(null)
-            isRedeemingRecorded(response)
-        } catch (e: Exception) {
-            false
-        }
+        val response = repository.startRewardRedeeming(rewardId)
+        handleRedeemingResponse(response)
+        return isRedeemingRecorded(response)
+    }
+
+    private fun isRedeemingRecorded(response: RedeemingRewardResponse): Boolean {
+        return response.isSuccessful
     }
 
     /**
-     * This method checks the server response when trying to redeem a reward. If the response
-     * contains no error, then the server has successfully recorded the redeeming
+     * Checks if the response contains an error, and emits it to the _messagesToUser
+     * to be collected by the fragment.
      */
-    private fun isRedeemingRecorded(response: RewardRedeemingResponse): Boolean {
+    private suspend fun handleRedeemingResponse(response: RedeemingRewardResponse){
         response.error?.message?.let {
             // UNAUTHORIZED and JWT_EXPIRED errors should be handled explicitly. As for other errors:
             // this method will return false, eventually, the 'rewardRedeemingState' will be set to
             // FAILED, causing a snackbar to appear to the user indicating that an error happened
             if (it == ServerError.UNAUTHORIZED || it == ServerError.JWT_EXPIRED)
                 it.doErrorAction(applicationContext)
-            return false
+            else
+                _messagesToUser.emit(response.error.message)
         }
-        return true
     }
 
     /**
      * Called from the fragment to indicate that the redeeming code was entered correctly by the user.
-     * This method acts as a link between this viewmodel and the SMSViewmodel; when the SMSViewmodel
-     * correctly verifies the code, the fragment, calls this method to notify this viewmodel that
+     * This method acts as a link between this viewModel and the SMSViewModel; when the SMSViewModel
+     * correctly verifies the code, the fragment, calls this method to notify this viewModel that
      * the redeeming is completed.
      */
     fun onRedeemingCodeVerified(){
@@ -153,12 +152,3 @@ class RedeemingRewardsViewModel @Inject constructor(
         }
     }
 }
-
-/*class RedeemingRewardsViewModelFactory(
-    private val application: Application,
-    private val bloodDonationAPI: RetrofitBloodDonationInterface
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return RedeemingRewardsViewModel(application, bloodDonationAPI) as T
-    }
-}*/
