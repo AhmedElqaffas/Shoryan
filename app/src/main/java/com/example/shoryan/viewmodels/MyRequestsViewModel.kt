@@ -1,14 +1,15 @@
 package com.example.shoryan.viewmodels
 
 import androidx.lifecycle.*
-import com.example.shoryan.data.DonationRequest
-import com.example.shoryan.data.ErrorResponse
 import com.example.shoryan.data.MyRequestsServerResponse
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.repos.MyRequestsRepo
-import kotlinx.coroutines.*
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class MyRequestsViewModel @Inject constructor(private val bloodDonationAPI: RetrofitBloodDonationInterface): ViewModel() {
 
     val LOADING = 0

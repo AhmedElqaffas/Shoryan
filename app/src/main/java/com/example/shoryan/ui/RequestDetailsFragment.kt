@@ -1,6 +1,5 @@
 package com.example.shoryan.ui
 
-import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.Resources
@@ -11,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import androidx.databinding.ViewDataBinding
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.shoryan.AndroidUtility
 import com.example.shoryan.BR
@@ -18,10 +18,7 @@ import com.example.shoryan.R
 import com.example.shoryan.data.ServerError
 import com.example.shoryan.databinding.FragmentMyRequestDetailsBinding
 import com.example.shoryan.databinding.FragmentRequestFulfillmentBinding
-import com.example.shoryan.di.AppComponent
-import com.example.shoryan.di.MyApplication
 import com.example.shoryan.interfaces.RequestsRecyclerInteraction
-import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.viewmodels.MyRequestDetailsViewModel
 import com.example.shoryan.viewmodels.RequestDetailsViewModel
 import com.example.shoryan.viewmodels.RequestFulfillmentViewModel
@@ -33,12 +30,14 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
+@AndroidEntryPoint
 class RequestDetailsFragment : BottomSheetDialogFragment(){
 
     companion object {
@@ -68,19 +67,16 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
             }
     }
 
-
-    private val appComponent: AppComponent by lazy {
-        (activity?.application as MyApplication).appComponent
+    val tokensViewModel: TokensViewModel by viewModels()
+    @Inject lateinit var requestFulfillmentFactory: RequestFulfillmentViewModel.AssistedFactory
+    val requestFulfillmentViewModel: RequestFulfillmentViewModel by viewModels{
+        RequestFulfillmentViewModel.provideFactory(requestFulfillmentFactory, getClickedRequest())
     }
 
-    @Inject
-    lateinit var tokensViewModel: TokensViewModel
-    @Inject
-    lateinit var bloodDonationAPI: RetrofitBloodDonationInterface
-    @Inject
-    lateinit var requestFulfillmentViewModel: RequestFulfillmentViewModel
-    @Inject
-    lateinit var myRequestDetailsViewModel: MyRequestDetailsViewModel
+    @Inject lateinit var myRequestDetailsFactory: MyRequestDetailsViewModel.AssistedFactory
+    val myRequestDetailsViewModel: MyRequestDetailsViewModel by viewModels{
+        MyRequestDetailsViewModel.provideFactory(myRequestDetailsFactory, getClickedRequest())
+    }
 
     private val viewModelsMap: Map<Int, RequestDetailsViewModel> by lazy{
         mapOf(
@@ -95,14 +91,6 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
     private lateinit var binding: ViewDataBinding
     private var fragmentType: Int = 0
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        initializeViewModel()
-    }
-
-    private fun initializeViewModel(){
-        appComponent.requestDetailsComponent().create(getClickedRequest()).inject(this)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         fragmentType = getFragmentType()

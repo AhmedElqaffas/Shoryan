@@ -1,14 +1,13 @@
 package com.example.shoryan.ui
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -22,25 +21,27 @@ import com.example.shoryan.data.DonationRequest
 import com.example.shoryan.data.RequestsFiltersContainer
 import com.example.shoryan.data.ServerError
 import com.example.shoryan.databinding.FragmentHomeBinding
-import com.example.shoryan.di.MyApplication
-import com.example.shoryan.ui.recyclersAdapters.RequestsRecyclerAdapter
-import com.example.shoryan.interfaces.RequestsRecyclerInteraction
 import com.example.shoryan.interfaces.FilterHolder
+import com.example.shoryan.interfaces.RequestsRecyclerInteraction
+import com.example.shoryan.ui.recyclersAdapters.RequestsRecyclerAdapter
 import com.example.shoryan.viewmodels.ProfileViewModel
 import com.example.shoryan.viewmodels.RequestsViewModel
 import com.example.shoryan.viewmodels.TokensViewModel
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.*
-import javax.inject.Inject
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
+@AndroidEntryPoint
 class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
 
     private lateinit var navController: NavController
     private val requestsRecyclerAdapter = RequestsRecyclerAdapter(this)
-    @Inject
-    lateinit var tokensViewModel: TokensViewModel
-    @Inject
-    lateinit var profileViewModel: ProfileViewModel
+
+    val tokensViewModel: TokensViewModel by viewModels()
+
+    val profileViewModel: ProfileViewModel by viewModels()
     // viewModels() connects the viewModel to the fragment, so, when the user navigates to another
     // tab using bottom navigation, the fragment is destroyed and therefore the attached viewModel
     // is destroyed as well. Therefore we used navGraphViewModels() to limit the scope of the
@@ -49,11 +50,6 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        (requireActivity().application as MyApplication).appComponent.homeComponent().create().inject(this)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)

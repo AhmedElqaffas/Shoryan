@@ -19,9 +19,11 @@
     <string name="change_location">Change Location</string>
     <string name="checking_requesting_permission">Checking Requesting Permission</string>
     <string name="checking_donating_ability">Checking Donating Ability</string>
+    <string name="choose_branch">Choose Branch</string>
     <string name="choose_location">Choose Location</string>
     <string name="choose_your_location">Choose Your Location</string>
-    <string name="click_here_to_try_again">"Couldn't show requests \n click here to try again"</string>
+    <string name="click_here_to_try_again">"Couldn't connect to server \n Click here to try again"</string>
+    <string name="close">Close</string>
     <string name="confirm">Confirm</string>
     <string name="confirmation_code">Confirmation Code</string>
     <string name="confirm_password">Confirm Password</string>
@@ -70,9 +72,11 @@
     <string name="number_donations">%1$d</string>
     <string name="number_points">%1$d</string>
     <string name="notifications">Notifications</string>
+    <string name="no_branch_chosen">Please choose a branch</string>
     <string name="no_internet_connection">You have no internet connection</string>
     <string name="no_pending_requests">You have no pending requests</string>
     <string name="no">No</string>
+    <string name="offer_redeemed">Offer Redeemed</string>
     <string name="ok">OK</string>
     <string name="password">Password</string>
     <string name="password_format_message">Password should include a minimum of 8 letter, including: \n - Uppercase letters \n - Lowercase letters \n - Numbers</string>
@@ -89,8 +93,8 @@
     <string name="register">Register</string>
     <string name="redeemable">Redeemable</string>
     <string name="redeem">Redeem</string>
-    <string name="redeeming_confirmation_title">Are you in one of the branches?</string>
-    <string name="redeeming_confirmation_body">You will have to show the screen to the store employee within 5 minutes</string>
+    <string name="redeeming_confirmation_title">Confirm Redeeming</string>
+    <string name="redeeming_confirmation_body">"You won't be able to cancel the redeeming, are you sure you want to continue?"</string>
     <string name="requests">Requests</string>
     <string name="request_already_pending">You are already registered as a donor for another request</string>
     <string name="request_created">The request is successfully created</string>
@@ -104,6 +108,7 @@
     <string name="settings">Settings</string>
     <string name="show_my_requests">Show my requests</string>
     <string name="submit">Submit</string>
+    <string name="success">Success!</string>
     <string name="thanks_donation">Thanks for your donation</string>
     <string name="try_again">Try again</string>
     <string name="yes">Yes</string>

@@ -37,25 +37,24 @@ import androidx.navigation.Navigation
 import com.example.shoryan.ConnectionLiveData
 import com.example.shoryan.R
 import com.example.shoryan.data.Reward
-import com.example.shoryan.networking.RetrofitBloodDonationInterface
-import com.example.shoryan.networking.RetrofitClient
 import com.example.shoryan.ui.composables.AppBar
 import com.example.shoryan.ui.composables.InternetConnectionBanner
 import com.example.shoryan.ui.theme.Gray
 import com.example.shoryan.ui.theme.Shimmer
 import com.example.shoryan.ui.theme.ShoryanTheme
 import com.example.shoryan.viewmodels.RedeemingRewardsViewModel
-import com.example.shoryan.viewmodels.RedeemingRewardsViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.accompanist.coil.CoilImage
 
+@AndroidEntryPoint
 class RewardsFragment : Fragment() {
 
-    private val rewardsViewModel: RedeemingRewardsViewModel by viewModels {
+    private val rewardsViewModel: RedeemingRewardsViewModel by viewModels() /*{
         RedeemingRewardsViewModelFactory(
             requireActivity().application,
             RetrofitClient.getRetrofitClient().create(RetrofitBloodDonationInterface::class.java)
         )
-    }
+    }*/
 
     private lateinit var navController: NavController
     private lateinit var connectionLiveData: ConnectionLiveData

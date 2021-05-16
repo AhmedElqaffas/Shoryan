@@ -1,6 +1,5 @@
 package com.example.shoryan.ui
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,6 +9,7 @@ import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
 import androidx.core.view.children
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -22,21 +22,20 @@ import com.example.shoryan.data.ServerError
 import com.example.shoryan.data.ViewEvent
 import com.example.shoryan.databinding.AppbarBinding
 import com.example.shoryan.databinding.FragmentNewRequestBinding
-import com.example.shoryan.di.MyApplication
 import com.example.shoryan.viewmodels.NewRequestViewModel
 import com.example.shoryan.viewmodels.TokensViewModel
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.*
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import javax.inject.Inject
+import kotlinx.coroutines.launch
 
 
+@AndroidEntryPoint
 class NewRequestFragment : Fragment() {
     private val newRequestViewModel: NewRequestViewModel by navGraphViewModels(R.id.main_nav_graph)
 
-    @Inject
-    lateinit var tokensViewModel: TokensViewModel
+    val tokensViewModel: TokensViewModel by viewModels()
 
     private lateinit var navController: NavController
     private var _binding: FragmentNewRequestBinding? = null
@@ -45,10 +44,6 @@ class NewRequestFragment : Fragment() {
     private var createdRequest : CreateNewRequestResponse? = null
     private var snackbar: Snackbar? = null
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        (requireActivity().application as MyApplication).appComponent.newRequestComponent().create().inject(this)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentNewRequestBinding.inflate(inflater, container, false)

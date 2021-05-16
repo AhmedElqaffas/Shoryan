@@ -19,9 +19,11 @@
     <string name="change_location">تغيير الموقع</string>
     <string name="checking_requesting_permission">جاري التأكد من عدد طلباتك اليوم</string>
     <string name="checking_donating_ability">جاري التأكد من قدرتك على تلبية الطلب</string>
+    <string name="choose_branch">اختر الفرع</string>
     <string name="choose_location">اختر المكان</string>
     <string name="choose_your_location">اختر عنوان تواجدك</string>
     <string name="click_here_to_try_again">"فشل في الحصول على البيانات \n   اضغط هنا لإعادة المحاولة"</string>
+    <string name="close">اغلاق</string>
     <string name="confirm">تأكيد</string>
     <string name="confirmation_code">رمز التأكيد</string>
     <string name="confirm_password">تأكيد كلمة السر</string>
@@ -70,9 +72,11 @@
     <string name="number_donations">%1$d</string>
     <string name="number_points">%1$d</string>
     <string name="notifications">الإشعارات</string>
+    <string name="no_branch_chosen">اختر الفرع</string>
     <string name="no_internet_connection">انت غير متصل بالشبكة</string>
     <string name="no_pending_requests">ليس لديك طلبات مُعلّقة</string>
     <string name="no">لا</string>
+    <string name="offer_redeemed">تم تسجيل الاسترداد</string>
     <string name="ok">حسناً</string>
     <string name="password">كلمة السر</string>
     <string name="password_format_message">\u200F كلمة السر يجب ان تتكون على الاقل من 8 احرف بدون مسافات منهم: \n - حرف انجليزي كبير \n - حرف انجليزي صغير \n - رقم انجليزي</string>
@@ -89,8 +93,8 @@
     <string name="register">إنشاء حساب جديد</string>
     <string name="redeemable">يمكنك الإسترداد</string>
     <string name="redeem">استرد العرض</string>
-    <string name="redeeming_confirmation_title">هل انت متواجد بأحد الفروع؟</string>
-    <string name="redeeming_confirmation_body">سيكون امامك ٥ دقائق لإظهار الشاشة للعامل بالمتجر و استرداد الهدية</string>
+    <string name="redeeming_confirmation_title">تأكيد استرداد الهدية</string>
+    <string name="redeeming_confirmation_body">لن تستطيع الغاء الاسترداد، هل تريد المتابعة؟</string>
     <string name="requests">الطلبات</string>
     <string name="request_already_pending">انت مسجل كمتبرع لطلب اخر</string>
     <string name="request_created">تم الطلب بنجاح</string>
@@ -104,6 +108,7 @@
     <string name="settings">الإعدادات</string>
     <string name="show_my_requests">اظهر طلباتي</string>
     <string name="submit">تنفيذ</string>
+    <string name="success">تم بنجاح!</string>
     <string name="thanks_donation">شكراً لتبرّعك</string>
     <string name="try_again">اعد المحاولة</string>
     <string name="user_already_exists">هذا الرقم مُسجّل بالفعل</string>

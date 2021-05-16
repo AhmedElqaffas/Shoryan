@@ -3,18 +3,19 @@ package com.example.shoryan.viewmodels
 import android.app.AlertDialog
 import android.view.View
 import android.widget.Toast
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.shoryan.R
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.repos.MyRequestDetailsRepo
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-import javax.inject.Named
 
-
-class MyRequestDetailsViewModel@Inject constructor(
+class MyRequestDetailsViewModel@AssistedInject constructor(
         bloodDonationAPI: RetrofitBloodDonationInterface,
-        @Named("requestId") requestId: String
+        @Assisted requestId: String
 ): RequestDetailsViewModel(bloodDonationAPI, requestId) {
 
     fun showAlertDialog(view: View){
@@ -49,5 +50,21 @@ class MyRequestDetailsViewModel@Inject constructor(
         Toast.makeText(view.context,
             view.context.resources.getString(R.string.request_canceled),
             Toast.LENGTH_LONG).show()
+    }
+
+    @dagger.assisted.AssistedFactory
+    interface AssistedFactory {
+        fun create(requestId: String): MyRequestDetailsViewModel
+    }
+
+    companion object {
+        fun provideFactory(
+            assistedFactory: AssistedFactory,
+            requestId: String
+        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                return assistedFactory.create(requestId) as T
+            }
+        }
     }
 }

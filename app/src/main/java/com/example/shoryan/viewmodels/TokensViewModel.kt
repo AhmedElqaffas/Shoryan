@@ -7,9 +7,11 @@ import com.example.shoryan.data.TokenResponse
 import com.example.shoryan.data.Tokens
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.repos.TokensRefresher
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+@HiltViewModel
 class TokensViewModel @Inject constructor (private val bloodDonationAPI: RetrofitBloodDonationInterface)
     : ViewModel() {
 

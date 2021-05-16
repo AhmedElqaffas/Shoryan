@@ -2,20 +2,21 @@ package com.example.shoryan.ui.composables
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Arrangement.Top
 import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment.Companion.Top
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.*
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.*
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusOrder
+import androidx.compose.ui.focus.isFocused
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -24,8 +25,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.*
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.min
 
+object PinEntryComposableDirection{
+    const val RTL = 0
+    const val LTR = 1
+}
 /**
  * Contains the cells where the code is inserted
  * @param numberOfCells The number of character in the code
@@ -41,9 +48,13 @@ import androidx.compose.ui.unit.*
  * characters or be left as plain text
  * @param onChange A function invoked when a new code character is entered
  * @param onCodeEntered A function invoked when a new code character is entered
+ * @param layoutDirection The pin entry should always be LTR, the layout direction
+ * ([PinEntryComposableDirection.LTR] or [PinEntryComposableDirection.RTL]) should be specified to
+ * avoid having an inverted composable in case the locale of the screen forces the composables to
+ * be drawn in a RTL fashion.
  */
 @Composable
-fun CodeEntryComposable(
+fun PinEntryComposable(
     numberOfCells: Int,
     modifier: Modifier = Modifier,
     cellsMarginPercentage: Float = 0.5f,
@@ -54,7 +65,8 @@ fun CodeEntryComposable(
     inActiveBorderWidth: Dp = 1.dp,
     isPassword: Boolean = false,
     onChange: (String) -> Unit,
-    onCodeEntered: (String) -> Unit
+    onCodeEntered: (String) -> Unit,
+    layoutDirection: Int
 ){
     // Create a focusRequester for each cell to use it to give focus to a cell when needed
     val focusRequesters = List(numberOfCells) { FocusRequester() }
@@ -72,8 +84,24 @@ fun CodeEntryComposable(
                    "nextFocus" value = null. First cell doesn't have any cell before it, therefore its
                    "previousFocus" value = null
                 */
-                val nextFocus = if(i < numberOfCells - 1) focusRequesters[i + 1] else null
-                val previousFocus = if(i > 0) focusRequesters[i - 1] else null
+                var nextFocus: FocusRequester?
+                var previousFocus: FocusRequester?
+                /* In a LTR layout direction, the cells are drawn from left to right, so the "next"
+                   of a cell is the one following it in the focusRequesters list, and the
+                   "previous" of the cell is the one preceding it in the focusRequesters list
+                 */
+                if(layoutDirection == PinEntryComposableDirection.LTR){
+                    nextFocus = if(i < numberOfCells - 1) focusRequesters[i + 1] else null
+                    previousFocus = if(i > 0) focusRequesters[i - 1] else null
+                } else{
+                    /* In a RTL layout direction, the cells are drawn from right to left, so the "next"
+                     of a cell is the one preceding it in the focusRequesters list, and the
+                    "previous" of the cell is the one following it in the focusRequesters list
+                    */
+                    nextFocus = if(i > 0) focusRequesters[i - 1] else null
+                    previousFocus = if(i < numberOfCells - 1) focusRequesters[i + 1] else null
+                }
+
                 Cell(this, i, cellsTexts, focusRequesters[i], nextFocus, previousFocus,
                     cellColor = cellColor,
                     activeBorderColor = activeBorderColor,
@@ -82,7 +110,9 @@ fun CodeEntryComposable(
                     inActiveBorderWidth = inActiveBorderWidth,
                     isPassword = isPassword,
                     onChange = onChange,
-                    onCodeEntered = onCodeEntered)
+                    onCodeEntered = onCodeEntered,
+                    layoutDirection = layoutDirection
+                )
                 // Add space between cells
                 if(i != numberOfCells - 1)
                     Spacer(modifier = Modifier.weight(cellsMarginPercentage))
@@ -111,6 +141,10 @@ fun CodeEntryComposable(
  * characters or be left as plain text
  * @param onChange A function invoked when a new code character is entered
  * @param onCodeEntered A function invoked when all cells are filled with characters
+ * @param layoutDirection The pin entry should always be LTR, the layout direction
+ * ([PinEntryComposableDirection.LTR] or [PinEntryComposableDirection.RTL]) should be specified to
+ * avoid having an inverted composable in case the locale of the screen forces the composables to
+ * be drawn in a RTL fashion.
  */
 
 @Composable
@@ -128,7 +162,8 @@ fun Cell(
     inActiveBorderWidth: Dp,
     isPassword: Boolean,
     onChange: (String) -> Unit,
-    onCodeEntered: (String) -> Unit
+    onCodeEntered: (String) -> Unit,
+    layoutDirection: Int
 ) {
     /* "textBeforeChange" is used to determine the change in text. For example if textBeforeChange
        = "5" and the cellsText[id] = "85", we can conclude that the new text entered = 8.
@@ -162,10 +197,10 @@ fun Cell(
                         if(nextFocusRequester != null)
                             nextFocusRequester.requestFocus()
                         else if(cellsText.all{state -> state.value.isNotEmpty()}) {
-                            onCodeEntered(extractCodeString(cellsText))
+                            onCodeEntered(extractCodeString(cellsText, layoutDirection))
                         }
                     }
-                    onChange(extractCodeString(cellsText))
+                    onChange(extractCodeString(cellsText, layoutDirection))
                     textBeforeChange.value = cellsText[id].value
                 },
                 modifier = Modifier
@@ -182,10 +217,10 @@ fun Cell(
                             nextFocusRequester.requestFocus()
                         else if (cellsText.all { state -> state.value.isNotEmpty() }) {
                             focusRequester.freeFocus()
-                            onCodeEntered(extractCodeString(cellsText))
+                            onCodeEntered(extractCodeString(cellsText, layoutDirection))
                         }
                         else{
-                            onChange(extractCodeString(cellsText))
+                            onChange(extractCodeString(cellsText, layoutDirection))
                         }
                     }
                     .border(borderWidth.value, borderColor.value, LineBorder),
@@ -205,11 +240,13 @@ fun Cell(
     }
 }
 
-fun extractCodeString(cellsText: List<MutableState<String>>): String {
+fun extractCodeString(cellsText: List<MutableState<String>>, layoutDirection: Int): String {
     var codeString = ""
     cellsText.forEach{
         codeString += it.value
     }
+    if(layoutDirection != PinEntryComposableDirection.LTR)
+        codeString = codeString.reversed()
     return codeString
 }
 

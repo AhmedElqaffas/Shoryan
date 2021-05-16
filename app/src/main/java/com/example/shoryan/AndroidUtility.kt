@@ -1,14 +1,13 @@
 package com.example.shoryan
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import android.widget.Toast
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.getSystemService
-import androidx.core.view.ViewCompat
 import com.example.shoryan.ui.LandingActivity
 import com.google.android.material.snackbar.Snackbar
 
@@ -54,5 +53,11 @@ class AndroidUtility {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
             context.startActivity(intent)
         }
+
+        fun getScreenWidth(context: Context): Dp =
+            context.resources.displayMetrics.run { return@run (1.dp *(widthPixels / density) ) }
+        fun getScreenHeight(context: Context): Dp =
+            context.resources.displayMetrics.run { return@run (1.dp *(heightPixels / density) ) }
+
     }
 }
