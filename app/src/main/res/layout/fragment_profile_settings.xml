@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.ProfileSettingsFragment">
+
+    <TextView
+        android:id="@+id/fragmentTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/opensans_semibold"
+        android:text="@string/settings"
+        android:textColor="#000"
+        android:textSize="25sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/backButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:src="@drawable/red_arrow_back_icon"
+        app:layout_constraintEnd_toStartOf="@+id/fragmentTitle"
+        app:layout_constraintHorizontal_bias="0.198"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/accountInfoButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/fragmentTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="30dp"
+        android:drawableEnd="@drawable/arrow_right_red_icon"
+        android:paddingStart="16dp"
+        android:paddingEnd="0dp"
+        android:paddingVertical="20dp"
+        android:text="@string/account_info"
+        android:textAlignment="viewStart"
+        android:textAllCaps="false"
+        style="?android:attr/borderlessButtonStyle"
+        android:textSize="17sp"
+        android:fontFamily="@font/opensans_semibold"
+        android:textColor="@android:color/black"/>
+
+    <View
+        app:layout_constraintTop_toBottomOf="@id/accountInfoButton"
+        app:layout_constraintLeft_toLeftOf="@id/accountInfoButton"
+        app:layout_constraintRight_toRightOf="@id/accountInfoButton"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
+    <Button
+        android:id="@+id/changePasswordButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/accountInfoButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="30dp"
+        android:drawableEnd="@drawable/arrow_right_red_icon"
+        android:paddingStart="16dp"
+        android:paddingEnd="0dp"
+        android:paddingVertical="20dp"
+        android:text="@string/change_password"
+        android:textAlignment="viewStart"
+        android:textAllCaps="false"
+        style="?android:attr/borderlessButtonStyle"
+        android:textSize="17sp"
+        android:fontFamily="@font/opensans_semibold"
+        android:textColor="@android:color/black"/>
+
+    <View
+        app:layout_constraintTop_toBottomOf="@id/changePasswordButton"
+        app:layout_constraintLeft_toLeftOf="@id/changePasswordButton"
+        app:layout_constraintRight_toRightOf="@id/changePasswordButton"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
+    <Button
+        android:id="@+id/changeLanguageButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/changePasswordButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="30dp"
+        android:drawableEnd="@drawable/arrow_right_red_icon"
+        android:paddingStart="16dp"
+        android:paddingEnd="0dp"
+        android:paddingVertical="20dp"
+        android:text="@string/change_language"
+        android:textAlignment="viewStart"
+        android:textAllCaps="false"
+        style="?android:attr/borderlessButtonStyle"
+        android:textSize="17sp"
+        android:fontFamily="@font/opensans_semibold"
+        android:textColor="@android:color/black"/>
+
+    <View
+        app:layout_constraintTop_toBottomOf="@id/changeLanguageButton"
+        app:layout_constraintLeft_toLeftOf="@id/changeLanguageButton"
+        app:layout_constraintRight_toRightOf="@id/changeLanguageButton"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+
+    <Button
+        android:id="@+id/logoutButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button_red_border"
+        android:fontFamily="@font/opensans_bold"
+        android:padding="20dp"
+        android:paddingVertical="20dp"
+        android:text="@string/logout"
+        android:textAllCaps="false"
+        android:textColor="#000000"
+        android:textSize="17sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/changeLanguageButton"
+        app:layout_constraintVertical_bias="0.223" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

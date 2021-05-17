@@ -209,4 +209,7 @@
     </string-array>
 
     <string name="your_request">طلبك</string>
+    <string name="account_info">بيانات الحساب</string>
+    <string name="change_password">تغيير كلمة المرور</string>
+    <string name="logout">تسجيل خروج</string>
 </resources>

@@ -9,6 +9,8 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import com.example.shoryan.R
 import com.example.shoryan.data.ServerError
 import com.example.shoryan.databinding.FragmentProfileBinding
@@ -19,6 +21,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class ProfileFragment : Fragment() {
 
+    private lateinit var navController: NavController
     val tokensViewModel: TokensViewModel by viewModels()
     val profileViewModel: ProfileViewModel by viewModels()
 
@@ -41,6 +44,14 @@ class ProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         fetchUserData(false)
         (binding.refreshLayout).setOnRefreshListener { refresh() }
+
+        // Getting the navigation controller object
+        navController = Navigation.findNavController(view)
+
+        // Go to Profile Settings screen when the settings button is clicked
+        binding.settingsButton.setOnClickListener{
+            navController.navigate(R.id.action_profile_to_profileSettingsFragment)
+        }
     }
 
     private fun fetchUserData(isRefreshing: Boolean){

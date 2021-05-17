@@ -42,7 +42,11 @@
         android:id="@+id/profile"
         android:name="com.example.shoryan.ui.ProfileFragment"
         android:label="Profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_profile_to_profileSettingsFragment"
+            app:destination="@id/profileSettingsFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/myRequestsFragment"
@@ -71,4 +75,9 @@
     <argument
         app:argType="com.example.shoryan.data.Reward"
         android:name="reward"/>
+    <fragment
+        android:id="@+id/profileSettingsFragment"
+        android:name="com.example.shoryan.ui.ProfileSettingsFragment"
+        android:label="fragment_profile_settings"
+        tools:layout="@layout/fragment_profile_settings" />
 </navigation>
