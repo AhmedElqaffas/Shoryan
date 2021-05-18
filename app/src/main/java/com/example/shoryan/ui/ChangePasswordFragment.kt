@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.DrawableRes
 import androidx.core.content.res.ResourcesCompat
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -13,8 +14,6 @@ import com.example.shoryan.AndroidUtility
 import com.example.shoryan.R
 import com.example.shoryan.databinding.FragmentChangePasswordBinding
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_change_password.*
-
 
 class ChangePasswordFragment : Fragment() {
 
@@ -89,13 +88,13 @@ class ChangePasswordFragment : Fragment() {
     private fun turnOnSaveButton() {
         binding.savePasswordButton.isEnabled = true
         binding.savePasswordButton.isClickable = true
-        binding.savePasswordButton.background = resources.getDrawable(R.drawable.button_curved_red)
+        binding.savePasswordButton.setBackgroundResource(R.drawable.button_curved_red)
     }
 
     private fun turnOffSaveButton() {
         binding.savePasswordButton.isEnabled = false
         binding.savePasswordButton.isClickable = false
-        binding.savePasswordButton.background = resources.getDrawable(R.drawable.button_disabled_selector)
+        binding.savePasswordButton.setBackgroundResource(R.drawable.button_disabled_selector)
     }
 
 
