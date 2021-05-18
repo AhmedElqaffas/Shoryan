@@ -95,8 +95,18 @@ class ProfileSettingsFragment : Fragment(), LocaleChangerHolder {
     }
 
     override fun onLocaleChanged(newLanguageTag: String){
+        /**
+         * This callback method is called when the app's language has been changed by the user.
+         * The application has to be restarted after the language change takes place.
+         */
+
+        // Changing the app's language
         updateLocale(newLanguageTag)
-        requireActivity().recreate()
+
+        // Restarting LandingActivity
+        val intent = Intent(context, LandingActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
     }
 
     private fun updateLocale(newLanguageTag: String) {
