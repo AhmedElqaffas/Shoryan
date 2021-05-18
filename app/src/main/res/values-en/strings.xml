@@ -136,6 +136,10 @@
     <string name="change_password">Change Password</string>
     <string name="logout">Log out</string>
     <string name="logged_out_message">Logged out successfully</string>
+    <string name="current_password">Current Password</string>
+    <string name="new_password">New Password</string>
+    <string name="confirm_new_password">Confirm New Password</string>
+    <string name="save_changes">Save</string>
 
 
     <string-array name="blood_types">

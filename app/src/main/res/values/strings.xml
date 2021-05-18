@@ -213,4 +213,8 @@
     <string name="change_password">تغيير كلمة المرور</string>
     <string name="logout">تسجيل خروج</string>
     <string name="logged_out_message">تم تسجيل الخروج</string>
+    <string name="current_password">كلمة السر الحالية</string>
+    <string name="new_password">كلمة السر الجديدة</string>
+    <string name="confirm_new_password">تأكيد كلمة السر الجديدة</string>
+    <string name="save_changes">حفظ التعديلات</string>
 </resources>
