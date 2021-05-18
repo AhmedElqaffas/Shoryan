@@ -9,10 +9,13 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import com.example.shoryan.DataStoreUtil
 import com.example.shoryan.R
 import com.example.shoryan.databinding.FragmentProfileBinding
 import com.example.shoryan.databinding.FragmentProfileSettingsBinding
 import com.example.shoryan.repos.TokensRefresher
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class ProfileSettingsFragment : Fragment() {
     private lateinit var navController: NavController
@@ -56,11 +59,19 @@ class ProfileSettingsFragment : Fragment() {
          *  In order to do this, the tokens must be cleared and the LandingActivity must be restarted
          */
 
-        //Clearing access and refresh tokens
-        TokensRefresher.accessToken = null
-        TokensRefresher.refreshToken = null
+        GlobalScope.launch {
+            //Clearing stored access and refresh tokens
+            TokensRefresher.clearCachedTokens(requireContext())
+        }
 
-        Toast.makeText(requireContext(), resources.getString(R.string.logged_out_message), Toast.LENGTH_LONG).show()
+        // Show logout message to user
+        Toast.makeText(
+            requireContext(),
+            resources.getString(R.string.logged_out_message),
+            Toast.LENGTH_LONG
+        ).show()
+
+        // Restarting LandingActivity
         val intent = Intent(context, LandingActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
