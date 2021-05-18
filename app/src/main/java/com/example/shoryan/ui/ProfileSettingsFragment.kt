@@ -10,14 +10,16 @@ import android.widget.Toast
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.shoryan.DataStoreUtil
+import com.example.shoryan.LocaleHelper
 import com.example.shoryan.R
 import com.example.shoryan.databinding.FragmentProfileBinding
 import com.example.shoryan.databinding.FragmentProfileSettingsBinding
+import com.example.shoryan.interfaces.LocaleChangerHolder
 import com.example.shoryan.repos.TokensRefresher
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class ProfileSettingsFragment : Fragment() {
+class ProfileSettingsFragment : Fragment(), LocaleChangerHolder {
     private lateinit var navController: NavController
     private var _binding: FragmentProfileSettingsBinding? = null
     private val binding get() = _binding!!
@@ -56,6 +58,11 @@ class ProfileSettingsFragment : Fragment() {
         binding.changePasswordButton.setOnClickListener {
             navController.navigate(R.id.action_profileSettingsFragment_to_changePasswordFragment)
         }
+
+        // Open LanguageFragment dialog box when the change language button is clicked
+        binding.changeLanguageButton.setOnClickListener {
+            openLanguageFragment()
+        }
     }
 
     private fun logoutFromAccount() {
@@ -81,6 +88,19 @@ class ProfileSettingsFragment : Fragment() {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
 
+    }
+
+    private fun openLanguageFragment(){
+        LanguageFragment().show(childFragmentManager, "language")
+    }
+
+    override fun onLocaleChanged(newLanguageTag: String){
+        updateLocale(newLanguageTag)
+        requireActivity().recreate()
+    }
+
+    private fun updateLocale(newLanguageTag: String) {
+        LocaleHelper.persist(requireContext(), newLanguageTag)
     }
 
 }
