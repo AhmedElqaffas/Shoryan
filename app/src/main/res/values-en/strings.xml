@@ -140,6 +140,7 @@
     <string name="new_password">New Password</string>
     <string name="confirm_new_password">Confirm New Password</string>
     <string name="save_changes">Save</string>
+    <string name="password_change_success">You have successfully changed your password</string>
 
 
     <string-array name="blood_types">
