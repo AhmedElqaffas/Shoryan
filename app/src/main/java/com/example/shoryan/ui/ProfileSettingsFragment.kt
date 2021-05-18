@@ -51,6 +51,11 @@ class ProfileSettingsFragment : Fragment() {
         binding.logoutButton.setOnClickListener{
             logoutFromAccount()
         }
+
+        // Go to ChangePasswordFragment when the change password button is clicked
+        binding.changePasswordButton.setOnClickListener {
+            navController.navigate(R.id.action_profileSettingsFragment_to_changePasswordFragment)
+        }
     }
 
     private fun logoutFromAccount() {
