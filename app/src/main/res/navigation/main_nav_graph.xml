@@ -83,10 +83,26 @@
         <action
             android:id="@+id/action_profileSettingsFragment_to_changePasswordFragment"
             app:destination="@id/changePasswordFragment" />
+        <action
+            android:id="@+id/action_profileSettingsFragment_to_accountInfoFragment"
+            app:destination="@id/accountInfoFragment" />
     </fragment>
     <fragment
         android:id="@+id/changePasswordFragment"
         android:name="com.example.shoryan.ui.ChangePasswordFragment"
         android:label="fragment_change_password"
         tools:layout="@layout/fragment_change_password" />
+    <fragment
+        android:id="@+id/accountInfoFragment"
+        android:name="com.example.shoryan.ui.AccountInfoFragment"
+        android:label="fragment_account_info"
+        tools:layout="@layout/fragment_account_info" >
+        <action
+            android:id="@+id/action_accountInfoFragment_to_mapFragment2"
+            app:destination="@id/mapFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/mapFragment2"
+        android:name="com.example.shoryan.ui.MapFragment"
+        android:label="MapFragment" />
 </navigation>
