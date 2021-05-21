@@ -4,7 +4,7 @@
 
     <data>
         <variable name="viewmodel"
-            type="com.example.shoryan.viewmodels.RegistrationViewModel" />
+            type="com.example.shoryan.viewmodels.AccountInfoViewModel" />
     </data>
 
 <androidx.constraintlayout.widget.ConstraintLayout
@@ -120,37 +120,6 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/registrationPhoneTextLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:theme="@style/hintAppearance"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/registrationLastNameTextLayout"
-                app:errorEnabled="true"
-                app:errorMessage="@{@string/phone_format_message}"
-                app:errorCondition="@{viewmodel.shouldShowPhoneNumberError}">
-
-                <EditText
-                    android:id="@+id/registrationPhoneEditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="@color/colorPrimaryDark"
-                    android:drawableStart="@mipmap/smartphone"
-                    android:drawablePadding="16dp"
-                    android:paddingEnd="20dp"
-                    android:hint="@string/phone_number"
-                    android:inputType="phone"
-                    android:maxLines="1"
-                    android:maxLength="@integer/phone_number_length"
-                    android:singleLine="true"
-                    android:text="@{viewmodel.phoneNumber}"
-                    app:onTextChanged="@{viewmodel.observePhoneText}"/>
-
-            </com.google.android.material.textfield.TextInputLayout>
-
             <TextView
                 android:id="@+id/birthDateTextView"
                 android:layout_width="wrap_content"
@@ -163,7 +132,7 @@
                 app:layout_constraintHorizontal_bias="0.05"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/registrationPhoneTextLayout" />
+                app:layout_constraintTop_toBottomOf="@id/registrationLastNameTextLayout" />
 
             <Button
                 android:id="@+id/birthDatePicker"
@@ -178,7 +147,7 @@
                 android:layout_marginTop="20dp"
                 app:layout_constraintStart_toEndOf="@id/birthDateTextView"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/registrationPhoneTextLayout" />
+                app:layout_constraintTop_toBottomOf="@id/registrationLastNameTextLayout" />
 
             <TextView
                 android:id="@+id/bloodTypeTextView"
