@@ -11,6 +11,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.shoryan.AndroidUtility
+import com.example.shoryan.InputValidator
 import com.example.shoryan.R
 import com.example.shoryan.databinding.FragmentChangePasswordBinding
 import com.google.android.material.snackbar.Snackbar
@@ -112,7 +113,7 @@ class ChangePasswordFragment : Fragment() {
         when {
             // Checking if the old password has been entered
             oldPassword.isEmpty() -> {
-                binding.currentPasswordLayout.error = "Enter your current password"
+                binding.currentPasswordLayout.error = resources.getString(R.string.enter_old_password)
                 binding.confirmNewPasswordLayout.error = null
                 binding.newPasswordLayout.error = null
                 return false
@@ -120,7 +121,15 @@ class ChangePasswordFragment : Fragment() {
 
             // Checking if the new password has been entered
             newPassword.isEmpty() -> {
-                binding.newPasswordLayout.error = "Enter your new password"
+                binding.newPasswordLayout.error = resources.getString(R.string.enter_new_password)
+                binding.confirmNewPasswordLayout.error = null
+                binding.currentPasswordLayout.error = null
+                return false
+            }
+
+            // Checking if the new password is valid
+            !(InputValidator.isValidPasswordEntered(newPassword)) ->{
+                binding.newPasswordLayout.error = resources.getString(R.string.password_format_message)
                 binding.confirmNewPasswordLayout.error = null
                 binding.currentPasswordLayout.error = null
                 return false
@@ -128,7 +137,7 @@ class ChangePasswordFragment : Fragment() {
 
             // Checking if the new password has been confirmed by the user correctly
             newPassword != confirmNewPassword -> {
-                binding.confirmNewPasswordLayout.error = "The passwords don't match"
+                binding.confirmNewPasswordLayout.error = resources.getString(R.string.password_mismatch)
                 binding.newPasswordLayout.error =  null
                 binding.currentPasswordLayout.error = null
                 return false
