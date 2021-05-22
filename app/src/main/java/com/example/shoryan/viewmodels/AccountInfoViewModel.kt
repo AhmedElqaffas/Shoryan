@@ -103,8 +103,8 @@ class AccountInfoViewModel : ViewModel() {
     }
 
     private fun createUserUpdateAccountInfoQuery(): UpdateUserInformationQuery {
-    return UpdateUserInformationQuery(Name(_firstName.value!!, _lastName.value!!), _bloodType.value,
-    _gender.value, _birthDate.value, _addressLiveData.value)
+    return UpdateUserInformationQuery(Name(_firstName.value!!, _lastName.value!!), bloodType.value,
+    gender.value, _birthDate.value, addressLiveData.value)
     }
 
     private fun areInputsValidAndComplete(): Boolean {
