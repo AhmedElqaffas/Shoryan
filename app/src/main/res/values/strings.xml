@@ -221,4 +221,5 @@
     <string name="save_changes">حفظ التعديلات</string>
     <string name="password_change_success">لقد تم تغيير كلمة المرور بنجاح</string>
     <string name="current_password_wrong">من فضلك أدخل كلمة المرور الحالية بشكل صحيح</string>
+    <string name="account_info_update_success">تم تحديث بيانات حسابك بنجاح</string>
 </resources>

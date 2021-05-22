@@ -1,5 +1,6 @@
 package com.example.shoryan.viewmodels
 
+import android.media.session.MediaSession
 import android.widget.EditText
 import androidx.lifecycle.*
 import com.example.shoryan.AndroidUtility
@@ -17,16 +18,16 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
 class AccountInfoViewModel : ViewModel() {
-    sealed class RegistrationViewEvent {
-        data class ShowSnackBarFromResource(val textResourceId: Int) : RegistrationViewEvent()
-        data class ShowSnackBarFromString(val text: String) : RegistrationViewEvent()
-        object OpenSMSFragment : RegistrationViewEvent()
-        object ToggleLoadingIndicator : RegistrationViewEvent()
+
+    sealed class EditAccountInfoViewEvent {
+        data class ShowSnackBarFromResource(val textResourceId: Int) : EditAccountInfoViewEvent()
+        data class ShowSnackBarFromString(val text: String) : EditAccountInfoViewEvent()
+        object ToggleLoadingIndicator : EditAccountInfoViewEvent()
+        object UpdatedAccountInfoSuccessfully : AccountInfoViewModel.EditAccountInfoViewEvent()
     }
 
     sealed class ChangePasswordViewEvent {
         data class ShowSnackBarFromResource(val textResourceId: Int) : ChangePasswordViewEvent()
-        data class ShowSnackBarFromString(val text: String) : ChangePasswordViewEvent()
         object ChangedPasswordsSuccessfully: ChangePasswordViewEvent()
     }
 
@@ -50,7 +51,6 @@ class AccountInfoViewModel : ViewModel() {
 
     private var _firstName = MutableLiveData("")
     private var _lastName = MutableLiveData("")
-    private var _password = MutableLiveData("")
     val firstName: LiveData<String> = _firstName
     val lastName: LiveData<String> = _lastName
 
@@ -61,11 +61,11 @@ class AccountInfoViewModel : ViewModel() {
         it != "" && !isNameValid(it)
     }
 
-    private val _eventsFlow = MutableSharedFlow<RegistrationViewEvent>()
-    val eventsFlow = _eventsFlow.asSharedFlow()
+    private val _updateAccountInfoEventsFlow = MutableSharedFlow<EditAccountInfoViewEvent>()
+    val updateAccountInfoEventsFlow  = _updateAccountInfoEventsFlow.asSharedFlow()
     private val _passwordEventsFlow = MutableSharedFlow<ChangePasswordViewEvent>()
     val passwordEventsFlow = _passwordEventsFlow.asSharedFlow()
-    private var registrationProcess: Job? = null
+    private var updateInfoProcess: Job? = null
 
 
     fun setBloodType(bloodType: String) {
@@ -92,15 +92,20 @@ class AccountInfoViewModel : ViewModel() {
         _lastName.value = (editText as EditText).text.toString()
     }
 
-    /** fun tryRegisterUser() {
+     fun tryUpdateAccountInfo() {
         if (areInputsValidAndComplete()) {
-            registrationProcess = registerUser(createUserRegistrationQuery())
+            updateInfoProcess = updateAccountInfo(createUserUpdateAccountInfoQuery())
         } else {
             viewModelScope.launch {
-                _eventsFlow.emit(RegistrationViewEvent.ShowSnackBarFromResource(R.string.fill_all_data))
+                _updateAccountInfoEventsFlow.emit(EditAccountInfoViewEvent.ShowSnackBarFromResource(R.string.fill_all_data))
             }
         }
-    }**/
+    }
+
+    private fun createUserUpdateAccountInfoQuery(): UpdateUserInformationQuery {
+    return UpdateUserInformationQuery(Name(_firstName.value!!, _lastName.value!!), _bloodType.value,
+    _gender.value, _birthDate.value, _addressLiveData.value)
+    }
 
     private fun areInputsValidAndComplete(): Boolean {
         return isNameValid(firstName.value!!) && isNameValid(lastName.value!!)
@@ -114,27 +119,28 @@ class AccountInfoViewModel : ViewModel() {
     private fun isBirthDateValid() = _birthDate.value != null
 
 
-    private fun registerUser(registrationQuery: RegistrationQuery) = viewModelScope.launch {
-        _eventsFlow.emit(RegistrationViewEvent.ToggleLoadingIndicator)
+    private fun updateAccountInfo(updateUserInformationQuery: UpdateUserInformationQuery) = viewModelScope.launch {
+        _updateAccountInfoEventsFlow.emit(EditAccountInfoViewEvent.ToggleLoadingIndicator)
         try {
-            val registrationResponse = bloodDonationAPI.sendSMSRegistration(registrationQuery)
-            processRegistrationAPIResponse(registrationResponse)
+            val profileResponse = bloodDonationAPI.updateUserInformation(TokensRefresher.accessToken!!, updateUserInformationQuery )
+            processUpdateAccountInfoAPIResponse(profileResponse)
         } catch (e: Exception) {
-            _eventsFlow.emit(RegistrationViewEvent.ShowSnackBarFromResource(R.string.connection_error))
+            _updateAccountInfoEventsFlow.emit(EditAccountInfoViewEvent.ShowSnackBarFromResource(R.string.connection_error))
         }
-        _eventsFlow.emit(RegistrationViewEvent.ToggleLoadingIndicator)
+        _updateAccountInfoEventsFlow.emit(EditAccountInfoViewEvent.ToggleLoadingIndicator)
     }
 
-    private suspend fun processRegistrationAPIResponse(registrationResponse: RegistrationResponse) {
-        if (registrationResponse.error != null) {
-            _eventsFlow.emit(RegistrationViewEvent.ShowSnackBarFromResource(registrationResponse.error.message.errorStringResource))
+    private suspend fun processUpdateAccountInfoAPIResponse(profileResponse: ProfileResponse) {
+        if (profileResponse.error != null) {
+            _updateAccountInfoEventsFlow.emit(EditAccountInfoViewEvent.ShowSnackBarFromResource(profileResponse.error.message.errorStringResource))
         } else {
-            _eventsFlow.emit(RegistrationViewEvent.OpenSMSFragment)
+            _updateAccountInfoEventsFlow.emit(EditAccountInfoViewEvent.UpdatedAccountInfoSuccessfully)
+            ProfileRepo.updateProfileInfo(profileResponse.user)
         }
     }
 
-    fun cancelRegistrationProcess() {
-        registrationProcess?.cancel()
+    fun cancelUpdateInfoProcess() {
+        updateInfoProcess?.cancel()
     }
 
     suspend fun getUserProfileData() {

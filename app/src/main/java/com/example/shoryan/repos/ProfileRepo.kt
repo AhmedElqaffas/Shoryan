@@ -36,4 +36,8 @@ object ProfileRepo {
         }
         return ProfileResponse(user, null)
     }
+
+    fun updateProfileInfo(updatedUser: User?){
+        user = updatedUser
+    }
 }

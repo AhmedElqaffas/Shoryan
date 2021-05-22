@@ -33,7 +33,7 @@
         android:id="@+id/backButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="25dp"
         android:src="@drawable/red_arrow_back_icon"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.041"
@@ -291,6 +291,7 @@
                 android:textColor="@android:color/white"
                 android:textSize="18sp"
                 android:fontFamily="@font/opensans_semibold"
+                android:onClick="@{() -> viewmodel.tryUpdateAccountInfo()}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/openMapButton" />

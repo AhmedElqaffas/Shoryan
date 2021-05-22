@@ -204,13 +204,23 @@ class AccountInfoFragment : Fragment(), LoadingFragmentHolder {
     }
 
     private fun observeViewModelEvents(){
-        accountInfoViewModel.eventsFlow.onEach {
+        accountInfoViewModel.updateAccountInfoEventsFlow.onEach {
             when(it){
-                is AccountInfoViewModel.RegistrationViewEvent.ShowSnackBarFromString -> showSnackbar(it.text)
-                is AccountInfoViewModel.RegistrationViewEvent.ShowSnackBarFromResource -> showSnackbar(resources.getString(it.textResourceId))
-                AccountInfoViewModel.RegistrationViewEvent.ToggleLoadingIndicator -> toggleLoadingIndicator()
+                is AccountInfoViewModel.EditAccountInfoViewEvent.ShowSnackBarFromString -> showSnackbar(it.text)
+                is AccountInfoViewModel.EditAccountInfoViewEvent.ShowSnackBarFromResource -> showSnackbar(resources.getString(it.textResourceId))
+                is AccountInfoViewModel.EditAccountInfoViewEvent.ToggleLoadingIndicator -> toggleLoadingIndicator()
+                is AccountInfoViewModel.EditAccountInfoViewEvent.UpdatedAccountInfoSuccessfully -> onSuccessfulResponse()
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
+    }
+
+    /**
+     * This callback method is called when the user's account information have been updated successfully.
+     * It shows a success message to the user and navigates back to the Profile Settings screen.
+     */
+    private fun onSuccessfulResponse() {
+        showSnackbar(resources.getString(R.string.account_info_update_success))
+        navController.navigateUp()
     }
 
     private fun showSnackbar(message: String){
@@ -226,6 +236,6 @@ class AccountInfoFragment : Fragment(), LoadingFragmentHolder {
     }
 
     override fun onLoadingFragmentDismissed() {
-        accountInfoViewModel.cancelRegistrationProcess()
+        accountInfoViewModel.cancelUpdateInfoProcess()
     }
 }
