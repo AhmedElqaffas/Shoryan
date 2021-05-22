@@ -37,7 +37,7 @@ class AccountInfoViewModel : ViewModel() {
         .create(RetrofitBloodDonationInterface::class.java)
     private val _bloodType = MutableLiveData<BloodType>(BloodType.APositive)
     val bloodType: LiveData<BloodType> = _bloodType
-    private val _gender = MutableLiveData<Gender>(Gender.None_EN)
+    private val _gender = MutableLiveData<Gender>(Gender.Male_EN)
     val gender: LiveData<Gender> = _gender
     private val _birthDate = MutableLiveData<BirthDate?>(null)
     val birthDateString: LiveData<String> = Transformations.map(_birthDate) {
@@ -103,8 +103,12 @@ class AccountInfoViewModel : ViewModel() {
     }
 
     private fun createUserUpdateAccountInfoQuery(): UpdateUserInformationQuery {
-    return UpdateUserInformationQuery(Name(_firstName.value!!, _lastName.value!!), bloodType.value,
-    gender.value, _birthDate.value, addressLiveData.value)
+    return UpdateUserInformationQuery(
+        name = Name(_firstName.value!!, _lastName.value!!),
+        bloodType = bloodType.value,
+        gender = gender.value,
+        birthDate = _birthDate.value,
+        location = addressLiveData.value)
     }
 
     private fun areInputsValidAndComplete(): Boolean {

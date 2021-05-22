@@ -199,10 +199,19 @@ class RegistrationFragment : Fragment(), LoadingFragmentHolder {
             { _, year, monthOfYear, dayOfMonth ->
                 registrationViewModel.setBirthDate(BirthDate(year, monthOfYear + 1, dayOfMonth))
             },
-            currentYear,
+            currentYear - 18,
             currentMonth,
             currentDay
         )
+
+        // Setting the maximum date for the birthday
+        c.set(2005, 11, 30)
+        dpd.datePicker.maxDate = c.timeInMillis
+
+        //Setting the minimum date for the birthday
+        c.set(1920, 0, 1)
+        dpd.datePicker.minDate = c.timeInMillis
+
         dpd.show()
     }
 
