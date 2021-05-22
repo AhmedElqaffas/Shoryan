@@ -222,14 +222,14 @@ class RegistrationFragment : Fragment(), LoadingFragmentHolder {
 
     private fun showBloodTypesList(menu: ContextMenu, v: View) {
         val bloodTypesList = resources.getStringArray(R.array.blood_types)
-        menu.setHeaderTitle("اختر فصيلة الدم")
+        menu.setHeaderTitle(resources.getString(R.string.choose_bloodtype))
         for(i in bloodTypesList.indices)
             menu.add(0, v.id, i, bloodTypesList[i].toString())
     }
 
     private fun showGenderList(menu: ContextMenu, v: View){
         val gendersList = resources.getStringArray(R.array.gender)
-        menu.setHeaderTitle("اختر النوع")
+        menu.setHeaderTitle(resources.getString(R.string.choose_gender))
         for(i in gendersList.indices)
             menu.add(1, v.id, i, gendersList[i].toString())
     }
