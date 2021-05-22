@@ -10,6 +10,7 @@ import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.networking.RetrofitClient
 import com.example.shoryan.removeAdditionalSpaces
 import com.example.shoryan.repos.ProfileRepo
+import com.example.shoryan.repos.TokensRefresher
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -21,6 +22,12 @@ class AccountInfoViewModel : ViewModel() {
         data class ShowSnackBarFromString(val text: String) : RegistrationViewEvent()
         object OpenSMSFragment : RegistrationViewEvent()
         object ToggleLoadingIndicator : RegistrationViewEvent()
+    }
+
+    sealed class ChangePasswordViewEvent {
+        data class ShowSnackBarFromResource(val textResourceId: Int) : ChangePasswordViewEvent()
+        data class ShowSnackBarFromString(val text: String) : ChangePasswordViewEvent()
+        object ChangedPasswordsSuccessfully: ChangePasswordViewEvent()
     }
 
     private val TAG = javaClass.simpleName
@@ -56,6 +63,8 @@ class AccountInfoViewModel : ViewModel() {
 
     private val _eventsFlow = MutableSharedFlow<RegistrationViewEvent>()
     val eventsFlow = _eventsFlow.asSharedFlow()
+    private val _passwordEventsFlow = MutableSharedFlow<ChangePasswordViewEvent>()
+    val passwordEventsFlow = _passwordEventsFlow.asSharedFlow()
     private var registrationProcess: Job? = null
 
 
@@ -150,5 +159,26 @@ class AccountInfoViewModel : ViewModel() {
 
         // Set address
         //_addressLiveData.postValue(profileResponse.user.location)
+    }
+
+    fun createChangePasswordQuery(oldPassword : String?, newPassword : String?) : UpdateUserInformationQuery{
+        return UpdateUserInformationQuery(oldPassword = oldPassword, newPassword = newPassword)
+    }
+
+    fun changeUserPassword(updateUserInformationQuery: UpdateUserInformationQuery) = viewModelScope.launch {
+        try {
+            val profileResponse = bloodDonationAPI.updateUserInformation(TokensRefresher.accessToken!!, updateUserInformationQuery)
+            processChangePasswordAPIResponse(profileResponse)
+        } catch (e: Exception) {
+            _passwordEventsFlow.emit(ChangePasswordViewEvent.ShowSnackBarFromResource(R.string.connection_error))
+        }
+    }
+
+    private suspend fun processChangePasswordAPIResponse(profileResponse: ProfileResponse) {
+        if (profileResponse.error != null) {
+            _passwordEventsFlow.emit(ChangePasswordViewEvent.ShowSnackBarFromResource(profileResponse.error.message.errorStringResource))
+        } else {
+            _passwordEventsFlow.emit(ChangePasswordViewEvent.ChangedPasswordsSuccessfully)
+        }
     }
 }

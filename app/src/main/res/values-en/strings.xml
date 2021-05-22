@@ -143,6 +143,7 @@
     <string name="password_change_success">You have successfully changed your password</string>
     <string name="enter_old_password">Enter your current password</string>
     <string name="enter_new_password">Enter your new password</string>
+    <string name="current_password_wrong">Please enter your current password correctly</string>
 
 
     <string-array name="blood_types">

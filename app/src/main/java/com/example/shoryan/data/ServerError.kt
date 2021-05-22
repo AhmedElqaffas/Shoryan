@@ -81,7 +81,8 @@ enum class ServerError(val errorStringResource: Int) {
     CONNECTION_ERROR(R.string.connection_error),
 
     // Create New Request errors
-    REQUESTS_DAILY_LIMIT(R.string.cant_request_today);
+    REQUESTS_DAILY_LIMIT(R.string.cant_request_today),
+    PASSWORD_MISMATCH(R.string.current_password_wrong);
 
     open fun doErrorAction(rootView: View){
         AndroidUtility.displaySnackbarMessage(rootView,

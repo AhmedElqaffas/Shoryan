@@ -220,4 +220,5 @@
     <string name="confirm_new_password">تأكيد كلمة السر الجديدة</string>
     <string name="save_changes">حفظ التعديلات</string>
     <string name="password_change_success">لقد تم تغيير كلمة المرور بنجاح</string>
+    <string name="current_password_wrong">من فضلك أدخل كلمة المرور الحالية بشكل صحيح</string>
 </resources>
