@@ -16,6 +16,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
@@ -39,6 +40,7 @@ import com.example.shoryan.data.ServerError
 import com.example.shoryan.interfaces.LoadingFragmentHolder
 import com.example.shoryan.ui.composables.*
 import com.example.shoryan.ui.theme.Gray
+import com.example.shoryan.ui.theme.Shimmer
 import com.example.shoryan.ui.theme.ShoryanTheme
 import com.example.shoryan.viewmodels.RedeemingRewardsViewModel
 import com.example.shoryan.viewmodels.SMSViewModel
@@ -322,6 +324,12 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
                     chosenBranch = it
                 }
 
+                val dropdownBorderColor = if(isBeingRedeemed) Shimmer
+                                        else MaterialTheme.colors.primary
+                val dropdownArrow =
+                    if(isBeingRedeemed) R.drawable.iconfinder_nav_arrow_right_383100_grey
+                    else R.mipmap.iconfinder_nav_arrow_right_1
+
                 Box {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -339,16 +347,21 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
                             onValueChange = { chosenBranch = it },
                             trailingIcon = {
                                 Image(
-                                    painter = painterResource(R.drawable.iconfinder_nav_arrow_right_383100_grey),
-                                    contentDescription = null
+                                    painter = painterResource(dropdownArrow),
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .scale(2f)
+                                        .padding(10.dp, 0.dp)
                                 )
                             },
                             textStyle = MaterialTheme.typography.body1,
-                            modifier = Modifier.fillMaxWidth(0.75f)
+                            modifier = Modifier
+                                .fillMaxWidth(0.75f)
                                 .wrapContentHeight()
-                                .clickable(false, null, null){}
+                                .clickable(false, null, null) {}
                                 .border(
-                                    2.dp, MaterialTheme.colors.primary,
+                                    2.dp,
+                                    dropdownBorderColor,
                                     MaterialTheme.shapes.small.copy(CornerSize(ShoryanTheme.dimens.grid_3))
                                 ),
                             colors = TextFieldDefaults.textFieldColors(
@@ -358,13 +371,19 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
                                 unfocusedIndicatorColor = Color.Transparent,
                                 disabledIndicatorColor = Color.Transparent)
                         )
-                        DropDownComposable(
-                            isOpen.value,
-                            reward.branches!!,
-                            openCloseOfDropDownList,
-                            selectedString,
-                            AndroidUtility.getScreenWidth(requireContext()) * 0.75f
-                        )
+                        Row(
+                            horizontalArrangement = Arrangement.End,
+                            modifier = Modifier.fillMaxWidth(0.75f)
+                        ){
+                            DropDownComposable(
+                                isOpen.value,
+                                reward.branches!!,
+                                openCloseOfDropDownList,
+                                selectedString,
+                                AndroidUtility.getScreenWidth(requireContext()) * 0.75f
+                            )
+                        }
+
                     }
                     Spacer(
                         modifier = Modifier

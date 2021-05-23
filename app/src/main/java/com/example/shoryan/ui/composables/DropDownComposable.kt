@@ -21,14 +21,12 @@ fun DropDownComposable(
 ){
     DropdownMenu(
             modifier = Modifier
-                .fillMaxWidth()
                 .height(150.dp),
             expanded = isOpen,
             onDismissRequest = { setMenuVisibility(false) }
         ) {
             itemsList.forEach {
                 DropdownMenuItem(
-                    modifier = Modifier.fillMaxWidth(),
                     onClick = {
                         setMenuVisibility(false)
                         setSelectedString(it)
@@ -41,7 +39,7 @@ fun DropDownComposable(
                     ){
                         Text(
                             text = it,
-                            textAlign = TextAlign.Right,
+                            textAlign = TextAlign.Center,
                             modifier = Modifier.width(popupWidth),
                             style = MaterialTheme.typography.body1
                         )

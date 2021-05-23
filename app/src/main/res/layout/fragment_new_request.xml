@@ -271,7 +271,7 @@
                             android:id="@+id/governmentsSpinnerImageView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
                             android:layout_gravity="center"
                             android:src="@drawable/iconfinder_nav_arrow_right_383100_grey" />
@@ -315,7 +315,7 @@
                             android:id="@+id/citySpinnerImageView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
                             android:layout_gravity="center"
                             android:src="@drawable/iconfinder_nav_arrow_right_383100_grey" />
@@ -359,7 +359,7 @@
                             android:id="@+id/bloodBankSpinnerImageView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentEnd="true"
                             android:layout_centerVertical="true"
                             android:layout_gravity="center"
                             android:src="@drawable/iconfinder_nav_arrow_right_383100_grey" />
