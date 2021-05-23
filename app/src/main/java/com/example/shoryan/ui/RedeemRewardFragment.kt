@@ -8,6 +8,7 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -300,7 +301,7 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
             Column(
                 modifier = Modifier
                     .constrainAs(branchesReference) {
-                        start.linkTo(logoReference.start)
+                        start.linkTo(parent.start)
                         end.linkTo(parent.end)
                         top.linkTo(logoReference.bottom, 40.dp)
                     }
@@ -310,6 +311,7 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
                     text = resources.getString(R.string.branches),
                     style = MaterialTheme.typography.subtitle1,
                     color = Color.Black,
+                    modifier = Modifier.padding(30.dp, 0.dp)
                 )
 
                 val isOpen = remember { mutableStateOf(false) }
@@ -321,19 +323,47 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
                 }
 
                 Box {
-                    Column {
-                        OutlinedTextField(
-                            value = chosenBranch ?: "---",
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                0.dp,
+                                ShoryanTheme.dimens.grid_5,
+                                0.dp,
+                                ShoryanTheme.dimens.plane_6
+                            )
+                    ) {
+                        TextField(
+                            value = chosenBranch ?: resources.getString(R.string.choose_branch),
                             onValueChange = { chosenBranch = it },
-                            readOnly = true,
-                            label = { Text(text = resources.getString(R.string.choose_branch)) },
-                            modifier = Modifier.fillMaxWidth(0.95f)
+                            trailingIcon = {
+                                Image(
+                                    painter = painterResource(R.drawable.iconfinder_nav_arrow_right_383100_grey),
+                                    contentDescription = null
+                                )
+                            },
+                            textStyle = MaterialTheme.typography.body1,
+                            modifier = Modifier.fillMaxWidth(0.75f)
+                                .wrapContentHeight()
+                                .clickable(false, null, null){}
+                                .border(
+                                    2.dp, MaterialTheme.colors.primary,
+                                    MaterialTheme.shapes.small.copy(CornerSize(ShoryanTheme.dimens.grid_3))
+                                ),
+                            colors = TextFieldDefaults.textFieldColors(
+                                textColor = Color(0xFFB2AAAA),
+                                backgroundColor = Color.White,
+                                cursorColor = Color.Transparent, // To hide the cursor and underline
+                                unfocusedIndicatorColor = Color.Transparent,
+                                disabledIndicatorColor = Color.Transparent)
                         )
                         DropDownComposable(
                             isOpen.value,
                             reward.branches!!,
                             openCloseOfDropDownList,
-                            selectedString
+                            selectedString,
+                            AndroidUtility.getScreenWidth(requireContext()) * 0.75f
                         )
                     }
                     Spacer(

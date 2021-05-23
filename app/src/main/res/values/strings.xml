@@ -19,7 +19,7 @@
     <string name="change_location">تغيير الموقع</string>
     <string name="checking_requesting_permission">جاري التأكد من عدد طلباتك اليوم</string>
     <string name="checking_donating_ability">جاري التأكد من قدرتك على تلبية الطلب</string>
-    <string name="choose_branch">اختر الفرع</string>
+    <string name="choose_branch">اختر الفرع…</string>
     <string name="choose_location">اختر المكان</string>
     <string name="choose_your_location">اختر عنوان تواجدك</string>
     <string name="click_here_to_try_again">"فشل في الحصول على البيانات \n   اضغط هنا لإعادة المحاولة"</string>

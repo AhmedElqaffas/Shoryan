@@ -47,7 +47,7 @@ class RewardsRepo_imp(
             "شارع طويل و عريض مفهوش ركنة"
         )
         //return RewardResponse(ErrorResponse(ServerError.CONNECTION_ERROR, null), null)
-        return RewardResponse(null, Reward("asfa000asfaf","اسم الهدية", 0, "https://homepages.cae.wisc.edu/~ece533/images/zelda.png","انا شرح الهدية",branchesList,true ))
+        return RewardResponse(null, Reward("asfa000asfaf","اسم الهدية", 0, "https://homepages.cae.wisc.edu/~ece533/images/zelda.png","انا شرح الهدية",branchesList,false ))
     }
 
     override suspend fun startRewardRedeeming(rewardId: String): RedeemingRewardResponse {

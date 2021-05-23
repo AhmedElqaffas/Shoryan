@@ -24,6 +24,7 @@ class Dimensions(
     val plane_4: Dp,
     val plane_5: Dp,
     val plane_6: Dp,
+    val plane_7: Dp,
     val minimum_touch_target: Dp = 48.dp,
 )
 
@@ -47,7 +48,8 @@ val smallDimensions = Dimensions(
     plane_3 = 3.dp,
     plane_4 = 6.dp,
     plane_5 = 12.dp,
-    plane_6 = 86.25.dp,
+    plane_6 = 63.75.dp,
+    plane_7 = 86.25.dp,
 )
 
 val sh700Dimensions = Dimensions(
@@ -70,5 +72,6 @@ val sh700Dimensions = Dimensions(
     plane_3 = 4.dp,
     plane_4 = 8.dp,
     plane_5 = 16.dp,
-    plane_6 = 115.dp
+    plane_6 = 85.dp,
+    plane_7 = 115.dp
 )
