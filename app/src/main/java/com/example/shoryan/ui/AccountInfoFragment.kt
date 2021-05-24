@@ -32,20 +32,17 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.*
-
 
 
 class AccountInfoFragment : Fragment(), LoadingFragmentHolder {
 
     private lateinit var navController: NavController
     private var _binding: FragmentAccountInfoBinding? = null
+    private var fusedLocationProviderClient: FusedLocationProviderClient? = null
     private val binding get() = _binding!!
     private lateinit var locationPickerViewModel: LocationPickerViewModel
     private val accountInfoViewModel: AccountInfoViewModel by navGraphViewModels(R.id.main_nav_graph)
@@ -53,6 +50,9 @@ class AccountInfoFragment : Fragment(), LoadingFragmentHolder {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initializeLocationPickerViewModel()
+
+        // Get user's current profile information
+        getUserCurrentProfileInfo()
     }
 
 
@@ -84,7 +84,7 @@ class AccountInfoFragment : Fragment(), LoadingFragmentHolder {
         }
 
         // Setting a click listener for the birthDatePicker button
-        binding.birthDatePicker.setOnClickListener{
+        binding.birthDatePicker.setOnClickListener {
             pickBirthDate()
         }
 
@@ -108,9 +108,6 @@ class AccountInfoFragment : Fragment(), LoadingFragmentHolder {
         // Setting the textview of the address with the location chosen by the user
         setAddress()
 
-        // Get user's current profile information
-        getUserCurrentProfileInfo()
-
         // Observing the viewmodel events
         observeViewModelEvents()
     }
@@ -120,15 +117,14 @@ class AccountInfoFragment : Fragment(), LoadingFragmentHolder {
      * fill the initial values for the account info form
      */
     private fun getUserCurrentProfileInfo() {
-        GlobalScope.launch {
-                accountInfoViewModel.getUserProfileData()
-        }
+        accountInfoViewModel.getUserProfileData()
+        getUserAddressFromLocation(accountInfoViewModel.addressLiveData.value!!)
     }
 
     /**
      * Links the viewModel to the activity instead of the fragment
      */
-    private fun initializeLocationPickerViewModel(){
+    private fun initializeLocationPickerViewModel() {
         locationPickerViewModel = ViewModelProvider(requireActivity())
             .get(LocationPickerViewModel::class.java)
     }
@@ -137,7 +133,7 @@ class AccountInfoFragment : Fragment(), LoadingFragmentHolder {
      * This function opens a DatePicker dialog so that the user can select his/her birth date for
      * registration
      */
-    private fun pickBirthDate(){
+    private fun pickBirthDate() {
         val c = Calendar.getInstance()
         val currentYear = c.get(Calendar.YEAR)
         val currentMonth = c.get(Calendar.MONTH)
@@ -166,12 +162,15 @@ class AccountInfoFragment : Fragment(), LoadingFragmentHolder {
     /**
      * ContextMenu code for selecting the appropriate blood type
      */
-    override fun onCreateContextMenu(menu: ContextMenu, v: View, menuInfo: ContextMenu.ContextMenuInfo?) {
+    override fun onCreateContextMenu(
+        menu: ContextMenu,
+        v: View,
+        menuInfo: ContextMenu.ContextMenuInfo?
+    ) {
         super.onCreateContextMenu(menu, v, menuInfo)
-        if(v == binding.bloodTypePicker) {
+        if (v == binding.bloodTypePicker) {
             showBloodTypesList(menu, v)
-        }
-        else if(v == binding.genderPicker){
+        } else if (v == binding.genderPicker) {
             showGenderList(menu, v)
         }
 
@@ -180,43 +179,68 @@ class AccountInfoFragment : Fragment(), LoadingFragmentHolder {
     private fun showBloodTypesList(menu: ContextMenu, v: View) {
         val bloodTypesList = resources.getStringArray(R.array.blood_types)
         menu.setHeaderTitle(resources.getString(R.string.choose_bloodtype))
-        for(i in bloodTypesList.indices)
+        for (i in bloodTypesList.indices)
             menu.add(0, v.id, i, bloodTypesList[i].toString())
     }
 
-    private fun showGenderList(menu: ContextMenu, v: View){
+    private fun showGenderList(menu: ContextMenu, v: View) {
         val gendersList = resources.getStringArray(R.array.gender)
         menu.setHeaderTitle(resources.getString(R.string.choose_gender))
-        for(i in gendersList.indices)
+        for (i in gendersList.indices)
             menu.add(1, v.id, i, gendersList[i].toString())
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
-        if(item.groupId == 0){
+        if (item.groupId == 0) {
             accountInfoViewModel.setBloodType(item.title.toString())
-        }
-        else if(item.groupId == 1){
+        } else if (item.groupId == 1) {
             accountInfoViewModel.setGender(item.title.toString())
         }
         return true
     }
 
-    private fun openLocationPicker(){
+    private fun openLocationPicker() {
         navController.navigate(R.id.action_accountInfoFragment_to_mapFragment2)
     }
 
-    private fun setAddress(){
-        locationPickerViewModel.locationStringLiveData.observe(viewLifecycleOwner){
+    private fun setAddress() {
+
+        locationPickerViewModel.locationStringLiveData.observe(viewLifecycleOwner) {
             accountInfoViewModel.setAddress(locationPickerViewModel.getLocation())
             binding.addressEditText.setText(it)
         }
     }
 
-    private fun observeViewModelEvents(){
+    /**
+     * Takes the location of the user and uses reverse geocoding to find the address.
+     * This method stores both the location and the address in the viewmodel
+     */
+    private fun getUserAddressFromLocation(location: com.example.shoryan.data.Location) {
+        val locationLatLng = LatLng(location.latitude, location.longitude)
+        locationPickerViewModel.locationLatLng = locationLatLng
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                val address = locationPickerViewModel.getAddressFromLatLng(
+                    requireActivity(),
+                    locationLatLng
+                )
+                address?.let {
+                    locationPickerViewModel.setLocation(it)
+                }
+            }
+        }
+    }
+
+
+    private fun observeViewModelEvents() {
         accountInfoViewModel.updateAccountInfoEventsFlow.onEach {
-            when(it){
-                is AccountInfoViewModel.EditAccountInfoViewEvent.ShowSnackBarFromString -> showSnackbar(it.text)
-                is AccountInfoViewModel.EditAccountInfoViewEvent.ShowSnackBarFromResource -> showSnackbar(resources.getString(it.textResourceId))
+            when (it) {
+                is AccountInfoViewModel.EditAccountInfoViewEvent.ShowSnackBarFromString -> showSnackbar(
+                    it.text
+                )
+                is AccountInfoViewModel.EditAccountInfoViewEvent.ShowSnackBarFromResource -> showSnackbar(
+                    resources.getString(it.textResourceId)
+                )
                 is AccountInfoViewModel.EditAccountInfoViewEvent.ToggleLoadingIndicator -> toggleLoadingIndicator()
                 is AccountInfoViewModel.EditAccountInfoViewEvent.UpdatedAccountInfoSuccessfully -> onSuccessfulResponse()
             }
@@ -232,13 +256,14 @@ class AccountInfoFragment : Fragment(), LoadingFragmentHolder {
         navController.navigateUp()
     }
 
-    private fun showSnackbar(message: String){
+    private fun showSnackbar(message: String) {
         AndroidUtility.displaySnackbarMessage(binding.rootLayout, message, Snackbar.LENGTH_LONG)
     }
 
-    private fun toggleLoadingIndicator(){
-        val loadingFragment: DialogFragment? = childFragmentManager.findFragmentByTag("loading") as DialogFragment?
-        if(loadingFragment == null)
+    private fun toggleLoadingIndicator() {
+        val loadingFragment: DialogFragment? =
+            childFragmentManager.findFragmentByTag("loading") as DialogFragment?
+        if (loadingFragment == null)
             LoadingFragment(this).show(childFragmentManager, "loading")
         else
             loadingFragment.dismiss()

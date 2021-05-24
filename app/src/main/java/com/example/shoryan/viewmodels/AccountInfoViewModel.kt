@@ -147,28 +147,30 @@ class AccountInfoViewModel : ViewModel() {
         updateInfoProcess?.cancel()
     }
 
-    suspend fun getUserProfileData() {
+    fun getUserProfileData() {
 
         // Get current profile information
-        val profileResponse = ProfileRepo.getUserProfileData(bloodDonationAPI, false)
+        val profileResponse = ProfileRepo.getStoredProfileData()
 
-        // Set firstname
-        _firstName.postValue(profileResponse.user?.name?.firstName)
+        if(profileResponse != null) {
+            // Set firstname
+            _firstName.value = profileResponse.user?.name?.firstName
 
-        // Set lastname
-        _lastName.postValue(profileResponse.user?.name?.lastName)
+            // Set lastname
+            _lastName.value = profileResponse.user?.name?.lastName
 
-        // Set blood type
-        _bloodType.postValue(profileResponse.user?.bloodType!!)
+            // Set blood type
+            _bloodType.value = profileResponse.user?.bloodType!!
 
-        // Set gender
-        //_gender.postValue(profileResponse.user.gender!!)
+            // Set gender
+            _gender.value = profileResponse.user.gender!!
 
-        // Set birthdate
-        //_birthDate.postValue(profileResponse.user.birthDate)
+            // Set birthdate
+            _birthDate.value = profileResponse.user.birthDate
 
-        // Set address
-        //_addressLiveData.postValue(profileResponse.user.location)
+            // Set address
+            _addressLiveData.value = profileResponse.user.location
+        }
     }
 
     fun createChangePasswordQuery(oldPassword : String?, newPassword : String?) : UpdateUserInformationQuery{
