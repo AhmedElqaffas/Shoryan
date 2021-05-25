@@ -6,6 +6,10 @@ object CurrentSession{
     var pendingRequestId: String? = null
 
     fun initializeUser(user: User){
-        if(this.user == null) this.user = user
+        this.user = user
+    }
+
+    fun updateUserPoints(points: Int){
+        user?.points = points
     }
 }

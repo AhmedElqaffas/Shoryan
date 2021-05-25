@@ -20,6 +20,7 @@ enum class ServerError(val errorStringResource: Int) {
     USER_NOT_FOUND(R.string.user_not_found),
     INVALID_FORMAT(R.string.invalid_input),
     PHONE_NUMBER_REQUIRED(R.string.connection_error),
+    REDEEMING_ANOTHER_REWARD(R.string.redeeming_another_reward),
     JWT_EXPIRED(R.string.connection_error){
         override fun doErrorAction(context: Context) {
             AndroidUtility.forceLogOut(context)

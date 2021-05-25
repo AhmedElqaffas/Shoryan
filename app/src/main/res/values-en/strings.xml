@@ -93,6 +93,7 @@
     <string name="register">Register</string>
     <string name="redeemable">Redeemable</string>
     <string name="redeem">Redeem</string>
+    <string name="redeeming_another_reward">You are already redeeming another reward</string>
     <string name="redeeming_confirmation_title">Confirm Redeeming</string>
     <string name="redeeming_confirmation_body">"You won't be able to cancel the redeeming, are you sure you want to continue?"</string>
     <string name="requests">Requests</string>

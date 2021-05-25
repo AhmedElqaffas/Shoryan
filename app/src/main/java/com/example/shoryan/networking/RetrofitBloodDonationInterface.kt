@@ -65,13 +65,23 @@ interface RetrofitBloodDonationInterface {
     @POST("users/signup-verification")
     suspend fun verifyRegistrationCode(@Body verificationCodeQuery: VerificationCodeQuery): TokenResponse
 
-    @POST("rewards")
+    @GET("rewards")
     suspend fun getRewardsList(@Header("Authorization") accessToken: String): RewardsListResponse
 
-    @POST("rewards")
-    suspend fun getRewardDetails(@Header("Authorization") accessToken: String, @Body rewardId: String): RewardResponse
+    @GET("rewards/{rewardId}")
+    suspend fun getRewardDetails(@Header("Authorization") accessToken: String,
+                                 @Path("rewardId") rewardId: String): RewardResponse
 
-    @POST("rewards")
-    suspend fun startRewardRedeeming(@Header("Authorization") accessToken: String, @Body rewardId: String): RedeemingRewardResponse
+    @POST("rewards/{rewardId}/redeemReward")
+    suspend fun startRewardRedeeming(@Header("Authorization") accessToken: String,
+                                     @Path("rewardId") rewardId: String,
+                                     @Body branchIdQuery: BranchIdQuery): RedeemingRewardResponse
+
+    @POST("rewards/{rewardId}/redeemRewardCodeVerification")
+    suspend fun confirmRewardRedeeming(
+        @Header("Authorization") accessToken: String,
+        @Path("rewardId") rewardId: String,
+        @Body confirmRewardRedeemingQuery: ConfirmRewardRedeemingQuery
+    ) : ConfirmRedeemingResponse
 
 }

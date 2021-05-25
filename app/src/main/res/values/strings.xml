@@ -93,6 +93,7 @@
     <string name="register">إنشاء حساب جديد</string>
     <string name="redeemable">يمكنك الإسترداد</string>
     <string name="redeem">استرد العرض</string>
+    <string name="redeeming_another_reward">You are already redeeming another reward</string>
     <string name="redeeming_confirmation_title">تأكيد استرداد الهدية</string>
     <string name="redeeming_confirmation_body">لن تستطيع الغاء الاسترداد، هل تريد المتابعة؟</string>
     <string name="requests">الطلبات</string>

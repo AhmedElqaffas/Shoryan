@@ -1,9 +1,11 @@
 package com.example.shoryan.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -18,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
@@ -26,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstrainedLayoutReference
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintLayoutScope
+import androidx.constraintlayout.compose.Dimension
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -35,7 +39,7 @@ import androidx.navigation.Navigation
 import com.example.shoryan.AndroidUtility
 import com.example.shoryan.ConnectionLiveData
 import com.example.shoryan.R
-import com.example.shoryan.data.Reward
+import com.example.shoryan.data.Branch
 import com.example.shoryan.data.ServerError
 import com.example.shoryan.interfaces.LoadingFragmentHolder
 import com.example.shoryan.ui.composables.*
@@ -44,6 +48,7 @@ import com.example.shoryan.ui.theme.Shimmer
 import com.example.shoryan.ui.theme.ShoryanTheme
 import com.example.shoryan.viewmodels.RedeemingRewardsViewModel
 import com.example.shoryan.viewmodels.SMSViewModel
+import com.example.shoryan.viewmodels.TokensViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.accompanist.coil.CoilImage
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -55,11 +60,13 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
     private val smsViewModel: SMSViewModel by viewModels()
     private lateinit var navController: NavController
     private val viewModel: RedeemingRewardsViewModel by viewModels()
+    private val tokensViewModel: TokensViewModel by viewModels()
     private lateinit var connectionLiveData: ConnectionLiveData
-    private val reward: Reward by lazy {
-        requireArguments().get("reward") as Reward
+    private val rewardId: String by lazy {
+        requireArguments().get("rewardId") as String
     }
-    private var chosenBranch: String? = null
+    private var chosenBranchId: String? = null
+    private var chosenBranchAddress: String? = null
 
     // Errors to show to user
     private val fragmentErrors = MutableStateFlow<String?>(null)
@@ -75,6 +82,7 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
                     val connectionStatus = connectionLiveData.observeAsState(true).value
                     val loadingState =
                         viewModel.rewardRedeemingState.collectAsState(RedeemingRewardsViewModel.RedeemingState.LOADING).value
+
                     Screen(connectionStatus, loadingState)
                 }
             }
@@ -93,7 +101,7 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
     }
 
     private fun fetchRewardDetails() = lifecycleScope.launchWhenResumed {
-        viewModel.getRewardDetails(reward)
+        viewModel.getRewardDetails(rewardId)
     }
 
     @Composable
@@ -118,6 +126,7 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
 
     @Composable
     fun RewardScreen() {
+        val reward = viewModel.detailedReward.collectAsState().value!!
         val scrollState = rememberScrollState()
         ConstraintLayout(
             Modifier
@@ -134,13 +143,13 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
                 ConstraintLayout(Modifier.fillMaxSize()) {
                     val parentLayout = this
                     val (appBar, points, cover, logo, description, branches, button) = createRefs()
-                    CoverImage(parentLayout, cover)
-                    AppBar(parentLayout, appBar)
+                    CoverImage(reward.store.coverLink, parentLayout, cover)
+                    AppBar(reward.store.name, parentLayout, appBar)
                     if (!isBeingRedeemed) UserPoints(parentLayout, points, cover)
-                    Logo(parentLayout, logo, cover, reward.imageLink)
-                    OfferDescription(parentLayout, description, logo)
-                    Branches(parentLayout, branches, logo, isBeingRedeemed)
-                    RewardRedeemingStatus(parentLayout, branches, button, isBeingRedeemed)
+                    Logo(parentLayout, logo, cover, reward.store.logoLink)
+                    OfferDescription(reward.description, parentLayout, description, logo)
+                    Branches(reward.store.branches, parentLayout, branches, logo, isBeingRedeemed)
+                    RewardRedeemingStatus(reward.points, parentLayout, branches, button, isBeingRedeemed)
                 }
             }
         }
@@ -163,7 +172,8 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
             // Collect server errors from SMSViewModel
             val redeemingCodeErrors: ServerError? by smsViewModel.eventsFlow.collectAsState(null)
             messageToUser?.let {
-                ShowSnackbar(resources.getString(it.errorStringResource)) {
+                if(isSpecialError(it)) handleSpecialError(it)
+                else ShowSnackbar(resources.getString(it.errorStringResource)) {
                     OKSnackbarButton()
                 }
             }
@@ -171,7 +181,8 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
                 ShowSnackbar(it) { OKSnackbarButton() }
             }
             redeemingCodeErrors?.let {
-                ShowSnackbar(message = resources.getString(it.errorStringResource)) {
+                if(isSpecialError(it)) handleSpecialError(it)
+                else ShowSnackbar(message = resources.getString(it.errorStringResource)) {
                     OKSnackbarButton()
                 }
             }
@@ -180,12 +191,13 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
 
     @Composable
     fun AppBar(
+        storeName: String,
         parentLayout: ConstraintLayoutScope,
         appBar: ConstrainedLayoutReference
     ) {
         parentLayout.apply {
             AppBar(
-                reward.rewardName!!,
+                storeName,
                 Modifier
                     .fillMaxWidth()
                     .constrainAs(appBar) {
@@ -197,6 +209,7 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
 
     @Composable
     fun CoverImage(
+        coverImageLink: String,
         parentLayout: ConstraintLayoutScope,
         imageReference: ConstrainedLayoutReference
     ) {
@@ -208,10 +221,11 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
                         top.linkTo(parent.top, margin = 18.dp)
                     }
             ) {
-                Image(
-                    painterResource(R.mipmap.pharm_cover_image),
+                CoilImage(
+                    data = coverImageLink,
                     contentDescription = "Cover Image",
                     Modifier
+                        .border(1.dp, Color(0xFF707070), RectangleShape)
                         .aspectRatio(1.8f)
                         .fillMaxWidth(),
                     contentScale = ContentScale.FillBounds
@@ -229,19 +243,21 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
         parentLayout.apply {
             Surface(
                 modifier = Modifier
-                    .clip(RoundedCornerShape(bottomStart = 25.dp, topStart = 25.dp))
                     .background(Color.White)
-                    .padding(25.dp, 15.dp, 15.dp, 10.dp)
                     .constrainAs(pointsReference) {
                         end.linkTo(coverReference.end)
                         top.linkTo(parent.top, margin = 70.dp)
-                    }
+                    },
+                elevation = 8.dp,
+                shape = RoundedCornerShape(bottomStart = 25.dp, topStart = 25.dp)
             ) {
                 Text(
                     text = resources.getString(R.string.point, viewModel.userPoints),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.subtitle1,
                     color = Color.Black,
+                    modifier = Modifier
+                        .padding(25.dp, 15.dp, 15.dp, 10.dp)
                 )
             }
         }
@@ -257,7 +273,7 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
         parentLayout.apply {
             CoilImage(
                 data = imageLink,
-                contentDescription = null,
+                contentDescription = "Logo",
                 contentScale = ContentScale.FillBounds,
                 modifier = Modifier
                     .clip(CircleShape)
@@ -273,19 +289,22 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
 
     @Composable
     fun OfferDescription(
+        rewardDescription: String,
         parentLayout: ConstraintLayoutScope,
         descriptionReference: ConstrainedLayoutReference,
         logoReference: ConstrainedLayoutReference
     ) {
         parentLayout.apply {
             Text(
-                text = reward.description!!,
-                textAlign = TextAlign.Center,
+                text = rewardDescription,
+                textAlign = TextAlign.Start,
                 style = MaterialTheme.typography.subtitle2,
                 color = Color.Black,
-                modifier = Modifier.constrainAs(descriptionReference) {
-                    centerVerticallyTo(logoReference)
-                    start.linkTo(logoReference.end, margin = 15.dp)
+                modifier = Modifier
+                    .constrainAs(descriptionReference) {
+                        linkTo(logoReference.top, logoReference.bottom, 0.dp, 0.dp, 0.7f)
+                        linkTo(logoReference.end, parent.end, 15.dp, 15.dp)
+                        width = Dimension.fillToConstraints
                 }
             )
         }
@@ -293,12 +312,17 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
 
     @Composable
     fun Branches(
+        storeBranches: List<Branch>,
         parentLayout: ConstraintLayoutScope,
         branchesReference: ConstrainedLayoutReference,
         logoReference: ConstrainedLayoutReference,
         isBeingRedeemed: Boolean
     ) {
 
+        if(isBeingRedeemed && chosenBranchId == null){
+            chosenBranchAddress = storeBranches[0].getStringAddress()
+            chosenBranchId = storeBranches[0].id
+        }
         parentLayout.apply {
             Column(
                 modifier = Modifier
@@ -320,8 +344,9 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
                 val openCloseOfDropDownList: (Boolean) -> Unit = {
                     isOpen.value = it
                 }
-                val selectedString: (String) -> Unit = {
-                    chosenBranch = it
+                val onBranchSelected: (String, String) -> Unit = { id, address ->
+                    chosenBranchId = id
+                    chosenBranchAddress = address
                 }
 
                 val dropdownBorderColor = if(isBeingRedeemed) Shimmer
@@ -343,8 +368,8 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
                             )
                     ) {
                         TextField(
-                            value = chosenBranch ?: resources.getString(R.string.choose_branch),
-                            onValueChange = { chosenBranch = it },
+                            value = chosenBranchAddress ?: resources.getString(R.string.choose_branch),
+                            onValueChange = { chosenBranchAddress = it },
                             trailingIcon = {
                                 Image(
                                     painter = painterResource(dropdownArrow),
@@ -377,9 +402,9 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
                         ){
                             DropDownComposable(
                                 isOpen.value,
-                                reward.branches!!,
+                                storeBranches,
                                 openCloseOfDropDownList,
-                                selectedString,
+                                onBranchSelected,
                                 AndroidUtility.getScreenWidth(requireContext()) * 0.75f
                             )
                         }
@@ -404,6 +429,7 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
 
     @Composable
     fun RewardRedeemingStatus(
+        rewardPoints: Int,
         parentLayout: ConstraintLayoutScope,
         branches: ConstrainedLayoutReference,
         button: ConstrainedLayoutReference,
@@ -412,10 +438,10 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
         if (isBeingRedeemed) {
             CodeEntryUI(parentLayout, button, branches)
         } else {
-            if (canUserRedeemReward())
+            if (canUserRedeemReward(viewModel.userPoints, rewardPoints))
                 RedeemButton(parentLayout, button, branches)
             else
-                InsufficientPointsButton(parentLayout, button, branches)
+                InsufficientPointsButton(rewardPoints, parentLayout, button, branches)
         }
     }
 
@@ -476,6 +502,7 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
 
     @Composable
     fun InsufficientPointsButton(
+        rewardPoints: Int,
         parentLayout: ConstraintLayoutScope,
         buttonReference: ConstrainedLayoutReference,
         branchesReference: ConstrainedLayoutReference
@@ -485,7 +512,7 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
             buttonReference,
             branchesReference,
             false,
-            resources.getString(R.string.points_remaining, reward.points - viewModel.userPoints)
+            resources.getString(R.string.points_remaining, rewardPoints - viewModel.userPoints)
         ) {}
     }
 
@@ -522,16 +549,16 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
 
 
     private fun onRedeemButtonClicked() {
-        if (chosenBranch != null)
-            showAlertDialog(reward.id)
+        if (chosenBranchAddress != null)
+            showAlertDialog(rewardId)
         else {
             fragmentErrors.value = resources.getString(R.string.no_branch_chosen)
         }
     }
 
-    private fun redeemReward(rewardId: String) {
+    private fun redeemReward(rewardId: String, branchId: String) {
         lifecycleScope.launchWhenResumed {
-            viewModel.tryRedeemReward(rewardId)
+            viewModel.tryRedeemReward(rewardId, branchId)
         }
     }
 
@@ -567,7 +594,9 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
             val screenHeight = remember {
                 AndroidUtility.getScreenHeight(requireContext())
             }
-            AppBar(title = reward.rewardName!!, modifier = Modifier.fillMaxWidth())
+            val reward = viewModel.detailedReward.collectAsState().value!!
+
+            AppBar(title = reward.store.name, modifier = Modifier.fillMaxWidth())
             Image(
                 painterResource(R.drawable.ic_reward_check),
                 contentDescription = "Check Mark",
@@ -604,7 +633,7 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
         }
     }
 
-    private fun canUserRedeemReward() = viewModel.userPoints >= reward.points
+    private fun canUserRedeemReward(userPoints: Int, rewardPoints: Int) = userPoints >= rewardPoints
 
 
     private fun showAlertDialog(id: String) {
@@ -612,18 +641,20 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
         with(builder) {
             setTitle(resources.getString(R.string.redeeming_confirmation_title))
             setMessage(resources.getString(R.string.redeeming_confirmation_body))
-            setPositiveButton(resources.getString(R.string.confirm)) { _, _ -> redeemReward(id) }
+            setPositiveButton(resources.getString(R.string.confirm)) { _, _ -> redeemReward(id, chosenBranchId!!) }
             setNegativeButton(resources.getString(R.string.no), null)
             show()
         }
     }
 
     private fun verifyCode(code: String) {
-        smsViewModel.verifyRedeemingCode(code)
+        smsViewModel.verifyRedeemingCode(rewardId, chosenBranchId!!, code)
     }
 
-    private fun sendSMS() {
-        smsViewModel.trySendSMS(reward.id)
+    private fun sendSMS(){
+        lifecycleScope.launchWhenResumed {
+            smsViewModel.trySendSMS(rewardId, chosenBranchId!!)
+        }
     }
 
     private fun observeCodeVerificationStatus() {
@@ -652,6 +683,35 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
         val loadingFragment: DialogFragment? =
             childFragmentManager.findFragmentByTag("loading") as DialogFragment?
         loadingFragment?.dismiss()
+    }
+
+    private fun isSpecialError(error: ServerError): Boolean{
+        return when(error){
+            ServerError.JWT_EXPIRED -> true
+            ServerError.UNAUTHORIZED -> true
+            else -> false
+        }
+    }
+    private fun handleSpecialError(error: ServerError){
+        if(error == ServerError.JWT_EXPIRED){
+            viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+                val response = tokensViewModel.getNewAccessToken(requireContext())
+                // If an error happened when refreshing tokens, log user out
+                response.error?.let{
+                    forceLogOut()
+                }
+            }
+        }
+        else if(error == ServerError.UNAUTHORIZED){
+            error.doErrorAction(requireContext())
+        }
+    }
+
+    private fun forceLogOut(){
+        Toast.makeText(requireContext(), resources.getString(R.string.re_login), Toast.LENGTH_LONG).show()
+        val intent = Intent(context, LandingActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
     }
 
     override fun onLoadingFragmentDismissed() {

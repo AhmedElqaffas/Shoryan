@@ -73,8 +73,7 @@
         android:name="com.example.shoryan.ui.RedeemRewardFragment"
         android:label="RedeemRewardFragment" />
     <argument
-        app:argType="com.example.shoryan.data.Reward"
-        android:name="reward"/>
+        android:name="rewardId"/>
     <fragment
         android:id="@+id/profileSettingsFragment"
         android:name="com.example.shoryan.ui.ProfileSettingsFragment"

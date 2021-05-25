@@ -30,8 +30,8 @@ fun CodeEntryUI(
     cellColor: Color = Color.White,
     activeBorderColor: Color = MaterialTheme.colors.primary,
     inActiveBorderColor: Color = Color.Black,
-    activeBorderWidth: Dp = 3.dp,
-    inActiveBorderWidth: Dp = 1.dp,
+    activeBorderWidth: Dp = 5.dp,
+    inActiveBorderWidth: Dp = 3.dp,
     isPassword: Boolean = false,
     onCodeEntered: (String) -> Unit,
     layoutDirection: Int,
@@ -46,6 +46,7 @@ fun CodeEntryUI(
     Column(
         modifier = modifier
     ) {
+
             PinEntryComposable(
                 numberOfCells,
                 Modifier,
@@ -64,6 +65,16 @@ fun CodeEntryUI(
         ResendCodeText(screenHeight, resendCodeText, onResendCodeClicked, canResendSMS, remainingTime)
     }
 }
+/*@Preview
+@Composable
+fun t(){
+    BasicTextField(
+        value = "8",
+        onValueChange = {},
+        modifier = Modifier.requiredWidth(50.dp).background(Color.Red),
+        textStyle = MaterialTheme.typography.h1.copy(fontSize = 100.sp)
+    )
+}*/
 
 @Composable
 fun ConfirmButton(

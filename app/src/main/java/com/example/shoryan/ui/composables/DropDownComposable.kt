@@ -10,13 +10,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.example.shoryan.data.Branch
 
 @Composable
 fun DropDownComposable(
     isOpen: Boolean,
-    itemsList: List<String>,
+    storeBranches: List<Branch>,
     setMenuVisibility: (Boolean) -> Unit,
-    setSelectedString: (String) -> Unit,
+    onBranchSelected: (String, String) -> Unit,
     popupWidth: Dp
 ){
     DropdownMenu(
@@ -25,11 +26,11 @@ fun DropDownComposable(
             expanded = isOpen,
             onDismissRequest = { setMenuVisibility(false) }
         ) {
-            itemsList.forEach {
+            storeBranches.forEach {
                 DropdownMenuItem(
                     onClick = {
                         setMenuVisibility(false)
-                        setSelectedString(it)
+                        onBranchSelected(it.id, it.getStringAddress())
                     },
                     contentPadding = PaddingValues(0.dp)
                 ) {
@@ -38,7 +39,7 @@ fun DropDownComposable(
 
                     ){
                         Text(
-                            text = it,
+                            text = it.getStringAddress(),
                             textAlign = TextAlign.Center,
                             modifier = Modifier.width(popupWidth),
                             style = MaterialTheme.typography.body1
