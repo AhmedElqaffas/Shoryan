@@ -140,7 +140,7 @@ class AccountInfoFragment : Fragment(), LoadingFragmentHolder {
                 accountInfoViewModel.setBirthDate(BirthDate(year, monthOfYear + 1, dayOfMonth))
             },
             accountInfoViewModel.getBirthYear(),
-            accountInfoViewModel.getBirthMonth(),
+            accountInfoViewModel.getBirthMonth() - 1,
             accountInfoViewModel.getBirthDay()
         )
 
