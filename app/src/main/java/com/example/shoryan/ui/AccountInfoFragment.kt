@@ -130,22 +130,18 @@ class AccountInfoFragment : Fragment(), LoadingFragmentHolder {
     }
 
     /**
-     * This function opens a DatePicker dialog so that the user can select his/her birth date for
-     * registration
+     * This function opens a DatePicker dialog so that the user can modify his/her birth date
      */
     private fun pickBirthDate() {
         val c = Calendar.getInstance()
-        val currentYear = c.get(Calendar.YEAR)
-        val currentMonth = c.get(Calendar.MONTH)
-        val currentDay = c.get(Calendar.DAY_OF_MONTH)
         val dpd = DatePickerDialog(
             requireActivity(),
             { _, year, monthOfYear, dayOfMonth ->
                 accountInfoViewModel.setBirthDate(BirthDate(year, monthOfYear + 1, dayOfMonth))
             },
-            currentYear - 18,
-            currentMonth,
-            currentDay
+            accountInfoViewModel.getBirthYear(),
+            accountInfoViewModel.getBirthMonth(),
+            accountInfoViewModel.getBirthDay()
         )
 
         // Setting the maximum date for the birthday

@@ -143,6 +143,18 @@ class AccountInfoViewModel : ViewModel() {
         }
     }
 
+    fun getBirthYear() : Int{
+        return _birthDate.value?.year!!
+    }
+
+    fun getBirthMonth() : Int{
+        return _birthDate.value?.month!!
+    }
+
+    fun getBirthDay() : Int{
+        return _birthDate.value?.day!!
+    }
+
     fun cancelUpdateInfoProcess() {
         updateInfoProcess?.cancel()
     }
