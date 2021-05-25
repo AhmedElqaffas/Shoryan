@@ -54,6 +54,11 @@ class ProfileSettingsFragment : Fragment(), LocaleChangerHolder {
             logoutFromAccount()
         }
 
+        // Go to AccountInfoFragment when the account info button is clicked
+        binding.accountInfoButton.setOnClickListener {
+            navController.navigate(R.id.action_profileSettingsFragment_to_accountInfoFragment)
+        }
+
         // Go to ChangePasswordFragment when the change password button is clicked
         binding.changePasswordButton.setOnClickListener {
             navController.navigate(R.id.action_profileSettingsFragment_to_changePasswordFragment)

@@ -1,13 +1,16 @@
 package com.example.shoryan.ui
 
+import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
+import com.example.shoryan.LocaleHelper
 import com.example.shoryan.R
 import com.example.shoryan.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -20,6 +23,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setNavigationComponent()
+    }
+
+    override fun attachBaseContext(newBase: Context?) {
+        newBase?.let {
+            super.attachBaseContext(LocaleHelper.onAttach(newBase, Locale.getDefault().language))
+        }
     }
 
     private fun setNavigationComponent(){

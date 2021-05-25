@@ -142,6 +142,12 @@
     <string name="confirm_new_password">Confirm New Password</string>
     <string name="save_changes">Save</string>
     <string name="password_change_success">You have successfully changed your password</string>
+    <string name="enter_old_password">Enter your current password</string>
+    <string name="enter_new_password">Enter your new password</string>
+    <string name="current_password_wrong">Please enter your current password correctly</string>
+    <string name="account_info_update_success">Your account information has been updated successfully</string>
+    <string name="choose_gender">Choose Gender</string>
+    <string name="choose_bloodtype">Choose Blood Type</string>
 
 
     <string-array name="blood_types">
@@ -156,7 +162,6 @@
     </string-array>
 
     <string-array name="gender">
-        <item>Prefer not to say</item>
         <item>Male</item>
         <item>Female</item>
     </string-array>

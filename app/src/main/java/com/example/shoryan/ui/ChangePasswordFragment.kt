@@ -8,12 +8,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.DrawableRes
 import androidx.core.content.res.ResourcesCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.navigation.navGraphViewModels
 import com.example.shoryan.AndroidUtility
+import com.example.shoryan.InputValidator
 import com.example.shoryan.R
 import com.example.shoryan.databinding.FragmentChangePasswordBinding
+import com.example.shoryan.viewmodels.AccountInfoViewModel
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 class ChangePasswordFragment : Fragment() {
 
@@ -21,6 +28,7 @@ class ChangePasswordFragment : Fragment() {
     private lateinit var navController: NavController
     private var _binding: FragmentChangePasswordBinding? = null
     private val binding get() = _binding!!
+    private val accountInfoViewModel: AccountInfoViewModel by navGraphViewModels(R.id.main_nav_graph)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,6 +55,9 @@ class ChangePasswordFragment : Fragment() {
             navController.navigateUp()
         }
 
+        // Observing the viewmodel events
+        observeViewModelEvents()
+
         // Setting up the save new password button
         binding.savePasswordButton.setOnClickListener {
             if (checkIfPasswordValid()) {
@@ -62,19 +73,13 @@ class ChangePasswordFragment : Fragment() {
         /**
          * This method saves the changes made to the user's password through an API call to the backend.
          */
-        val timer = object: CountDownTimer(1000, 1000) {
-            override fun onTick(millisUntilFinished: Long) {
-            }
 
-            override fun onFinish() {
-                turnOnSaveButton()
-                turnOffProgressBar()
-                AndroidUtility.displaySnackbarMessage(binding.changePasswordLayout,
-                    resources.getString(R.string.password_change_success),
-                    Snackbar.LENGTH_LONG)
-            }
-        }
-        timer.start()
+        // Getting the values the user has entered
+        val oldPassword = binding.currentPasswordEditText.text.toString().trim()
+        val newPassword = binding.newPasswordEditText.text.toString().trim()
+
+        // Making the API call
+        accountInfoViewModel.changeUserPassword(accountInfoViewModel.createChangePasswordQuery(oldPassword, newPassword))
     }
 
     private fun turnOnProgressBar() {
@@ -112,7 +117,7 @@ class ChangePasswordFragment : Fragment() {
         when {
             // Checking if the old password has been entered
             oldPassword.isEmpty() -> {
-                binding.currentPasswordLayout.error = "Enter your current password"
+                binding.currentPasswordLayout.error = resources.getString(R.string.enter_old_password)
                 binding.confirmNewPasswordLayout.error = null
                 binding.newPasswordLayout.error = null
                 return false
@@ -120,7 +125,15 @@ class ChangePasswordFragment : Fragment() {
 
             // Checking if the new password has been entered
             newPassword.isEmpty() -> {
-                binding.newPasswordLayout.error = "Enter your new password"
+                binding.newPasswordLayout.error = resources.getString(R.string.enter_new_password)
+                binding.confirmNewPasswordLayout.error = null
+                binding.currentPasswordLayout.error = null
+                return false
+            }
+
+            // Checking if the new password is valid
+            !(InputValidator.isValidPasswordEntered(newPassword)) ->{
+                binding.newPasswordLayout.error = resources.getString(R.string.password_format_message)
                 binding.confirmNewPasswordLayout.error = null
                 binding.currentPasswordLayout.error = null
                 return false
@@ -128,7 +141,7 @@ class ChangePasswordFragment : Fragment() {
 
             // Checking if the new password has been confirmed by the user correctly
             newPassword != confirmNewPassword -> {
-                binding.confirmNewPasswordLayout.error = "The passwords don't match"
+                binding.confirmNewPasswordLayout.error = resources.getString(R.string.password_mismatch)
                 binding.newPasswordLayout.error =  null
                 binding.currentPasswordLayout.error = null
                 return false
@@ -142,5 +155,39 @@ class ChangePasswordFragment : Fragment() {
             }
         }
 
+    }
+
+    private fun observeViewModelEvents(){
+        accountInfoViewModel.passwordEventsFlow.onEach {
+            when(it){
+                is AccountInfoViewModel.ChangePasswordViewEvent.ShowSnackBarFromResource -> onFailureResponse(it.textResourceId)
+                AccountInfoViewModel.ChangePasswordViewEvent.ChangedPasswordsSuccessfully -> onSuccessfulResponse()
+            }
+        }.launchIn(viewLifecycleOwner.lifecycleScope)
+    }
+
+    private fun showSnackbar(message: String){
+        AndroidUtility.displaySnackbarMessage(binding.rootLayout, message, Snackbar.LENGTH_LONG)
+    }
+
+    /**
+     * This callback method is called when an error occurs while changing the password.
+     * It displays an error message to the user and toggles the loading indicators.
+     */
+    private fun onFailureResponse(resourceID: Int){
+        showSnackbar(resources.getString(resourceID))
+        turnOffProgressBar()
+        turnOnSaveButton()
+    }
+
+    /**
+     * This callback method is called when the password has been changed successfully.
+     * It displays a success message to the user and toggles the loading indicators.
+     */
+    private fun onSuccessfulResponse(){
+        showSnackbar(resources.getString(R.string.password_change_success))
+        turnOffProgressBar()
+        turnOnSaveButton()
+        navController.navigateUp()
     }
 }

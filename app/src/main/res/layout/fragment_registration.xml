@@ -16,18 +16,18 @@
         android:focusableInTouchMode="true"
         android:clickable="true">
 
-        <ImageButton
+        <ImageView
             android:id="@+id/registrationBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@mipmap/ic_back_oval"
+            android:padding="20dp"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_bias="0.044"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.038"
-            app:layout_constraintHorizontal_bias="0.038"
-            android:padding="20dp"/>
+            app:layout_constraintVertical_bias="0.023" />
 
         <ImageView
             android:id="@+id/registrationAppLogo"

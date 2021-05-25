@@ -84,4 +84,6 @@ interface RetrofitBloodDonationInterface {
         @Body confirmRewardRedeemingQuery: ConfirmRewardRedeemingQuery
     ) : ConfirmRedeemingResponse
 
+    @PATCH("users/profile")
+    suspend fun updateUserInformation(@Header("Authorization") accessToken: String, @Body updateUserInformationQuery: UpdateUserInformationQuery): ProfileResponse
 }

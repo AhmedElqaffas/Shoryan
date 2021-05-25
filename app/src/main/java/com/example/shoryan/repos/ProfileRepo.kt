@@ -36,4 +36,18 @@ object ProfileRepo {
         }
         return ProfileResponse(user, null)
     }
+
+    /**
+     * This method gets the stored profile response if it exists
+     */
+    fun getStoredProfileData() : ProfileResponse? {
+        return if(user != null)
+            ProfileResponse(user, null)
+        else
+            null
+    }
+
+    fun updateProfileInfo(updatedUser: User?){
+        user = updatedUser
+    }
 }
