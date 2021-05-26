@@ -5,8 +5,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.example.shoryan.ApiTestManager
 import com.example.shoryan.CoroutinesTestRule
 import com.example.shoryan.MockResponseFileReader
-import com.example.shoryan.data.CurrentSession
-import com.example.shoryan.data.Reward
+import com.example.shoryan.data.*
 import com.example.shoryan.viewmodels.RedeemingRewardsViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -38,18 +37,26 @@ class RedeemingRewardsViewModelTest{
     private lateinit var viewmodel: RedeemingRewardsViewModel
     private lateinit var context: Context
 
-    private val fakeRedeemingRewardObject = Reward(
+    private val fakeReward= Reward(
         "dummy id",
-        "name",
         0,
-        "https://homepages.cae.wisc.edu/~ece533/images/zelda.png",
-        "desc" ,
-        listOf("branch 1", "branch 2", "branch 3"),
-        true
+        "name",
+        Store(
+            "dummy",
+            "dummy",
+            "dummy",
+            "dummy",
+            listOf(Branch("dummy", Location("","",null,null)))
+        )
     )
 
-    private val fakeNotRedeemingRewardObject = fakeRedeemingRewardObject.copy(
-        isBeingRedeemed = false
+    private val fakeRedeemingReward = RewardResponse(
+        null,
+        SuccessfulRewardResponse(fakeReward, true)
+    )
+
+    private val fakeNotRedeemingRewardObject = fakeRedeemingReward.copy(
+        successfulRewardResponse = SuccessfulRewardResponse(fakeReward, false)
     )
 
 
@@ -122,7 +129,7 @@ class RedeemingRewardsViewModelTest{
 
         // Act
         // Perform fake api call
-        viewmodel.getRewardDetails(Reward("dummy", null, 0, "dummy", null, null))
+        viewmodel.getRewardDetails("rewardId")
 
         // Assert
         /* assert that
@@ -138,7 +145,7 @@ class RedeemingRewardsViewModelTest{
         assertEquals(true, viewmodel.isBeingRedeemed.first())
         assertEquals(
             "Reward details not updated",
-            fakeRedeemingRewardObject,
+            fakeRedeemingReward.successfulRewardResponse?.reward,
             viewmodel.detailedReward.value
         )
 
@@ -152,7 +159,7 @@ class RedeemingRewardsViewModelTest{
 
         // Act
         // Perform fake api call
-        viewmodel.getRewardDetails(Reward("dummy", null, 0, "dummy", null, null))
+        viewmodel.getRewardDetails("rewardId")
 
         // Assert
         /* assert that
@@ -169,7 +176,7 @@ class RedeemingRewardsViewModelTest{
         assertEquals(false, viewmodel.isBeingRedeemed.first())
         assertEquals(
             "Reward details not updated",
-            fakeNotRedeemingRewardObject,
+            fakeNotRedeemingRewardObject.successfulRewardResponse?.reward,
             viewmodel.detailedReward.value
         )
     }
@@ -182,7 +189,7 @@ class RedeemingRewardsViewModelTest{
 
         // Act
         // Perform fake api call
-        viewmodel.getRewardDetails(Reward("dummy", null, 0, "dummy", null, null))
+        viewmodel.getRewardDetails("rewardId")
 
         // Assert
         /* assert that
@@ -198,7 +205,7 @@ class RedeemingRewardsViewModelTest{
 
         assertEquals(false, viewmodel.isBeingRedeemed.first())
         assertEquals(
-            Reward("dummy", null, 0, "dummy", null, null),
+            null,
             viewmodel.detailedReward.value
         )
     }
@@ -211,7 +218,7 @@ class RedeemingRewardsViewModelTest{
 
         // Act
         // Perform fake api call
-        viewmodel.tryRedeemReward("test")
+        viewmodel.tryRedeemReward("rewardId", "branchId")
 
         // Assert
         // Make sure RedeemingState = STARTED, and isBeingRedeemed = true
@@ -230,7 +237,7 @@ class RedeemingRewardsViewModelTest{
 
         // Act
         // Perform fake api call
-        viewmodel.tryRedeemReward("test")
+        viewmodel.tryRedeemReward("rewaredId", "branchId")
 
         // Assert
         // Make sure RedeemingState = REDEEMING_FAILED, and isBeingRedeemed = false

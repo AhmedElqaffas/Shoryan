@@ -1,7 +1,6 @@
 {
-  "isSuccessful": false,
-  "error":{
+  "error": {
     "message": "CONNECTION_ERROR",
-    "status": 0
+    "status": 200
   }
 }

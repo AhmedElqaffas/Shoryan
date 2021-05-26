@@ -182,7 +182,7 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
         mapInstance.apply {
             viewModel.donationDetails.observe(viewLifecycleOwner){
                 it?.request?.bloodBank?.location?.let { location ->
-                    val latLng = LatLng(location.latitude, location.longitude)
+                    val latLng = LatLng(location.latitude!!, location.longitude!!)
                     addMarker(MarkerOptions().position(latLng))
                     moveCamera(CameraUpdateFactory.newLatLng(latLng))
                 }

@@ -1,3 +1,5 @@
 {
-  "isSuccessful": true
+  "response": {
+    "message": "MESSAGE_SENT_SUCCESSFULLY"
+  }
 }

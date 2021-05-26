@@ -1,15 +1,8 @@
 package com.example.shoryan.ui
 
-import android.Manifest
-import android.annotation.SuppressLint
 import android.app.DatePickerDialog
-import android.content.pm.PackageManager
-import android.location.Location
 import android.os.Bundle
 import android.view.*
-import android.widget.Toast
-import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -20,21 +13,18 @@ import androidx.navigation.navGraphViewModels
 import com.example.shoryan.AndroidUtility
 import com.example.shoryan.R
 import com.example.shoryan.data.BirthDate
-import com.example.shoryan.data.ProfileResponse
 import com.example.shoryan.databinding.FragmentAccountInfoBinding
-import com.example.shoryan.getStringWithoutAdditionalSpaces
 import com.example.shoryan.interfaces.LoadingFragmentHolder
-import com.example.shoryan.repos.ProfileRepo
-import com.example.shoryan.repos.TokensRefresher
 import com.example.shoryan.viewmodels.AccountInfoViewModel
 import com.example.shoryan.viewmodels.LocationPickerViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 
 
@@ -212,7 +202,7 @@ class AccountInfoFragment : Fragment(), LoadingFragmentHolder {
      * This method stores both the location and the address in the viewmodel
      */
     private fun getUserAddressFromLocation(location: com.example.shoryan.data.Location) {
-        val locationLatLng = LatLng(location.latitude, location.longitude)
+        val locationLatLng = LatLng(location.latitude!!, location.longitude!!)
         locationPickerViewModel.locationLatLng = locationLatLng
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {

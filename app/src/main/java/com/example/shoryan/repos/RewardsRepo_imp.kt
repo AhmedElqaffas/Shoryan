@@ -52,7 +52,7 @@ class RewardsRepo_imp(
         return try{
             val response = retrofit.confirmRewardRedeeming(TokensRefresher.accessToken!!,
                 rewardId,
-                ConfirmRewardRedeemingQuery(branchId, Integer.parseInt(code))
+                ConfirmRewardRedeemingQuery(branchId, code.toInt())
             )
             // After complete redemption, user's points are deducted, and therefore we need to
             // update the user's singleton.

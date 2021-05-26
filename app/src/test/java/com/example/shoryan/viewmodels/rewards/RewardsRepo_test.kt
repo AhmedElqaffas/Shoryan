@@ -1,8 +1,6 @@
 package com.example.shoryan.viewmodels.rewards
 
-import com.example.shoryan.data.RedeemingRewardResponse
-import com.example.shoryan.data.RewardResponse
-import com.example.shoryan.data.RewardsListResponse
+import com.example.shoryan.data.*
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.repos.RewardsRepo
 
@@ -24,10 +22,18 @@ class RewardsRepo_test(
     }
 
     override suspend fun getRewardDetails(rewardId: String): RewardResponse {
-        return retrofit.getRewardDetails("dummy token", "dummy id")
+        return retrofit.getRewardDetails("dummy token", rewardId)
     }
 
-    override suspend fun startRewardRedeeming(rewardId: String): RedeemingRewardResponse {
-        return retrofit.startRewardRedeeming("dummy", "dummy")
+    override suspend fun startRewardRedeeming(rewardId: String, branchId: String): RedeemingRewardResponse {
+        return retrofit.startRewardRedeeming("dummy", rewardId, BranchIdQuery(branchId))
+    }
+
+    override suspend fun confirmRewardRedeeming(
+        rewardId: String,
+        branchId: String,
+        code: String
+    ): ConfirmRedeemingResponse {
+        return retrofit.confirmRewardRedeeming("dummy", rewardId, ConfirmRewardRedeemingQuery(branchId, code.toInt()))
     }
 }
