@@ -2,10 +2,12 @@ package com.example.shoryan.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -207,21 +209,23 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
         AndroidUtility.displaySnackbarMessage(binding.rootLayout, message, Snackbar.LENGTH_LONG)
 
     private fun openDonationFragment(requestId: String){
-        val fragment = RequestDetailsFragment.newInstance(
-            requestId,
-            RequestDetailsFragment.REQUEST_FULFILLMENT_BINDING
+        val bundle = bundleOf(
+            RequestDetailsFragment.ARGUMENT_REQUEST_KEY to requestId,
+            RequestDetailsFragment.ARGUMENT_BINDING_KEY to RequestDetailsFragment.REQUEST_FULFILLMENT_BINDING
         )
-        fragment.show(childFragmentManager, "requestDetails")
+        navController.navigate(R.id.action_home_to_requestDetailsFragment, bundle)
+    }
+
+    private fun openMyRequestDetailsFragment(requestId: String){
+        val bundle = bundleOf(
+            RequestDetailsFragment.ARGUMENT_REQUEST_KEY to requestId,
+            RequestDetailsFragment.ARGUMENT_BINDING_KEY to RequestDetailsFragment.MY_REQUEST_BINDING
+        )
+        navController.navigate(R.id.action_home_to_requestDetailsFragment, bundle)
     }
 
     private fun openMyRequestsFragment() {
         navController.navigate(R.id.action_home_to_myRequestsFragment)
-    }
-
-    private fun openMyRequestDetailsFragment(requestId: String){
-        val fragment =
-            RequestDetailsFragment.newInstance(requestId, RequestDetailsFragment.MY_REQUEST_BINDING)
-        fragment.show(childFragmentManager, "requestDetails")
     }
 
     private fun setRewardsCardListener(){
@@ -235,20 +239,20 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
     }
 
     override fun onRequestCardClicked(donationRequest: DonationRequest, isMyRequest: Boolean){
-        if(childFragmentManager.findFragmentByTag("requestDetails") != null){
-            return
+        try{
+            if(!isMyRequest){
+                openDonationFragment(donationRequest.id)
+            }
+            else{
+                openMyRequestDetailsFragment(donationRequest.id)
+            }
         }
-        if(!isMyRequest){
-            openDonationFragment(donationRequest.id)
+        catch(e: Exception){
+            Log.e("HomeFragment", "The fragment is already displayed")
         }
-        else{
-            openMyRequestDetailsFragment(donationRequest.id)
-        }
-
     }
 
-    override fun onRequestCardDismissed() {
-    }
+    override fun onRequestCardDismissed(){}
 
     override fun submitFilters(requestsFiltersContainer: RequestsFiltersContainer?) {
         requestsViewModel.storeFilter(requestsFiltersContainer)
