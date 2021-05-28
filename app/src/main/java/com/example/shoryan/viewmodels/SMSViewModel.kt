@@ -131,8 +131,10 @@ class SMSViewModel: ViewModel() {
 
     private suspend fun processSendingSMSResponse(responseError: ErrorResponse?){
         if(responseError == null){
-            // Code is sent successfully, start a cooldown timer to prevent rapid sms resending
-            startTimer()
+            // Code is sent successfully, start a cool down timer to prevent rapid sms resending
+            // But avoid starting the timer again if it is already started
+            if(timer == null)
+                startTimer()
         }
         else{
             _canResendSMS.emit(true)
@@ -154,6 +156,7 @@ class SMSViewModel: ViewModel() {
                 viewModelScope.launch{
                     _remainingTime.emit(0L)
                     _canResendSMS.emit(true)
+                    timer = null
                 }
             }
         }.start()
