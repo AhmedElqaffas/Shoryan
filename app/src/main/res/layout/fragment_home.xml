@@ -70,27 +70,27 @@
                                 android:background="@drawable/appbar_background"/>
 
 
-                            <LinearLayout
+                            <androidx.constraintlayout.widget.ConstraintLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 app:layout_constraintTop_toBottomOf="@id/toolbarText"
-                                android:layout_marginTop="40dp"
                                 android:id="@+id/homeCardsLayout"
                                 android:gravity="fill_horizontal"
                                 android:paddingVertical="8dp">
 
-                                <View
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1"
-                                    android:visibility="invisible"/>
-
                                 <androidx.cardview.widget.CardView
                                     android:id="@+id/myRequestsCard"
-                                    android:layout_width="100dp"
-                                    android:layout_height="100dp"
-                                    app:cardCornerRadius="24dp"
-                                    android:layout_weight="1.5">
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    android:layout_width="0dp"
+                                    app:layout_constraintWidth_percent="0.28"
+                                    android:layout_height="wrap_content"
+                                    app:layout_constraintHorizontal_bias="0.05"
+                                    app:cardCornerRadius="@dimen/_20ssp"
+                                    app:cardElevation="5dp"
+                                    android:layout_marginVertical="10dp">
 
                                     <androidx.constraintlayout.widget.ConstraintLayout
                                         android:layout_width="match_parent"
@@ -101,6 +101,7 @@
                                             android:layout_width="match_parent"
                                             android:layout_height="match_parent"
                                             android:src="@mipmap/requests"
+                                            android:padding="10dp"
                                             android:adjustViewBounds="true"/>
                                         <TextView
                                             android:layout_width="match_parent"
@@ -111,25 +112,26 @@
                                             android:layout_marginBottom="5dp"
                                             android:text="@string/my_requests"
                                             android:gravity="center_horizontal|bottom"
-                                            android:fontFamily="@font/opensans_bold"
+                                            android:fontFamily="@font/opensans_semibold"
                                             android:textColor="#FFFFFF"
-                                            android:textSize="16sp"/>
+                                            android:textSize="@dimen/_14ssp"/>
 
                                     </androidx.constraintlayout.widget.ConstraintLayout>
                                 </androidx.cardview.widget.CardView>
 
-                                <View
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1"
-                                    android:visibility="invisible"/>
-
                                 <androidx.cardview.widget.CardView
                                     android:id="@+id/pendingRequestCard"
-                                    android:layout_width="100dp"
-                                    android:layout_height="100dp"
-                                    app:cardCornerRadius="24dp"
-                                    android:layout_weight="1.5">
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    app:layout_constraintWidth_percent="0.28"
+                                    app:layout_constraintHorizontal_bias="0.5"
+                                    app:cardCornerRadius="@dimen/_20ssp"
+                                    app:cardElevation="5dp"
+                                    android:layout_marginVertical="10dp">
 
                                     <androidx.constraintlayout.widget.ConstraintLayout
                                         android:layout_width="match_parent"
@@ -150,31 +152,36 @@
                                             android:layout_marginBottom="5dp"
                                             android:text="@string/pending_request"
                                             android:gravity="center_horizontal|bottom"
-                                            android:fontFamily="@font/opensans_bold"
+                                            android:fontFamily="@font/opensans_semibold"
                                             android:textColor="#FFFFFF"
-                                            android:textSize="16sp"/>
+                                            android:textSize="@dimen/_14ssp"/>
 
                                     </androidx.constraintlayout.widget.ConstraintLayout>
                                 </androidx.cardview.widget.CardView>
 
-                                <View
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1"
-                                    android:visibility="invisible"/>
-
-                                <androidx.cardview.widget.CardView
+                                <com.google.android.material.card.MaterialCardView
                                     android:id="@+id/redeemRewardsCard"
-                                    android:layout_width="100dp"
-                                    android:layout_height="100dp"
-                                    app:cardCornerRadius="24dp"
-                                    android:elevation="0dp"
-                                    android:layout_weight="1.5">
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:layout_constraintBottom_toBottomOf="parent"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    app:layout_constraintWidth_percent="0.28"
+                                    app:layout_constraintHorizontal_bias="0.95"
+                                    app:cardCornerRadius="@dimen/_20ssp"
+                                    app:cardElevation="5dp"
+                                    android:layout_marginVertical="10dp">
 
                                     <androidx.constraintlayout.widget.ConstraintLayout
                                         android:layout_width="match_parent"
-                                        android:layout_height="match_parent"
-                                        android:background="@mipmap/gradient_home_cards">
+                                        android:layout_height="match_parent">
+
+                                        <ImageView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="match_parent"
+                                            android:src="@mipmap/gradient_home_cards"
+                                            android:adjustViewBounds="true"/>
 
                                         <ImageView
                                             android:layout_width="match_parent"
@@ -191,17 +198,12 @@
                                             android:text="@string/rewards"
                                             android:gravity="center_horizontal|bottom"
                                             android:textColor="#FFFFFF"
-                                            android:textSize="16sp"
-                                            android:fontFamily="@font/opensans_bold"/>
+                                            android:textSize="@dimen/_14ssp"
+                                            android:fontFamily="@font/opensans_semibold"/>
 
                                     </androidx.constraintlayout.widget.ConstraintLayout>
-                                </androidx.cardview.widget.CardView>
-                                <View
-                                    android:layout_width="0dp"
-                                    android:layout_height="match_parent"
-                                    android:layout_weight="1"
-                                    android:visibility="invisible"/>
-                            </LinearLayout>
+                                </com.google.android.material.card.MaterialCardView>
+                            </androidx.constraintlayout.widget.ConstraintLayout>
                         </androidx.constraintlayout.widget.ConstraintLayout>
                     </androidx.appcompat.widget.Toolbar>
                 </com.google.android.material.appbar.AppBarLayout>
