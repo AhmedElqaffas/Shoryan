@@ -65,16 +65,6 @@ fun CodeEntryUI(
         ResendCodeText(screenHeight, resendCodeText, onResendCodeClicked, canResendSMS, remainingTime)
     }
 }
-/*@Preview
-@Composable
-fun t(){
-    BasicTextField(
-        value = "8",
-        onValueChange = {},
-        modifier = Modifier.requiredWidth(50.dp).background(Color.Red),
-        textStyle = MaterialTheme.typography.h1.copy(fontSize = 100.sp)
-    )
-}*/
 
 @Composable
 fun ConfirmButton(
@@ -87,16 +77,16 @@ fun ConfirmButton(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(0.dp, screenHeight * 0.09f, 0.dp, 0.dp),
+            .padding(0.dp, screenHeight * 0.05f, 0.dp, 0.dp),
         horizontalArrangement = Arrangement.Center
     ) {
         Button(
             onClick = { onClick(enteredCode)},
             enabled = true,
-            contentPadding = PaddingValues(20.dp),
+            contentPadding = PaddingValues(18.dp),
             shape = RoundedCornerShape(29.dp),
             modifier = Modifier
-                .width(screenWidth * 0.8f)
+                .width(screenWidth * 0.88f)
         ) {
             Text(
                 text = text,
@@ -120,7 +110,7 @@ fun ResendCodeText(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(0.dp, screenHeight * 0.04f, 0.dp, 0.dp),
+            .padding(0.dp, screenHeight * 0.01f, 0.dp, 0.dp),
         horizontalArrangement = Arrangement.Center
     ){
         Text(

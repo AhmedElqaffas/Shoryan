@@ -37,6 +37,7 @@
     <string name="donation_location">مكان التبرع</string>
     <string name="donation_request">طلب تبرّع بالدم</string>
     <string name="enter_code">\u200F قم بإدخال الرمز المرسل الى \n %1$s</string>
+    <string name="enter_code_branch">\u200F قم بإدخال الرمز المرسل الى الفرع \n %1$s</string>
     <string name="enter_login_password">\u200F قم بإدخال كلمة السر الخاصة بالرقم \n %1$s</string>
     <string name="enter_password">من فضلك تأكّد من إدخال كلمة السر</string>
     <string name="female">أنثي</string>

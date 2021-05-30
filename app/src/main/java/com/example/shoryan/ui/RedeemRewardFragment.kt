@@ -6,7 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.compose.foundation.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -44,7 +47,6 @@ import com.example.shoryan.data.ServerError
 import com.example.shoryan.interfaces.LoadingFragmentHolder
 import com.example.shoryan.ui.composables.*
 import com.example.shoryan.ui.theme.Gray
-import com.example.shoryan.ui.theme.Shimmer
 import com.example.shoryan.ui.theme.ShoryanTheme
 import com.example.shoryan.viewmodels.RedeemingRewardsViewModel
 import com.example.shoryan.viewmodels.SMSViewModel
@@ -127,20 +129,27 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
     @Composable
     fun RewardScreen() {
         val reward = viewModel.detailedReward.collectAsState().value!!
-        val scrollState = rememberScrollState()
+       // val scrollState = rememberScrollState()
         ConstraintLayout(
             Modifier
                 .fillMaxSize()
                 .background(Color.White)
         ) {
+            val column = createRef()
             Column(
                 Modifier
-                    .verticalScroll(scrollState)
-                    .padding(0.dp, 0.dp, 0.dp, 10.dp)
-                    .fillMaxSize()
+         //           .verticalScroll(scrollState)
+                    .constrainAs(column){
+                        linkTo(parent.top, parent.bottom)
+                        linkTo(parent.start, parent.end)
+                        width = Dimension.fillToConstraints
+                        height = Dimension.fillToConstraints
+                    }
             ) {
                 val isBeingRedeemed: Boolean by viewModel.isBeingRedeemed.collectAsState(false)
-                ConstraintLayout(Modifier.fillMaxSize()) {
+                ConstraintLayout(
+                    modifier = Modifier.fillMaxSize()
+                ) {
                     val parentLayout = this
                     val (appBar, points, cover, logo, description, branches, button) = createRefs()
                     CoverImage(reward.store.coverLink, parentLayout, cover)
@@ -278,10 +287,11 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
                 modifier = Modifier
                     .clip(CircleShape)
                     .border(1.dp, Gray, CircleShape)
-                    .size(110.dp)
+                    .aspectRatio(1f)
                     .constrainAs(logoReference) {
-                        top.linkTo(coverReference.bottom, margin = (-40).dp)
+                        top.linkTo(coverReference.bottom, - AndroidUtility.getScreenWidth(requireContext()) * 0.1f)
                         start.linkTo(parent.start, margin = 30.dp)
+                        width = Dimension.percent(0.25f)
                     },
             )
         }
@@ -323,13 +333,54 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
             chosenBranchAddress = storeBranches[0].getStringAddress()
             chosenBranchId = storeBranches[0].id
         }
+
+        if(isBeingRedeemed){
+            parentLayout.apply {
+                Text(
+                    text = resources.getString(R.string.enter_code_branch, storeBranches[0].getStringAddress()),
+                    color = MaterialTheme.colors.secondaryVariant,
+                    textAlign = TextAlign.Start,
+                    style = MaterialTheme.typography.body1,
+                    modifier = Modifier.constrainAs(branchesReference) {
+                        linkTo(
+                            logoReference.start,
+                            parent.end,
+                            bias = 0f
+                        )
+                        linkTo(
+                            logoReference.bottom,
+                            parent.bottom,
+                            bias = 0.125f
+                        )
+
+                        width = Dimension.percent(0.9f)
+                    }
+                )
+            }
+        }
+        else{
+            ChooseBranch(storeBranches, parentLayout, branchesReference, logoReference)
+        }
+    }
+
+    @Composable
+    fun ChooseBranch(
+        storeBranches: List<Branch>,
+        parentLayout: ConstraintLayoutScope,
+        branchesReference: ConstrainedLayoutReference,
+        logoReference: ConstrainedLayoutReference,
+    ){
         parentLayout.apply {
             Column(
                 modifier = Modifier
                     .constrainAs(branchesReference) {
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
-                        top.linkTo(logoReference.bottom, 40.dp)
+                        linkTo(
+                            logoReference.bottom,
+                            parent.bottom,
+                            bias = 0.125f
+                        )
                     }
                     .fillMaxWidth()
             ) {
@@ -337,7 +388,7 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
                     text = resources.getString(R.string.branches),
                     style = MaterialTheme.typography.subtitle1,
                     color = Color.Black,
-                    modifier = Modifier.padding(30.dp, 0.dp)
+                    modifier = Modifier.padding(ShoryanTheme.dimens.grid_4_5, 0.dp)
                 )
 
                 val isOpen = remember { mutableStateOf(false) }
@@ -349,11 +400,7 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
                     chosenBranchAddress = address
                 }
 
-                val dropdownBorderColor = if(isBeingRedeemed) Shimmer
-                                        else MaterialTheme.colors.primary
-                val dropdownArrow =
-                    if(isBeingRedeemed) R.drawable.iconfinder_nav_arrow_right_383100_grey
-                    else R.mipmap.iconfinder_nav_arrow_right_1
+                val dropdownArrow = R.mipmap.iconfinder_nav_arrow_right_1
 
                 Box {
                     Column(
@@ -362,9 +409,9 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
                             .fillMaxWidth()
                             .padding(
                                 0.dp,
-                                ShoryanTheme.dimens.grid_5,
+                                ShoryanTheme.dimens.grid_4,
                                 0.dp,
-                                ShoryanTheme.dimens.plane_6
+                                0.dp
                             )
                     ) {
                         TextField(
@@ -386,7 +433,7 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
                                 .clickable(false, null, null) {}
                                 .border(
                                     2.dp,
-                                    dropdownBorderColor,
+                                    MaterialTheme.colors.primary,
                                     MaterialTheme.shapes.small.copy(CornerSize(ShoryanTheme.dimens.grid_3))
                                 ),
                             colors = TextFieldDefaults.textFieldColors(
@@ -418,7 +465,7 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
                                 interactionSource = remember { MutableInteractionSource() },
                                 indication = null,
                                 onClick = {
-                                    if (!isBeingRedeemed) isOpen.value = true
+                                    isOpen.value = true
                                 }
                             )
                     )
@@ -467,11 +514,11 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
                 layoutDirection = getLayoutDirection(),
                 modifier = Modifier
                     .constrainAs(button) {
-                        top.linkTo(branchesReference.bottom, 20.dp)
+                        linkTo(branchesReference.bottom, parent.bottom, bias = 0.5f)
                         centerHorizontallyTo(parent)
+                        width = Dimension.percent(0.88f)
                     }
-                    .fillMaxSize()
-                    .padding(20.dp, 0.dp)
+                    .padding(5.dp, 0.dp)
             )
         }
     }
@@ -529,13 +576,20 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
             Button(
                 onClick = onClick,
                 enabled = enabled,
-                contentPadding = PaddingValues(20.dp),
+                contentPadding = PaddingValues(0.dp, 17.dp),
                 shape = RoundedCornerShape(29.dp),
                 modifier = Modifier
-                    .width(350.dp)
                     .constrainAs(buttonReference) {
-                        top.linkTo(branchesReference.bottom, 20.dp)
-                        centerHorizontallyTo(parent)
+                        linkTo(
+                            parent.start,
+                            parent.end
+                        )
+                        linkTo(
+                            top = branchesReference.bottom,
+                            bottom = parent.bottom,
+                            bias = 0.8f
+                        )
+                        width = Dimension.percent(0.88f)
                     }
             ) {
                 Text(

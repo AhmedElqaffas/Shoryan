@@ -37,6 +37,7 @@
     <string name="donation_location">Donation Location</string>
     <string name="donation_request">Donation Request</string>
     <string name="enter_code">Enter the sms code sent to \n %1$s</string>
+    <string name="enter_code_branch">Enter the code sent to the branch:  \n%1$s</string>
     <string name="enter_login_password">Enter the password for the number \n %1$s</string>
     <string name="enter_password">Please enter your password</string>
     <string name="female">Female</string>
