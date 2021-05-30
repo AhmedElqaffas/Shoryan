@@ -129,7 +129,6 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
     @Composable
     fun RewardScreen() {
         val reward = viewModel.detailedReward.collectAsState().value!!
-       // val scrollState = rememberScrollState()
         ConstraintLayout(
             Modifier
                 .fillMaxSize()
@@ -138,7 +137,6 @@ class RedeemRewardFragment : Fragment(), LoadingFragmentHolder {
             val column = createRef()
             Column(
                 Modifier
-         //           .verticalScroll(scrollState)
                     .constrainAs(column){
                         linkTo(parent.top, parent.bottom)
                         linkTo(parent.start, parent.end)
