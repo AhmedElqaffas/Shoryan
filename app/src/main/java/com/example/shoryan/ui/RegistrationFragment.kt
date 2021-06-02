@@ -20,7 +20,7 @@ import androidx.navigation.Navigation
 import androidx.navigation.navGraphViewModels
 import com.example.shoryan.AndroidUtility
 import com.example.shoryan.R
-import com.example.shoryan.data.*
+import com.example.shoryan.data.BirthDate
 import com.example.shoryan.databinding.FragmentRegistrationBinding
 import com.example.shoryan.getStringWithoutAdditionalSpaces
 import com.example.shoryan.interfaces.LoadingFragmentHolder
@@ -267,8 +267,8 @@ class RegistrationFragment : Fragment(), LoadingFragmentHolder {
     private fun observeViewModelEvents(){
         registrationViewModel.eventsFlow.onEach {
             when(it){
-                is RegistrationViewModel.RegistrationViewEvent.ShowSnackBarFromString -> showSnackbar(it.text)
-                is RegistrationViewModel.RegistrationViewEvent.ShowSnackBarFromResource -> showSnackbar(resources.getString(it.textResourceId))
+                is RegistrationViewModel.RegistrationViewEvent.ShowMessageFromString -> showSnackbar(it.text)
+                is RegistrationViewModel.RegistrationViewEvent.ShowMessageFromResource -> showSnackbar(resources.getString(it.textResourceId))
                 RegistrationViewModel.RegistrationViewEvent.OpenSMSFragment -> goToSMSFragment()
                 RegistrationViewModel.RegistrationViewEvent.ToggleLoadingIndicator -> toggleLoadingIndicator()
             }

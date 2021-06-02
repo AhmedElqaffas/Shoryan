@@ -1,6 +1,5 @@
 package com.example.shoryan.viewmodels
 
-import android.util.Log
 import android.widget.EditText
 import androidx.lifecycle.*
 import com.example.shoryan.AndroidUtility
@@ -10,7 +9,6 @@ import com.example.shoryan.data.*
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.networking.RetrofitClient
 import com.example.shoryan.removeAdditionalSpaces
-import com.example.shoryan.repos.TokensRefresher
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -19,8 +17,8 @@ import kotlinx.coroutines.launch
 class RegistrationViewModel: ViewModel() {
 
     sealed class RegistrationViewEvent{
-        data class ShowSnackBarFromResource(val textResourceId: Int): RegistrationViewEvent()
-        data class ShowSnackBarFromString(val text: String): RegistrationViewEvent()
+        data class ShowMessageFromResource(val textResourceId: Int): RegistrationViewEvent()
+        data class ShowMessageFromString(val text: String): RegistrationViewEvent()
         object OpenSMSFragment: RegistrationViewEvent()
         object ToggleLoadingIndicator: RegistrationViewEvent()
     }
@@ -116,7 +114,7 @@ class RegistrationViewModel: ViewModel() {
         }
         else{
             viewModelScope.launch {
-                _eventsFlow.emit(RegistrationViewEvent.ShowSnackBarFromResource(R.string.fill_all_data))
+                _eventsFlow.emit(RegistrationViewEvent.ShowMessageFromResource(R.string.fill_all_data))
             }
         }
     }
@@ -151,14 +149,14 @@ class RegistrationViewModel: ViewModel() {
             processRegistrationAPIResponse(registrationResponse)
         }
         catch (e: Exception){
-            _eventsFlow.emit(RegistrationViewEvent.ShowSnackBarFromResource(R.string.connection_error))
+            _eventsFlow.emit(RegistrationViewEvent.ShowMessageFromResource(R.string.connection_error))
         }
         _eventsFlow.emit(RegistrationViewEvent.ToggleLoadingIndicator)
     }
 
     private suspend fun processRegistrationAPIResponse(registrationResponse: RegistrationResponse){
         if(registrationResponse.error != null){
-            _eventsFlow.emit(RegistrationViewEvent.ShowSnackBarFromResource(registrationResponse.error.message.errorStringResource))
+            _eventsFlow.emit(RegistrationViewEvent.ShowMessageFromResource(registrationResponse.error.message.errorStringResource))
         }
         else {
             _eventsFlow.emit(RegistrationViewEvent.OpenSMSFragment)
