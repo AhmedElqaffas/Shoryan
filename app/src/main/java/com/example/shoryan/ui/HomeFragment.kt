@@ -29,7 +29,6 @@ import com.example.shoryan.ui.recyclersAdapters.RequestsRecyclerAdapter
 import com.example.shoryan.viewmodels.ProfileViewModel
 import com.example.shoryan.viewmodels.RequestsViewModel
 import com.example.shoryan.viewmodels.TokensViewModel
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -206,7 +205,7 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
     }
 
     private fun showMessage(message: String) =
-        AndroidUtility.displaySnackbarMessage(binding.rootLayout, message, Snackbar.LENGTH_LONG)
+        AndroidUtility.displayAlertDialog(requireContext(), message)
 
     private fun openDonationFragment(requestId: String){
         val bundle = bundleOf(

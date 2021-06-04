@@ -1,13 +1,10 @@
 package com.example.shoryan.ui
 
 import android.os.Bundle
-import android.os.CountDownTimer
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.DrawableRes
-import androidx.core.content.res.ResourcesCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -17,8 +14,6 @@ import com.example.shoryan.InputValidator
 import com.example.shoryan.R
 import com.example.shoryan.databinding.FragmentChangePasswordBinding
 import com.example.shoryan.viewmodels.AccountInfoViewModel
-import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -33,7 +28,7 @@ class ChangePasswordFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View{
         // Inflate the layout for this fragment
         _binding = FragmentChangePasswordBinding.inflate(inflater, container, false)
         return binding.root
@@ -166,8 +161,8 @@ class ChangePasswordFragment : Fragment() {
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
-    private fun showSnackbar(message: String){
-        AndroidUtility.displaySnackbarMessage(binding.rootLayout, message, Snackbar.LENGTH_LONG)
+    private fun showMessage(message: String){
+        AndroidUtility.displayAlertDialog(requireContext(), message)
     }
 
     /**
@@ -175,7 +170,7 @@ class ChangePasswordFragment : Fragment() {
      * It displays an error message to the user and toggles the loading indicators.
      */
     private fun onFailureResponse(resourceID: Int){
-        showSnackbar(resources.getString(resourceID))
+        showMessage(resources.getString(resourceID))
         turnOffProgressBar()
         turnOnSaveButton()
     }
@@ -185,9 +180,8 @@ class ChangePasswordFragment : Fragment() {
      * It displays a success message to the user and toggles the loading indicators.
      */
     private fun onSuccessfulResponse(){
-        showSnackbar(resources.getString(R.string.password_change_success))
+        showMessage(resources.getString(R.string.password_change_success))
         turnOffProgressBar()
         turnOnSaveButton()
-        navController.navigateUp()
     }
 }

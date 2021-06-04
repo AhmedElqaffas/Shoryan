@@ -41,7 +41,6 @@ class NewRequestFragment : Fragment() {
     private var _binding: FragmentNewRequestBinding? = null
     private val binding get() = _binding!!
     private var toolbarBinding: AppbarBinding? = null
-    private var createdRequest : CreateNewRequestResponse? = null
     private var snackbar: Snackbar? = null
 
 
@@ -375,7 +374,7 @@ class NewRequestFragment : Fragment() {
                 }
                 .show()
         else
-            AndroidUtility.displaySnackbarMessage(binding.scrollView, message, Snackbar.LENGTH_LONG)
+            AndroidUtility.displayAlertDialog(requireContext(), message)
     }
     private fun openMyRequestsFragment() {
         navController.navigate(R.id.action_newRequest_to_myRequestsFragment)

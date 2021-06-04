@@ -23,7 +23,6 @@ import com.example.shoryan.databinding.LoginBannerBinding
 import com.example.shoryan.interfaces.LoadingFragmentHolder
 import com.example.shoryan.repos.TokensRefresher
 import com.example.shoryan.viewmodels.LoginViewModel
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -122,10 +121,7 @@ class PasswordLoginFragment : Fragment(), LoadingFragmentHolder {
     }
 
     private fun handleFailedLogin(message: ServerError){
-        AndroidUtility.displaySnackbarMessage(
-            binding.rootLayout,
-            resources.getString(message.errorStringResource),
-            Snackbar.LENGTH_LONG)
+        AndroidUtility.displayAlertDialog(requireContext(), resources.getString(message.errorStringResource))
     }
 
     private fun toggleLoggingInIndicator(){
@@ -152,9 +148,7 @@ class PasswordLoginFragment : Fragment(), LoadingFragmentHolder {
     private fun checkLogin() {
         val password = binding.passwordEditText.text.toString().trim()
         if(password.isEmpty()){
-            AndroidUtility.displaySnackbarMessage(binding.rootLayout,
-                resources.getString(R.string.enter_password),
-                Snackbar.LENGTH_LONG)
+            AndroidUtility.displayAlertDialog(requireContext(), resources.getString(R.string.enter_password))
         }
         else {
             verifyCredentials(phoneNumber, password)

@@ -16,7 +16,6 @@ import com.example.shoryan.R
 import com.example.shoryan.databinding.FragmentLoginPhoneBinding
 import com.example.shoryan.databinding.LoginBannerBinding
 import com.example.shoryan.getStringWithoutAdditionalSpaces
-import com.google.android.material.snackbar.Snackbar
 
 class LoginPhoneFragment : Fragment(){
 
@@ -100,8 +99,7 @@ class LoginPhoneFragment : Fragment(){
             navController.navigate(fragmentId, phoneNumberBundle)
         }
         else{
-            AndroidUtility.displaySnackbarMessage(binding.loginScreenLayout,
-                resources.getString(R.string.phone_format_message), Snackbar.LENGTH_LONG)
+            AndroidUtility.displayAlertDialog(requireContext(), resources.getString(R.string.phone_format_message))
         }
     }
 }

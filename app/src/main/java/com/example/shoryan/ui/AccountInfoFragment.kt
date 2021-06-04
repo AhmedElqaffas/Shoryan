@@ -17,9 +17,7 @@ import com.example.shoryan.databinding.FragmentAccountInfoBinding
 import com.example.shoryan.interfaces.LoadingFragmentHolder
 import com.example.shoryan.viewmodels.AccountInfoViewModel
 import com.example.shoryan.viewmodels.LocationPickerViewModel
-import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -32,7 +30,6 @@ class AccountInfoFragment : Fragment(), LoadingFragmentHolder {
 
     private lateinit var navController: NavController
     private var _binding: FragmentAccountInfoBinding? = null
-    private var fusedLocationProviderClient: FusedLocationProviderClient? = null
     private val binding get() = _binding!!
     private lateinit var locationPickerViewModel: LocationPickerViewModel
     private val accountInfoViewModel: AccountInfoViewModel by navGraphViewModels(R.id.main_nav_graph)
@@ -49,7 +46,7 @@ class AccountInfoFragment : Fragment(), LoadingFragmentHolder {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View{
         // Inflate the layout for this fragment
         _binding = FragmentAccountInfoBinding.inflate(inflater, container, false)
         _binding!!.viewmodel = accountInfoViewModel
@@ -221,12 +218,10 @@ class AccountInfoFragment : Fragment(), LoadingFragmentHolder {
     private fun observeViewModelEvents() {
         accountInfoViewModel.updateAccountInfoEventsFlow.onEach {
             when (it) {
-                is AccountInfoViewModel.EditAccountInfoViewEvent.ShowSnackBarFromString -> showSnackbar(
-                    it.text
-                )
-                is AccountInfoViewModel.EditAccountInfoViewEvent.ShowSnackBarFromResource -> showSnackbar(
-                    resources.getString(it.textResourceId)
-                )
+                is AccountInfoViewModel.EditAccountInfoViewEvent.ShowSnackBarFromString ->
+                    showMessage(it.text)
+                is AccountInfoViewModel.EditAccountInfoViewEvent.ShowSnackBarFromResource ->
+                    showMessage(resources.getString(it.textResourceId))
                 is AccountInfoViewModel.EditAccountInfoViewEvent.ToggleLoadingIndicator -> toggleLoadingIndicator()
                 is AccountInfoViewModel.EditAccountInfoViewEvent.UpdatedAccountInfoSuccessfully -> onSuccessfulResponse()
             }
@@ -238,12 +233,11 @@ class AccountInfoFragment : Fragment(), LoadingFragmentHolder {
      * It shows a success message to the user and navigates back to the Profile Settings screen.
      */
     private fun onSuccessfulResponse() {
-        showSnackbar(resources.getString(R.string.account_info_update_success))
-        navController.navigateUp()
+        showMessage(resources.getString(R.string.account_info_update_success))
     }
 
-    private fun showSnackbar(message: String) {
-        AndroidUtility.displaySnackbarMessage(binding.rootLayout, message, Snackbar.LENGTH_LONG)
+    private fun showMessage(message: String) {
+        AndroidUtility.displayAlertDialog(requireContext(), message)
     }
 
     private fun toggleLoadingIndicator() {
