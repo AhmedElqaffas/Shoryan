@@ -19,7 +19,8 @@ class RewardsRepo_imp(
 
     private suspend fun initializeRewardsListFromBackend(): RewardsListResponse{
         return try{
-            retrofit.getRewardsList(TokensRefresher.accessToken!!)
+            cachedResponse = retrofit.getRewardsList(TokensRefresher.accessToken!!)
+            cachedResponse!!
         }
         catch(e: Exception){
             Log.e(TAG, e.message.toString())
