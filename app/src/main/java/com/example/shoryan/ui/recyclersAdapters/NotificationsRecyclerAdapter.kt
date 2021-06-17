@@ -1,44 +1,56 @@
 package com.example.shoryan.ui.recyclersAdapters
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.shoryan.R
+import com.example.shoryan.data.CurrentSession
 import com.example.shoryan.data.DonationNotification
-import kotlinx.android.synthetic.main.item_notification.view.*
+import com.example.shoryan.data.DonationRequest
+import com.example.shoryan.databinding.ItemNotificationBinding
+import com.example.shoryan.interfaces.RequestsRecyclerInteraction
 
-class NotificationsRecyclerAdapter:
-    RecyclerView.Adapter<NotificationsRecyclerAdapter.NotificationViewHolder>(){
-
-    private var notificationsList = listOf<DonationNotification>()
+class NotificationsRecyclerAdapter(private val requestsRecyclerInteraction: RequestsRecyclerInteraction):
+    ListAdapter<DonationNotification, NotificationsRecyclerAdapter.NotificationViewHolder>(NotificationsRecyclerDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotificationViewHolder {
-        return NotificationViewHolder(LayoutInflater.from(parent.context).
-        inflate(R.layout.item_notification, parent, false))
+        val inflater = LayoutInflater.from(parent.context)
+        return NotificationViewHolder(ItemNotificationBinding.inflate(inflater, parent, false))
     }
 
     override fun onBindViewHolder(holder: NotificationViewHolder, position: Int) {
-        holder.bindRequestData(notificationsList[position])
+        holder.bindRequestData(getItem(position))
     }
 
-    override fun getItemCount(): Int {
-        return notificationsList.size
-    }
+    inner class NotificationViewHolder(val binding: ItemNotificationBinding): RecyclerView.ViewHolder(binding.root){
 
-    fun setNotificationsList(notifications: List<DonationNotification>){
-        this.notificationsList = notifications
-        notifyDataSetChanged()
-    }
+        init{
+            setClickListener()
+        }
 
-    inner class NotificationViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+        private fun setClickListener(){
+            itemView.setOnClickListener{
+                val notification = getItem(layoutPosition)
+                requestsRecyclerInteraction.onRequestCardClicked(notification.request, isMyRequest(notification.request))
+            }
+        }
+
+        private fun isMyRequest(item: DonationRequest) = item.requester?.id == CurrentSession.user?.id
 
         fun bindRequestData(notification: DonationNotification){
-            itemView.notificationTitle.text = notification.title
-            itemView.notificationDetails.text = notification.details
-            itemView.notificationTimeElapsed.text = "${itemView.notificationTimeElapsed.text} " +
-                    "${notification.dateTime}"
-            itemView.newNotificationIcon.visibility = if(notification.isRead) View.INVISIBLE else View.VISIBLE
+            binding.notification = notification
         }
     }
+}
+
+class NotificationsRecyclerDiffCallback: DiffUtil.ItemCallback<DonationNotification>(){
+    override fun areItemsTheSame(oldItem: DonationNotification, newItem: DonationNotification): Boolean {
+        return oldItem.id == newItem.id
+    }
+
+    override fun areContentsTheSame(oldItem: DonationNotification, newItem: DonationNotification): Boolean {
+        return oldItem == newItem
+    }
+
 }

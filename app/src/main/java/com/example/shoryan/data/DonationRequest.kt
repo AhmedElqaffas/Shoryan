@@ -18,8 +18,8 @@ data class DonationRequest(@SerializedName("_id") val id: String,
 
 data class DonationRequester(
     @SerializedName("_id") val id: String,
-    val name: String,
-    val phoneNumber: String
+    val name: String? = null,
+    val phoneNumber: String? = null
 )
 
 /**

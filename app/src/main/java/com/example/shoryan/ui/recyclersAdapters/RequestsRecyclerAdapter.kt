@@ -50,8 +50,6 @@ class RequestsRecyclerAdapter(private val requestsRecyclerInteraction: RequestsR
         private fun setClickListener(){
             itemView.setOnClickListener{
                 val request = getItem(layoutPosition)
-                println(CurrentSession.user?.id)
-                println(request.requester?.id)
                 requestsRecyclerInteraction.onRequestCardClicked(request, isMyRequest(request))
             }
         }

@@ -243,6 +243,7 @@ class HomeFragment : Fragment(), RequestsRecyclerInteraction, FilterHolder {
                 openDonationFragment(donationRequest.id)
             }
             else{
+                println("REQ  ${donationRequest.id}")
                 openMyRequestDetailsFragment(donationRequest.id)
             }
         }
