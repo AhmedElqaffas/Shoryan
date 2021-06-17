@@ -125,7 +125,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="27dp"
                             android:fontFamily="@font/opensans_bold"
-                            android:text="@{viewmodel.donationDetails.request.requester.name.fullName}"
+                            android:text="@{viewmodel.donationDetails.request.requester.name}"
                             android:textColor="@color/colorPrimaryDark"
                             android:textSize="21sp"
                             app:layout_constraintStart_toEndOf="@id/requestBloodType"

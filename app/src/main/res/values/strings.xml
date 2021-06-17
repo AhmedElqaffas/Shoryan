@@ -115,6 +115,7 @@
     <string name="success">تم بنجاح!</string>
     <string name="thanks_donation">شكراً لتبرّعك</string>
     <string name="try_again">اعد المحاولة</string>
+    <string name="urgent">ضروري</string>
     <string name="user_already_exists">هذا الرقم مُسجّل بالفعل</string>
     <string name="user_not_found">هذا الرقم غير مُسجّل</string>
     <string name="waiting_confirmation">انت الان مسجل كمتبرع لهذا الطلب, نحن في انتظار وصولك الي بنك الدم</string>

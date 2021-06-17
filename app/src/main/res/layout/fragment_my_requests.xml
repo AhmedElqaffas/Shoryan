@@ -60,7 +60,7 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/homeAppbar"
-            tools:listitem="@layout/item_request" />
+            tools:listitem="@layout/item_request_user" />
 
         <TextView
             android:layout_width="wrap_content"

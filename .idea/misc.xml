@@ -8,6 +8,7 @@
         <entry key="..\:/Graduation_Project/Shoryan/app/src/main/res/drawable/back_arrow_icon.xml" value="0.1" />
         <entry key="..\:/Graduation_Project/Shoryan/app/src/main/res/drawable/border_english_fragment.xml" value="0.1" />
         <entry key="..\:/Graduation_Project/Shoryan/app/src/main/res/drawable/border_language_fragment.xml" value="0.1" />
+        <entry key="..\:/Graduation_Project/Shoryan/app/src/main/res/drawable/bottom_red_cureve_bg.xml" value="0.1" />
         <entry key="..\:/Graduation_Project/Shoryan/app/src/main/res/drawable/button_blood_type_disabled.xml" value="0.14074074074074075" />
         <entry key="..\:/Graduation_Project/Shoryan/app/src/main/res/drawable/button_blood_type_not_selected.xml" value="0.14074074074074075" />
         <entry key="..\:/Graduation_Project/Shoryan/app/src/main/res/drawable/button_blood_type_selector.xml" value="0.14074074074074075" />
@@ -50,6 +51,8 @@
         <entry key="..\:/Graduation_Project/Shoryan/app/src/main/res/layout/internet_connection_banner.xml" value="0.1" />
         <entry key="..\:/Graduation_Project/Shoryan/app/src/main/res/layout/item_notification.xml" value="0.13020833333333334" />
         <entry key="..\:/Graduation_Project/Shoryan/app/src/main/res/layout/item_request.xml" value="0.1" />
+        <entry key="..\:/Graduation_Project/Shoryan/app/src/main/res/layout/item_request_bank.xml" value="0.2" />
+        <entry key="..\:/Graduation_Project/Shoryan/app/src/main/res/layout/item_request_user.xml" value="0.128" />
         <entry key="..\:/Graduation_Project/Shoryan/app/src/main/res/layout/login_banner.xml" value="0.1475" />
         <entry key="..\:/Graduation_Project/Shoryan/app/src/main/res/layout/shimmer_item_request.xml" value="0.1" />
         <entry key="..\:/Graduation_Project/Shoryan/app/src/main/res/layout/shimmer_request_details_card.xml" value="0.128" />
