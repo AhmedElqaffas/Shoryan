@@ -1,12 +1,16 @@
 package com.example.shoryan
 
-object TimestampToElapsedTime {
+import javax.inject.Inject
+import javax.inject.Singleton
+
+@Singleton
+class TimestampToElapsedTime @Inject constructor() {
     fun convert(timestamp: Long): String{
         val elapsedTimeMS: Long = System.currentTimeMillis() - timestamp
 
         return when {
             elapsedTimeMS / 1000 < 60 -> {
-                "${elapsedTimeMS / 1000} Seconds ago"
+                "<1 Minute ago"
             }
             elapsedTimeMS / (1000*60) < 60 -> {
                 "${elapsedTimeMS / (1000*60)} Minutes ago"

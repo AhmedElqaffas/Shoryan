@@ -7,9 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.navigation.navGraphViewModels
 import com.example.shoryan.R
 import com.example.shoryan.data.DonationRequest
 import com.example.shoryan.databinding.AppbarBinding
@@ -17,11 +17,13 @@ import com.example.shoryan.databinding.FragmentNotificationsBinding
 import com.example.shoryan.interfaces.RequestsRecyclerInteraction
 import com.example.shoryan.ui.recyclersAdapters.NotificationsRecyclerAdapter
 import com.example.shoryan.viewmodels.NotificationsViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class NotificationsFragment : Fragment(), RequestsRecyclerInteraction {
 
     private lateinit var notificationsRecyclerAdapter: NotificationsRecyclerAdapter
-    private val notificationsViewModel: NotificationsViewModel by navGraphViewModels(R.id.main_nav_graph)
+    private val notificationsViewModel: NotificationsViewModel by viewModels()
 
     private var _binding: FragmentNotificationsBinding? = null
     private val binding get() = _binding!!
@@ -38,19 +40,15 @@ class NotificationsFragment : Fragment(), RequestsRecyclerInteraction {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         instantiateNavController(view)
+        setToolbarText(resources.getString(R.string.notifications))
+        initializeRecyclerViewAdapter()
+        showNotifications()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
         toolbarBinding = null
-    }
-
-    override fun onResume() {
-        super.onResume()
-        setToolbarText(resources.getString(R.string.notifications))
-        initializeRecyclerViewAdapter()
-        showNotifications()
     }
 
     private fun instantiateNavController(view: View){
@@ -62,7 +60,7 @@ class NotificationsFragment : Fragment(), RequestsRecyclerInteraction {
     }
 
     private fun initializeRecyclerViewAdapter(){
-        notificationsRecyclerAdapter = NotificationsRecyclerAdapter(this)
+        notificationsRecyclerAdapter = NotificationsRecyclerAdapter(this, notificationsViewModel, viewLifecycleOwner)
         binding.notificationsRecycler.adapter = notificationsRecyclerAdapter
     }
 

@@ -10,8 +10,8 @@ data class DonationNotification(
     val timestamp: Long,
     val request: DonationRequest
 ){
-    fun getElapsedTime(): String{
-        return TimestampToElapsedTime.convert(timestamp)
+    fun getElapsedTime(timeConverter: TimestampToElapsedTime): String{
+        return timeConverter.convert(timestamp)
     }
 }
 
