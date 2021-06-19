@@ -120,6 +120,7 @@
     <string name="user_not_found">هذا الرقم غير مُسجّل</string>
     <string name="waiting_confirmation">انت الان مسجل كمتبرع لهذا الطلب, نحن في انتظار وصولك الي بنك الدم</string>
     <string name="yes">نعم</string>
+    <string name="you_have_no_notifications">"لا يوجد اي اخطارات جديدة \n     اضغط هنا للتحديث"</string>
     <string name="you_have_no_requests">"لا يوجد لديك طلبات حالية \n   اضغط هنا للتحديث"</string>
 
 

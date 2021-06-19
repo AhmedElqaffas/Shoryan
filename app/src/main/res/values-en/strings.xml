@@ -118,6 +118,7 @@
     <string name="user_already_exists">This number is already registered</string>
     <string name="user_not_found">This phone number is not registered</string>
     <string name="waiting_confirmation">You are now registered as a donor for this request, we are awaiting your donation</string>
+    <string name="you_have_no_notifications">"No new notifications \n click here to refresh"</string>
     <string name="you_have_no_requests">"You have no active requests \n click here to refresh"</string>
     <string name="your_request">Your Request</string>
 
