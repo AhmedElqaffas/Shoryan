@@ -86,4 +86,7 @@ interface RetrofitBloodDonationInterface {
 
     @PATCH("users/profile")
     suspend fun updateUserInformation(@Header("Authorization") accessToken: String, @Body updateUserInformationQuery: UpdateUserInformationQuery): ProfileResponse
+
+    @GET("users/notifications")
+    suspend fun getNotifications(@Header("Authorization") accessToken: String): NotificationsResponse
 }
