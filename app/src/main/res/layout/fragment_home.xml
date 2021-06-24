@@ -59,21 +59,24 @@
                             <TextView
                                 android:id="@+id/toolbarText"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
+                                android:layout_height="0dp"
                                 app:layout_constraintTop_toTopOf="parent"
-                                android:paddingBottom="20dp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintHeight_percent="0.6"
+                                app:layout_constraintVertical_bias="0"
                                 android:textSize="25sp"
                                 android:textColor="@android:color/white"
-                                android:textAlignment="center"
+                                android:gravity="top|center_horizontal"
                                 android:text="@string/home"
                                 android:fontFamily="@font/opensans_bold"
-                                android:background="@drawable/appbar_background"/>
+                                android:background="@drawable/appbar_background_home"/>
 
 
                             <androidx.constraintlayout.widget.ConstraintLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 app:layout_constraintTop_toBottomOf="@id/toolbarText"
+                                app:layout_constraintBottom_toBottomOf="@id/toolbarText"
                                 android:id="@+id/homeCardsLayout"
                                 android:gravity="fill_horizontal"
                                 android:paddingVertical="8dp">
