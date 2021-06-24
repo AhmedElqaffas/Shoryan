@@ -45,21 +45,36 @@
                 android:textSize="16sp"
                 android:fontFamily="@font/opensans_bold"/>
 
-            <TextView
-                android:id="@+id/urgentFlag"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:background="@drawable/bottom_red_cureve_bg"
-                android:textColor="@android:color/white"
-                android:textSize="@dimen/_12ssp"
-                android:fontFamily="@font/opensans_bold"
-                android:text="@string/urgent"
-                android:paddingHorizontal="15dp"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp"/>
+
+                <TextView
+                    android:id="@+id/request_item_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="@id/request_item_blood_type"
+                    app:layout_constraintStart_toEndOf="@id/request_item_blood_type"
+                    app:layout_constraintEnd_toEndOf="@id/urgentFlag"
+                    app:layout_constraintHorizontal_bias="0.15"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="21sp"
+                    android:fontFamily="@font/opensans_bold"
+                    android:text="@{item.requester.name}"/>
+
+                <TextView
+                    android:id="@+id/urgentFlag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="@id/request_item_name"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="@id/request_arrow"
+                    app:layout_constraintHorizontal_bias="0.9"
+                    android:background="@drawable/small_red_curve_bg"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/_12ssp"
+                    android:fontFamily="@font/opensans_bold"
+                    android:text="@string/urgent"
+                    android:paddingHorizontal="10dp"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"/>
 
             <ImageView
                 android:id="@+id/pin_icon"
@@ -67,7 +82,7 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toTopOf="@id/request_item_blood_type"
                 app:layout_constraintBottom_toBottomOf="@id/request_item_blood_type"
-                app:layout_constraintStart_toStartOf="@id/urgentFlag"
+                app:layout_constraintStart_toStartOf="@id/request_item_name"
                 app:layout_constraintVertical_bias="0.8"
                 android:src="@drawable/ic_pin"/>
 
@@ -79,7 +94,7 @@
                 app:layout_constraintStart_toEndOf="@id/pin_icon"
                 app:layout_constraintEnd_toStartOf="@id/request_arrow"
                 android:textColor="@color/colorPrimaryDark"
-                android:text='@{item.bloodBank.name +" - "+ item.bloodBank.location.region}'
+                android:text='@{item.bloodBank.location.region}'
                 android:textSize="13sp"
                 android:fontFamily="@font/opensans_bold"
                 android:layout_marginHorizontal="5dp"

@@ -50,7 +50,7 @@
     <string name="frequent_donation">لا يمكنك التبرع قبل مرور ٣ شهور على اخر تبرع لك</string>
     <string name="gender">النوع</string>
     <string name="hello_user_greeting">\u200F مرحباً، %1$s</string>
-    <string name="home">الرئيسية</string>
+    <string name="home">الصفحة الرئيسية</string>
     <string name="incompatible_blood_type">فصيلة دمك غير متطابقة مع الطلب</string>
     <string name="invalid_input">تأكد من اخال البيانات بشكل صحيح</string>
     <string name="invalid_code">هذا الرمز غير صحيح</string>

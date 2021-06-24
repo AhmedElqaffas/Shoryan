@@ -17,6 +17,7 @@
         <entry key="..\:/Graduation_Project/Shoryan/app/src/main/res/drawable/ic_check.xml" value="0.109765625" />
         <entry key="..\:/Graduation_Project/Shoryan/app/src/main/res/drawable/ic_refresh.xml" value="0.14635416666666667" />
         <entry key="..\:/Graduation_Project/Shoryan/app/src/main/res/drawable/login_banner.xml" value="0.1" />
+        <entry key="..\:/Graduation_Project/Shoryan/app/src/main/res/drawable/small_red_curve_bg.xml" value="0.1388888888888889" />
         <entry key="..\:/Graduation_Project/Shoryan/app/src/main/res/drawable/white_circle_drawable.xml" value="0.1" />
         <entry key="..\:/Graduation_Project/Shoryan/app/src/main/res/drawable/white_curve_seventeed_dp.xml" value="0.1" />
         <entry key="..\:/Graduation_Project/Shoryan/app/src/main/res/layout-en/activity_main.xml" value="0.10868226600985222" />
@@ -51,7 +52,7 @@
         <entry key="..\:/Graduation_Project/Shoryan/app/src/main/res/layout/internet_connection_banner.xml" value="0.1" />
         <entry key="..\:/Graduation_Project/Shoryan/app/src/main/res/layout/item_notification.xml" value="0.176" />
         <entry key="..\:/Graduation_Project/Shoryan/app/src/main/res/layout/item_request.xml" value="0.1" />
-        <entry key="..\:/Graduation_Project/Shoryan/app/src/main/res/layout/item_request_bank.xml" value="0.2" />
+        <entry key="..\:/Graduation_Project/Shoryan/app/src/main/res/layout/item_request_bank.xml" value="0.1" />
         <entry key="..\:/Graduation_Project/Shoryan/app/src/main/res/layout/item_request_user.xml" value="0.128" />
         <entry key="..\:/Graduation_Project/Shoryan/app/src/main/res/layout/login_banner.xml" value="0.1475" />
         <entry key="..\:/Graduation_Project/Shoryan/app/src/main/res/layout/shimmer_item_notification.xml" value="0.15895765472312703" />
