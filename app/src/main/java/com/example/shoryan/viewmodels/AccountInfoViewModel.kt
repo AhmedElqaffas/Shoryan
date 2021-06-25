@@ -20,14 +20,14 @@ import kotlinx.coroutines.launch
 class AccountInfoViewModel : ViewModel() {
 
     sealed class EditAccountInfoViewEvent {
-        data class ShowSnackBarFromResource(val textResourceId: Int) : EditAccountInfoViewEvent()
+        data class HandleError(val error : ServerError) : EditAccountInfoViewEvent()
         data class ShowSnackBarFromString(val text: String) : EditAccountInfoViewEvent()
         object ToggleLoadingIndicator : EditAccountInfoViewEvent()
         object UpdatedAccountInfoSuccessfully : AccountInfoViewModel.EditAccountInfoViewEvent()
     }
 
     sealed class ChangePasswordViewEvent {
-        data class ShowSnackBarFromResource(val textResourceId: Int) : ChangePasswordViewEvent()
+        data class HandleError(val error : ServerError) : ChangePasswordViewEvent()
         object ChangedPasswordsSuccessfully: ChangePasswordViewEvent()
     }
 
@@ -97,7 +97,7 @@ class AccountInfoViewModel : ViewModel() {
             updateInfoProcess = updateAccountInfo(createUserUpdateAccountInfoQuery())
         } else {
             viewModelScope.launch {
-                _updateAccountInfoEventsFlow.emit(EditAccountInfoViewEvent.ShowSnackBarFromResource(R.string.fill_all_data))
+                _updateAccountInfoEventsFlow.emit(EditAccountInfoViewEvent.HandleError(ServerError.FILL_ALL_DATA))
             }
         }
     }
@@ -129,14 +129,14 @@ class AccountInfoViewModel : ViewModel() {
             val profileResponse = bloodDonationAPI.updateUserInformation(TokensRefresher.accessToken!!, updateUserInformationQuery )
             processUpdateAccountInfoAPIResponse(profileResponse)
         } catch (e: Exception) {
-            _updateAccountInfoEventsFlow.emit(EditAccountInfoViewEvent.ShowSnackBarFromResource(R.string.connection_error))
+            _updateAccountInfoEventsFlow.emit(EditAccountInfoViewEvent.HandleError(ServerError.CONNECTION_ERROR))
         }
         _updateAccountInfoEventsFlow.emit(EditAccountInfoViewEvent.ToggleLoadingIndicator)
     }
 
     private suspend fun processUpdateAccountInfoAPIResponse(profileResponse: ProfileResponse) {
         if (profileResponse.error != null) {
-            _updateAccountInfoEventsFlow.emit(EditAccountInfoViewEvent.ShowSnackBarFromResource(profileResponse.error.message.errorStringResource))
+            _updateAccountInfoEventsFlow.emit(EditAccountInfoViewEvent.HandleError(profileResponse.error.message))
         } else {
             _updateAccountInfoEventsFlow.emit(EditAccountInfoViewEvent.UpdatedAccountInfoSuccessfully)
             ProfileRepo.updateProfileInfo(profileResponse.user)
@@ -194,13 +194,13 @@ class AccountInfoViewModel : ViewModel() {
             val profileResponse = bloodDonationAPI.updateUserInformation(TokensRefresher.accessToken!!, updateUserInformationQuery)
             processChangePasswordAPIResponse(profileResponse)
         } catch (e: Exception) {
-            _passwordEventsFlow.emit(ChangePasswordViewEvent.ShowSnackBarFromResource(R.string.connection_error))
+            _passwordEventsFlow.emit(ChangePasswordViewEvent.HandleError(ServerError.CONNECTION_ERROR))
         }
     }
 
     private suspend fun processChangePasswordAPIResponse(profileResponse: ProfileResponse) {
         if (profileResponse.error != null) {
-            _passwordEventsFlow.emit(ChangePasswordViewEvent.ShowSnackBarFromResource(profileResponse.error.message.errorStringResource))
+            _passwordEventsFlow.emit(ChangePasswordViewEvent.HandleError(profileResponse.error.message))
         } else {
             _passwordEventsFlow.emit(ChangePasswordViewEvent.ChangedPasswordsSuccessfully)
         }

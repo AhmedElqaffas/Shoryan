@@ -1,10 +1,13 @@
 package com.example.shoryan.ui
 
 import android.app.DatePickerDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -13,11 +16,14 @@ import androidx.navigation.navGraphViewModels
 import com.example.shoryan.AndroidUtility
 import com.example.shoryan.R
 import com.example.shoryan.data.BirthDate
+import com.example.shoryan.data.ServerError
 import com.example.shoryan.databinding.FragmentAccountInfoBinding
 import com.example.shoryan.interfaces.LoadingFragmentHolder
 import com.example.shoryan.viewmodels.AccountInfoViewModel
 import com.example.shoryan.viewmodels.LocationPickerViewModel
+import com.example.shoryan.viewmodels.TokensViewModel
 import com.google.android.gms.maps.model.LatLng
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -25,7 +31,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
 
-
+@AndroidEntryPoint
 class AccountInfoFragment : Fragment(), LoadingFragmentHolder {
 
     private lateinit var navController: NavController
@@ -33,6 +39,7 @@ class AccountInfoFragment : Fragment(), LoadingFragmentHolder {
     private val binding get() = _binding!!
     private lateinit var locationPickerViewModel: LocationPickerViewModel
     private val accountInfoViewModel: AccountInfoViewModel by navGraphViewModels(R.id.main_nav_graph)
+    val tokensViewModel: TokensViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -220,12 +227,40 @@ class AccountInfoFragment : Fragment(), LoadingFragmentHolder {
             when (it) {
                 is AccountInfoViewModel.EditAccountInfoViewEvent.ShowSnackBarFromString ->
                     showMessage(it.text)
-                is AccountInfoViewModel.EditAccountInfoViewEvent.ShowSnackBarFromResource ->
-                    showMessage(resources.getString(it.textResourceId))
+                is AccountInfoViewModel.EditAccountInfoViewEvent.HandleError ->
+                    handleError(it.error)
                 is AccountInfoViewModel.EditAccountInfoViewEvent.ToggleLoadingIndicator -> toggleLoadingIndicator()
                 is AccountInfoViewModel.EditAccountInfoViewEvent.UpdatedAccountInfoSuccessfully -> onSuccessfulResponse()
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
+    }
+
+    /**
+     * This method is responsible for handling all possible occurring errors which could include
+     * missing data, connection errors and expiration of tokens.
+     */
+    private fun handleError(errorMessage: ServerError) {
+        if(errorMessage == ServerError.JWT_EXPIRED){
+            viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+                val response = tokensViewModel.getNewAccessToken(requireContext())
+                // If an error happened when refreshing tokens, log user out
+                response.error?.let{
+                    forceLogOut()
+                }
+            }
+        }
+        else
+            showMessage(resources.getString(errorMessage.errorStringResource))
+    }
+
+    /**
+     * This method forces the logout of the user when the tokens have expired.
+     */
+    private fun forceLogOut(){
+        Toast.makeText(requireContext(), resources.getString(R.string.re_login), Toast.LENGTH_LONG).show()
+        val intent = Intent(context, LandingActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
     }
 
     /**

@@ -1,10 +1,13 @@
 package com.example.shoryan.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -12,11 +15,15 @@ import androidx.navigation.navGraphViewModels
 import com.example.shoryan.AndroidUtility
 import com.example.shoryan.InputValidator
 import com.example.shoryan.R
+import com.example.shoryan.data.ServerError
 import com.example.shoryan.databinding.FragmentChangePasswordBinding
 import com.example.shoryan.viewmodels.AccountInfoViewModel
+import com.example.shoryan.viewmodels.TokensViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
+@AndroidEntryPoint
 class ChangePasswordFragment : Fragment() {
 
 
@@ -24,6 +31,7 @@ class ChangePasswordFragment : Fragment() {
     private var _binding: FragmentChangePasswordBinding? = null
     private val binding get() = _binding!!
     private val accountInfoViewModel: AccountInfoViewModel by navGraphViewModels(R.id.main_nav_graph)
+    val tokensViewModel: TokensViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -155,7 +163,7 @@ class ChangePasswordFragment : Fragment() {
     private fun observeViewModelEvents(){
         accountInfoViewModel.passwordEventsFlow.onEach {
             when(it){
-                is AccountInfoViewModel.ChangePasswordViewEvent.ShowSnackBarFromResource -> onFailureResponse(it.textResourceId)
+                is AccountInfoViewModel.ChangePasswordViewEvent.HandleError -> onFailureResponse(it.error)
                 AccountInfoViewModel.ChangePasswordViewEvent.ChangedPasswordsSuccessfully -> onSuccessfulResponse()
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
@@ -169,10 +177,31 @@ class ChangePasswordFragment : Fragment() {
      * This callback method is called when an error occurs while changing the password.
      * It displays an error message to the user and toggles the loading indicators.
      */
-    private fun onFailureResponse(resourceID: Int){
-        showMessage(resources.getString(resourceID))
-        turnOffProgressBar()
-        turnOnSaveButton()
+    private fun onFailureResponse(error : ServerError){
+        if(error == ServerError.JWT_EXPIRED){
+            viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+                val response = tokensViewModel.getNewAccessToken(requireContext())
+                // If an error happened when refreshing tokens, log user out
+                response.error?.let{
+                    forceLogOut()
+                }
+            }
+        }
+        else {
+            showMessage(resources.getString(error.errorStringResource))
+            turnOffProgressBar()
+            turnOnSaveButton()
+        }
+    }
+
+    /**
+     * This method forces the logout of the user when the tokens have expired.
+     */
+    private fun forceLogOut(){
+        Toast.makeText(requireContext(), resources.getString(R.string.re_login), Toast.LENGTH_LONG).show()
+        val intent = Intent(context, LandingActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
     }
 
     /**
