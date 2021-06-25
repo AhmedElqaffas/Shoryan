@@ -52,29 +52,29 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toTopOf="@id/request_item_blood_type"
                     app:layout_constraintStart_toEndOf="@id/request_item_blood_type"
-                    app:layout_constraintEnd_toEndOf="@id/urgentFlag"
-                    app:layout_constraintHorizontal_bias="0.15"
+                    app:layout_constraintEnd_toStartOf="@id/urgentFlag"
+                    android:layout_marginHorizontal="15dp"
                     android:textColor="@color/colorPrimaryDark"
                     android:textSize="21sp"
+                    app:layout_constraintHorizontal_bias="0.15"
                     android:fontFamily="@font/opensans_bold"
                     android:text="@{item.requester.name}"/>
 
-                <TextView
-                    android:id="@+id/urgentFlag"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintTop_toTopOf="@id/request_item_name"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="@id/request_arrow"
-                    app:layout_constraintHorizontal_bias="0.9"
-                    android:background="@drawable/small_red_curve_bg"
-                    android:textColor="@android:color/white"
-                    android:textSize="@dimen/_12ssp"
-                    android:fontFamily="@font/opensans_bold"
-                    android:text="@string/urgent"
-                    android:paddingHorizontal="10dp"
-                    android:paddingTop="4dp"
-                    android:paddingBottom="4dp"/>
+            <TextView
+                android:id="@+id/urgentFlag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="@id/request_item_name"
+                app:layout_constraintEnd_toStartOf="@id/request_arrow"
+                android:background="@drawable/small_red_curve_bg"
+                android:textColor="@android:color/white"
+                android:textSize="13sp"
+                android:fontFamily="@font/opensans_bold"
+                android:text="@string/urgent"
+                android:paddingHorizontal="10dp"
+                android:paddingTop="4dp"
+                android:layout_marginEnd="15dp"
+                android:paddingBottom="4dp"/>
 
             <ImageView
                 android:id="@+id/pin_icon"
