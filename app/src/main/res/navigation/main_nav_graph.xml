@@ -51,8 +51,11 @@
         android:label="Profile"
         tools:layout="@layout/fragment_profile" >
         <action
-            android:id="@+id/action_profile_to_profileSettingsFragment"
-            app:destination="@id/profileSettingsFragment" />
+            android:id="@+id/action_profile_to_accountInfoFragment"
+            app:destination="@id/accountInfoFragment" />
+        <action
+            android:id="@+id/action_profile_to_changePasswordFragment"
+            app:destination="@id/changePasswordFragment" />
     </fragment>
 
     <fragment
@@ -84,18 +87,6 @@
         android:label="RedeemRewardFragment" />
     <argument
         android:name="rewardId"/>
-    <fragment
-        android:id="@+id/profileSettingsFragment"
-        android:name="com.example.shoryan.ui.ProfileSettingsFragment"
-        android:label="fragment_profile_settings"
-        tools:layout="@layout/fragment_profile_settings" >
-        <action
-            android:id="@+id/action_profileSettingsFragment_to_changePasswordFragment"
-            app:destination="@id/changePasswordFragment" />
-        <action
-            android:id="@+id/action_profileSettingsFragment_to_accountInfoFragment"
-            app:destination="@id/accountInfoFragment" />
-    </fragment>
     <fragment
         android:id="@+id/changePasswordFragment"
         android:name="com.example.shoryan.ui.ChangePasswordFragment"
