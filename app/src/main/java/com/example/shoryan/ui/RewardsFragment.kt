@@ -139,7 +139,7 @@ class RewardsFragment : Fragment() {
                 .clickable(
                     interactionSource = MutableInteractionSource(),
                     indication = null,
-                    onClick = { onRewardClick(reward) }
+                    onClick = { onRewardClick(reward.id) }
                 )
                 .padding(10.dp),
             verticalArrangement = Arrangement.Center,
@@ -165,7 +165,7 @@ class RewardsFragment : Fragment() {
                             .fillMaxWidth()
                             .background(Color.White)
                             .padding(0.dp, 0.dp, 0.dp, 8.dp),
-                        verticalArrangement = Arrangement.Bottom,
+                        verticalArrangement = Arrangement.Top,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ){
                         RewardPoints(reward.points)
@@ -174,7 +174,13 @@ class RewardsFragment : Fragment() {
                 Box(
                     contentAlignment = Alignment.TopCenter
                 ) {
-                    RewardImage(reward.imageLink)
+                    Surface(
+                        elevation = 8.dp,
+                        shape = MaterialTheme.shapes.large
+                    ) {
+                        RewardImage(reward.store.logoLink)
+                    }
+
                 }
             }
         }
@@ -203,8 +209,8 @@ class RewardsFragment : Fragment() {
         )
     }
 
-    private fun onRewardClick(reward: Reward){
-        val bundle = bundleOf(Pair("reward", reward))
+    private fun onRewardClick(rewardId: String){
+        val bundle = bundleOf(Pair("rewardId", rewardId))
         navController.navigate(R.id.action_rewardsFragment_to_redeemRewardFragment, bundle)
     }
 

@@ -2,17 +2,15 @@ package com.example.shoryan.ui
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import com.example.shoryan.DataStoreUtil
 import com.example.shoryan.LocaleHelper
 import com.example.shoryan.R
-import com.example.shoryan.databinding.FragmentProfileBinding
 import com.example.shoryan.databinding.FragmentProfileSettingsBinding
 import com.example.shoryan.interfaces.LocaleChangerHolder
 import com.example.shoryan.repos.TokensRefresher
@@ -99,19 +97,16 @@ class ProfileSettingsFragment : Fragment(), LocaleChangerHolder {
         LanguageFragment().show(childFragmentManager, "language")
     }
 
+    /**
+     * This callback method is called when the app's language has been changed by the user.
+     * The activity has to be restarted after the language change takes place.
+     */
     override fun onLocaleChanged(newLanguageTag: String){
-        /**
-         * This callback method is called when the app's language has been changed by the user.
-         * The application has to be restarted after the language change takes place.
-         */
-
         // Changing the app's language
         updateLocale(newLanguageTag)
 
-        // Restarting LandingActivity
-        val intent = Intent(context, LandingActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-        startActivity(intent)
+        // Restarting activity
+        requireActivity().recreate()
     }
 
     private fun updateLocale(newLanguageTag: String) {

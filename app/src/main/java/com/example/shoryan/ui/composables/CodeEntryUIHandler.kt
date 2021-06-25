@@ -30,8 +30,8 @@ fun CodeEntryUI(
     cellColor: Color = Color.White,
     activeBorderColor: Color = MaterialTheme.colors.primary,
     inActiveBorderColor: Color = Color.Black,
-    activeBorderWidth: Dp = 3.dp,
-    inActiveBorderWidth: Dp = 1.dp,
+    activeBorderWidth: Dp = 5.dp,
+    inActiveBorderWidth: Dp = 3.dp,
     isPassword: Boolean = false,
     onCodeEntered: (String) -> Unit,
     layoutDirection: Int,
@@ -46,6 +46,7 @@ fun CodeEntryUI(
     Column(
         modifier = modifier
     ) {
+
             PinEntryComposable(
                 numberOfCells,
                 Modifier,
@@ -76,16 +77,16 @@ fun ConfirmButton(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(0.dp, screenHeight * 0.09f, 0.dp, 0.dp),
+            .padding(0.dp, screenHeight * 0.05f, 0.dp, 0.dp),
         horizontalArrangement = Arrangement.Center
     ) {
         Button(
             onClick = { onClick(enteredCode)},
             enabled = true,
-            contentPadding = PaddingValues(20.dp),
+            contentPadding = PaddingValues(18.dp),
             shape = RoundedCornerShape(29.dp),
             modifier = Modifier
-                .width(screenWidth * 0.8f)
+                .width(screenWidth * 0.88f)
         ) {
             Text(
                 text = text,
@@ -109,7 +110,7 @@ fun ResendCodeText(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(0.dp, screenHeight * 0.04f, 0.dp, 0.dp),
+            .padding(0.dp, screenHeight * 0.01f, 0.dp, 0.dp),
         horizontalArrangement = Arrangement.Center
     ){
         Text(

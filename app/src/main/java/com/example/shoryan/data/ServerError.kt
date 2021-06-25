@@ -8,7 +8,6 @@ import com.example.shoryan.AndroidUtility
 import com.example.shoryan.R
 import com.example.shoryan.repos.TokensRefresher
 import com.example.shoryan.ui.LandingActivity
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -20,6 +19,7 @@ enum class ServerError(val errorStringResource: Int) {
     USER_NOT_FOUND(R.string.user_not_found),
     INVALID_FORMAT(R.string.invalid_input),
     PHONE_NUMBER_REQUIRED(R.string.connection_error),
+    REDEEMING_ANOTHER_REWARD(R.string.redeeming_another_reward),
     JWT_EXPIRED(R.string.connection_error){
         override fun doErrorAction(context: Context) {
             AndroidUtility.forceLogOut(context)
@@ -52,41 +52,22 @@ enum class ServerError(val errorStringResource: Int) {
         }
     },
     USER_ALREADY_EXISTS(R.string.user_already_exists),
-    AGE_CHECK_FAILS(R.string.age_check_failed){
-        override fun doErrorAction(rootView: View){
-            AndroidUtility.displaySnackbarMessage(rootView,
-                rootView.context.resources.getString(this.errorStringResource), Snackbar.LENGTH_INDEFINITE)
-        }
-    },
-    BREAK_TIME_CHECK_FAILS(R.string.frequent_donation){
-        override fun doErrorAction(rootView: View){
-            AndroidUtility.displaySnackbarMessage(rootView,
-                rootView.context.resources.getString(this.errorStringResource), Snackbar.LENGTH_INDEFINITE)
-        }
-    },
-    INCOMPATIBLE_BLOOD_TYPE(R.string.incompatible_blood_type){
-        override fun doErrorAction(rootView: View){
-            AndroidUtility.displaySnackbarMessage(rootView,
-                rootView.context.resources.getString(this.errorStringResource), Snackbar.LENGTH_INDEFINITE)
-        }
-    },
-    USER_GOING_TO_ANOTHER_REQUEST(R.string.request_already_pending){
-        override fun doErrorAction(rootView: View){
-            AndroidUtility.displaySnackbarMessage(rootView,
-                rootView.context.resources.getString(this.errorStringResource), Snackbar.LENGTH_INDEFINITE)
-        }
-    },
+    AGE_CHECK_FAILS(R.string.age_check_failed),
+    BREAK_TIME_CHECK_FAILS(R.string.frequent_donation),
+    INCOMPATIBLE_BLOOD_TYPE(R.string.incompatible_blood_type),
+    USER_GOING_TO_ANOTHER_REQUEST(R.string.request_already_pending),
     JWT_NOT_ACTIVE(R.string.connection_error),
     INTERNAL_SERVER_ERROR(R.string.connection_error),
     CONNECTION_ERROR(R.string.connection_error),
 
     // Create New Request errors
     REQUESTS_DAILY_LIMIT(R.string.cant_request_today),
-    PASSWORD_MISMATCH(R.string.current_password_wrong);
+    PASSWORD_MISMATCH(R.string.current_password_wrong),
+    FILL_ALL_DATA(R.string.fill_all_data);
 
     open fun doErrorAction(rootView: View){
-        AndroidUtility.displaySnackbarMessage(rootView,
-            rootView.context.resources.getString(this.errorStringResource), Snackbar.LENGTH_LONG)
+        AndroidUtility.displayAlertDialog(rootView.context,
+            rootView.context.resources.getString(this.errorStringResource))
     }
 
     open fun doErrorAction(context: Context){}

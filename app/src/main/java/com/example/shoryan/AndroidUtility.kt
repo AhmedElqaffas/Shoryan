@@ -1,5 +1,6 @@
 package com.example.shoryan
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.view.View
@@ -28,13 +29,13 @@ class AndroidUtility {
             inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
         }
 
-        fun displaySnackbarMessage(layout: View,  message: String, duration : Int){
-            val snackbar =  Snackbar.make(layout, message, duration)
-                .setAction(R.string.ok) {
-                    // By default, the snackbar will be dismissed
-                }
-                .setActionTextColor(layout.context.resources.getColor(R.color.colorAccent))
-            snackbar.show()
+        fun displayAlertDialog(context: Context, text: String){
+            val builder = AlertDialog.Builder(context)
+            with(builder) {
+                setMessage(text)
+                setNeutralButton(context.resources.getString(R.string.ok),null)
+                show()
+            }
         }
 
         fun makeTryAgainSnackbar(view: View, message: String, whatToTry: () -> Unit): Snackbar{

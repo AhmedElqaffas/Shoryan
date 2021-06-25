@@ -41,30 +41,14 @@ import javax.inject.Inject
 class RequestDetailsFragment : BottomSheetDialogFragment(){
 
     companion object {
-
-        const val ARGUMENT_REQUEST_KEY = "request"
+        const val ARGUMENT_REQUEST_KEY = "requestId"
         const val ARGUMENT_BINDING_KEY = "binding"
+        // Sometimes, we need the parent fragment to do something when this dialog is dismissed.
+        // The parent should implement RequestsRecyclerInteraction and pass itself with the following
+        // key.
+        const val PARENT_REQUESTS_HOLDER = "requestsHolder"
         const val MY_REQUEST_BINDING = 1
         const val REQUEST_FULFILLMENT_BINDING = 2
-
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param requestId - The clicked request id.
-         * @param binding - A integer to select which xml layout to inflate, 1: fragment_my_request_details,
-         * 2: fragment_request_fulfillment
-         * @return A new instance of fragment RequestDetailsFragment.
-         */
-
-        @JvmStatic
-        fun newInstance(requestId: String, binding: Int) =
-            RequestDetailsFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARGUMENT_REQUEST_KEY, requestId)
-                    putInt(ARGUMENT_BINDING_KEY, binding)
-                }
-            }
     }
 
     val tokensViewModel: TokensViewModel by viewModels()
@@ -112,7 +96,7 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        (parentFragment as RequestsRecyclerInteraction).onRequestCardDismissed()
+        (requireArguments().get(PARENT_REQUESTS_HOLDER) as RequestsRecyclerInteraction?)?.onRequestCardDismissed()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -123,9 +107,9 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
         observeViewModelEvents(viewModelsMap[getFragmentType()]!!)
     }
 
-    private fun getFragmentType() = requireArguments().getInt(ARGUMENT_BINDING_KEY)
+    private fun getFragmentType() = requireArguments().get(ARGUMENT_BINDING_KEY) as Int
 
-    private fun getClickedRequest() = requireArguments().getString(ARGUMENT_REQUEST_KEY)!!
+    private fun getClickedRequest() = requireArguments().get(ARGUMENT_REQUEST_KEY) as String
 
     private fun setWindowSize(){
         val bottomSheetView = binding.root.findViewById(R.id.design_bottom_sheet) as View
@@ -182,7 +166,7 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
         mapInstance.apply {
             viewModel.donationDetails.observe(viewLifecycleOwner){
                 it?.request?.bloodBank?.location?.let { location ->
-                    val latLng = LatLng(location.latitude, location.longitude)
+                    val latLng = LatLng(location.latitude!!, location.longitude!!)
                     addMarker(MarkerOptions().position(latLng))
                     moveCamera(CameraUpdateFactory.newLatLng(latLng))
                 }

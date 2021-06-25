@@ -47,6 +47,7 @@ class RedeemingRewardsViewModel @Inject constructor(
         emit(it == RedeemingState.STARTED)
     }
 
+
     fun fetchRewardsList(){
         rewardsListJob?.cancel()
         rewardsListJob = viewModelScope.launch {
@@ -64,21 +65,22 @@ class RedeemingRewardsViewModel @Inject constructor(
         }
     }
 
-    suspend fun getRewardDetails(reward: Reward){
+    suspend fun getRewardDetails(rewardId: String){
         _rewardRedeemingState.value = RedeemingState.LOADING
-        val response = repository.getRewardDetails(reward.id)
+        val response = repository.getRewardDetails(rewardId)
         val detailedReward: Reward? = handleRewardDetailsResponse(response)
-        _detailedReward.value = detailedReward ?: reward
+        _detailedReward.value = detailedReward
     }
 
     private fun handleRewardDetailsResponse(response: RewardResponse): Reward?{
         if(response.error == null){
-            _rewardRedeemingState.value = getRedeemingStateFromBoolean(response.reward!!.isBeingRedeemed!!)
+            _rewardRedeemingState.value = getRedeemingStateFromBoolean(
+                response.successfulRewardResponse!!.isBeingRedeemed)
         }
         else{
             _rewardRedeemingState.value = RedeemingState.LOADING_FAILED
         }
-        return response.reward
+        return response.successfulRewardResponse?.reward
     }
 
     private fun getRedeemingStateFromBoolean(isBeingRedeemed: Boolean): RedeemingState =
@@ -92,12 +94,14 @@ class RedeemingRewardsViewModel @Inject constructor(
      * branch mobile number containing the redeeming details
      * @param rewardId ID of the reward being redeemed
      */
-    suspend fun tryRedeemReward(rewardId: String){
+    suspend fun tryRedeemReward(rewardId: String, branchId: String): Boolean{
         _rewardRedeemingState.emit(RedeemingState.NOT_REDEEMING)
-        if (sendRedeemingRequestToServer(rewardId)) {
+        return if (sendRedeemingRequestToServer(rewardId, branchId)) {
             _rewardRedeemingState.emit(RedeemingState.STARTED)
+            true
         } else {
             _rewardRedeemingState.emit(RedeemingState.REDEEMING_FAILED)
+            false
         }
     }
 
@@ -106,14 +110,14 @@ class RedeemingRewardsViewModel @Inject constructor(
      * request to the server.
      * @return true, if the server recorded the request successfully. Otherwise it returns false
      */
-    private suspend fun sendRedeemingRequestToServer(rewardId: String): Boolean {
-        val response = repository.startRewardRedeeming(rewardId)
+    private suspend fun sendRedeemingRequestToServer(rewardId: String, branchId: String): Boolean {
+        val response = repository.startRewardRedeeming(rewardId, branchId)
         handleRedeemingResponse(response)
         return isRedeemingRecorded(response)
     }
 
     private fun isRedeemingRecorded(response: RedeemingRewardResponse): Boolean {
-        return response.isSuccessful
+        return response.error == null
     }
 
     /**

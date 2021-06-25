@@ -6,8 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.shoryan.data.*
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.networking.RetrofitClient
+import com.example.shoryan.repos.RewardsRepo_imp
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -76,11 +76,12 @@ class SMSViewModel: ViewModel() {
      * Checks whether resending an sms to the store is allowed now or not.
      * If allowed, a new verification code is sent to the branch mobile number.
      * @param rewardId The reward being redeemed
+     * @param branchId The store branch to send SMS to
      */
-    fun trySendSMS(rewardId: String){
+    fun trySendSMS(rewardId: String, branchId: String){
         if(_canResendSMS.value == true){
             viewModelScope.launch{
-                sendRewardCodeSMS(rewardId)
+                sendRewardCodeSMS(rewardId, branchId)
             }
         }
     }
@@ -88,12 +89,11 @@ class SMSViewModel: ViewModel() {
     /**
      * Used to send an SMS to the store branch mobile number
      */
-    private suspend fun sendRewardCodeSMS(code: String){
+    private suspend fun sendRewardCodeSMS(rewardId: String, branchId: String){
         _canResendSMS.emit(false)
         try{
-            delay(500)
-            val response = ErrorResponse(ServerError.CONNECTION_ERROR, 100)
-            processSendingSMSResponse(response)
+            val response = RewardsRepo_imp(bloodDonationAPI).startRewardRedeeming(rewardId, branchId)
+            processSendingSMSResponse(response.error)
         }catch(e: Exception){
             _canResendSMS.emit(true)
             _eventsFlow.emit(ServerError.CONNECTION_ERROR)
@@ -131,8 +131,10 @@ class SMSViewModel: ViewModel() {
 
     private suspend fun processSendingSMSResponse(responseError: ErrorResponse?){
         if(responseError == null){
-            // Code is sent successfully, start a cooldown timer to prevent rapid sms resending
-            startTimer()
+            // Code is sent successfully, start a cool down timer to prevent rapid sms resending
+            // But avoid starting the timer again if it is already started
+            if(timer == null)
+                startTimer()
         }
         else{
             _canResendSMS.emit(true)
@@ -154,6 +156,7 @@ class SMSViewModel: ViewModel() {
                 viewModelScope.launch{
                     _remainingTime.emit(0L)
                     _canResendSMS.emit(true)
+                    timer = null
                 }
             }
         }.start()
@@ -184,13 +187,15 @@ class SMSViewModel: ViewModel() {
 
     /**
      * Sends the verification code entered by the user to the server to check if it is correct
+     * @param rewardId The reward being redeemed
+     * @param branchId The branch where the redeeming is taking place
      * @param code The code entered by the user
      */
-    fun verifyRedeemingCode(code: String){
+    fun verifyRedeemingCode(rewardId: String, branchId: String, code: String){
         currentJob = viewModelScope.launch{
             _isVerifyingCode.value = VerificationState.VERIFYING
             try{
-                sendCodeToServer(code)
+                sendCodeToServer(rewardId, branchId, code)
             }catch(e: Exception){
                 _isVerifyingCode.value = VerificationState.NOT_VERIFYING
                 _eventsFlow.emit(ServerError.CONNECTION_ERROR)
@@ -198,14 +203,13 @@ class SMSViewModel: ViewModel() {
         }
     }
 
-    private suspend fun sendCodeToServer(code: String){
-        delay(2000)
-        val response = RedeemingCodeVerificationResponse(true,null)
-        if(response.isSuccessful){
+    private suspend fun sendCodeToServer(rewardId: String, branchId: String, code: String){
+        val response = RewardsRepo_imp(bloodDonationAPI).confirmRewardRedeeming(rewardId, branchId, code)
+        if(response.error == null){
             _isVerifyingCode.value = VerificationState.VERIFIED
         }else{
             _isVerifyingCode.value = VerificationState.NOT_VERIFYING
-            _eventsFlow.emit(response.error?.message)
+            _eventsFlow.emit(response.error.message)
         }
     }
 

@@ -1,9 +1,11 @@
 package com.example.shoryan.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -33,11 +35,6 @@ class MyRequestsFragment : Fragment(), RequestsRecyclerInteraction {
 
     val tokensViewModel: TokensViewModel by viewModels()
     val viewModel: MyRequestsViewModel by viewModels()
-
-   /* override fun onAttach(context: Context) {
-        super.onAttach(context)
-        (requireActivity().application as MyApplication).appComponent.myRequestsComponent().create().inject(this)
-    }*/
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentMyRequestsBinding.inflate(inflater, container, false)
@@ -115,14 +112,20 @@ class MyRequestsFragment : Fragment(), RequestsRecyclerInteraction {
     }
 
     override fun onRequestCardClicked(donationRequest: DonationRequest, isMyRequest: Boolean) {
-        if(childFragmentManager.findFragmentByTag("requestDetails") != null){
-            return
+        try{
+            openRequestFragment(donationRequest.id)
+        }catch(e: Exception){
+            Log.e("MyRequestsFragment", "The fragment is already displayed")
         }
-        val fragment = RequestDetailsFragment.newInstance(
-            donationRequest.id,
-            RequestDetailsFragment.MY_REQUEST_BINDING
+    }
+
+    private fun openRequestFragment(requestId: String){
+        val bundle = bundleOf(
+            RequestDetailsFragment.ARGUMENT_REQUEST_KEY to requestId,
+            RequestDetailsFragment.ARGUMENT_BINDING_KEY to RequestDetailsFragment.MY_REQUEST_BINDING,
+            RequestDetailsFragment.PARENT_REQUESTS_HOLDER to this
         )
-        fragment.show(childFragmentManager, "requestDetails")
+        navController.navigate(R.id.action_myRequestsFragment_to_requestDetailsFragment, bundle)
     }
 
     override fun onRequestCardDismissed() {

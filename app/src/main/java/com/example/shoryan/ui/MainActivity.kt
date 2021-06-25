@@ -2,6 +2,7 @@ package com.example.shoryan.ui
 
 import android.content.Context
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -21,8 +22,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setLayoutDirectionBasedOnLanguage(Locale.getDefault().language)
 
         setNavigationComponent()
+    }
+
+    private fun setLayoutDirectionBasedOnLanguage(currentLanguage: String) {
+        if(currentLanguage == Locale("ar").language)
+            window.decorView.layoutDirection = View.LAYOUT_DIRECTION_RTL
+        else
+            window.decorView.layoutDirection = View.LAYOUT_DIRECTION_LTR
     }
 
     override fun attachBaseContext(newBase: Context?) {

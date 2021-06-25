@@ -1,12 +1,12 @@
 package com.example.shoryan.ui.composables
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.GenericShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -17,6 +17,7 @@ import androidx.compose.ui.focus.focusOrder
 import androidx.compose.ui.focus.isFocused
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -61,8 +62,8 @@ fun PinEntryComposable(
     cellColor: Color = Color.White,
     activeBorderColor: Color = MaterialTheme.colors.primary,
     inActiveBorderColor: Color = Color.Black,
-    activeBorderWidth: Dp = 3.dp,
-    inActiveBorderWidth: Dp = 1.dp,
+    activeBorderWidth: Dp = 5.dp,
+    inActiveBorderWidth: Dp = 3.dp,
     isPassword: Boolean = false,
     onChange: (String) -> Unit,
     onCodeEntered: (String) -> Unit,
@@ -178,11 +179,10 @@ fun Cell(
     val borderWidth = remember { mutableStateOf(1.dp) }
     parentLayoutScope.apply{
         BoxWithConstraints(modifier = Modifier.weight(1f)) {
-            val fontSize = min(maxHeight*0.4f*0.78f, maxWidth * 0.4f * 0.78f)
-            TextField(
+            val fontSize = min(maxHeight, maxWidth)
+            BasicTextField(
                 value = cellsText[id].value,
-                onValueChange =
-                {
+                onValueChange = { it ->
                     if(it.isEmpty()) {
                         cellsText[id].value = it
                         previousFocusRequester?.requestFocus()
@@ -223,17 +223,16 @@ fun Cell(
                             onChange(extractCodeString(cellsText, layoutDirection))
                         }
                     }
-                    .border(borderWidth.value, borderColor.value, LineBorder),
+
+                    .border(borderWidth.value, borderColor.value, LineBorder)
+                    .background(cellColor),
+                cursorBrush = SolidColor(Color.Unspecified),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Next
                 ),
                 visualTransformation = if(isPassword) PasswordVisualTransformation() else VisualTransformation.None,
                 textStyle = TextStyle(fontSize= LocalDensity.current.run { fontSize.toSp() }, textAlign = TextAlign.Center, fontWeight = FontWeight.Bold),
-                colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = cellColor,
-                    cursorColor = Color.Transparent, // To hide the cursor
-                    focusedIndicatorColor = activeBorderColor) // To hide the underline below the textField by blending it with border color
             )
         }
 
@@ -250,7 +249,17 @@ fun extractCodeString(cellsText: List<MutableState<String>>, layoutDirection: In
     return codeString
 }
 
-private val LineBorder = GenericShape { size, _ ->
-    moveTo(0f, size.height)
-    lineTo(size.width, size.height)
+private val LineBorder = GenericShape { box, _ ->
+    moveTo(0f, box.height)
+    lineTo(box.width, box.height)
+    moveTo(0f, box.height-1)
+    lineTo(box.width, box.height-1)
+    moveTo(0f, box.height-2)
+    lineTo(box.width, box.height-2)
+    moveTo(0f, box.height-3)
+    lineTo(box.width, box.height-3)
+    moveTo(0f, box.height-4)
+    lineTo(box.width, box.height-4)
+    moveTo(0f, box.height-5)
+    lineTo(box.width, box.height-5)
 }

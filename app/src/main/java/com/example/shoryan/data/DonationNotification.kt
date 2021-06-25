@@ -1,7 +1,18 @@
 package com.example.shoryan.data
 
-data class DonationNotification(val title: String,
-                                val details: String,
-                                val dateTime: String,
-                                val isRead: Boolean
-                                )
+import com.example.shoryan.TimestampToElapsedTime
+import com.google.gson.annotations.SerializedName
+
+data class DonationNotification(
+    @SerializedName("_id") val id: String,
+    val title: String,
+    val body: String,
+    val timestamp: Long,
+    val request: DonationRequest
+){
+    fun getElapsedTime(timeConverter: TimestampToElapsedTime): String{
+        return timeConverter.convert(timestamp)
+    }
+}
+
+

@@ -19,7 +19,7 @@
     <string name="change_location">Change Location</string>
     <string name="checking_requesting_permission">Checking Requesting Permission</string>
     <string name="checking_donating_ability">Checking Donating Ability</string>
-    <string name="choose_branch">Choose Branch</string>
+    <string name="choose_branch">Choose Branch…</string>
     <string name="choose_location">Choose Location</string>
     <string name="choose_your_location">Choose Your Location</string>
     <string name="click_here_to_try_again">"Couldn't connect to server \n Click here to try again"</string>
@@ -27,7 +27,7 @@
     <string name="confirm">Confirm</string>
     <string name="confirmation_code">Confirmation Code</string>
     <string name="confirm_password">Confirm Password</string>
-    <string name="connection_error">"Couldn't connect to server"</string>
+    <string name="connection_error">"Couldn't connect to the server"</string>
     <string name="current_location">Current Location</string>
     <string name="date_initial">DD-MM-YYYY</string>
     <string name="donate">Donate</string>
@@ -37,6 +37,7 @@
     <string name="donation_location">Donation Location</string>
     <string name="donation_request">Donation Request</string>
     <string name="enter_code">Enter the sms code sent to \n %1$s</string>
+    <string name="enter_code_branch">Enter the code sent to the branch:  \n%1$s</string>
     <string name="enter_login_password">Enter the password for the number \n %1$s</string>
     <string name="enter_password">Please enter your password</string>
     <string name="female">Female</string>
@@ -93,6 +94,7 @@
     <string name="register">Register</string>
     <string name="redeemable">Redeemable</string>
     <string name="redeem">Redeem</string>
+    <string name="redeeming_another_reward">You are already redeeming another reward</string>
     <string name="redeeming_confirmation_title">Confirm Redeeming</string>
     <string name="redeeming_confirmation_body">"You won't be able to cancel the redeeming, are you sure you want to continue?"</string>
     <string name="requests">Requests</string>
@@ -112,9 +114,11 @@
     <string name="thanks_donation">Thanks for your donation</string>
     <string name="try_again">Try again</string>
     <string name="yes">Yes</string>
+    <string name="urgent">URGENT</string>
     <string name="user_already_exists">This number is already registered</string>
     <string name="user_not_found">This phone number is not registered</string>
     <string name="waiting_confirmation">You are now registered as a donor for this request, we are awaiting your donation</string>
+    <string name="you_have_no_notifications">"No new notifications \n click here to refresh"</string>
     <string name="you_have_no_requests">"You have no active requests \n click here to refresh"</string>
     <string name="your_request">Your Request</string>
 

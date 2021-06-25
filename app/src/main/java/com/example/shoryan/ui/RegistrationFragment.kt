@@ -20,17 +20,15 @@ import androidx.navigation.Navigation
 import androidx.navigation.navGraphViewModels
 import com.example.shoryan.AndroidUtility
 import com.example.shoryan.R
-import com.example.shoryan.data.*
+import com.example.shoryan.data.BirthDate
 import com.example.shoryan.databinding.FragmentRegistrationBinding
 import com.example.shoryan.getStringWithoutAdditionalSpaces
 import com.example.shoryan.interfaces.LoadingFragmentHolder
-import com.example.shoryan.repos.TokensRefresher
 import com.example.shoryan.viewmodels.LocationPickerViewModel
 import com.example.shoryan.viewmodels.RegistrationViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -267,23 +265,16 @@ class RegistrationFragment : Fragment(), LoadingFragmentHolder {
     private fun observeViewModelEvents(){
         registrationViewModel.eventsFlow.onEach {
             when(it){
-                is RegistrationViewModel.RegistrationViewEvent.ShowSnackBarFromString -> showSnackbar(it.text)
-                is RegistrationViewModel.RegistrationViewEvent.ShowSnackBarFromResource -> showSnackbar(resources.getString(it.textResourceId))
+                is RegistrationViewModel.RegistrationViewEvent.ShowMessageFromString -> showMessage(it.text)
+                is RegistrationViewModel.RegistrationViewEvent.ShowMessageFromResource -> showMessage(resources.getString(it.textResourceId))
                 RegistrationViewModel.RegistrationViewEvent.OpenSMSFragment -> goToSMSFragment()
                 RegistrationViewModel.RegistrationViewEvent.ToggleLoadingIndicator -> toggleLoadingIndicator()
             }
         }.launchIn(viewLifecycleOwner.lifecycleScope)
     }
 
-    private fun showSnackbar(message: String){
-        AndroidUtility.displaySnackbarMessage(binding.rootLayout, message, Snackbar.LENGTH_LONG)
-    }
-
-    private fun onSuccessfulRegistration(accessToken: String, refreshToken: String){
-        viewLifecycleOwner.lifecycleScope.launchWhenResumed {
-            TokensRefresher.saveTokens(accessToken, refreshToken, requireContext())
-            goToSMSFragment()
-        }
+    private fun showMessage(message: String){
+        AndroidUtility.displayAlertDialog(requireContext(), message)
     }
 
     private fun goToSMSFragment(){

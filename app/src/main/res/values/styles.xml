@@ -40,4 +40,16 @@
         <item name="cornerSizeBottomRight">0dp</item>
         <item name="cornerSizeBottomLeft">0dp</item>
     </style>
+
+    <style name="registrationCard" parent="">
+        <item name="shapeAppearanceOverlay">@style/registrationCardCorners</item>
+    </style>
+
+    <style name="registrationCardCorners" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopRight">59dp</item>
+        <item name="cornerSizeTopLeft">59dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+    </style>
 </resources>

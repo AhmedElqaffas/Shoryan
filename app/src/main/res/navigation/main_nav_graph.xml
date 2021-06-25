@@ -20,6 +20,9 @@
         <action
             android:id="@+id/action_home_to_rewardsFragment"
             app:destination="@id/rewardsFragment" />
+        <action
+            android:id="@+id/action_home_to_requestDetailsFragment"
+            app:destination="@id/requestDetailsFragment" />
     </fragment>
 
     <fragment
@@ -36,7 +39,11 @@
         android:id="@+id/notifications"
         android:name="com.example.shoryan.ui.NotificationsFragment"
         android:label="Notifications"
-        tools:layout="@layout/fragment_notifications" />
+        tools:layout="@layout/fragment_notifications" >
+        <action
+            android:id="@+id/action_notifications_to_requestDetailsFragment"
+            app:destination="@id/requestDetailsFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/profile"
@@ -58,6 +65,9 @@
             app:destination="@id/newRequest" />
         <argument android:name="requestsIDs"
             app:argType="com.example.shoryan.data.DonationRequest"/>
+        <action
+            android:id="@+id/action_myRequestsFragment_to_requestDetailsFragment"
+            app:destination="@id/requestDetailsFragment" />
 
     </fragment>
     <fragment
@@ -73,8 +83,7 @@
         android:name="com.example.shoryan.ui.RedeemRewardFragment"
         android:label="RedeemRewardFragment" />
     <argument
-        app:argType="com.example.shoryan.data.Reward"
-        android:name="reward"/>
+        android:name="rewardId"/>
     <fragment
         android:id="@+id/profileSettingsFragment"
         android:name="com.example.shoryan.ui.ProfileSettingsFragment"
@@ -105,4 +114,18 @@
         android:id="@+id/mapFragment2"
         android:name="com.example.shoryan.ui.MapFragment"
         android:label="MapFragment" />
+    <dialog
+        android:id="@+id/requestDetailsFragment"
+        android:name="com.example.shoryan.ui.RequestDetailsFragment"
+        android:label="RequestDetailsFragment">
+        <argument
+            android:name="requestId"/>
+        <argument android:name="binding"
+            app:argType="integer"/>
+        <!-- To be able to make a callback when the dialog is dismissed -->
+        <argument android:name="requestsHolder"
+            app:argType="com.example.shoryan.interfaces.RequestsRecyclerInteraction"
+            app:nullable="true"/>
+    </dialog>
+
 </navigation>

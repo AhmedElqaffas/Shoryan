@@ -1,6 +1,6 @@
 package com.example.shoryan.data
 
-class RedeemingRewardResponse(
-    val isSuccessful: Boolean,
+
+data class RedeemingRewardResponse(
     val error: ErrorResponse?
 )

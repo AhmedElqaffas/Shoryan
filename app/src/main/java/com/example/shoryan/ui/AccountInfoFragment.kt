@@ -1,17 +1,13 @@
 package com.example.shoryan.ui
 
-import android.Manifest
-import android.annotation.SuppressLint
 import android.app.DatePickerDialog
-import android.content.pm.PackageManager
-import android.location.Location
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
-import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -20,32 +16,30 @@ import androidx.navigation.navGraphViewModels
 import com.example.shoryan.AndroidUtility
 import com.example.shoryan.R
 import com.example.shoryan.data.BirthDate
-import com.example.shoryan.data.ProfileResponse
+import com.example.shoryan.data.ServerError
 import com.example.shoryan.databinding.FragmentAccountInfoBinding
-import com.example.shoryan.getStringWithoutAdditionalSpaces
 import com.example.shoryan.interfaces.LoadingFragmentHolder
-import com.example.shoryan.repos.ProfileRepo
-import com.example.shoryan.repos.TokensRefresher
 import com.example.shoryan.viewmodels.AccountInfoViewModel
 import com.example.shoryan.viewmodels.LocationPickerViewModel
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
+import com.example.shoryan.viewmodels.TokensViewModel
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.*
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 
-
+@AndroidEntryPoint
 class AccountInfoFragment : Fragment(), LoadingFragmentHolder {
 
     private lateinit var navController: NavController
     private var _binding: FragmentAccountInfoBinding? = null
-    private var fusedLocationProviderClient: FusedLocationProviderClient? = null
     private val binding get() = _binding!!
     private lateinit var locationPickerViewModel: LocationPickerViewModel
     private val accountInfoViewModel: AccountInfoViewModel by navGraphViewModels(R.id.main_nav_graph)
+    val tokensViewModel: TokensViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +53,7 @@ class AccountInfoFragment : Fragment(), LoadingFragmentHolder {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View{
         // Inflate the layout for this fragment
         _binding = FragmentAccountInfoBinding.inflate(inflater, container, false)
         _binding!!.viewmodel = accountInfoViewModel
@@ -140,7 +134,7 @@ class AccountInfoFragment : Fragment(), LoadingFragmentHolder {
                 accountInfoViewModel.setBirthDate(BirthDate(year, monthOfYear + 1, dayOfMonth))
             },
             accountInfoViewModel.getBirthYear(),
-            accountInfoViewModel.getBirthMonth(),
+            accountInfoViewModel.getBirthMonth() - 1,
             accountInfoViewModel.getBirthDay()
         )
 
@@ -212,7 +206,7 @@ class AccountInfoFragment : Fragment(), LoadingFragmentHolder {
      * This method stores both the location and the address in the viewmodel
      */
     private fun getUserAddressFromLocation(location: com.example.shoryan.data.Location) {
-        val locationLatLng = LatLng(location.latitude, location.longitude)
+        val locationLatLng = LatLng(location.latitude!!, location.longitude!!)
         locationPickerViewModel.locationLatLng = locationLatLng
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
@@ -231,12 +225,10 @@ class AccountInfoFragment : Fragment(), LoadingFragmentHolder {
     private fun observeViewModelEvents() {
         accountInfoViewModel.updateAccountInfoEventsFlow.onEach {
             when (it) {
-                is AccountInfoViewModel.EditAccountInfoViewEvent.ShowSnackBarFromString -> showSnackbar(
-                    it.text
-                )
-                is AccountInfoViewModel.EditAccountInfoViewEvent.ShowSnackBarFromResource -> showSnackbar(
-                    resources.getString(it.textResourceId)
-                )
+                is AccountInfoViewModel.EditAccountInfoViewEvent.ShowSnackBarFromString ->
+                    showMessage(it.text)
+                is AccountInfoViewModel.EditAccountInfoViewEvent.HandleError ->
+                    handleError(it.error)
                 is AccountInfoViewModel.EditAccountInfoViewEvent.ToggleLoadingIndicator -> toggleLoadingIndicator()
                 is AccountInfoViewModel.EditAccountInfoViewEvent.UpdatedAccountInfoSuccessfully -> onSuccessfulResponse()
             }
@@ -244,16 +236,43 @@ class AccountInfoFragment : Fragment(), LoadingFragmentHolder {
     }
 
     /**
+     * This method is responsible for handling all possible occurring errors which could include
+     * missing data, connection errors and expiration of tokens.
+     */
+    private fun handleError(errorMessage: ServerError) {
+        if(errorMessage == ServerError.JWT_EXPIRED){
+            viewLifecycleOwner.lifecycleScope.launchWhenResumed {
+                val response = tokensViewModel.getNewAccessToken(requireContext())
+                // If an error happened when refreshing tokens, log user out
+                response.error?.let{
+                    forceLogOut()
+                }
+            }
+        }
+        else
+            showMessage(resources.getString(errorMessage.errorStringResource))
+    }
+
+    /**
+     * This method forces the logout of the user when the tokens have expired.
+     */
+    private fun forceLogOut(){
+        Toast.makeText(requireContext(), resources.getString(R.string.re_login), Toast.LENGTH_LONG).show()
+        val intent = Intent(context, LandingActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
+    }
+
+    /**
      * This callback method is called when the user's account information have been updated successfully.
      * It shows a success message to the user and navigates back to the Profile Settings screen.
      */
     private fun onSuccessfulResponse() {
-        showSnackbar(resources.getString(R.string.account_info_update_success))
-        navController.navigateUp()
+        showMessage(resources.getString(R.string.account_info_update_success))
     }
 
-    private fun showSnackbar(message: String) {
-        AndroidUtility.displaySnackbarMessage(binding.rootLayout, message, Snackbar.LENGTH_LONG)
+    private fun showMessage(message: String) {
+        AndroidUtility.displayAlertDialog(requireContext(), message)
     }
 
     private fun toggleLoadingIndicator() {
