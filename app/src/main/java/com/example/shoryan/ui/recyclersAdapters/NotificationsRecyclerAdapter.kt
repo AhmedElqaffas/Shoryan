@@ -36,7 +36,9 @@ private val lifecycleOwner: LifecycleOwner):
         private fun setClickListener(){
             itemView.setOnClickListener{
                 val notification = getItem(layoutPosition)
-                requestsRecyclerInteraction.onRequestCardClicked(notification.request, isMyRequest(notification.request))
+                notification.request?.let{
+                    requestsRecyclerInteraction.onRequestCardClicked(it, isMyRequest(it))
+                }
             }
         }
 

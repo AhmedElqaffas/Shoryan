@@ -7,8 +7,8 @@ data class DonationNotification(
     @SerializedName("_id") val id: String,
     val title: String,
     val body: String,
-    val timestamp: Long,
-    val request: DonationRequest
+    @SerializedName("date") val timestamp: Long,
+    val request: DonationRequest?
 ){
     fun getElapsedTime(timeConverter: TimestampToElapsedTime): String{
         return timeConverter.convert(timestamp)
