@@ -40,6 +40,7 @@ enum class ServerError(val errorStringResource: Int) {
         private fun clearTokensAndLogUserOut(context: Context){
             GlobalScope.launch {
                 TokensRefresher.clearCachedTokens(context)
+                CurrentSession.clearSession()
                 Toast.makeText(
                     context,
                     context.resources.getString(errorStringResource),

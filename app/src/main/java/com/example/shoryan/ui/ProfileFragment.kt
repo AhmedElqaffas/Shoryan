@@ -13,6 +13,7 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.shoryan.LocaleHelper
 import com.example.shoryan.R
+import com.example.shoryan.data.CurrentSession
 import com.example.shoryan.data.ServerError
 import com.example.shoryan.databinding.FragmentProfileBinding
 import com.example.shoryan.interfaces.LocaleChangerHolder
@@ -124,13 +125,16 @@ class ProfileFragment : Fragment(), LocaleChangerHolder {
     private fun logoutFromAccount() {
         /**
          *  This function logs the user out of his/her account.
-         *  In order to do this, the tokens must be cleared and the LandingActivity must be restarted
+         *  In order to do this, the tokens must be cleared, currentSession details cleared,
+         *  and the LandingActivity must be restarted
          */
 
         GlobalScope.launch {
             //Clearing stored access and refresh tokens
             TokensRefresher.clearCachedTokens(requireContext())
         }
+
+        CurrentSession.clearSession()
 
         // Show logout message to user
         Toast.makeText(

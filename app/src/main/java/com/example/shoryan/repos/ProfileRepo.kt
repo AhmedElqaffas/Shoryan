@@ -2,13 +2,12 @@ package com.example.shoryan.repos
 
 import android.util.Log
 import com.example.shoryan.data.*
+import com.example.shoryan.data.CurrentSession.user
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
-import java.lang.Exception
 
 object ProfileRepo {
 
     private val TAG = javaClass.simpleName
-    private var user: User? = null
 
     /**
      * Returns the logged in user data either from the server or from the cached variable 'User'

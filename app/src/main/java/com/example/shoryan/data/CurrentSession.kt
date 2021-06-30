@@ -12,4 +12,9 @@ object CurrentSession{
     fun updateUserPoints(points: Int){
         user?.points = points
     }
+
+    fun clearSession(){
+        user = null
+        pendingRequestId = null
+    }
 }
