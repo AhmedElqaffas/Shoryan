@@ -29,7 +29,7 @@
                     android:id="@+id/registrationBack"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@mipmap/ic_back_oval2"
+                    android:background="@mipmap/ic_back_oval"
                     android:padding="20dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintHorizontal_bias="0.044"
