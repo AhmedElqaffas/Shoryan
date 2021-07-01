@@ -51,6 +51,16 @@
         <uses-library
             android:name="com.google.android.maps"
             android:required="true" />
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/logo" />
+
+        <service android:name=".networking.FirebaseMessenger">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

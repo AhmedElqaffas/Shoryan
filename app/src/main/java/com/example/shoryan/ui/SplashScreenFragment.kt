@@ -12,7 +12,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.shoryan.LocaleHelper
+import com.example.shoryan.NotificationDestinationManager
 import com.example.shoryan.R
+import com.example.shoryan.data.NotificationData
 import com.example.shoryan.data.ServerError
 import com.example.shoryan.databinding.FragmentSplashScreenBinding
 import com.example.shoryan.interfaces.LocaleChangerHolder
@@ -24,6 +26,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_splash_screen.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
 
 @AndroidEntryPoint
 class SplashScreenFragment : Fragment(), LocaleChangerHolder {
@@ -118,7 +121,34 @@ class SplashScreenFragment : Fragment(), LocaleChangerHolder {
     }
 
     private fun openApplication(){
-        startActivity(Intent(activity, MainActivity::class.java))
+
+        if(isDirectedHereByNotification()){
+            goToDestinedFragment()
+        }/*else{
+            // The user opened the app normally
+            FirebaseMessaging.getInstance().token.addOnSuccessListener { token ->
+                if (!TextUtils.isEmpty(token)) {
+                    startActivity(Intent(activity, MainActivity::class.java))
+                    println("///////// $token")
+                    activity?.finish()
+                } else{
+                    Log.w("lANDING", "token should not be null...");
+                }
+            }
+        }*/else{
+            // The user opened the app normally
+            startActivity(Intent(activity, MainActivity::class.java))
+            activity?.finish()
+        }
+    }
+
+    private fun isDirectedHereByNotification() = requireActivity().intent.extras?.get("notificationId")  != null
+
+    private fun goToDestinedFragment(){
+        val notificationData = requireActivity().intent.extras?.get("notificationData") as NotificationData
+        val navDeepLink = NotificationDestinationManager.createNavDeepLink(requireContext(), notificationData.data)
+        val pendingIntent = navDeepLink.createPendingIntent()
+        pendingIntent.send()
         activity?.finish()
     }
 
