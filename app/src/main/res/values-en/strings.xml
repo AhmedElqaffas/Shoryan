@@ -102,6 +102,7 @@
     <string name="request_created">The request is successfully created</string>
     <string name="request_canceled">Your request has been canceled</string>
     <string name="request_donation">Request Donation</string>
+    <string name="request_expired">Request has expired</string>
     <string name="resend_sms"><u>Resend code</u></string>
     <string name="reset">Reset</string>
     <string name="rewards">Rewards</string>

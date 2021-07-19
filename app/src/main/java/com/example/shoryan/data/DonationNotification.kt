@@ -15,4 +15,15 @@ data class DonationNotification(
     }
 }
 
+enum class NotificationDestinationCode(val code: String){
+    HOME("HOME"),
+    MY_REQUEST("MY_REQUEST"),
+    REQUEST_FULFILLMENT("REQUEST_FULFILLMENT"),
+    PROFILE("PROFILE");
+
+    companion object {
+        fun fromString(code: String) = values().first { it.code == code }
+    }
+}
+
 

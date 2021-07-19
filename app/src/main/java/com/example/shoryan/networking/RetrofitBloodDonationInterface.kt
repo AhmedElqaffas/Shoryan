@@ -45,7 +45,8 @@ interface RetrofitBloodDonationInterface {
                                          ,@Header("Authorization") accessToken: String): DonationRequestUpdateResponse
 
     @POST("users/login")
-    suspend fun logUser(@Body loginQuery: LoginQuery): LoginResponse
+    suspend fun logUser(@Header("deviceid") deviceId: String,
+                        @Body loginQuery: LoginQuery): LoginResponse
 
     @POST("users/refresh-token")
     suspend fun getNewAccessToken(@Body refreshToken: RefreshTokenQuery): TokenResponse
@@ -57,10 +58,14 @@ interface RetrofitBloodDonationInterface {
     suspend fun sendSMSLogin(@Body phoneQuery: SMSCodeQuery): SMSResponse
 
     @POST("users/login-sms")
-    suspend fun verifyLoginCode(@Body verificationCodeQuery: VerificationCodeQuery): TokenResponse
+    suspend fun verifyLoginCode(
+        @Header("deviceid") deviceId: String,
+        @Body verificationCodeQuery: VerificationCodeQuery): TokenResponse
 
     @POST("users/signup")
-    suspend fun sendSMSRegistration(@Body user: RegistrationQuery): RegistrationResponse
+    suspend fun sendSMSRegistration(
+        @Header("deviceid") deviceId: String,
+        @Body user: RegistrationQuery): RegistrationResponse
 
     @POST("users/signup-verification")
     suspend fun verifyRegistrationCode(@Body verificationCodeQuery: VerificationCodeQuery): TokenResponse
@@ -88,5 +93,20 @@ interface RetrofitBloodDonationInterface {
     suspend fun updateUserInformation(@Header("Authorization") accessToken: String, @Body updateUserInformationQuery: UpdateUserInformationQuery): ProfileResponse
 
     @GET("users/notifications")
-    suspend fun getNotifications(@Header("Authorization") accessToken: String): NotificationsResponse
+    suspend fun getNotifications(
+        @Header("Authorization") accessToken: String,
+        @Query("language") language: Language): NotificationsResponse
 }
+
+/*else{
+            // The user opened the app normally
+            FirebaseMessaging.getInstance().token.addOnSuccessListener { token ->
+                if (!TextUtils.isEmpty(token)) {
+                    startActivity(Intent(activity, MainActivity::class.java))
+                    println("///////// $token")
+                    activity?.finish()
+                } else{
+                    Log.w("lANDING", "token should not be null...");
+                }
+            }
+        }*/

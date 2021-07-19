@@ -64,10 +64,10 @@ class SMSViewModel: ViewModel() {
      * @param registrationQuery The user details used to create an account for the user during registration.
      * If null, then the user is trying to login, not register
      */
-    fun trySendSMS(phoneNumber: String, registrationQuery: RegistrationQuery?){
+    fun trySendSMS(phoneNumber: String, registrationQuery: RegistrationQuery?, token: String?){
         if(_canResendSMS.value == true){
             viewModelScope.launch{
-                sendLoggingSMS(phoneNumber, registrationQuery)
+                sendLoggingSMS(phoneNumber, registrationQuery, token)
             }
         }
     }
@@ -100,13 +100,13 @@ class SMSViewModel: ViewModel() {
         }
     }
 
-    suspend fun sendLoggingSMS(phoneNumber: String, registrationQuery: RegistrationQuery?){
+    suspend fun sendLoggingSMS(phoneNumber: String, registrationQuery: RegistrationQuery?, token: String?){
         _canResendSMS.emit(false)
         try{
             if(registrationQuery == null)
                 sendLoginSMS(phoneNumber, bloodDonationAPI::sendSMSLogin)
             else
-                sendRegistrationSMS(registrationQuery, bloodDonationAPI::sendSMSRegistration)
+                sendRegistrationSMS(token!!, registrationQuery, bloodDonationAPI::sendSMSRegistration)
         }catch(e: Exception){
             _canResendSMS.emit(true)
             _eventsFlow.emit(ServerError.CONNECTION_ERROR)
@@ -122,10 +122,11 @@ class SMSViewModel: ViewModel() {
     }
 
     private suspend fun sendRegistrationSMS(
+        token: String,
         registrationQuery: RegistrationQuery,
-        endpoint: suspend (RegistrationQuery) -> RegistrationResponse
+        endpoint: suspend (String, RegistrationQuery) -> RegistrationResponse
     ){
-        val response = endpoint(registrationQuery)
+        val response = endpoint(token, registrationQuery)
         processSendingSMSResponse(response.error)
     }
 
@@ -170,12 +171,12 @@ class SMSViewModel: ViewModel() {
      * or OperationType.REGISTRATION to control whether to use the login or registration
      * API endpoints
      */
-    fun verifyCode(phoneNumber: String, code: String, operationType: Int){
+    fun verifyCode(phoneNumber: String, code: String, operationType: Int, token: String?){
         currentJob = viewModelScope.launch{
             _isVerifyingCode.value = VerificationState.VERIFYING
             try{
                 when(operationType){
-                    LOGIN -> sendCodeToServer(phoneNumber, code, bloodDonationAPI::verifyLoginCode)
+                    LOGIN -> sendCodeToServer(token!!, phoneNumber, code, bloodDonationAPI::verifyLoginCode)
                     REGISTRATION -> sendCodeToServer(phoneNumber, code, bloodDonationAPI::verifyRegistrationCode)
                 }
             }catch(e: Exception){
@@ -216,6 +217,18 @@ class SMSViewModel: ViewModel() {
     private suspend fun sendCodeToServer(phoneNumber: String, code: String, endpoint: suspend (VerificationCodeQuery) -> TokenResponse){
         val serverQuery = VerificationCodeQuery(phoneNumber, code)
         val response = endpoint(serverQuery)
+        _eventsFlow.emit(response.error?.message)
+        if(response.accessToken != null){
+            this._loggingCredentials.emit(Tokens(response.accessToken, response.refreshToken!!))
+            _isVerifyingCode.value = VerificationState.VERIFIED
+        }else{
+            _isVerifyingCode.value = VerificationState.NOT_VERIFYING
+        }
+    }
+
+    private suspend fun sendCodeToServer(token: String, phoneNumber: String, code: String, endpoint: suspend (String, VerificationCodeQuery) -> TokenResponse){
+        val serverQuery = VerificationCodeQuery(phoneNumber, code)
+        val response = endpoint(token, serverQuery)
         _eventsFlow.emit(response.error?.message)
         if(response.accessToken != null){
             this._loggingCredentials.emit(Tokens(response.accessToken, response.refreshToken!!))

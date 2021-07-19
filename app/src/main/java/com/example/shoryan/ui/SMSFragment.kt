@@ -2,6 +2,8 @@ package com.example.shoryan.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,6 +41,7 @@ import com.example.shoryan.viewmodels.SMSViewModel
 import com.example.shoryan.viewmodels.SMSViewModel.OperationType.LOGIN
 import com.example.shoryan.viewmodels.SMSViewModel.OperationType.REGISTRATION
 import com.example.shoryan.viewmodels.TokensViewModel
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -64,7 +67,14 @@ class SMSFragment : Fragment(), LoadingFragmentHolder {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initializeNavController(view)
-        lifecycleScope.launch { viewModel.sendLoggingSMS(phoneNumber, registrationQuery) }
+        FirebaseMessaging.getInstance().token.addOnSuccessListener { token ->
+            if (!TextUtils.isEmpty(token)) {
+                lifecycleScope.launch { viewModel.sendLoggingSMS(phoneNumber, registrationQuery, token) }
+            } else{
+                Log.w("FCM", "token should not be null...");
+            }
+        }
+
         observeLoggingStatus()
         observeCodeVerificationStatus()
     }
@@ -269,7 +279,13 @@ class SMSFragment : Fragment(), LoadingFragmentHolder {
     private fun sendSMS(){
         // If "registrationQuery" isn't null, then this fragment is for registration, otherwise it is
         // for login
-        viewModel.trySendSMS(phoneNumber, registrationQuery)
+        FirebaseMessaging.getInstance().token.addOnSuccessListener { token ->
+            if (!TextUtils.isEmpty(token)) {
+                lifecycleScope.launch { viewModel.trySendSMS(phoneNumber, registrationQuery, token) }
+            } else{
+                Log.w("FCM", "token should not be null...");
+            }
+        }
     }
 
     private fun updateCodeInstance(code: String){
@@ -279,8 +295,14 @@ class SMSFragment : Fragment(), LoadingFragmentHolder {
     private fun verifyCode(code: String){
         // If "registrationQuery" isn't null, then this fragment is for registration, otherwise it is
         // for login
-        val operation = if(registrationQuery != null) REGISTRATION else LOGIN
-        viewModel.verifyCode(phoneNumber, code, operation)
+        FirebaseMessaging.getInstance().token.addOnSuccessListener { token ->
+            if (!TextUtils.isEmpty(token)) {
+                val operation = if(registrationQuery != null) REGISTRATION else LOGIN
+                viewModel.verifyCode(phoneNumber, code, operation, token)
+            } else{
+                Log.w("FCM", "token should not be null...");
+            }
+        }
     }
 
     private fun observeCodeVerificationStatus(){

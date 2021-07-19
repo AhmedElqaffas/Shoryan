@@ -2,6 +2,7 @@ package com.example.shoryan.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -94,6 +95,7 @@ class SplashScreenFragment : Fragment(), LocaleChangerHolder {
     }
 
     private fun isUserLoggedIn(): Boolean{
+        Log.i("SPLASHSCREEN", "ACCESS TOKEN IS: "+TokensRefresher.accessToken)
         return !TokensRefresher.accessToken.isNullOrEmpty()
     }
 
@@ -121,21 +123,9 @@ class SplashScreenFragment : Fragment(), LocaleChangerHolder {
     }
 
     private fun openApplication(){
-
         if(isDirectedHereByNotification()){
             goToDestinedFragment()
-        }/*else{
-            // The user opened the app normally
-            FirebaseMessaging.getInstance().token.addOnSuccessListener { token ->
-                if (!TextUtils.isEmpty(token)) {
-                    startActivity(Intent(activity, MainActivity::class.java))
-                    println("///////// $token")
-                    activity?.finish()
-                } else{
-                    Log.w("lANDING", "token should not be null...");
-                }
-            }
-        }*/else{
+        }else{
             // The user opened the app normally
             startActivity(Intent(activity, MainActivity::class.java))
             activity?.finish()

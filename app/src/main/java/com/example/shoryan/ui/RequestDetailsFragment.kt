@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver.OnGlobalLayoutListener
+import android.widget.Toast
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -204,6 +205,10 @@ class RequestDetailsFragment : BottomSheetDialogFragment(){
                 resources.getString(error.errorStringResource),
                 ::fetchDonationDetails
             ).show()
+        }
+        else if(error == ServerError.REQUEST_NOT_FOUND){
+            Toast.makeText(requireContext(), resources.getString(error.errorStringResource), Toast.LENGTH_LONG).show()
+            dismiss()
         }
         else{
             error.doErrorAction(binding.root.findViewById(R.id.dummyView) as View)

@@ -1,8 +1,10 @@
 package com.example.shoryan.viewmodels
 
 import androidx.lifecycle.*
+import com.example.shoryan.LocaleHelper
 import com.example.shoryan.TimestampToElapsedTime
 import com.example.shoryan.data.DonationNotification
+import com.example.shoryan.data.Language
 import com.example.shoryan.data.NotificationsResponse
 import com.example.shoryan.repos.NotificationsRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -49,10 +51,18 @@ class NotificationsViewModel @Inject constructor(
     suspend fun getNotifications(): LiveData<NotificationsResponse> {
         areNotificationsLoaded.postValue(false)
         viewModelScope.launch {
-            notificationsResponse.postValue(notificationsRepo.getNotifications())
+            notificationsResponse.postValue(notificationsRepo.getNotifications(getLanguage()))
             areNotificationsLoaded.postValue(true)
         }.join()
         return notificationsResponse
+    }
+
+    private fun getLanguage(): Language{
+        return if(LocaleHelper.currentLanguage == LocaleHelper.LANGUAGE_EN){
+            Language.english
+        }else{
+            Language.arabic
+        }
     }
 
     /**

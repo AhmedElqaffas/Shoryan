@@ -57,6 +57,7 @@ enum class ServerError(val errorStringResource: Int) {
     BREAK_TIME_CHECK_FAILS(R.string.frequent_donation),
     INCOMPATIBLE_BLOOD_TYPE(R.string.incompatible_blood_type),
     USER_GOING_TO_ANOTHER_REQUEST(R.string.request_already_pending),
+    REQUEST_NOT_FOUND(R.string.request_expired),
     JWT_NOT_ACTIVE(R.string.connection_error),
     INTERNAL_SERVER_ERROR(R.string.connection_error),
     CONNECTION_ERROR(R.string.connection_error),

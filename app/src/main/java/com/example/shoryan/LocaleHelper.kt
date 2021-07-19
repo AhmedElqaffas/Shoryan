@@ -1,14 +1,18 @@
 package com.example.shoryan
 
-import android.os.Build
 import android.annotation.TargetApi
 import android.content.Context
-import java.util.*
+import android.os.Build
 import android.preference.PreferenceManager
+import java.util.*
 
 
 object LocaleHelper {
     private const val SELECTED_LANGUAGE = "language"
+    const val LANGUAGE_EN = "en"
+    const val LANGUAGE_AR = "ar"
+    var currentLanguage = ""
+    private set
 
     fun onAttach(context: Context): Context? {
         val lang = getPersistedData(context, Locale.getDefault().language)
@@ -33,7 +37,9 @@ object LocaleHelper {
 
     private fun getPersistedData(context: Context, defaultLanguage: String): String {
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-        return preferences.getString(SELECTED_LANGUAGE, defaultLanguage)?: defaultLanguage
+        val language =  preferences.getString(SELECTED_LANGUAGE, defaultLanguage)?: defaultLanguage
+        currentLanguage = language
+        return language
     }
 
     fun persist(context: Context, language: String?) {
@@ -41,6 +47,9 @@ object LocaleHelper {
         val editor = preferences.edit()
         editor.putString(SELECTED_LANGUAGE, language)
         editor.apply()
+        language?.let{
+            currentLanguage = it
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.N)

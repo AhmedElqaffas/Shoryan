@@ -2,6 +2,8 @@ package com.example.shoryan.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +25,7 @@ import com.example.shoryan.databinding.LoginBannerBinding
 import com.example.shoryan.interfaces.LoadingFragmentHolder
 import com.example.shoryan.repos.TokensRefresher
 import com.example.shoryan.viewmodels.LoginViewModel
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -157,8 +160,14 @@ class PasswordLoginFragment : Fragment(), LoadingFragmentHolder {
 
     private fun verifyCredentials(phoneNumber: String, password: String){
         toggleLoggingInIndicator()
-        loginProcess = loginViewModel.logUser(phoneNumber, password)
-        loginProcess.observe(viewLifecycleOwner, loginObserver)
+        FirebaseMessaging.getInstance().token.addOnSuccessListener { token ->
+            if (!TextUtils.isEmpty(token)) {
+                loginProcess = loginViewModel.logUser(token, phoneNumber, password)
+                loginProcess.observe(viewLifecycleOwner, loginObserver)
+            } else{
+                Log.w("FCM", "token should not be null...");
+            }
+        }
     }
 
     override fun onLoadingFragmentDismissed() {

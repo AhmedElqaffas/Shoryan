@@ -104,6 +104,7 @@
     <string name="request_created">تم الطلب بنجاح</string>
     <string name="request_canceled">تم الغاء الطلب</string>
     <string name="request_donation">طلب تبرع</string>
+    <string name="request_expired">لقد انتهى الطلب</string>
     <string name="resend_sms"><u>إعادة إرسال الرمز</u></string>
     <string name="reset">مسح</string>
     <string name="rewards">المكافآت</string>

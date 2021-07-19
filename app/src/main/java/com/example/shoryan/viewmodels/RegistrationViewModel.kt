@@ -1,5 +1,7 @@
 package com.example.shoryan.viewmodels
 
+import android.text.TextUtils
+import android.util.Log
 import android.widget.EditText
 import androidx.lifecycle.*
 import com.example.shoryan.AndroidUtility
@@ -9,6 +11,7 @@ import com.example.shoryan.data.*
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
 import com.example.shoryan.networking.RetrofitClient
 import com.example.shoryan.removeAdditionalSpaces
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -110,7 +113,13 @@ class RegistrationViewModel: ViewModel() {
 
     fun tryRegisterUser(){
         if(areInputsValidAndComplete()){
-            registrationProcess = registerUser(createUserRegistrationQuery())
+            FirebaseMessaging.getInstance().token.addOnSuccessListener { token ->
+                if (!TextUtils.isEmpty(token)) {
+                    registrationProcess = registerUser(token, createUserRegistrationQuery())
+                } else{
+                    Log.w("FCM", "token should not be null...");
+                }
+            }
         }
         else{
             viewModelScope.launch {
@@ -142,10 +151,10 @@ class RegistrationViewModel: ViewModel() {
             birthDate = _birthDate.value!!
     )
 
-    private fun registerUser(registrationQuery: RegistrationQuery)  = viewModelScope.launch{
+    private fun registerUser(token: String, registrationQuery: RegistrationQuery)  = viewModelScope.launch{
         _eventsFlow.emit(RegistrationViewEvent.ToggleLoadingIndicator)
         try{
-            val registrationResponse = bloodDonationAPI.sendSMSRegistration(registrationQuery)
+            val registrationResponse = bloodDonationAPI.sendSMSRegistration(token, registrationQuery)
             processRegistrationAPIResponse(registrationResponse)
         }
         catch (e: Exception){
