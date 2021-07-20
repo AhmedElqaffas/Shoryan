@@ -52,6 +52,7 @@ enum class ServerError(val errorStringResource: Int) {
             }
         }
     },
+    DONATION_WILL_BE_CONFIRMED(R.string.waiting_blood_bank_confirmation),
     USER_ALREADY_EXISTS(R.string.user_already_exists),
     AGE_CHECK_FAILS(R.string.age_check_failed),
     BREAK_TIME_CHECK_FAILS(R.string.frequent_donation),

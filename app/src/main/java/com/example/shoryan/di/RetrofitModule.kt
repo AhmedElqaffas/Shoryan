@@ -16,7 +16,7 @@ object RetrofitModule{
     @Provides
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): RetrofitBloodDonationInterface{
-        return  Retrofit.Builder().baseUrl("https://pacific-springs-77989.herokuapp.com/api/")
+        return  Retrofit.Builder().baseUrl("https://shoryan.herokuapp.com/api/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()

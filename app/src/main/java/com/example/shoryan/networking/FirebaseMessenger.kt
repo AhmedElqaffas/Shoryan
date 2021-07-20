@@ -24,7 +24,6 @@ class FirebaseMessenger: FirebaseMessagingService() {
         val data: HashMap<String, String> = HashMap(remoteMessage.data)
         val title = data["title"]
         val body = data["body"]
-        println(data)
         //The message is received, now we need to build a notification out of it
         MyNotificationManager.displayNotification(this, arrayOf(title, body), data)
     }

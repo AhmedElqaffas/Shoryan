@@ -106,6 +106,9 @@ class RequestFulfillmentViewModel @AssistedInject constructor(
         updatedDonationRequest.error?.message?.let{
             pushErrorToFragment(it)
         }
+        updatedDonationRequest.response?.message?.let{
+            pushErrorToFragment(it)
+        }
         _isInLoadingState.postValue(false)
     }
 

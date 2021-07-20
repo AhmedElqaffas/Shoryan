@@ -28,7 +28,8 @@ data class DonationRequester(
  **/
 data class DonationRequestUpdateResponse(
     val request: DonationRequest?,
-    val error: ErrorResponse?
+    val error: ErrorResponse?,
+    val response: ErrorResponse?
 )
 
 enum class RequesterType(val requesterType: String){

@@ -1,9 +1,11 @@
 package com.example.shoryan.repos
 
 import android.util.Log
-import com.example.shoryan.data.*
+import com.example.shoryan.data.DonationDetailsResponse
+import com.example.shoryan.data.DonationRequestUpdateResponse
+import com.example.shoryan.data.ErrorResponse
+import com.example.shoryan.data.ServerError
 import com.example.shoryan.networking.RetrofitBloodDonationInterface
-import java.lang.Exception
 
 object RequestFulfillmentRepo {
 
@@ -25,7 +27,7 @@ object RequestFulfillmentRepo {
             bloodDonationAPI.addUserToDonorsList(requestId, TokensRefresher.accessToken!!)
         }catch(e: Exception){
             Log.e("RequestFulfillmentRepo","Couldn't start donation" + e.message)
-            DonationRequestUpdateResponse(null, ErrorResponse(ServerError.CONNECTION_ERROR))
+            DonationRequestUpdateResponse(null, ErrorResponse(ServerError.CONNECTION_ERROR), null)
         }
     }
 
@@ -36,7 +38,7 @@ object RequestFulfillmentRepo {
             bloodDonationAPI.confirmDonation(requestId, TokensRefresher.accessToken!!)
         }catch(e: Exception){
             Log.e("RequestFulfillmentRepo","Couldn't confirm donation" + e.message)
-            DonationRequestUpdateResponse(null, ErrorResponse(ServerError.CONNECTION_ERROR))
+            DonationRequestUpdateResponse(null, ErrorResponse(ServerError.CONNECTION_ERROR), null)
         }
     }
 
@@ -47,7 +49,7 @@ object RequestFulfillmentRepo {
             bloodDonationAPI.removeUserFromDonorsList(requestId, TokensRefresher.accessToken!!)
         }catch(e: Exception){
             Log.e("RequestFulfillmentRepo","Couldn't cancel donation" + e.message)
-            DonationRequestUpdateResponse(null, ErrorResponse(ServerError.CONNECTION_ERROR))
+            DonationRequestUpdateResponse(null, ErrorResponse(ServerError.CONNECTION_ERROR), null)
         }
     }
 }
