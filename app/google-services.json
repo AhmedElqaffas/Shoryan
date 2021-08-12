@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "442744827202",
+    "project_id": "shoryan-bfb4f",
+    "storage_bucket": "shoryan-bfb4f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:442744827202:android:d910e8f238fb1edd216cdb",
+        "android_client_info": {
+          "package_name": "com.example.shoryan"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "442744827202-6d3i35f0k6dskv1tj0nc97vq53foc47n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5AO-Gil7IB1ZXLT8aYQe8OQFk4gLU-Xc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "442744827202-6d3i35f0k6dskv1tj0nc97vq53foc47n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

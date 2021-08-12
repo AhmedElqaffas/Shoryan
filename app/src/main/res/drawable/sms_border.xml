@@ -1,0 +1,50 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--Currently selected character -->
+    <item android:state_focused="true" android:state_selected="true">
+        <layer-list>
+            <item>
+                <color android:color="@android:color/transparent"/>
+            </item>
+
+            <item android:gravity="bottom">
+                <shape>
+                    <size android:height="2dp" />
+                    <solid android:color="@color/colorPrimaryDark" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+
+    <!-- PinEntryEditText is focused (applies to all characters except currently
+    selected character) -->
+    <item android:state_focused="true">
+        <layer-list>
+            <item>
+                <color android:color="@android:color/transparent"/>
+            </item>
+
+            <item android:gravity="bottom">
+                <shape>
+                    <size android:height="2dp" />
+                    <solid android:color="@color/gray" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+    <!-- PinEntryEditText is not focused -->
+    <item>
+        <layer-list>
+            <item>
+                <color android:color="@android:color/transparent"/>
+            </item>
+
+            <item android:gravity="bottom">
+                <shape>
+                    <size android:height="2dp" />
+                    <solid android:color="@color/colorPrimaryDark" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+</selector>

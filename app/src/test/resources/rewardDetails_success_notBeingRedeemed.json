@@ -1,0 +1,27 @@
+{
+  "successfulResponse": {
+    "reward": {
+      "_id": "dummy id",
+      "description": "name",
+      "requiredPoints": 0,
+      "store": {
+        "branches": [
+          {
+            "location": {
+              "governorate": "",
+              "region": ""
+            },
+            "_id": "dummy"
+          }
+        ],
+        "_id": "dummy",
+        "name": "dummy",
+        "cover": "dummy",
+        "logo": "dummy"
+      },
+      "code": "MP15",
+      "__v": 0
+    },
+    "isRedeemingThisReward": false
+  }
+}

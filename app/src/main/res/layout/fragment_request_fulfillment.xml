@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable name="viewmodel"
+            type="com.example.shoryan.viewmodels.RequestFulfillmentViewModel" />
+
+    </data>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+            android:id="@+id/design_bottom_sheet">
+
+            <TextView
+                android:id="@+id/donationRequestWord"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                android:layout_marginTop="25dp"
+                android:text="@string/donation_request"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="25sp"
+                android:fontFamily="@font/opensans_bold" />
+
+            <com.example.shoryan.ui.CustomScrollView
+                android:id="@+id/requestDetailsScrollView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/donationRequestWord"
+                android:layout_marginTop="15dp"
+                android:fillViewport="true">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingBottom="40dp"
+                    android:id="@+id/scrollViewChild">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintHeight_percent="0.5"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0"
+                        android:nestedScrollingEnabled="true"
+                        android:id="@+id/mapFragmentContainer">
+
+                        <fragment xmlns:map="http://schemas.android.com/apk/res-auto"
+                            android:id="@+id/mapFragment"
+                            android:name="com.google.android.gms.maps.SupportMapFragment"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            map:cameraZoom="13"
+                            map:mapType="normal"
+                            map:uiCompass="false" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <View
+                        android:id="@+id/cardBiasGuide"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        app:layout_constraintTop_toTopOf="@id/mapFragmentContainer"
+                        app:layout_constraintBottom_toBottomOf="@id/mapFragmentContainer"
+                        app:layout_constraintVertical_bias="0.8" />
+
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/requestDetailsCard"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:elevation="5dp"
+                        app:cardCornerRadius="21dp"
+                        app:layout_constraintTop_toBottomOf="@id/cardBiasGuide"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintWidth_percent="0.85">
+
+                        <com.facebook.shimmer.ShimmerFrameLayout
+                            android:id="@+id/requestDetailsShimmer"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            app:shimmer_auto_start="true"
+                            app:isVisible="@{!viewmodel.areDonationDetailsLoaded}"
+                            app:isShimmerActive="@{!viewmodel.areDonationDetailsLoaded}">
+
+                            <include layout="@layout/shimmer_request_details_card" />
+                        </com.facebook.shimmer.ShimmerFrameLayout>
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/requestDetailsLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:isVisible="@{viewmodel.areDonationDetailsLoaded}">
+
+                            <TextView
+                                android:id="@+id/requestBloodType"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp"
+                                android:layout_marginTop="25dp"
+                                android:background="@drawable/red_circle"
+                                android:gravity="center"
+                                android:textColor="@android:color/white"
+                                android:textSize="21sp"
+                                android:fontFamily="@font/opensans_bold"
+                                app:layout_constraintHorizontal_bias="0.1"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="@{viewmodel.donationDetails.request.bloodType.bloodType}" />
+
+                            <TextView
+                                android:id="@+id/requesterName"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:layout_constraintStart_toEndOf="@id/requestBloodType"
+                                app:layout_constraintTop_toTopOf="@id/requestBloodType"
+                                android:layout_marginStart="27dp"
+                                android:text="@{viewmodel.donationDetails.request.requester.name}"
+                                android:textColor="@color/colorPrimaryDark"
+                                android:textSize="21sp"
+                                android:fontFamily="@font/opensans_bold" />
+
+                            <ImageView
+                                android:id="@+id/pinIcon"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:layout_constraintStart_toEndOf="@id/requestBloodType"
+                                app:layout_constraintTop_toBottomOf="@id/requesterName"
+                                android:layout_marginTop="10dp"
+                                android:layout_marginStart="20dp"
+                                android:src="@drawable/ic_pin" />
+
+                            <TextView
+                                android:id="@+id/requestLocation"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                app:layout_constraintTop_toTopOf="@id/pinIcon"
+                                app:layout_constraintStart_toEndOf="@id/pinIcon"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                android:paddingTop="0dp"
+                                android:paddingStart="10dp"
+                                android:layout_marginEnd="10dp"
+                                android:textColor="@color/colorPrimary"
+                                android:textSize="13sp"
+                                android:fontFamily="@font/opensans_bold"
+                                android:text="@{@string/address_full(viewmodel.donationDetails.request.bloodBank.name,viewmodel.donationDetails.request.bloodBank.location.buildingNumber,viewmodel.donationDetails.request.bloodBank.location.streetName,viewmodel.donationDetails.request.bloodBank.location.region,viewmodel.donationDetails.request.bloodBank.location.governorate)}" />
+
+                            <TextView
+                                android:id="@+id/requestBagsRequired"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:drawablePadding="15dp"
+                                android:textColor="@color/colorPrimary"
+                                android:textSize="13sp"
+                                android:fontFamily="@font/opensans_bold"
+                                app:drawableStartCompat="@drawable/ic_blood_drop"
+                                app:layout_constraintStart_toStartOf="@id/pinIcon"
+                                app:layout_constraintTop_toBottomOf="@id/requestLocation"
+                                android:text="@{@string/blood_bags(viewmodel.numberOfRemainingBags)}" />
+
+                            <TextView
+                                android:id="@+id/personsDonatingToRequest"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="10dp"
+                                android:drawablePadding="8dp"
+                                android:textColor="@color/colorPrimary"
+                                android:textSize="13sp"
+                                android:fontFamily="@font/opensans_bold"
+                                app:drawableStartCompat="@drawable/ic_blood_hand"
+                                app:layout_constraintStart_toStartOf="@id/pinIcon"
+                                app:layout_constraintTop_toBottomOf="@id/requestBagsRequired"
+                                android:text="@{@string/persons_going(viewmodel.donationDetails.request.numberOfComingDonors)}" />
+
+                            <TextView
+                                android:id="@+id/callRequesterIcon"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginVertical="20dp"
+                                app:drawableStartCompat="@drawable/ic_phone"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintHorizontal_bias="0.9"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/personsDonatingToRequest"
+                                android:onClick="@{() -> viewmodel.callPatient(viewmodel.donationDetails.request.requester.phoneNumber)}"/>
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <Button
+                        android:id="@+id/donateButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="30dp"
+                        app:layout_constraintLeft_toLeftOf="@id/requestDetailsCard"
+                        app:layout_constraintRight_toRightOf="@id/requestDetailsCard"
+                        app:layout_constraintTop_toBottomOf="@id/requestDetailsCard"
+                        android:background="@drawable/button_disabled_selector"
+                        android:fontFamily="@font/opensans_bold"
+                        android:textSize="17sp"
+                        android:textColor="#FFFFFF"
+                        android:text="@string/donate"
+                        android:paddingVertical="20dp"
+                        android:enabled="@{viewmodel.canUserDonate}"
+                        android:visibility="@{viewmodel.donateButtonVisibility}"
+                        android:alpha="@{viewmodel.donateButtonAlpha}"
+                        android:onClick="@{() -> viewmodel.startDonation(viewmodel.donationDetails.request.id)}"
+                        android:textAllCaps="false"/>
+
+                    <TextView
+                        android:id="@+id/waitingConfirmationSentence"
+                        app:layout_constraintTop_toBottomOf="@id/requestDetailsCard"
+                        app:layout_constraintLeft_toLeftOf="@id/requestDetailsCard"
+                        app:layout_constraintRight_toRightOf="@id/requestDetailsCard"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:fontFamily="@font/opensans_regular"
+                        android:textSize="17sp"
+                        android:text="@string/waiting_confirmation"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:enabled="@{!viewmodel.isInLoadingState}"
+                        android:visibility="@{viewmodel.getWaitingDonationViewVisibility}" />
+
+                    <Button
+                        android:id="@+id/cancelDonationButton"
+                        app:layout_constraintLeft_toLeftOf="@id/requestDetailsCard"
+                        app:layout_constraintRight_toRightOf="@id/requestDetailsCard"
+                        app:layout_constraintTop_toBottomOf="@id/waitingConfirmationSentence"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/curved_gray_border"
+                        android:fontFamily="@font/opensans_bold"
+                        android:textSize="17sp"
+                        android:textColor="#000000"
+                        android:text="@string/cancel_donation"
+                        android:paddingVertical="20dp"
+                        android:enabled="@{!viewmodel.isInLoadingState}"
+                        android:visibility="@{viewmodel.getWaitingDonationViewVisibility}"
+                        android:onClick="@{() -> viewmodel.cancelDonation(viewmodel.donationDetails.request.id)}"
+                        android:textAllCaps="false"/>
+
+                    <Button
+                        android:id="@+id/confirmDonationButton"
+                        app:layout_constraintLeft_toLeftOf="@id/requestDetailsCard"
+                        app:layout_constraintRight_toRightOf="@id/requestDetailsCard"
+                        app:layout_constraintTop_toBottomOf="@id/cancelDonationButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:background="@drawable/button_curved_red"
+                        android:textSize="17sp"
+                        android:fontFamily="@font/opensans_bold"
+                        android:textColor="#FFFFFF"
+                        android:text="@string/i_donated"
+                        android:paddingVertical="20dp"
+                        android:enabled="@{!viewmodel.isInLoadingState}"
+                        android:visibility="@{viewmodel.getWaitingDonationViewVisibility}"
+                        android:onClick="@{() -> viewmodel.confirmDonation(viewmodel.donationDetails.request.id)}"
+                        android:textAllCaps="false"/>
+
+                    <!-- Showing a snackbar in a bottomsheet requires the view to
+                    be in a coordinator layout, the following view is just a dummy view
+                    to show the snackbar over -->
+                    <androidx.coordinatorlayout.widget.CoordinatorLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toBottomOf="parent">
+                        <View
+                            android:id="@+id/dummyView"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"/>
+                    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.example.shoryan.ui.CustomScrollView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

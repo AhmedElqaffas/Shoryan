@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable name="item"
+            type="com.example.shoryan.data.DonationRequest" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="6dp"
+            android:layout_marginBottom="30dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginHorizontal="10dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/request_item_blood_type"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_bias="0.1"
+                android:layout_marginVertical="25dp"
+                android:background="@drawable/red_circle"
+                android:text="@{item.bloodType.bloodType}"
+                android:textColor="@android:color/white"
+                android:gravity="center"
+                android:textSize="16sp"
+                android:fontFamily="@font/opensans_bold"/>
+
+
+                <TextView
+                    android:id="@+id/request_item_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="@id/request_item_blood_type"
+                    app:layout_constraintStart_toEndOf="@id/request_item_blood_type"
+                    app:layout_constraintEnd_toStartOf="@id/urgentFlag"
+                    android:layout_marginHorizontal="15dp"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="21sp"
+                    app:layout_constraintHorizontal_bias="0.15"
+                    android:fontFamily="@font/opensans_bold"
+                    android:text="@{item.requester.name}"/>
+
+            <TextView
+                android:id="@+id/urgentFlag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="@id/request_item_name"
+                app:layout_constraintEnd_toStartOf="@id/request_arrow"
+                android:background="@drawable/small_red_curve_bg"
+                android:textColor="@android:color/white"
+                android:textSize="13sp"
+                android:fontFamily="@font/opensans_bold"
+                android:text="@string/urgent"
+                android:paddingHorizontal="10dp"
+                android:paddingTop="4dp"
+                android:layout_marginEnd="15dp"
+                android:paddingBottom="4dp"/>
+
+            <ImageView
+                android:id="@+id/pin_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="@id/request_item_blood_type"
+                app:layout_constraintBottom_toBottomOf="@id/request_item_blood_type"
+                app:layout_constraintStart_toStartOf="@id/request_item_name"
+                app:layout_constraintVertical_bias="0.8"
+                android:src="@drawable/ic_pin"/>
+
+            <TextView
+                android:id="@+id/request_item_location"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="@id/pin_icon"
+                app:layout_constraintStart_toEndOf="@id/pin_icon"
+                app:layout_constraintEnd_toStartOf="@id/request_arrow"
+                android:textColor="@color/colorPrimaryDark"
+                android:text='@{item.bloodBank.location.region}'
+                android:textSize="13sp"
+                android:fontFamily="@font/opensans_bold"
+                android:layout_marginHorizontal="5dp"
+                android:textAlignment="viewStart"/>
+
+            <ImageView
+                android:id="@+id/request_arrow"
+                android:layout_width="8dp"
+                android:layout_height="14dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_bias="0.95"
+                android:src="@mipmap/ic_next"
+                android:backgroundTint="@android:color/black"
+                android:alpha="0.4"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

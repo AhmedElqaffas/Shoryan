@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_nav_graph"
+    app:startDestination="@id/home">
+
+    <fragment
+        android:id="@+id/home"
+        android:name="com.example.shoryan.ui.HomeFragment"
+        android:label="Home"
+        tools:layout="@layout/fragment_home"
+        app:defaultNavHost="true">
+        <action
+            android:id="@+id/action_home_to_myRequestsFragment"
+            app:destination="@id/myRequestsFragment"/>
+        <action
+            android:id="@+id/action_home_to_newRequest"
+            app:destination="@id/newRequest" />
+        <action
+            android:id="@+id/action_home_to_rewardsFragment"
+            app:destination="@id/rewardsFragment" />
+        <action
+            android:id="@+id/action_home_to_requestDetailsFragment"
+            app:destination="@id/requestDetailsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/newRequest"
+        android:name="com.example.shoryan.ui.NewRequestFragment"
+        android:label="New Request"
+        tools:layout="@layout/fragment_new_request">
+        <action
+            android:id="@+id/action_newRequest_to_myRequestsFragment"
+            app:destination="@id/myRequestsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/notifications"
+        android:name="com.example.shoryan.ui.NotificationsFragment"
+        android:label="Notifications"
+        tools:layout="@layout/fragment_notifications" >
+        <action
+            android:id="@+id/action_notifications_to_requestDetailsFragment"
+            app:destination="@id/requestDetailsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/profile"
+        android:name="com.example.shoryan.ui.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_profile_to_accountInfoFragment"
+            app:destination="@id/accountInfoFragment" />
+        <action
+            android:id="@+id/action_profile_to_changePasswordFragment"
+            app:destination="@id/changePasswordFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/myRequestsFragment"
+        android:name="com.example.shoryan.ui.MyRequestsFragment"
+        android:label="fragment_my_requests"
+        tools:layout="@layout/fragment_my_requests" >
+        <action
+            android:id="@+id/action_myRequestsFragment_to_newRequest"
+            app:destination="@id/newRequest" />
+        <argument android:name="requestsIDs"
+            app:argType="com.example.shoryan.data.DonationRequest"/>
+        <action
+            android:id="@+id/action_myRequestsFragment_to_requestDetailsFragment"
+            app:destination="@id/requestDetailsFragment" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/rewardsFragment"
+        android:name="com.example.shoryan.ui.RewardsFragment"
+        android:label="RewardsFragment" >
+        <action
+            android:id="@+id/action_rewardsFragment_to_redeemRewardFragment"
+            app:destination="@id/redeemRewardFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/redeemRewardFragment"
+        android:name="com.example.shoryan.ui.RedeemRewardFragment"
+        android:label="RedeemRewardFragment" />
+    <argument
+        android:name="rewardId"/>
+    <fragment
+        android:id="@+id/changePasswordFragment"
+        android:name="com.example.shoryan.ui.ChangePasswordFragment"
+        android:label="fragment_change_password"
+        tools:layout="@layout/fragment_change_password" />
+    <fragment
+        android:id="@+id/accountInfoFragment"
+        android:name="com.example.shoryan.ui.AccountInfoFragment"
+        android:label="fragment_account_info"
+        tools:layout="@layout/fragment_account_info" >
+        <action
+            android:id="@+id/action_accountInfoFragment_to_mapFragment2"
+            app:destination="@id/mapFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/mapFragment2"
+        android:name="com.example.shoryan.ui.MapFragment"
+        android:label="MapFragment" />
+    <dialog
+        android:id="@+id/requestDetailsFragment"
+        android:name="com.example.shoryan.ui.RequestDetailsFragment"
+        android:label="RequestDetailsFragment">
+        <argument
+            android:name="requestId"/>
+        <argument android:name="binding"
+            app:argType="integer"/>
+        <!-- To be able to make a callback when the dialog is dismissed -->
+        <argument android:name="requestsHolder"
+            app:argType="com.example.shoryan.interfaces.RequestsRecyclerInteraction"
+            app:nullable="true"/>
+    </dialog>
+
+</navigation>
